@@ -38,3 +38,18 @@ create table if not exists public.cities (
   type text not null check (type in ('kabupaten', 'kota')),
   unique (province_id, slug)
 );
+
+create table if not exists public.companies (
+  id bigint generated always as identity primary key,
+  owner_id uuid not null unique references public.profiles(id) on delete cascade,
+  name text not null check (char_length(name) <= 100),
+  slug text not null unique,
+  logo_path text,
+  website text,
+  industry text,
+  size text,
+  city_id int references public.cities(id) on delete restrict,
+  address_note text check (address_note is null or char_length(address_note) <= 150),
+  description text check (description is null or char_length(description) <= 1500),
+  created_at timestamptz not null default now()
+);
