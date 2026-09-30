@@ -17,7 +17,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 2: Database Supabase (folder database/)
 
-- [ ] 007 `db: buat tabel profiles dengan role user, company, admin`
+- [x] 007 `db: buat tabel profiles dengan role user, company, admin`
 - [ ] 008 `db: buat tabel categories`
 - [ ] 009 `db: buat tabel provinces untuk kode wilayah 38 provinsi`
 - [ ] 010 `db: buat tabel cities untuk kota dan kabupaten`
