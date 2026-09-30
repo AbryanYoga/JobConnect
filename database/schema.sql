@@ -173,3 +173,11 @@ create table if not exists public.notifications (
   read_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+-- Fitur P2: Bookmark lowongan oleh pelamar
+create table if not exists public.saved_jobs (
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  job_id bigint not null references public.jobs(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (user_id, job_id)
+);
