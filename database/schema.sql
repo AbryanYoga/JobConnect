@@ -126,3 +126,13 @@ create trigger trg_applications_touch_updated_at
 before update on public.applications
 for each row
 execute function public.touch_updated_at();
+
+create table if not exists public.application_status_history (
+  id bigint generated always as identity primary key,
+  application_id bigint not null references public.applications(id) on delete cascade,
+  from_status text,
+  to_status text not null,
+  changed_by uuid,
+  note text,
+  created_at timestamptz not null default now()
+);
