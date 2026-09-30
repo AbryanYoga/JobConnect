@@ -136,3 +136,11 @@ create table if not exists public.application_status_history (
   note text,
   created_at timestamptz not null default now()
 );
+
+create table if not exists public.application_notes (
+  id bigint generated always as identity primary key,
+  application_id bigint not null references public.applications(id) on delete cascade,
+  author_id uuid not null,
+  note text not null check (char_length(note) <= 2000),
+  created_at timestamptz not null default now()
+);
