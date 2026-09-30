@@ -15,3 +15,9 @@ create table if not exists public.profiles (
   email_notifications boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+create table if not exists public.categories (
+  id bigint generated always as identity primary key,
+  name text not null unique,
+  slug text not null unique
+);
