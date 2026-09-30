@@ -144,3 +144,21 @@ create table if not exists public.application_notes (
   note text not null check (char_length(note) <= 2000),
   created_at timestamptz not null default now()
 );
+
+create table if not exists public.application_ai_reviews (
+  id bigint generated always as identity primary key,
+  application_id bigint not null unique references public.applications(id) on delete cascade,
+  status text not null default 'pending' check (status in ('pending', 'processing', 'done', 'failed', 'skipped')),
+  score int check (score is null or (score between 0 and 100)),
+  level text check (level is null or level in ('tinggi', 'sedang', 'rendah')),
+  summary text,
+  matched_skills text[] not null default '{}',
+  missing_skills text[] not null default '{}',
+  interview_questions text[] not null default '{}',
+  suspicious boolean not null default false,
+  attempts int not null default 0,
+  error_message text,
+  model text,
+  created_at timestamptz not null default now(),
+  completed_at timestamptz
+);
