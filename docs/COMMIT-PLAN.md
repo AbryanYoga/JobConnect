@@ -9,7 +9,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 ## Fase 1: Setup repo dan dokumen
 
 - [x] 001 `chore: inisialisasi repo dengan README awal`
-- [ ] 002 `chore: tambah .gitignore untuk Next.js dan file env`
+- [x] 002 `chore: tambah .gitignore untuk Next.js dan file env`
 - [ ] 003 `docs: tambah AGENTS.md dan COMMIT-PLAN.md`
 - [ ] 004 `docs: tambah PRD JobConnect ke folder docs`
 - [ ] 005 `docs: tambah rancangan database ke folder docs`
