@@ -27,7 +27,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 014 `db: buat tabel application_status_history untuk timeline status`
 - [x] 015 `db: buat tabel application_notes untuk catatan internal perusahaan`
 - [x] 016 `db: buat tabel application_ai_reviews untuk hasil screening AI`
-- [ ] 017 `db: buat tabel notifications untuk notifikasi realtime`
+- [x] 017 `db: buat tabel notifications untuk notifikasi realtime`
 - [ ] 018 `db: buat tabel saved_jobs untuk bookmark lowongan`
 - [ ] 019 `db: tambah index performa untuk seluruh tabel`
 - [ ] 020 `db: tambah trigger handle_new_user untuk membuat profil otomatis`

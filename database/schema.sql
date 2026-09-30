@@ -162,3 +162,14 @@ create table if not exists public.application_ai_reviews (
   created_at timestamptz not null default now(),
   completed_at timestamptz
 );
+
+create table if not exists public.notifications (
+  id bigint generated always as identity primary key,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  type text not null,
+  title text not null,
+  body text,
+  link text,
+  read_at timestamptz,
+  created_at timestamptz not null default now()
+);
