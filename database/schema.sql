@@ -21,3 +21,10 @@ create table if not exists public.categories (
   name text not null unique,
   slug text not null unique
 );
+
+-- Slug remote dicadangkan untuk rute khusus lowongan jarak jauh (/wilayah/remote)
+create table if not exists public.provinces (
+  id smallint primary key,
+  name text not null,
+  slug text not null unique check (slug <> 'remote')
+);
