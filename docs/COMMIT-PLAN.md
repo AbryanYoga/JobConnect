@@ -10,7 +10,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 - [x] 001 `chore: inisialisasi repo dengan README awal`
 - [x] 002 `chore: tambah .gitignore untuk Next.js dan file env`
-- [ ] 003 `docs: tambah AGENTS.md dan COMMIT-PLAN.md`
+- [x] 003 `docs: tambah AGENTS.md dan COMMIT-PLAN.md`
 - [ ] 004 `docs: tambah PRD JobConnect ke folder docs`
 - [ ] 005 `docs: tambah rancangan database ke folder docs`
 - [ ] 006 `docs: tambah gambar ERD ke folder docs`
