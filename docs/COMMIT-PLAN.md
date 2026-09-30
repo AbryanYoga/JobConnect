@@ -20,7 +20,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 007 `db: buat tabel profiles dengan role user, company, admin`
 - [x] 008 `db: buat tabel categories`
 - [x] 009 `db: buat tabel provinces untuk kode wilayah 38 provinsi`
-- [ ] 010 `db: buat tabel cities untuk kota dan kabupaten`
+- [x] 010 `db: buat tabel cities untuk kota dan kabupaten`
 - [ ] 011 `db: buat tabel companies untuk profil perusahaan mitra`
 - [ ] 012 `db: buat tabel jobs dengan kriteria terstruktur dan work mode`
 - [ ] 013 `db: buat tabel applications dengan unique job_id dan user_id`

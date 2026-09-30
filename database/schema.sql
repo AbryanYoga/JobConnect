@@ -28,3 +28,13 @@ create table if not exists public.provinces (
   name text not null,
   slug text not null unique check (slug <> 'remote')
 );
+
+-- Nama memuat awalan "Kota" atau "Kabupaten" agar slug tidak bentrok (PRD 9.1)
+create table if not exists public.cities (
+  id int primary key,
+  province_id smallint not null references public.provinces(id) on delete restrict,
+  name text not null,
+  slug text not null,
+  type text not null check (type in ('kabupaten', 'kota')),
+  unique (province_id, slug)
+);
