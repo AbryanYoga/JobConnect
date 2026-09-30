@@ -103,3 +103,26 @@ create trigger trg_jobs_touch_updated_at
 before update on public.jobs
 for each row
 execute function public.touch_updated_at();
+
+create table if not exists public.applications (
+  id bigint generated always as identity primary key,
+  job_id bigint not null references public.jobs(id) on delete cascade,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  cv_path text not null,
+  cover_letter text check (cover_letter is null or char_length(cover_letter) <= 2000),
+  ai_consent boolean not null,
+  status text not null default 'dikirim' check (status in ('dikirim', 'ditinjau', 'shortlist', 'wawancara', 'ditawari', 'diterima', 'ditolak', 'ditarik')),
+  message_to_applicant text,
+  interview_at timestamptz,
+  interview_place text,
+  decided_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (job_id, user_id)
+);
+
+drop trigger if exists trg_applications_touch_updated_at on public.applications;
+create trigger trg_applications_touch_updated_at
+before update on public.applications
+for each row
+execute function public.touch_updated_at();
