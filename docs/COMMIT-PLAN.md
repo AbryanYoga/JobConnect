@@ -13,7 +13,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 003 `docs: tambah AGENTS.md dan COMMIT-PLAN.md`
 - [x] 004 `docs: tambah PRD JobConnect ke folder docs`
 - [x] 005 `docs: tambah rancangan database ke folder docs`
-- [ ] 006 `docs: tambah gambar ERD ke folder docs`
+- [x] 006 `docs: tambah gambar ERD ke folder docs`
 
 ## Fase 2: Database Supabase (folder database/)
 
