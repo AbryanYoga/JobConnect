@@ -72,3 +72,48 @@ with check (owner_id = auth.uid());
 revoke insert, update, delete on public.companies from anon, authenticated;
 grant insert (owner_id, name, slug, logo_path, website, industry, size, city_id, address_note, description) on public.companies to authenticated;
 grant update (name, logo_path, website, industry, size, city_id, address_note, description) on public.companies to authenticated;
+
+-- Policy tabel categories
+drop policy if exists "categories_select_policy" on public.categories;
+create policy "categories_select_policy"
+on public.categories
+for select
+using (true);
+
+drop policy if exists "categories_admin_all_policy" on public.categories;
+create policy "categories_admin_all_policy"
+on public.categories
+for all
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
+
+-- Policy tabel provinces
+drop policy if exists "provinces_select_policy" on public.provinces;
+create policy "provinces_select_policy"
+on public.provinces
+for select
+using (true);
+
+drop policy if exists "provinces_admin_all_policy" on public.provinces;
+create policy "provinces_admin_all_policy"
+on public.provinces
+for all
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
+
+-- Policy tabel cities
+drop policy if exists "cities_select_policy" on public.cities;
+create policy "cities_select_policy"
+on public.cities
+for select
+using (true);
+
+drop policy if exists "cities_admin_all_policy" on public.cities;
+create policy "cities_admin_all_policy"
+on public.cities
+for all
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
