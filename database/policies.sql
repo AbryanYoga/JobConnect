@@ -117,3 +117,92 @@ for all
 to authenticated
 using (public.is_admin())
 with check (public.is_admin());
+
+-- Policy tabel jobs
+drop policy if exists "jobs_select_policy" on public.jobs;
+create policy "jobs_select_policy"
+on public.jobs
+for select
+using (
+  status = 'open'
+  or public.is_company_owner(company_id)
+  or public.is_admin()
+  or public.has_applied(id)
+);
+
+drop policy if exists "jobs_insert_policy" on public.jobs;
+create policy "jobs_insert_policy"
+on public.jobs
+for insert
+to authenticated
+with check (
+  public.is_company_owner(company_id)
+  and status = 'draft'
+  and is_demo = false
+);
+
+drop policy if exists "jobs_update_policy" on public.jobs;
+create policy "jobs_update_policy"
+on public.jobs
+for update
+to authenticated
+using (public.is_company_owner(company_id))
+with check (public.is_company_owner(company_id));
+
+drop policy if exists "jobs_delete_policy" on public.jobs;
+create policy "jobs_delete_policy"
+on public.jobs
+for delete
+to authenticated
+using (
+  public.is_company_owner(company_id)
+  and status = 'draft'
+);
+
+-- Pembatasan hak kolom jobs dari klien
+revoke insert, update, delete on public.jobs from anon, authenticated;
+grant insert (
+  company_id,
+  category_id,
+  city_id,
+  location_detail,
+  title,
+  slug,
+  work_mode,
+  job_type,
+  education_min,
+  experience_min_years,
+  skills,
+  summary,
+  responsibilities,
+  nice_to_have,
+  benefits,
+  salary_min,
+  salary_max,
+  deadline,
+  status,
+  ai_screening
+) on public.jobs to authenticated;
+
+grant update (
+  category_id,
+  city_id,
+  location_detail,
+  title,
+  work_mode,
+  job_type,
+  education_min,
+  experience_min_years,
+  skills,
+  summary,
+  responsibilities,
+  nice_to_have,
+  benefits,
+  salary_min,
+  salary_max,
+  deadline,
+  status,
+  ai_screening
+) on public.jobs to authenticated;
+
+grant delete on public.jobs to authenticated;

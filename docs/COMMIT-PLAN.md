@@ -37,7 +37,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 024 `db: batasi update profiles hanya kolom name, phone, headline, notifikasi`
 - [x] 025 `db: tambah policy RLS tabel companies`
 - [x] 026 `db: tambah policy RLS tabel categories, provinces, dan cities`
-- [ ] 027 `db: tambah policy RLS tabel jobs`
+- [x] 027 `db: tambah policy RLS tabel jobs`
 - [ ] 028 `db: tambah policy RLS tabel applications dan status history`
 - [ ] 029 `db: tambah policy RLS tabel application_notes khusus perusahaan`
 - [ ] 030 `db: tambah policy RLS tabel application_ai_reviews`
