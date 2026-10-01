@@ -327,4 +327,83 @@ revoke all on public.application_ai_reviews from anon;
 revoke insert, update, delete on public.application_ai_reviews from authenticated;
 grant select on public.application_ai_reviews to authenticated;
 
+-- Policy tabel notifications
+drop policy if exists "notifications_select_policy" on public.notifications;
+create policy "notifications_select_policy"
+on public.notifications
+for select
+to authenticated
+using (
+  user_id = auth.uid()
+);
+
+drop policy if exists "notifications_update_policy" on public.notifications;
+create policy "notifications_update_policy"
+on public.notifications
+for update
+to authenticated
+using (
+  user_id = auth.uid()
+)
+with check (
+  user_id = auth.uid()
+);
+
+revoke all on public.notifications from anon;
+revoke insert, update, delete on public.notifications from authenticated;
+grant select on public.notifications to authenticated;
+grant update (read_at) on public.notifications to authenticated;
+
+-- Menambahkan tabel notifications ke publikasi realtime Supabase secara idempotent
+do $$
+begin
+  if exists (
+    select 1
+    from pg_publication
+    where pubname = 'supabase_realtime'
+  ) and not exists (
+    select 1
+    from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'notifications'
+  ) then
+    alter publication supabase_realtime add table public.notifications;
+  end if;
+end;
+$$;
+
+-- Policy tabel saved_jobs
+drop policy if exists "saved_jobs_select_policy" on public.saved_jobs;
+create policy "saved_jobs_select_policy"
+on public.saved_jobs
+for select
+to authenticated
+using (
+  user_id = auth.uid()
+);
+
+drop policy if exists "saved_jobs_insert_policy" on public.saved_jobs;
+create policy "saved_jobs_insert_policy"
+on public.saved_jobs
+for insert
+to authenticated
+with check (
+  user_id = auth.uid()
+);
+
+drop policy if exists "saved_jobs_delete_policy" on public.saved_jobs;
+create policy "saved_jobs_delete_policy"
+on public.saved_jobs
+for delete
+to authenticated
+using (
+  user_id = auth.uid()
+);
+
+revoke all on public.saved_jobs from anon;
+revoke update on public.saved_jobs from authenticated;
+grant select, insert, delete on public.saved_jobs to authenticated;
+
+
 
