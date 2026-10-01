@@ -265,3 +265,51 @@ using (
 
 revoke all on public.application_status_history from anon;
 revoke insert, update, delete on public.application_status_history from authenticated;
+
+-- Policy tabel application_notes
+drop policy if exists "application_notes_select_policy" on public.application_notes;
+create policy "application_notes_select_policy"
+on public.application_notes
+for select
+to authenticated
+using (
+  public.is_application_company(application_id)
+);
+
+drop policy if exists "application_notes_insert_policy" on public.application_notes;
+create policy "application_notes_insert_policy"
+on public.application_notes
+for insert
+to authenticated
+with check (
+  public.is_application_company(application_id)
+  and author_id = auth.uid()
+);
+
+drop policy if exists "application_notes_update_policy" on public.application_notes;
+create policy "application_notes_update_policy"
+on public.application_notes
+for update
+to authenticated
+using (
+  public.is_application_company(application_id)
+)
+with check (
+  public.is_application_company(application_id)
+);
+
+drop policy if exists "application_notes_delete_policy" on public.application_notes;
+create policy "application_notes_delete_policy"
+on public.application_notes
+for delete
+to authenticated
+using (
+  public.is_application_company(application_id)
+);
+
+revoke all on public.application_notes from anon;
+revoke insert, update, delete on public.application_notes from authenticated;
+grant select, delete on public.application_notes to authenticated;
+grant insert (application_id, author_id, note) on public.application_notes to authenticated;
+grant update (note) on public.application_notes to authenticated;
+
