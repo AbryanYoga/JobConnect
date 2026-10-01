@@ -553,6 +553,60 @@ begin
 end;
 $$;
 
+-- Menghitung jumlah lowongan open untuk seluruh provinsi (termasuk count 0)
+create or replace function public.jobs_count_by_province()
+returns table (
+  province_id smallint,
+  name text,
+  slug text,
+  job_count bigint
+)
+language sql
+stable
+security invoker
+set search_path = ''
+as $$
+  select
+    p.id as province_id,
+    p.name,
+    p.slug,
+    count(j.id) as job_count
+  from public.provinces p
+  left join public.cities c on c.province_id = p.id
+  left join public.jobs j on j.city_id = c.id and j.status = 'open'
+  group by p.id, p.name, p.slug
+  order by count(j.id) desc, p.name asc;
+$$;
+
+-- Menghitung jumlah lowongan open per kota di suatu provinsi (hanya kota dengan count >= 1)
+create or replace function public.jobs_count_by_city(p_province text)
+returns table (
+  city_id int,
+  name text,
+  slug text,
+  type text,
+  job_count bigint
+)
+language sql
+stable
+security invoker
+set search_path = ''
+as $$
+  select
+    c.id as city_id,
+    c.name,
+    c.slug,
+    c.type,
+    count(j.id) as job_count
+  from public.cities c
+  join public.provinces p on p.id = c.province_id
+  join public.jobs j on j.city_id = c.id and j.status = 'open'
+  where p.slug = p_province
+  group by c.id, c.name, c.slug, c.type
+  order by count(j.id) desc, c.name asc;
+$$;
+
+
 
 
 
