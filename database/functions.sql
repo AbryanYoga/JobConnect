@@ -858,6 +858,106 @@ after update of status on public.jobs
 for each row
 execute function public.notify_on_job_status_changed();
 
+-- Laporan performa lowongan dan pelamar untuk mitra perusahaan (hanya lowongan miliknya)
+create or replace function public.company_report(
+  p_from date,
+  p_to date,
+  p_category bigint default null
+)
+returns table (
+  job_id bigint,
+  title text,
+  category_name text,
+  status text,
+  created_at timestamptz,
+  applicants_total bigint,
+  applicants_dikirim bigint,
+  applicants_ditinjau bigint,
+  applicants_shortlist bigint,
+  applicants_wawancara bigint,
+  applicants_ditawari bigint,
+  applicants_diterima bigint,
+  applicants_ditolak bigint,
+  applicants_ditarik bigint
+)
+language sql
+stable
+security invoker
+set search_path = ''
+as $$
+  select
+    j.id as job_id,
+    j.title,
+    coalesce(cat.name, '-') as category_name,
+    j.status,
+    j.created_at,
+    count(a.id) as applicants_total,
+    count(a.id) filter (where a.status = 'dikirim') as applicants_dikirim,
+    count(a.id) filter (where a.status = 'ditinjau') as applicants_ditinjau,
+    count(a.id) filter (where a.status = 'shortlist') as applicants_shortlist,
+    count(a.id) filter (where a.status = 'wawancara') as applicants_wawancara,
+    count(a.id) filter (where a.status = 'ditawari') as applicants_ditawari,
+    count(a.id) filter (where a.status = 'diterima') as applicants_diterima,
+    count(a.id) filter (where a.status = 'ditolak') as applicants_ditolak,
+    count(a.id) filter (where a.status = 'ditarik') as applicants_ditarik
+  from public.jobs j
+  left join public.categories cat on cat.id = j.category_id
+  left join public.applications a on a.job_id = j.id
+  where public.is_company_owner(j.company_id)
+    and j.created_at::date >= p_from
+    and j.created_at::date <= p_to
+    and (p_category is null or j.category_id = p_category)
+  group by j.id, j.title, cat.name, j.status, j.created_at
+  order by j.created_at desc;
+$$;
+
+-- Laporan ringkasan agregat platform untuk admin moderator tanpa membocorkan data pribadi pelamar
+create or replace function public.platform_report(
+  p_from date,
+  p_to date
+)
+returns table (
+  total_users bigint,
+  total_companies bigint,
+  jobs_draft bigint,
+  jobs_pending bigint,
+  jobs_open bigint,
+  jobs_rejected bigint,
+  jobs_closed bigint,
+  jobs_removed bigint,
+  jobs_total bigint,
+  jobs_created_in_period bigint,
+  applications_submitted_in_period bigint
+)
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+  -- Baris pertama wajib: verifikasi bahwa pemanggil adalah admin
+  if not public.is_admin() then
+    raise exception 'Hanya admin yang berhak mengakses laporan platform';
+  end if;
+
+  return query
+  select
+    (select count(*)::bigint from public.profiles where role = 'user') as total_users,
+    (select count(*)::bigint from public.companies) as total_companies,
+    coalesce(count(*) filter (where j.status = 'draft'), 0)::bigint as jobs_draft,
+    coalesce(count(*) filter (where j.status = 'pending'), 0)::bigint as jobs_pending,
+    coalesce(count(*) filter (where j.status = 'open'), 0)::bigint as jobs_open,
+    coalesce(count(*) filter (where j.status = 'rejected'), 0)::bigint as jobs_rejected,
+    coalesce(count(*) filter (where j.status = 'closed'), 0)::bigint as jobs_closed,
+    coalesce(count(*) filter (where j.status = 'removed'), 0)::bigint as jobs_removed,
+    coalesce(count(*), 0)::bigint as jobs_total,
+    coalesce(count(*) filter (where j.created_at::date >= p_from and j.created_at::date <= p_to), 0)::bigint as jobs_created_in_period,
+    (select count(*)::bigint from public.applications where created_at::date >= p_from and created_at::date <= p_to) as applications_submitted_in_period
+  from public.jobs j;
+end;
+$$;
+
+
 
 
 

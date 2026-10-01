@@ -47,7 +47,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 034 `db: tambah fungsi change_application_status untuk transisi status`
 - [x] 035 `db: tambah fungsi jobs_count_by_province dan city untuk jelajah wilayah`
 - [x] 036 `db: tambah trigger notify otomatis pada lamaran dan status`
-- [ ] 037 `db: tambah fungsi rekap company_report dan platform_report`
+- [x] 037 `db: tambah fungsi rekap company_report dan platform_report`
 - [ ] 038 `db: tambah seed data kategori pekerjaan`
 - [ ] 039 `db: tambah seed data 38 provinsi dan kota kabupaten`
 - [ ] 040 `db: tambah seed data lowongan contoh berlabel demo`
