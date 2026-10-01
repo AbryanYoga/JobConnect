@@ -38,7 +38,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 025 `db: tambah policy RLS tabel companies`
 - [x] 026 `db: tambah policy RLS tabel categories, provinces, dan cities`
 - [x] 027 `db: tambah policy RLS tabel jobs`
-- [ ] 028 `db: tambah policy RLS tabel applications dan status history`
+- [x] 028 `db: tambah policy RLS tabel applications dan status history`
 - [ ] 029 `db: tambah policy RLS tabel application_notes khusus perusahaan`
 - [ ] 030 `db: tambah policy RLS tabel application_ai_reviews`
 - [ ] 031 `db: tambah policy RLS tabel notifications dan saved_jobs`

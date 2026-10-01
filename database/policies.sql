@@ -206,3 +206,62 @@ grant update (
 ) on public.jobs to authenticated;
 
 grant delete on public.jobs to authenticated;
+
+-- Policy tabel applications
+drop policy if exists "applications_select_policy" on public.applications;
+create policy "applications_select_policy"
+on public.applications
+for select
+to authenticated
+using (
+  user_id = auth.uid()
+  or public.is_job_owner(job_id)
+);
+
+drop policy if exists "applications_insert_policy" on public.applications;
+create policy "applications_insert_policy"
+on public.applications
+for insert
+to authenticated
+with check (
+  user_id = auth.uid()
+  and status = 'dikirim'
+  and ai_consent = true
+  and exists (
+    select 1
+    from public.profiles
+    where id = auth.uid()
+      and role = 'user'
+  )
+  and cv_path = (auth.uid()::text || '/' || job_id::text || '.pdf')
+  and exists (
+    select 1
+    from public.jobs
+    where id = job_id
+      and status = 'open'
+      and (deadline is null or deadline >= current_date)
+  )
+);
+
+revoke all on public.applications from anon;
+revoke update, delete on public.applications from authenticated;
+grant insert (job_id, user_id, cv_path, cover_letter, ai_consent, status) on public.applications to authenticated;
+
+-- Policy tabel application_status_history
+drop policy if exists "application_status_history_select_policy" on public.application_status_history;
+create policy "application_status_history_select_policy"
+on public.application_status_history
+for select
+to authenticated
+using (
+  exists (
+    select 1
+    from public.applications a
+    where a.id = application_id
+      and a.user_id = auth.uid()
+  )
+  or public.is_application_company(application_id)
+);
+
+revoke all on public.application_status_history from anon;
+revoke insert, update, delete on public.application_status_history from authenticated;
