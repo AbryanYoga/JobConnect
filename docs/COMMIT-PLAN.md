@@ -233,6 +233,8 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format: `- [x] T1 pesan commit`
 
+- [x] T1 `docs: perbarui PRD dan README dengan konsep nilai pembeda dan analisis komparatif Glints`
+
 ## Catatan Penting Agent
 
 - Nomor 007 sampai 041 adalah file migrasi dan seed SQL di folder `database/`. Pemilik proyek menjalankannya manual di Supabase SQL Editor. Berhenti dan minta konfirmasi setelah nomor 041 selesai dibuat.

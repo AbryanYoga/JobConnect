@@ -59,9 +59,19 @@ JobConnect mempertemukan **perusahaan** yang membuka lowongan dengan **pelamar**
 | Email | Resend (lewat `lib/email/`) |
 | Hosting | Vercel |
 
-### 1.3 Di luar cakupan
+### 1.3 Nilai pembeda dan masalah pasar yang diselesaikan (Komparasi terhadap Glints)
 
-Chat pelamar dan perusahaan, tes online, pembayaran atau paket berbayar, aplikasi mobile native, banyak akun recruiter dalam satu perusahaan, penolakan otomatis oleh AI, dan pengumpulan data (scraping) lowongan dari situs lain.
+JobConnect mengambil inspirasi dari kecepatan dan kepraktisan portal lowongan kerja modern seperti Glints dan Glints TapLoker, namun secara khusus mengatasi 6 kelemahan mendasar yang sering dikeluhkan pencari kerja dan rekruter di Indonesia:
+
+| Masalah pada Glints / Pasar Umum | Dampak Pengguna | Solusi Nyata di JobConnect |
+| --- | --- | --- |
+| **Ketidakpastian Status (Ghosting Lamaran)** | Lamaran tertahan berminggu-minggu di status applied tanpa kejelasan apakah CV dibaca, diproses, atau ditolak. | **Transparansi 8 status lamaran:** Alur bertahap (`dikirim` -> `ditinjau` -> `shortlist` -> `wawancara` -> `ditawari` -> `diterima` / `ditolak` / `ditarik`), riwayat waktu perubahan status, notifikasi realtime dalam aplikasi, dan hak tarik lamaran mandiri. |
+| **Loker Bodong / Penipuan Lolos** | Verifikasi perusahaan yang longgar membuka celah lowongan penipuan berkedok kerja sampingan atau meminta biaya tes/administrasi. | **Moderasi ACC Wajib oleh Admin:** Lowongan baru tidak bisa langsung tayang publik. Masuk status `pending` dan wajib diverifikasi serta disetujui (ACC) oleh Admin Moderator sebelum menjadi `open`. Admin dapat menolak atau melakukan takedown (`removed`). |
+| **Banjir Lamaran Tidak Relevan (Overwhelmed HRD)** | Fitur melamar instan 1-ketukan memicu pelamar asal melamar tanpa membaca syarat, sehingga HRD kebanjiran ratusan berkas dan kandidat potensial terlewat. | **Screening CV Berbantuan AI (Claude):** Sistem mengekstrak teks CV dan membandingkannya dengan kualifikasi lowongan secara objektif, menyajikan skor kecocokan (0 sampai 100) dan ringkasan bagi HRD. AI hanya memberi saran, keputusan akhir mutlak di tangan rekruter manusia. |
+| **Antarmuka Padat & Penuh Iklan Kursus (Bloated UI)** | Tampilan web dipenuhi banner promosi kursus berbayar (bootcamp/webinar), pop-up pendaftaran, dan informasi yang mengaburkan esensi mencari kerja. | **Standar Desain Antislop:** Antarmuka bersih, cepat, tanpa iklan komersial pihak ketiga, tanpa pop-up manipulatif, dan tanpa data karangan. Fokus murni pada efisiensi mencari kerja dan meninjau kandidat. |
+| **Sentralisasi Kota Metropolitan** | Lowongan didominasi wilayah Jabodetabek dan kota besar, menyulitkan pencari kerja lokal di daerah tingkat kabupaten. | **Jelajah Wilayah 38 Provinsi & 514 Kota/Kabupaten:** Basis data wilayah resmi Kemendagri 2025 dengan rute jelajah terstruktur (`/wilayah`, `/wilayah/[provinsi]`, `/wilayah/[kota]`, `/wilayah/remote`) serta penghitungan lowongan aktif yang transparan. |
+| **Kekhawatiran Privasi Dokumen CV** | Berkas pelamar rawan tersebar atau dimanfaatkan untuk telemarketing dan broadcast penawaran di luar sistem. | **Privasi Ketat via Row Level Security (RLS):** Berkas CV tersimpan di bucket privat. Hanya pelamar pemilik berkas dan perusahaan yang dilamar yang dapat mengaksesnya. Admin platform dibatasi dari membuka berkas CV pelamar. |
+
 
 ### 1.4 Alur status lowongan (ACC admin) [KEPUTUSAN]
 
@@ -75,6 +85,10 @@ Chat pelamar dan perusahaan, tes online, pembayaran atau paket berbayar, aplikas
 | open | removed | Admin | Takedown karena melanggar aturan, wajib alasan |
 
 Aturan: hanya lowongan berstatus `open` yang terlihat publik, dihitung di jelajah wilayah, dan bisa dilamar. Perusahaan tidak bisa membuat atau mengubah status menjadi `open`, `rejected`, atau `removed`; database menolaknya.
+
+### 1.5 Di luar cakupan
+
+Chat pelamar dan perusahaan, tes online, pembayaran atau paket berbayar, aplikasi mobile native, banyak akun recruiter dalam satu perusahaan, penolakan otomatis oleh AI, dan pengumpulan data (scraping) lowongan dari situs lain.
 
 ## 2. Peran dan hak akses
 
