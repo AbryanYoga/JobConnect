@@ -1,1 +1,71 @@
 @import "tailwindcss";
+
+@theme {
+  --color-navy-50: #EEF2F8;
+  --color-navy-100: #D9E2F0;
+  --color-navy-200: #B3C4DE;
+  --color-navy-300: #8AA3C8;
+  --color-navy-400: #5C7DB0;
+  --color-navy-500: #3B5F96;
+  --color-navy-600: #2A4A7C;
+  --color-navy-700: #1F3A64;
+  --color-navy-800: #172C4D;
+  --color-navy-900: #0F1F38;
+  --color-navy-950: #0A1628;
+
+  --color-accent-50: #FFFBEB;
+  --color-accent-100: #FEF3C7;
+  --color-accent-400: #FBBF24;
+  --color-accent-700: #B45309;
+  --color-accent-900: #78350F;
+
+  --color-status-gray-bg: #F1F5F9;
+  --color-status-gray-fg: #334155;
+  --color-status-yellow-bg: #FEF9C3;
+  --color-status-yellow-fg: #713F12;
+  --color-status-blue-bg: #DBEAFE;
+  --color-status-blue-fg: #1E3A8A;
+  --color-status-green-bg: #DCFCE7;
+  --color-status-green-fg: #14532D;
+  --color-status-red-bg: #FEE2E2;
+  --color-status-red-fg: #7F1D1D;
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  --radius-control: 0.5rem;
+  --radius-card: 1rem;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 1px rgb(15 23 42 / 0.04);
+  --shadow-modal: 0 10px 15px -3px rgb(15 23 42 / 0.1), 0 4px 6px -4px rgb(15 23 42 / 0.1);
+  --shadow-dropdown: 0 10px 15px -3px rgb(15 23 42 / 0.1), 0 4px 6px -4px rgb(15 23 42 / 0.1);
+}
+
+/*
+  Pedoman kontras warna Antislop:
+  - Teks sekunder minimal memakai slate-600 untuk menjaga rasio kontras 4.5:1 terhadap latar.
+  - Warna aksen (amber) hanya untuk penanda kecil, tidak dipakai sebagai warna teks.
+*/
+
+body {
+  background-color: var(--color-slate-50);
+  color: var(--color-slate-900);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color-scheme: light;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-navy-600);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
