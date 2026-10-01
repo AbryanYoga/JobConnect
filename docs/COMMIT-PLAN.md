@@ -44,7 +44,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 031 `db: tambah policy RLS tabel notifications dan saved_jobs`
 - [x] 032 `db: tambah bucket storage cvs dan company-logos beserta policynya`
 - [x] 033 `db: tambah fungsi submit_job dan review_job untuk ACC lowongan`
-- [ ] 034 `db: tambah fungsi change_application_status untuk transisi status`
+- [x] 034 `db: tambah fungsi change_application_status untuk transisi status`
 - [ ] 035 `db: tambah fungsi jobs_count_by_province dan city untuk jelajah wilayah`
 - [ ] 036 `db: tambah trigger notify otomatis pada lamaran dan status`
 - [ ] 037 `db: tambah fungsi rekap company_report dan platform_report`

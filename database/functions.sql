@@ -419,5 +419,140 @@ before insert or update on public.jobs
 for each row
 execute function public.jobs_guard();
 
+-- Mengubah status lamaran kerja dengan validasi hak akses dan alur transisi peran
+create or replace function public.change_application_status(
+  p_application_id bigint,
+  p_to_status text,
+  p_message text default null,
+  p_interview_at timestamptz default null,
+  p_interview_place text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_app record;
+  v_is_applicant boolean := false;
+  v_is_company boolean := false;
+  v_history_note text;
+begin
+  -- 1) Kunci baris lamaran dan tentukan peran pemanggil
+  select * into v_app
+  from public.applications
+  where id = p_application_id
+  for update;
+
+  if not found then
+    raise exception 'Lamaran tidak ditemukan';
+  end if;
+
+  if v_app.user_id = auth.uid() then
+    v_is_applicant := true;
+  elsif public.is_job_owner(v_app.job_id) then
+    v_is_company := true;
+  else
+    raise exception 'Kamu tidak berhak mengubah lamaran ini';
+  end if;
+
+  -- 2) Status akhir tidak bisa diubah lagi
+  if v_app.status in ('diterima', 'ditolak', 'ditarik') then
+    raise exception 'Lamaran dengan status akhir % tidak dapat diubah lagi', v_app.status;
+  end if;
+
+  -- 3) Validasi transisi untuk pelamar
+  if v_is_applicant then
+    if p_to_status <> 'ditarik' then
+      raise exception 'Pelamar hanya dapat mengubah status lamaran menjadi ditarik';
+    end if;
+
+  -- 4) Validasi transisi untuk mitra perusahaan
+  elsif v_is_company then
+    if p_to_status = 'ditolak' then
+      -- Ditolak diizinkan dari status aktif apa pun (dikirim, ditinjau, shortlist, wawancara, ditawari)
+      null;
+    elsif v_app.status = 'dikirim' and p_to_status = 'ditinjau' then
+      null;
+    elsif v_app.status = 'ditinjau' and p_to_status = 'shortlist' then
+      null;
+    elsif v_app.status = 'shortlist' and p_to_status = 'wawancara' then
+      null;
+    elsif v_app.status = 'wawancara' and p_to_status = 'wawancara' then
+      -- Wawancara ke wawancara diizinkan khusus untuk mengubah jadwal wawancara
+      null;
+    elsif v_app.status = 'wawancara' and p_to_status = 'ditawari' then
+      null;
+    elsif v_app.status = 'ditawari' and p_to_status = 'diterima' then
+      null;
+    else
+      raise exception 'Status tidak bisa berubah dari % langsung ke %', v_app.status, p_to_status;
+    end if;
+  end if;
+
+  -- 5) Validasi data masukan tambahan untuk status tertentu
+  if p_to_status = 'ditolak' then
+    if p_message is null or char_length(trim(p_message)) < 10 then
+      raise exception 'Alasan penolakan wajib diisi minimal 10 karakter';
+    end if;
+  elsif p_to_status = 'wawancara' then
+    if p_interview_at is null then
+      raise exception 'Jadwal wawancara wajib diisi';
+    end if;
+    if p_interview_at <= now() then
+      raise exception 'Jadwal wawancara harus di masa depan';
+    end if;
+    if p_interview_place is null or trim(p_interview_place) = '' then
+      raise exception 'Lokasi atau tautan wawancara wajib diisi';
+    end if;
+  end if;
+
+  -- 6) Update data lamaran
+  update public.applications
+  set
+    status = p_to_status,
+    message_to_applicant = case
+      when p_message is not null then p_message
+      else message_to_applicant
+    end,
+    interview_at = case
+      when p_to_status = 'wawancara' then p_interview_at
+      else interview_at
+    end,
+    interview_place = case
+      when p_to_status = 'wawancara' then p_interview_place
+      else interview_place
+    end,
+    decided_at = case
+      when p_to_status in ('diterima', 'ditolak', 'ditarik') then now()
+      else decided_at
+    end
+  where id = p_application_id;
+
+  -- 7) Catat riwayat perubahan status
+  if v_app.status = 'wawancara' and p_to_status = 'wawancara' then
+    v_history_note := 'Jadwal wawancara diubah';
+  else
+    v_history_note := p_message;
+  end if;
+
+  insert into public.application_status_history (
+    application_id,
+    from_status,
+    to_status,
+    changed_by,
+    note
+  )
+  values (
+    p_application_id,
+    v_app.status,
+    p_to_status,
+    auth.uid(),
+    v_history_note
+  );
+end;
+$$;
+
+
 
 
