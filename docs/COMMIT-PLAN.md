@@ -235,6 +235,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 
 - [x] T1 `docs: perbarui PRD dan README dengan konsep nilai pembeda dan solusi komparatif`
 - [x] T2 `docs: netralkan penyebutan nama platform di README dan PRD`
+- [x] T3 `docs: sinkronkan alur baca CV PDF dan rute wilayah di PRD serta README`
 
 ## Catatan Penting Agent
 
