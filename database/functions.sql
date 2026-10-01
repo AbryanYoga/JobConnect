@@ -180,4 +180,244 @@ as $$
   ) sub;
 $$;
 
+-- Pengajuan lowongan pekerjaan oleh pemilik perusahaan dengan validasi kelengkapan
+create or replace function public.submit_job(p_job_id bigint)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_job record;
+  v_item text;
+  v_skills_count int;
+  v_resp_count int;
+  v_nth_count int;
+  v_ben_count int;
+begin
+  select j.*, c.name as company_name, c.city_id as company_city_id
+  into v_job
+  from public.jobs j
+  join public.companies c on c.id = j.company_id
+  where j.id = p_job_id;
+
+  if not found then
+    raise exception 'Lowongan tidak ditemukan';
+  end if;
+
+  if not public.is_company_owner(v_job.company_id) then
+    raise exception 'Hanya pemilik perusahaan yang dapat mengajukan lowongan ini';
+  end if;
+
+  if v_job.status not in ('draft', 'rejected') then
+    raise exception 'Hanya lowongan berstatus draft atau rejected yang dapat diajukan (status saat ini: %)', v_job.status;
+  end if;
+
+  -- Cek profil perusahaan
+  if v_job.company_name is null or trim(v_job.company_name) = '' then
+    raise exception 'Profil perusahaan harus memiliki nama yang valid sebelum mengajukan lowongan';
+  end if;
+
+  if v_job.company_city_id is null then
+    raise exception 'Profil perusahaan harus memiliki kota/kabupaten sebelum mengajukan lowongan';
+  end if;
+
+  -- Cek kelengkapan lowongan (PRD 3.7)
+  if v_job.title is null or char_length(trim(v_job.title)) < 5 or char_length(trim(v_job.title)) > 80 then
+    raise exception 'Judul lowongan harus 5 sampai 80 karakter (sekarang %)', coalesce(char_length(trim(v_job.title)), 0);
+  end if;
+
+  if v_job.category_id is null then
+    raise exception 'Kategori pekerjaan wajib dipilih';
+  end if;
+
+  if v_job.summary is null or char_length(trim(v_job.summary)) < 50 or char_length(trim(v_job.summary)) > 280 then
+    raise exception 'Ringkasan harus 50 sampai 280 karakter (sekarang %)', coalesce(char_length(trim(v_job.summary)), 0);
+  end if;
+
+  v_skills_count := coalesce(cardinality(v_job.skills), 0);
+  if v_skills_count < 1 or v_skills_count > 8 then
+    raise exception 'Keahlian harus 1 sampai 8 item (sekarang %)', v_skills_count;
+  end if;
+  foreach v_item in array v_job.skills loop
+    if v_item is null or char_length(trim(v_item)) = 0 or char_length(trim(v_item)) > 30 then
+      raise exception 'Setiap keahlian tidak boleh kosong dan maksimal 30 karakter';
+    end if;
+  end loop;
+
+  v_resp_count := coalesce(cardinality(v_job.responsibilities), 0);
+  if v_resp_count < 3 or v_resp_count > 6 then
+    raise exception 'Tanggung jawab harus 3 sampai 6 item (sekarang %)', v_resp_count;
+  end if;
+  foreach v_item in array v_job.responsibilities loop
+    if v_item is null or char_length(trim(v_item)) = 0 or char_length(trim(v_item)) > 120 then
+      raise exception 'Setiap tanggung jawab tidak boleh kosong dan maksimal 120 karakter';
+    end if;
+  end loop;
+
+  v_nth_count := coalesce(cardinality(v_job.nice_to_have), 0);
+  if v_nth_count > 5 then
+    raise exception 'Nilai tambah maksimal 5 item (sekarang %)', v_nth_count;
+  end if;
+  foreach v_item in array v_job.nice_to_have loop
+    if v_item is null or char_length(trim(v_item)) = 0 or char_length(trim(v_item)) > 120 then
+      raise exception 'Setiap nilai tambah tidak boleh kosong dan maksimal 120 karakter';
+    end if;
+  end loop;
+
+  v_ben_count := coalesce(cardinality(v_job.benefits), 0);
+  if v_ben_count > 6 then
+    raise exception 'Benefit maksimal 6 item (sekarang %)', v_ben_count;
+  end if;
+  foreach v_item in array v_job.benefits loop
+    if v_item is null or char_length(trim(v_item)) = 0 or char_length(trim(v_item)) > 60 then
+      raise exception 'Setiap benefit tidak boleh kosong dan maksimal 60 karakter';
+    end if;
+  end loop;
+
+  if v_job.deadline is null then
+    raise exception 'Batas waktu lamaran (deadline) wajib diisi';
+  end if;
+
+  if v_job.deadline < current_date then
+    raise exception 'Batas waktu lamaran (deadline) tidak boleh di masa lalu (sekarang %)', v_job.deadline;
+  end if;
+
+  if v_job.work_mode <> 'remote' and v_job.city_id is null then
+    raise exception 'Kota penempatan wajib dipilih untuk mode kerja non-remote';
+  end if;
+
+  -- Pengajuan berhasil, ubah status ke pending dan bersihkan riwayat review sebelumnya
+  update public.jobs
+  set
+    status = 'pending',
+    review_note = null,
+    reviewed_by = null,
+    reviewed_at = null
+  where id = p_job_id;
+end;
+$$;
+
+-- Peninjauan lowongan oleh admin moderator platform (approve, reject, takedown)
+create or replace function public.review_job(
+  p_job_id bigint,
+  p_decision text,
+  p_note text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_job record;
+  v_new_status text;
+begin
+  if not public.is_admin() then
+    raise exception 'Hanya admin yang berhak meninjau lowongan';
+  end if;
+
+  if p_decision not in ('approve', 'reject', 'takedown') then
+    raise exception 'Keputusan review tidak valid (harus approve, reject, atau takedown)';
+  end if;
+
+  select * into v_job
+  from public.jobs
+  where id = p_job_id;
+
+  if not found then
+    raise exception 'Lowongan tidak ditemukan';
+  end if;
+
+  if p_decision = 'approve' then
+    if v_job.status <> 'pending' then
+      raise exception 'Hanya lowongan berstatus pending yang dapat disetujui (status saat ini: %)', v_job.status;
+    end if;
+    v_new_status := 'open';
+  elsif p_decision = 'reject' then
+    if v_job.status <> 'pending' then
+      raise exception 'Hanya lowongan berstatus pending yang dapat ditolak (status saat ini: %)', v_job.status;
+    end if;
+    if p_note is null or trim(p_note) = '' then
+      raise exception 'Catatan review wajib diisi saat menolak lowongan';
+    end if;
+    v_new_status := 'rejected';
+  elsif p_decision = 'takedown' then
+    if v_job.status <> 'open' then
+      raise exception 'Hanya lowongan berstatus open yang dapat di-takedown (status saat ini: %)', v_job.status;
+    end if;
+    if p_note is null or trim(p_note) = '' then
+      raise exception 'Catatan review wajib diisi saat melakukan takedown lowongan';
+    end if;
+    v_new_status := 'removed';
+  end if;
+
+  update public.jobs
+  set
+    status = v_new_status,
+    reviewed_by = auth.uid(),
+    reviewed_at = now(),
+    review_note = p_note
+  where id = p_job_id;
+end;
+$$;
+
+-- Trigger pengaman tanpa security definer agar pemeriksaan current_user hanya menghadang operasi langsung dari anon dan authenticated
+create or replace function public.jobs_guard()
+returns trigger
+language plpgsql
+as $$
+begin
+  if current_user in ('anon', 'authenticated') then
+    if tg_op = 'INSERT' then
+      if new.status <> 'draft' then
+        raise exception 'Lowongan baru hanya boleh dibuat dengan status draft (diberikan: %)', new.status;
+      end if;
+    elsif tg_op = 'UPDATE' then
+      -- Tolak jika status lama pending, removed, atau closed
+      if old.status in ('pending', 'removed', 'closed') then
+        raise exception 'Lowongan dengan status % tidak dapat diubah langsung', old.status;
+      end if;
+
+      -- Tolak perubahan status kecuali open menjadi closed
+      if new.status <> old.status then
+        if not (old.status = 'open' and new.status = 'closed') then
+          raise exception 'Perubahan status dari % menjadi % tidak diizinkan secara langsung', old.status, new.status;
+        end if;
+      end if;
+
+      -- Tolak perubahan review_note, reviewed_by, reviewed_at, is_demo, company_id
+      if new.review_note is distinct from old.review_note then
+        raise exception 'Kolom review_note tidak boleh diubah langsung';
+      end if;
+
+      if new.reviewed_by is distinct from old.reviewed_by then
+        raise exception 'Kolom reviewed_by tidak boleh diubah langsung';
+      end if;
+
+      if new.reviewed_at is distinct from old.reviewed_at then
+        raise exception 'Kolom reviewed_at tidak boleh diubah langsung';
+      end if;
+
+      if new.is_demo is distinct from old.is_demo then
+        raise exception 'Kolom is_demo tidak boleh diubah';
+      end if;
+
+      if new.company_id is distinct from old.company_id then
+        raise exception 'Kolom company_id tidak boleh diubah';
+      end if;
+    end if;
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_jobs_guard on public.jobs;
+create trigger trg_jobs_guard
+before insert or update on public.jobs
+for each row
+execute function public.jobs_guard();
+
+
 
