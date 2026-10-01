@@ -55,7 +55,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 3: Inisialisasi Next.js dan Fondasi Desain
 
-- [ ] 042 `chore: inisialisasi Next.js dengan TypeScript dan Tailwind`
+- [x] 042 `chore: inisialisasi Next.js dengan TypeScript dan Tailwind`
 - [ ] 043 `chore: bersihkan template bawaan create-next-app`
 - [ ] 044 `chore: pasang dependensi supabase, zod, lucide-react`
 - [ ] 045 `chore: tambah .env.example tanpa nilai rahasia`
