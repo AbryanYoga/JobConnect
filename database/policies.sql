@@ -14,3 +14,21 @@ alter table public.application_notes enable row level security;
 alter table public.application_ai_reviews enable row level security;
 alter table public.notifications enable row level security;
 alter table public.saved_jobs enable row level security;
+
+-- Policy tabel profiles
+drop policy if exists "profiles_select_policy" on public.profiles;
+create policy "profiles_select_policy"
+on public.profiles
+for select
+using (
+  id = auth.uid()
+  or public.is_admin()
+  or public.is_applicant_of_my_company(id)
+);
+
+drop policy if exists "profiles_update_policy" on public.profiles;
+create policy "profiles_update_policy"
+on public.profiles
+for update
+using (id = auth.uid())
+with check (id = auth.uid());
