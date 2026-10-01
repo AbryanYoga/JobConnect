@@ -59,11 +59,11 @@ JobConnect mempertemukan **perusahaan** yang membuka lowongan dengan **pelamar**
 | Email | Resend (lewat `lib/email/`) |
 | Hosting | Vercel |
 
-### 1.3 Nilai pembeda dan masalah pasar yang diselesaikan (Komparasi terhadap Glints)
+### 1.3 Nilai pembeda dan masalah pasar yang diselesaikan (Komparasi terhadap Platform Rekrutmen Umum)
 
-JobConnect mengambil inspirasi dari kecepatan dan kepraktisan portal lowongan kerja modern seperti Glints dan Glints TapLoker, namun secara khusus mengatasi 6 kelemahan mendasar yang sering dikeluhkan pencari kerja dan rekruter di Indonesia:
+JobConnect mengambil inspirasi dari kecepatan dan kepraktisan portal lowongan kerja modern, namun secara khusus mengatasi 6 kelemahan mendasar yang sering dikeluhkan pencari kerja dan rekruter di berbagai portal rekrutmen umum di Indonesia:
 
-| Masalah pada Glints / Pasar Umum | Dampak Pengguna | Solusi Nyata di JobConnect |
+| Masalah pada Platform Loker Umum | Dampak Pengguna | Solusi Nyata di JobConnect |
 | --- | --- | --- |
 | **Ketidakpastian Status (Ghosting Lamaran)** | Lamaran tertahan berminggu-minggu di status applied tanpa kejelasan apakah CV dibaca, diproses, atau ditolak. | **Transparansi 8 status lamaran:** Alur bertahap (`dikirim` -> `ditinjau` -> `shortlist` -> `wawancara` -> `ditawari` -> `diterima` / `ditolak` / `ditarik`), riwayat waktu perubahan status, notifikasi realtime dalam aplikasi, dan hak tarik lamaran mandiri. |
 | **Loker Bodong / Penipuan Lolos** | Verifikasi perusahaan yang longgar membuka celah lowongan penipuan berkedok kerja sampingan atau meminta biaya tes/administrasi. | **Moderasi ACC Wajib oleh Admin:** Lowongan baru tidak bisa langsung tayang publik. Masuk status `pending` dan wajib diverifikasi serta disetujui (ACC) oleh Admin Moderator sebelum menjadi `open`. Admin dapat menolak atau melakukan takedown (`removed`). |

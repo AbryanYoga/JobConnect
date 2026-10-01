@@ -4,7 +4,7 @@ JobConnect adalah sistem informasi lowongan pekerjaan berbasis web yang memperte
 
 ## Nilai Pembeda dan Solusi Masalah
 
-JobConnect mengadopsi kemudahan dan kepraktisan portal rekrutmen modern seperti Glints, sekaligus secara tegas menyelesaikan masalah nyata yang sering dihadapi pencari kerja dan rekruter:
+JobConnect mengadopsi kemudahan dan kepraktisan platform lowongan kerja modern, sekaligus secara tegas menyelesaikan permasalahan yang sering dihadapi pencari kerja dan rekruter di berbagai portal rekrutmen umum:
 
 1. **Bebas Ghosting:** Transparansi 8 status lamaran yang runtut dengan catatan riwayat waktu dan notifikasi realtime.
 2. **Bebas Loker Bodong:** Seluruh lowongan pekerjaan wajib lolos moderasi dan ACC oleh Admin sebelum dapat tayang ke publik.
