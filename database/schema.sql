@@ -181,3 +181,21 @@ create table if not exists public.saved_jobs (
   created_at timestamptz not null default now(),
   primary key (user_id, job_id)
 );
+
+-- Index performa query dan relasi foreign key
+create index if not exists idx_jobs_status_deadline on public.jobs(status, deadline);
+create index if not exists idx_jobs_company_id on public.jobs(company_id);
+create index if not exists idx_jobs_category_id on public.jobs(category_id);
+create index if not exists idx_jobs_city_id_status on public.jobs(city_id, status);
+create index if not exists idx_cities_province_id on public.cities(province_id);
+create index if not exists idx_jobs_skills_gin on public.jobs using gin(skills);
+create index if not exists idx_applications_user_id on public.applications(user_id);
+create index if not exists idx_applications_job_id_status on public.applications(job_id, status);
+create index if not exists idx_notifications_user_read_created on public.notifications(user_id, read_at, created_at desc);
+create index if not exists idx_application_ai_reviews_score on public.application_ai_reviews(score);
+
+create index if not exists idx_application_status_history_application_id on public.application_status_history(application_id);
+create index if not exists idx_application_notes_application_id on public.application_notes(application_id);
+create index if not exists idx_saved_jobs_job_id on public.saved_jobs(job_id);
+create index if not exists idx_companies_city_id on public.companies(city_id);
+create index if not exists idx_jobs_open_created_at on public.jobs(created_at desc) where status = 'open';
