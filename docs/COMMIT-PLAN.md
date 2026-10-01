@@ -50,7 +50,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 037 `db: tambah fungsi rekap company_report dan platform_report`
 - [x] 038 `db: tambah seed data kategori pekerjaan`
 - [x] 039 `db: tambah seed data 38 provinsi dan kota kabupaten`
-- [ ] 040 `db: tambah seed data lowongan contoh berlabel demo`
+- [x] 040 `db: tambah seed data lowongan contoh berlabel demo`
 - [ ] 041 `docs: tambah panduan menjalankan migrasi SQL di Supabase`
 
 ## Fase 3: Inisialisasi Next.js dan Fondasi Desain
