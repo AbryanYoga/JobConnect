@@ -32,3 +32,8 @@ on public.profiles
 for update
 using (id = auth.uid())
 with check (id = auth.uid());
+
+-- Mencegah pengguna mengubah kolom role menjadi admin atau memalsukan email dari klien
+revoke all on public.profiles from anon;
+revoke insert, update, delete on public.profiles from authenticated;
+grant update (name, phone, headline, email_notifications) on public.profiles to authenticated;
