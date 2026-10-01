@@ -606,6 +606,259 @@ as $$
   order by count(j.id) desc, c.name asc;
 $$;
 
+-- Notifikasi dan inisialisasi screening AI saat lamaran baru masuk
+create or replace function public.notify_on_application_created()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_info record;
+begin
+  select
+    j.title as job_title,
+    j.ai_screening,
+    c.owner_id as company_owner_id,
+    p.name as applicant_name
+  into v_info
+  from public.jobs j
+  join public.companies c on c.id = j.company_id
+  join public.profiles p on p.id = new.user_id
+  where j.id = new.job_id;
+
+  if found and v_info.company_owner_id is not null then
+    -- Notifikasi lamaran_baru ke pemilik perusahaan
+    insert into public.notifications (user_id, type, title, body, link)
+    values (
+      v_info.company_owner_id,
+      'lamaran_baru',
+      'Lamaran Baru Masuk',
+      v_info.applicant_name || ' mengirimkan lamaran untuk posisi ' || v_info.job_title,
+      '/mitra/pelamar/' || new.id::text
+    );
+  end if;
+
+  -- Buat baris application_ai_reviews otomatis
+  if coalesce(v_info.ai_screening, true) then
+    insert into public.application_ai_reviews (application_id, status)
+    values (new.id, 'pending')
+    on conflict (application_id) do nothing;
+  else
+    insert into public.application_ai_reviews (application_id, status, error_message)
+    values (new.id, 'skipped', 'Analisis AI dimatikan untuk lowongan ini')
+    on conflict (application_id) do nothing;
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_notify_on_application_created on public.applications;
+create trigger trg_notify_on_application_created
+after insert on public.applications
+for each row
+execute function public.notify_on_application_created();
+
+-- Notifikasi pembaruan status lamaran kepada pelamar atau perusahaan
+create or replace function public.notify_on_application_status_history()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_info record;
+  v_interview_time text;
+begin
+  select
+    a.user_id as applicant_id,
+    a.interview_at,
+    a.interview_place,
+    j.title as job_title,
+    c.name as company_name,
+    c.owner_id as company_owner_id,
+    p.name as applicant_name
+  into v_info
+  from public.applications a
+  join public.jobs j on j.id = a.job_id
+  join public.companies c on c.id = j.company_id
+  join public.profiles p on p.id = a.user_id
+  where a.id = new.application_id;
+
+  if not found then
+    return new;
+  end if;
+
+  if new.to_status = 'ditarik' then
+    if v_info.company_owner_id is not null then
+      insert into public.notifications (user_id, type, title, body, link)
+      values (
+        v_info.company_owner_id,
+        'lamaran_ditarik',
+        'Lamaran Ditarik',
+        v_info.applicant_name || ' telah menarik lamarannya untuk posisi ' || v_info.job_title,
+        '/mitra/pelamar/' || new.application_id::text
+      );
+    end if;
+  elsif new.to_status = 'wawancara' then
+    v_interview_time := coalesce(
+      to_char(v_info.interview_at at time zone 'Asia/Jakarta', 'DD/MM/YYYY pukul HH24:MI WIB'),
+      to_char(v_info.interview_at, 'YYYY-MM-DD HH24:MI')
+    );
+    insert into public.notifications (user_id, type, title, body, link)
+    values (
+      v_info.applicant_id,
+      'wawancara_dijadwalkan',
+      'Jadwal Wawancara',
+      'Wawancara untuk posisi ' || v_info.job_title || ' di ' || v_info.company_name || ' dijadwalkan pada ' || v_interview_time || ' di ' || coalesce(v_info.interview_place, '-'),
+      '/lamaran-saya/' || new.application_id::text
+    );
+  else
+    insert into public.notifications (user_id, type, title, body, link)
+    values (
+      v_info.applicant_id,
+      'status_lamaran',
+      'Pembaruan Status Lamaran',
+      'Status lamaran Anda untuk posisi ' || v_info.job_title || ' di ' || v_info.company_name || ' telah diperbarui menjadi ' || new.to_status || '.' || case when new.note is not null and trim(new.note) <> '' then ' Catatan: ' || trim(new.note) else '' end,
+      '/lamaran-saya/' || new.application_id::text
+    );
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_notify_on_application_status_history on public.application_status_history;
+create trigger trg_notify_on_application_status_history
+after insert on public.application_status_history
+for each row
+execute function public.notify_on_application_status_history();
+
+-- Notifikasi selesai analisis AI berkas pelamar ke pemilik perusahaan tanpa skor
+create or replace function public.notify_on_ai_review_done()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_info record;
+begin
+  if old.status is distinct from new.status and new.status = 'done' then
+    select
+      j.title as job_title,
+      c.owner_id as company_owner_id,
+      p.name as applicant_name
+    into v_info
+    from public.applications a
+    join public.jobs j on j.id = a.job_id
+    join public.companies c on c.id = j.company_id
+    join public.profiles p on p.id = a.user_id
+    where a.id = new.application_id;
+
+    if found and v_info.company_owner_id is not null then
+      insert into public.notifications (user_id, type, title, body, link)
+      values (
+        v_info.company_owner_id,
+        'analisis_selesai',
+        'Analisis AI Selesai',
+        'Analisis AI untuk berkas pelamar ' || v_info.applicant_name || ' pada posisi ' || v_info.job_title || ' telah selesai',
+        '/mitra/pelamar/' || new.application_id::text
+      );
+    end if;
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_notify_on_ai_review_done on public.application_ai_reviews;
+create trigger trg_notify_on_ai_review_done
+after update of status on public.application_ai_reviews
+for each row
+execute function public.notify_on_ai_review_done();
+
+-- Notifikasi alur persetujuan dan status tayang lowongan kepada admin dan mitra perusahaan
+create or replace function public.notify_on_job_status_changed()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_info record;
+begin
+  if old.status is distinct from new.status then
+    select c.name as company_name, c.owner_id as company_owner_id
+    into v_info
+    from public.companies c
+    where c.id = new.company_id;
+
+    -- 1) Status menjadi pending: notifikasi lowongan_diajukan ke SEMUA admin
+    if new.status = 'pending' then
+      insert into public.notifications (user_id, type, title, body, link)
+      select
+        pr.id,
+        'lowongan_diajukan',
+        'Pengajuan Lowongan Baru',
+        'Perusahaan ' || coalesce(v_info.company_name, 'Mitra') || ' mengajukan lowongan baru: ' || new.title,
+        '/admin/lowongan'
+      from public.profiles pr
+      where pr.role = 'admin';
+
+    -- 2) Dari pending menjadi open: lowongan_disetujui ke pemilik perusahaan
+    elsif old.status = 'pending' and new.status = 'open' then
+      if v_info.company_owner_id is not null then
+        insert into public.notifications (user_id, type, title, body, link)
+        values (
+          v_info.company_owner_id,
+          'lowongan_disetujui',
+          'Lowongan Disetujui',
+          'Lowongan ' || new.title || ' telah disetujui dan kini tayang di JobConnect',
+          '/mitra/lowongan'
+        );
+      end if;
+
+    -- 3) Menjadi rejected: lowongan_ditolak ke pemilik perusahaan memuat review_note
+    elsif new.status = 'rejected' then
+      if v_info.company_owner_id is not null then
+        insert into public.notifications (user_id, type, title, body, link)
+        values (
+          v_info.company_owner_id,
+          'lowongan_ditolak',
+          'Lowongan Belum Disetujui',
+          'Pengajuan lowongan ' || new.title || ' belum disetujui.' || case when new.review_note is not null and trim(new.review_note) <> '' then ' Catatan: ' || trim(new.review_note) else '' end,
+          '/mitra/lowongan'
+        );
+      end if;
+
+    -- 4) Dari open menjadi removed: lowongan_takedown ke pemilik perusahaan memuat review_note
+    elsif old.status = 'open' and new.status = 'removed' then
+      if v_info.company_owner_id is not null then
+        insert into public.notifications (user_id, type, title, body, link)
+        values (
+          v_info.company_owner_id,
+          'lowongan_takedown',
+          'Lowongan Diturunkan',
+          'Lowongan ' || new.title || ' telah diturunkan oleh admin.' || case when new.review_note is not null and trim(new.review_note) <> '' then ' Catatan: ' || trim(new.review_note) else '' end,
+          '/mitra/lowongan'
+        );
+      end if;
+    end if;
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_notify_on_job_status_changed on public.jobs;
+create trigger trg_notify_on_job_status_changed
+after update of status on public.jobs
+for each row
+execute function public.notify_on_job_status_changed();
+
+
 
 
 
