@@ -145,3 +145,39 @@ as $$
     and a.user_id = auth.uid();
 $$;
 
+-- Pemeriksaan hak akses perusahaan membaca CV pelamar pada lowongannya
+create or replace function public.can_company_read_cv(p_path text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.applications a
+    where a.cv_path = p_path
+      and public.is_job_owner(a.job_id)
+  );
+$$;
+
+-- Memeriksa kepemilikan folder logo perusahaan dengan evaluasi CASE untuk keamanan typecast
+create or replace function public.owns_logo_folder(p_path text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select case
+    when f ~ '^[0-9]+$' then
+      public.is_company_owner(f::bigint)
+    else
+      false
+  end
+  from (
+    select (storage.foldername(p_path))[1] as f
+  ) sub;
+$$;
+
+

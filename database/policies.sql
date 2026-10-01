@@ -405,5 +405,111 @@ revoke all on public.saved_jobs from anon;
 revoke update on public.saved_jobs from authenticated;
 grant select, insert, delete on public.saved_jobs to authenticated;
 
+-- Konfigurasi bucket storage cvs dan company-logos
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'cvs',
+  'cvs',
+  false,
+  2097152,
+  array['application/pdf']::text[]
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'company-logos',
+  'company-logos',
+  true,
+  1048576,
+  array['image/png', 'image/jpeg']::text[]
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+-- Policy storage.objects untuk bucket cvs
+drop policy if exists "cvs_insert_policy" on storage.objects;
+create policy "cvs_insert_policy"
+on storage.objects
+for insert
+to authenticated
+with check (
+  bucket_id = 'cvs'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+drop policy if exists "cvs_select_policy" on storage.objects;
+create policy "cvs_select_policy"
+on storage.objects
+for select
+to authenticated
+using (
+  bucket_id = 'cvs'
+  and (
+    (storage.foldername(name))[1] = auth.uid()::text
+    or public.can_company_read_cv(name)
+  )
+);
+
+drop policy if exists "cvs_delete_policy" on storage.objects;
+create policy "cvs_delete_policy"
+on storage.objects
+for delete
+to authenticated
+using (
+  bucket_id = 'cvs'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- Policy storage.objects untuk bucket company-logos
+drop policy if exists "company_logos_select_policy" on storage.objects;
+create policy "company_logos_select_policy"
+on storage.objects
+for select
+to public
+using (
+  bucket_id = 'company-logos'
+);
+
+drop policy if exists "company_logos_insert_policy" on storage.objects;
+create policy "company_logos_insert_policy"
+on storage.objects
+for insert
+to authenticated
+with check (
+  bucket_id = 'company-logos'
+  and public.owns_logo_folder(name)
+);
+
+drop policy if exists "company_logos_update_policy" on storage.objects;
+create policy "company_logos_update_policy"
+on storage.objects
+for update
+to authenticated
+using (
+  bucket_id = 'company-logos'
+  and public.owns_logo_folder(name)
+)
+with check (
+  bucket_id = 'company-logos'
+  and public.owns_logo_folder(name)
+);
+
+drop policy if exists "company_logos_delete_policy" on storage.objects;
+create policy "company_logos_delete_policy"
+on storage.objects
+for delete
+to authenticated
+using (
+  bucket_id = 'company-logos'
+  and public.owns_logo_folder(name)
+);
+
+
 
 
