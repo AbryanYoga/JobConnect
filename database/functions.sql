@@ -129,3 +129,19 @@ as $$
       and c.owner_id = auth.uid()
   );
 $$;
+
+-- Mengambil status review AI untuk pelamar tanpa membocorkan skor atau catatan detail
+create or replace function public.get_my_ai_review_status(p_application_id bigint)
+returns text
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select r.status
+  from public.application_ai_reviews r
+  join public.applications a on a.id = r.application_id
+  where r.application_id = p_application_id
+    and a.user_id = auth.uid();
+$$;
+

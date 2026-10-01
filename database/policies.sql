@@ -313,3 +313,18 @@ grant select, delete on public.application_notes to authenticated;
 grant insert (application_id, author_id, note) on public.application_notes to authenticated;
 grant update (note) on public.application_notes to authenticated;
 
+-- Policy tabel application_ai_reviews
+drop policy if exists "application_ai_reviews_select_policy" on public.application_ai_reviews;
+create policy "application_ai_reviews_select_policy"
+on public.application_ai_reviews
+for select
+to authenticated
+using (
+  public.is_application_company(application_id)
+);
+
+revoke all on public.application_ai_reviews from anon;
+revoke insert, update, delete on public.application_ai_reviews from authenticated;
+grant select on public.application_ai_reviews to authenticated;
+
+
