@@ -31,7 +31,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 018 `db: buat tabel saved_jobs untuk bookmark lowongan`
 - [x] 019 `db: tambah index performa untuk seluruh tabel`
 - [x] 020 `db: tambah trigger handle_new_user untuk membuat profil otomatis`
-- [ ] 021 `db: aktifkan RLS pada seluruh tabel`
+- [x] 021 `db: aktifkan RLS pada seluruh tabel`
 - [ ] 022 `db: tambah fungsi keamanan is_admin dan is_company_owner`
 - [ ] 023 `db: tambah policy RLS tabel profiles`
 - [ ] 024 `db: batasi update profiles hanya kolom name, phone, headline, notifikasi`
