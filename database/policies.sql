@@ -37,3 +37,38 @@ with check (id = auth.uid());
 revoke all on public.profiles from anon;
 revoke insert, update, delete on public.profiles from authenticated;
 grant update (name, phone, headline, email_notifications) on public.profiles to authenticated;
+
+-- Policy tabel companies
+drop policy if exists "companies_select_policy" on public.companies;
+create policy "companies_select_policy"
+on public.companies
+for select
+using (true);
+
+drop policy if exists "companies_insert_policy" on public.companies;
+create policy "companies_insert_policy"
+on public.companies
+for insert
+to authenticated
+with check (
+  owner_id = auth.uid()
+  and exists (
+    select 1
+    from public.profiles
+    where id = auth.uid()
+      and role = 'company'
+  )
+);
+
+drop policy if exists "companies_update_policy" on public.companies;
+create policy "companies_update_policy"
+on public.companies
+for update
+to authenticated
+using (public.is_company_owner(id))
+with check (owner_id = auth.uid());
+
+-- slug dan owner_id tidak bisa diubah setelah dibuat agar URL profil stabil
+revoke insert, update, delete on public.companies from anon, authenticated;
+grant insert (owner_id, name, slug, logo_path, website, industry, size, city_id, address_note, description) on public.companies to authenticated;
+grant update (name, logo_path, website, industry, size, city_id, address_note, description) on public.companies to authenticated;
