@@ -26,6 +26,10 @@ JobConnect mengadopsi kemudahan dan kepraktisan platform lowongan kerja modern, 
 2. **Perusahaan (Mitra):** mengelola profil perusahaan, mengajukan lowongan kerja, meninjau berkas pelamar, mengatur jadwal wawancara, dan memutuskan hasil lamaran.
 3. **Admin:** memoderasi platform, menyetujui (ACC) atau menolak pengajuan lowongan, mengelola kategori, serta memantau data platform.
 
+## Struktur Folder
+
+Kode sumber proyek JobConnect diorganisasikan ke dalam beberapa folder utama: `app/` untuk routing halaman dan rute API Next.js App Router, `components/` untuk komponen antarmuka yang dikelompokkan berdasarkan modul (ui, layout, lowongan, lamaran, notifikasi, mitra, dan admin), `lib/` untuk utilitas logika aplikasi, koneksi Supabase, integrasi AI, pengiriman email, kueri database, serta skema validasi Zod, `database/` untuk skema SQL, fungsi, policy RLS, dan seed data, serta `docs/` untuk dokumentasi spesifikasi produk dan database.
+
 ## Dokumentasi
 
 Dokumentasi perancangan sistem dapat dibaca pada berkas:
