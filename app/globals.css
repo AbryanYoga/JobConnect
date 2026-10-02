@@ -54,9 +54,34 @@ body {
   color-scheme: light;
 }
 
+/*
+  Focus ring aksesibilitas Antislop (WCAG AA 4.5:1):
+  - Latar terang: outline 2px navy-600 dengan offset 2px.
+  - Latar gelap atau wadah navy: outline 2px amber-400 dengan offset 2px.
+  - Input form: outline 2px dengan offset 1px agar pas mengikuti radius kontrol.
+*/
+
 :focus-visible {
   outline: 2px solid var(--color-navy-600);
   outline-offset: 2px;
+}
+
+/* Elemen interaktif di dalam wadah berlatar gelap atau navy */
+.bg-navy-950 :focus-visible,
+.bg-navy-900 :focus-visible,
+.bg-navy-800 :focus-visible,
+.bg-navy-700 :focus-visible,
+[data-dark="true"] :focus-visible {
+  outline: 2px solid var(--color-accent-400);
+  outline-offset: 2px;
+}
+
+/* Elemen formulir (input, select, textarea) */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-navy-600);
+  outline-offset: 1px;
 }
 
 @media (prefers-reduced-motion: reduce) {
