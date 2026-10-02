@@ -157,7 +157,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 ## Fase 11: Proses Melamar Kerja dan Manajemen Lamaran
 
 - [ ] 119 `feat(lamar): buat komponen form melamar kerja pada detail lowongan`
-- [ ] 120 `feat(lamar): tambah validasi checkbox persetujuan analisis AI`
+- [ ] 120 `feat(lamar): tambah kotak centang opsional analisis AI pada form lamar`
 - [ ] 121 `feat(lamar): tambah upload file CV format PDF maksimal 2 MB`
 - [ ] 122 `feat(lamar): unggah CV ke bucket privat cvs di Supabase Storage`
 - [ ] 123 `feat(lamar): simpan baris lamaran dengan status awal dikirim`
@@ -188,7 +188,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [ ] 142 `feat(ai): buat pembatasan kuota harian screening AI`
 - [ ] 143 `feat(mitra): buat panel hasil review AI pada detail pelamar`
 - [ ] 144 `feat(mitra): tambah tombol analisis ulang jika screening gagal`
-- [ ] 145 `feat(mitra): tambah pengurutan dan filter pelamar berdasarkan skor AI`
+- [ ] 145 `feat(mitra): tambah pengurutan dan filter pelamar berdasarkan skor AI dan label tanpa analisis`
 - [ ] 146 `feat(lamaran-saya): tampilkan status proses analisis tanpa membocorkan skor`
 
 ## Fase 14: Notifikasi Realtime dan Email
@@ -235,7 +235,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 
 - [x] T1 `docs: perbarui PRD dan README dengan konsep nilai pembeda dan solusi komparatif`
 - [x] T2 `docs: netralkan penyebutan nama platform di README dan PRD`
-- [x] T3 `docs: sinkronkan alur baca CV PDF dan rute wilayah di PRD serta README`
+- [x] T3 `docs: jadikan analisis AI opsional bagi pelamar di PRD dan rencana commit`
 
 ## Catatan Penting Agent
 

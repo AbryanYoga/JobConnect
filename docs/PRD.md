@@ -43,7 +43,7 @@ JobConnect mempertemukan **perusahaan** yang membuka lowongan dengan **pelamar**
 
 1. **AI hanya memberi saran.** AI tidak pernah mengubah status lamaran, menolak, atau menyaring pelamar secara otomatis. Skor hanya mengurutkan dan menjelaskan.
 2. **Keputusan akhir ada di perusahaan pemilik lowongan.** Admin dan AI tidak bisa mengubah status lamaran.
-3. **Pelamar diberi tahu dan menyetujui** bahwa CV-nya dianalisis AI sebelum mengirim lamaran.
+3. **Analisis AI bersifat opsional.** Pelamar memilih sendiri saat melamar dan diberi penjelasan. CV hanya dikirim ke penyedia AI jika pelamar memilih analisis.
 4. **Tidak ada data palsu di produksi** (lihat bagian 6).
 5. **Privasi:** admin tidak bisa membuka CV pelamar. CV hanya bisa dibuka pemiliknya dan perusahaan yang dilamar.
 
@@ -67,7 +67,7 @@ JobConnect mengambil inspirasi dari kecepatan dan kepraktisan portal lowongan ke
 | --- | --- | --- |
 | **Ketidakpastian Status (Ghosting Lamaran)** | Lamaran tertahan berminggu-minggu di status applied tanpa kejelasan apakah CV dibaca, diproses, atau ditolak. | **Transparansi 8 status lamaran:** Alur bertahap (`dikirim` -> `ditinjau` -> `shortlist` -> `wawancara` -> `ditawari` -> `diterima` / `ditolak` / `ditarik`), riwayat waktu perubahan status, notifikasi realtime dalam aplikasi, dan hak tarik lamaran mandiri. |
 | **Loker Bodong / Penipuan Lolos** | Verifikasi perusahaan yang longgar membuka celah lowongan penipuan berkedok kerja sampingan atau meminta biaya tes/administrasi. | **Moderasi ACC Wajib oleh Admin:** Lowongan baru tidak bisa langsung tayang publik. Masuk status `pending` dan wajib diverifikasi serta disetujui (ACC) oleh Admin Moderator sebelum menjadi `open`. Admin dapat menolak atau melakukan takedown (`removed`). |
-| **Banjir Lamaran Tidak Relevan (Overwhelmed HRD)** | Fitur melamar instan 1-ketukan memicu pelamar asal melamar tanpa membaca syarat, sehingga HRD kebanjiran ratusan berkas dan kandidat potensial terlewat. | **Screening CV Berbantuan AI (Claude):** Sistem membaca CV PDF dan membandingkannya dengan kualifikasi lowongan secara objektif, menyajikan skor kecocokan (0 sampai 100) dan ringkasan bagi HRD. AI hanya memberi saran, keputusan akhir mutlak di tangan rekruter manusia. |
+| **Banjir Lamaran Tidak Relevan (Overwhelmed HRD)** | Fitur melamar instan 1-ketukan memicu pelamar asal melamar tanpa membaca syarat, sehingga HRD kebanjiran ratusan berkas dan kandidat potensial terlewat. | **Screening CV Berbantuan AI (Claude):** Sistem membaca CV PDF untuk pelamar yang memilih analisis dan membandingkannya dengan kualifikasi lowongan secara objektif, menyajikan skor kecocokan (0 sampai 100) dan ringkasan bagi HRD. AI hanya memberi saran, keputusan akhir mutlak di tangan rekruter manusia. |
 | **Antarmuka Padat & Penuh Iklan Kursus (Bloated UI)** | Tampilan web dipenuhi banner promosi kursus berbayar (bootcamp/webinar), pop-up pendaftaran, dan informasi yang mengaburkan esensi mencari kerja. | **Standar Desain Antislop:** Antarmuka bersih, cepat, tanpa iklan komersial pihak ketiga, tanpa pop-up manipulatif, dan tanpa data karangan. Fokus murni pada efisiensi mencari kerja dan meninjau kandidat. |
 | **Sentralisasi Kota Metropolitan** | Lowongan didominasi wilayah Jabodetabek dan kota besar, menyulitkan pencari kerja lokal di daerah tingkat kabupaten. | **Jelajah Wilayah 38 Provinsi & 514 Kota/Kabupaten:** Basis data wilayah resmi Kemendagri 2025 dengan rute jelajah terstruktur (`/wilayah`, `/wilayah/[provinsi]`, `/wilayah/[provinsi]/[kota]`, `/wilayah/remote`) serta penghitungan lowongan aktif yang transparan. |
 | **Kekhawatiran Privasi Dokumen CV** | Berkas pelamar rawan tersebar atau dimanfaatkan untuk telemarketing dan broadcast penawaran di luar sistem. | **Privasi Ketat via Row Level Security (RLS):** Berkas CV tersimpan di bucket privat. Hanya pelamar pemilik berkas dan perusahaan yang dilamar yang dapat mengaksesnya. Admin platform dibatasi dari membuka berkas CV pelamar. |
@@ -138,7 +138,7 @@ Prioritas: **P0** wajib, **P1** penting, **P2** tambahan setelah semua P0 dan P1
 
 | ID | Fitur | Prioritas | Rilis |
 | --- | --- | --- | --- |
-| F-13 | Melamar: unggah CV PDF maksimal 2 MB, surat lamaran opsional, **persetujuan analisis AI** | P0 | R1 |
+| F-13 | Melamar: unggah CV PDF maksimal 2 MB, surat lamaran opsional, **pilihan analisis AI (opsional, default tidak dipilih)** | P0 | R1 |
 | F-14 | Satu pelamar hanya boleh melamar sekali per lowongan | P0 | R1 |
 | F-15 | Perusahaan meninjau pelamar per lowongan, membuka CV, menambah catatan internal | P0 | R1 |
 | F-16 | Perusahaan mengubah status sesuai alur (bagian 5) dan boleh menulis pesan ke pelamar | P0 | R1 |
@@ -150,12 +150,13 @@ Prioritas: **P0** wajib, **P1** penting, **P2** tambahan setelah semua P0 dan P1
 
 | ID | Fitur | Prioritas | Rilis |
 | --- | --- | --- | --- |
-| F-20 | Analisis otomatis setiap lamaran baru: skor 0 sampai 100, tingkat kecocokan, ringkasan, keahlian cocok dan kurang, pertanyaan wawancara yang disarankan | P1 | R3 |
+| F-20 | Analisis otomatis setiap lamaran baru untuk pelamar yang memilih analisis: skor 0 sampai 100, tingkat kecocokan, ringkasan, keahlian cocok dan kurang, pertanyaan wawancara yang disarankan | P1 | R3 |
 | F-21 | Daftar pelamar bisa diurutkan dan difilter berdasarkan skor AI | P1 | R3 |
 | F-22 | Perusahaan bisa mematikan AI per lowongan (`ai_screening = false`) | P1 | R3 |
 | F-23 | Tombol "Analisis ulang" bila analisis gagal | P1 | R3 |
-| F-24 | Pelamar melihat status "CV sedang dianalisis" tanpa melihat skor | P1 | R3 |
+| F-24 | Pelamar melihat status analisis (sedang dianalisis atau tidak dianalisis sesuai pilihannya) tanpa melihat skor | P1 | R3 |
 | F-25 | Cek kecocokan CV sebelum melamar (hasil hanya untuk pelamar, tidak dikirim ke perusahaan) | P2 | R4 |
+| F-38 | Daftar pelamar menandai lamaran tanpa analisis dengan label netral 'Tanpa analisis AI'; urutan default tetap terbaru | P1 | R3 |
 
 ### 3.5 Notifikasi
 
@@ -268,10 +269,10 @@ Aturan:
 
 ### 5.2 Alur end to end
 
-1. Pelamar membuka lowongan, memeriksa persetujuan analisis AI, mengunggah CV, dan mengirim.
-2. Sistem menyimpan lamaran (`dikirim`), mengunggah CV ke bucket `cvs`, dan membuat baris `application_ai_reviews` berstatus `pending`.
+1. Pelamar membuka lowongan, memilih apakah CV dianalisis AI (opsional), mengunggah CV, dan mengirim.
+2. Sistem menyimpan lamaran (`dikirim`), mengunggah CV ke bucket `cvs`, dan membuat baris `application_ai_reviews` berstatus `pending` bila pelamar memilih analisis, atau `skipped` bila tidak atau bila AI dimatikan di lowongan.
 3. Notifikasi "Lamaran baru" dikirim ke perusahaan (dalam aplikasi, dan email bila diaktifkan).
-4. Server menganalisis CV (bagian 7). Hasilnya muncul di panel AI perusahaan, dan notifikasi dalam aplikasi "Analisis selesai" muncul.
+4. Server menganalisis CV (bagian 7), berjalan hanya untuk lamaran yang memilih analisis. Hasilnya muncul di panel AI perusahaan, dan notifikasi dalam aplikasi "Analisis selesai" muncul.
 5. Perusahaan meninjau, memberi catatan, dan mengubah status.
 6. Pelamar menerima notifikasi setiap perubahan status dan melihat timeline di `/lamaran-saya/[id]`.
 
@@ -306,6 +307,7 @@ Aturan:
 | `/mitra/lowongan/[id]/pelamar` | Belum ada pelamar | "Belum ada yang melamar." Saran membagikan tautan lowongan (tombol salin tautan) |
 | Panel AI | Analisis belum selesai | Skeleton dan teks "CV sedang dianalisis" |
 | Panel AI | Analisis gagal atau dimatikan | Pesan penyebab dan tombol **Analisis Ulang** (bila gagal). CV tetap bisa dibuka |
+| Panel AI | Pelamar tidak memilih analisis | "Pelamar ini tidak memilih analisis AI. CV tetap bisa dibuka dan dinilai langsung." (tanpa tombol Analisis Ulang) |
 | `/admin/lowongan` | Tidak ada lowongan yang menunggu ACC | "Tidak ada lowongan yang menunggu review." |
 | Laporan | Tidak ada data pada rentang tanggal | "Tidak ada data pada rentang ini." Ekspor dinonaktifkan |
 
@@ -320,6 +322,7 @@ Membantu perusahaan membaca banyak CV dengan lebih cepat. Bukan alat seleksi oto
 - AI tidak mengubah status, tidak menolak, tidak menyembunyikan pelamar. Semua pelamar tetap terlihat, hanya urutannya bisa mengikuti skor.
 - Panel AI selalu menampilkan tulisan: "Skor ini saran otomatis. Keputusan ada pada Anda."
 - Pelamar melihat bahwa analisis sedang atau sudah berjalan, **tidak melihat skor**.
+- Analisis hanya berjalan untuk lamaran yang ai_consent-nya true. Perusahaan tidak bisa memicunya pada lamaran lain, termasuk lewat Analisis Ulang.
 
 ### 7.2 Alur teknis
 
@@ -358,7 +361,7 @@ Membantu perusahaan membaca banyak CV dengan lebih cepat. Bukan alat seleksi oto
 
 ### 7.6 Privasi dan persetujuan
 
-- Checkbox wajib di form lamar: "Saya setuju CV saya dianalisis oleh AI untuk membantu perusahaan menyaring lamaran. Keputusan akhir tetap ada pada perusahaan."
+- Kotak centang opsional di form lamar, default tidak tercentang, dengan label "Analisis CV dengan AI (opsional)" dan penjelasan: "AI membaca CV-mu dan memberi saran kecocokan kepada perusahaan. Skor tidak ditampilkan kepadamu. Perusahaan tetap membaca CV dan memutuskan sendiri. Jika tidak dicentang, CV tidak dikirim ke layanan AI."
 - Halaman kebijakan privasi singkat menjelaskan data apa yang diproses, oleh siapa, dan cara menghapus CV atau akun.
 - Teks CV tidak disimpan di database. Yang disimpan hanya hasil review.
 
@@ -403,7 +406,7 @@ Catatan: SQL lengkap dan policy ditulis pada fase database di rencana commit. Ba
 
 **jobs**: `id`, `company_id FK companies (CASCADE)`, `category_id FK categories (RESTRICT)`, `city_id FK cities (RESTRICT)`, `location_detail`, `title`, `slug UNIQUE`, `work_mode` (`onsite`, `hybrid`, `remote`), `job_type` (`full_time`, `part_time`, `magang`, `kontrak`, `freelance`), `education_min`, `experience_min_years int`, `skills text[]`, `summary`, `responsibilities text[]`, `nice_to_have text[]`, `benefits text[]`, `salary_min`, `salary_max`, `deadline date`, `status` (`draft`, `pending`, `open`, `rejected`, `closed`, `removed`), `review_note`, `reviewed_by`, `reviewed_at`, `ai_screening boolean default true`, `is_demo boolean default false`, `views`, `created_at`, `updated_at`. `CHECK (city_id IS NOT NULL OR work_mode = 'remote')`.
 
-**applications**: `id`, `job_id FK jobs (CASCADE)`, `user_id FK profiles (CASCADE)`, `cv_path`, `cover_letter`, `ai_consent boolean not null`, `status` (delapan nilai di bagian 5.1), `message_to_applicant`, `interview_at timestamptz`, `interview_place`, `decided_at`, `created_at`, `updated_at`. `UNIQUE(job_id, user_id)`.
+**applications**: `id`, `job_id FK jobs (CASCADE)`, `user_id FK profiles (CASCADE)`, `cv_path`, `cover_letter`, `ai_consent boolean not null` (true bila pelamar memilih analisis AI, boleh false), `status` (delapan nilai di bagian 5.1), `message_to_applicant`, `interview_at timestamptz`, `interview_place`, `decided_at`, `created_at`, `updated_at`. `UNIQUE(job_id, user_id)`.
 
 **application_status_history**: `id`, `application_id FK (CASCADE)`, `from_status`, `to_status`, `changed_by uuid`, `note`, `created_at`.
 
@@ -428,7 +431,7 @@ Index utama: `jobs(status, deadline)`, `jobs(company_id)`, `jobs(category_id)`, 
 | categories | Baca | Baca | Baca | Tulis |
 | provinces, cities | Baca | Baca | Baca | Tulis |
 | jobs | Baca yang `open` | Baca yang `open` | CRUD miliknya. Status hanya `draft`, `pending` (lewat `submit_job`), `closed`. **Tidak bisa** membuat `open` | Baca semua. Ubah status ke `open`, `rejected`, `removed` lewat `review_job` |
-| applications | - | Buat (status `dikirim`, `ai_consent` benar), baca milik sendiri | Baca untuk lowongan miliknya, status diubah lewat fungsi | **Tidak ada akses** ke isi lamaran |
+| applications | - | Buat (status `dikirim`), baca milik sendiri | Baca untuk lowongan miliknya, status diubah lewat fungsi | **Tidak ada akses** ke isi lamaran |
 | application_status_history | - | Baca milik sendiri | Baca untuk lowongannya | - |
 | application_notes | - | **Tidak ada akses** | CRUD untuk lowongannya | - |
 | application_ai_reviews | - | **Tidak ada akses** (hanya status lewat fungsi khusus) | Baca untuk lowongannya | - |
@@ -480,7 +483,7 @@ Poin keamanan tambahan:
 | Performa | Daftar dipaginasi (10 per halaman), query memakai index, gambar logo dikompres |
 | Keandalan | Kegagalan AI atau email tidak menggagalkan lamaran atau perubahan status |
 | Keamanan | Bagian 9.2, semua input divalidasi Zod di server |
-| Privasi | Persetujuan AI, kebijakan privasi, penghapusan CV dan akun oleh pemilik |
+| Privasi | Pilihan analisis AI oleh pelamar, kebijakan privasi, penghapusan CV dan akun oleh pemilik |
 | Desain dan tulisan | Mengikuti bagian 6 `AGENTS.md` (Antislop) |
 | Bahasa | Seluruh UI dalam bahasa Indonesia |
 
@@ -497,7 +500,7 @@ Poin keamanan tambahan:
 - Ketika admin menolak, alasan wajib diisi. Perusahaan menerima notifikasi berisi alasan, dapat memperbaiki, lalu mengajukan ulang.
 
 **Melamar (F-13, F-14)**
-- Tanpa mencentang persetujuan AI, tombol kirim tidak aktif.
+- Tanpa mencentang pilihan analisis AI, lamaran tetap terkirim, tidak ada analisis, dan panel perusahaan menampilkan bahwa pelamar tidak memilih analisis.
 - CV non-PDF atau di atas 2 MB ditolak dengan pesan "CV harus berformat PDF dan maksimal 2 MB".
 - Melamar kedua kali ke lowongan yang sama ditolak dengan pesan jelas.
 - Lowongan `closed` atau lewat deadline tidak bisa dilamar.
@@ -513,6 +516,8 @@ Poin keamanan tambahan:
 - CV yang berisi instruksi manipulasi tidak menaikkan skor dan ditandai `suspicious`.
 - Jika API AI gagal, lamaran tetap tersimpan dan perusahaan bisa membuka CV serta menekan Analisis Ulang.
 - Lowongan dengan `ai_screening = false` tidak memanggil AI sama sekali.
+- Lamaran dengan ai_consent false tidak pernah dikirim ke Claude, termasuk lewat Analisis Ulang.
+- Daftar pelamar menampilkan label 'Tanpa analisis AI' dan urutan default tetap terbaru.
 
 **Notifikasi (F-26 sampai F-28)**
 - Saat pelamar melamar, lonceng perusahaan bertambah dalam beberapa detik tanpa muat ulang.
