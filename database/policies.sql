@@ -226,7 +226,6 @@ to authenticated
 with check (
   user_id = auth.uid()
   and status = 'dikirim'
-  and ai_consent = true
   and exists (
     select 1
     from public.profiles

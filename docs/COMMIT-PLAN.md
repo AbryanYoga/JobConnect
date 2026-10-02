@@ -236,6 +236,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T1 `docs: perbarui PRD dan README dengan konsep nilai pembeda dan solusi komparatif`
 - [x] T2 `docs: netralkan penyebutan nama platform di README dan PRD`
 - [x] T3 `docs: jadikan analisis AI opsional bagi pelamar di PRD dan rencana commit`
+- [x] T4 `db: izinkan lamaran tanpa persetujuan AI dan lewati analisis otomatis`
 
 ## Catatan Penting Agent
 

@@ -187,3 +187,114 @@ Lakukan pengujian aturan keamanan langsung di SQL Editor menggunakan simulasi ro
 - Kunci `SUPABASE_SERVICE_ROLE_KEY` memiliki hak administratif penuh yang melewati seluruh kebijakan RLS database.
 - Kunci ini **TIDAK DIGUNAKAN** pada konfigurasi klien maupun variabel lingkungan publik.
 - Pada sistem JobConnect, kunci service role hanya akan diizinkan pada satu modul server terisolasi di `lib/supabase/admin.ts` yang dikhususkan untuk worker pemrosesan hasil screening AI Claude pada Fase 14.
+
+---
+
+## 7. Pembaruan Setelah Migrasi Awal (Pilihan Analisis AI Opsional)
+
+Bila Anda sebelumnya sudah menjalankan migrasi database lengkap (Langkah 1 sampai 5 di bagian 2), Anda **tidak perlu mengulang seluruh skrip dari awal**.
+
+Cukup buka **SQL Editor** di Supabase Dashboard, buat kueri baru, lalu salin dan jalankan **hanya dua blok pembaruan berikut** secara berurutan:
+
+### Blok 1: Pembaruan Policy Insert Lamaran (dari `database/policies.sql`)
+Mengizinkan pelamar mengirim lamaran baik dengan memilih analisis AI (`ai_consent = true`) maupun tanpa analisis AI (`ai_consent = false`):
+
+```sql
+drop policy if exists "applications_insert_policy" on public.applications;
+create policy "applications_insert_policy"
+on public.applications
+for insert
+to authenticated
+with check (
+  user_id = auth.uid()
+  and status = 'dikirim'
+  and exists (
+    select 1
+    from public.profiles
+    where id = auth.uid()
+      and role = 'user'
+  )
+  and cv_path = (auth.uid()::text || '/' || job_id::text || '.pdf')
+  and exists (
+    select 1
+    from public.jobs
+    where id = job_id
+      and status = 'open'
+      and (deadline is null or deadline >= current_date)
+  )
+);
+```
+
+### Blok 2: Pembaruan Fungsi Trigger Lamaran (dari `database/functions.sql`)
+Memeriksa pilihan pelamar terlebih dahulu: jika pelamar tidak memilih analisis AI, baris ulasan otomatis berstatus `skipped` dengan pesan penjelas:
+
+```sql
+create or replace function public.notify_on_application_created()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_info record;
+begin
+  select
+    j.title as job_title,
+    j.ai_screening,
+    c.owner_id as company_owner_id,
+    p.name as applicant_name
+  into v_info
+  from public.jobs j
+  join public.companies c on c.id = j.company_id
+  join public.profiles p on p.id = new.user_id
+  where j.id = new.job_id;
+
+  if found and v_info.company_owner_id is not null then
+    -- Notifikasi lamaran_baru ke pemilik perusahaan
+    insert into public.notifications (user_id, type, title, body, link)
+    values (
+      v_info.company_owner_id,
+      'lamaran_baru',
+      'Lamaran Baru Masuk',
+      v_info.applicant_name || ' mengirimkan lamaran untuk posisi ' || v_info.job_title,
+      '/mitra/pelamar/' || new.id::text
+    );
+  end if;
+
+  -- Buat baris application_ai_reviews otomatis
+  if new.ai_consent is not true then
+    insert into public.application_ai_reviews (application_id, status, error_message)
+    values (new.id, 'skipped', 'Pelamar tidak memilih analisis AI')
+    on conflict (application_id) do nothing;
+  elsif coalesce(v_info.ai_screening, true) then
+    insert into public.application_ai_reviews (application_id, status)
+    values (new.id, 'pending')
+    on conflict (application_id) do nothing;
+  else
+    insert into public.application_ai_reviews (application_id, status, error_message)
+    values (new.id, 'skipped', 'Analisis AI dimatikan untuk lowongan ini')
+    on conflict (application_id) do nothing;
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_notify_on_application_created on public.applications;
+create trigger trg_notify_on_application_created
+after insert on public.applications
+for each row
+execute function public.notify_on_application_created();
+```
+
+### Kueri Uji Pembaruan:
+Untuk memastikan pembaruan telah aktif, Anda dapat mencoba insert lamaran dengan `ai_consent = false` sebagai pelamar lalu periksa hasilnya:
+
+```sql
+-- Uji verifikasi: Baris review wajib terbentuk dengan status 'skipped' dan error_message 'Pelamar tidak memilih analisis AI'
+select a.id, a.ai_consent, r.status as review_status, r.error_message
+from public.applications a
+left join public.application_ai_reviews r on r.application_id = a.id
+order by a.created_at desc
+limit 5;
+```

@@ -640,7 +640,11 @@ begin
   end if;
 
   -- Buat baris application_ai_reviews otomatis
-  if coalesce(v_info.ai_screening, true) then
+  if new.ai_consent is not true then
+    insert into public.application_ai_reviews (application_id, status, error_message)
+    values (new.id, 'skipped', 'Pelamar tidak memilih analisis AI')
+    on conflict (application_id) do nothing;
+  elsif coalesce(v_info.ai_screening, true) then
     insert into public.application_ai_reviews (application_id, status)
     values (new.id, 'pending')
     on conflict (application_id) do nothing;
