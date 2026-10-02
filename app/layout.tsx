@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { Navbar } from "@/components/layout/Navbar";
 import "./globals.css";
 
 const inter = Inter({
@@ -38,7 +39,7 @@ export default function RootLayout({
         >
           Lewati ke konten
         </a>
-        {/* Navbar */}
+        <Navbar role="tamu" />
         <main id="konten" className="flex-1">
           {children}
         </main>
