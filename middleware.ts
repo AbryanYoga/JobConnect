@@ -44,7 +44,39 @@ export async function middleware(request: NextRequest) {
   );
 
   // Memanggil getUser() menyegarkan token sesi jika kedaluwarsa
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const pathname = request.nextUrl.pathname;
+
+  // Proteksi rute mitra (/mitra dan sub-rutenya): khusus akun dengan peran 'company'
+  if (pathname.startsWith("/mitra")) {
+    if (!user) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirectTo", pathname);
+      const redirectResponse = NextResponse.redirect(loginUrl);
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+      });
+      return redirectResponse;
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role !== "company") {
+      const forbiddenUrl = new URL("/403", request.url);
+      const redirectResponse = NextResponse.redirect(forbiddenUrl);
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+      });
+      return redirectResponse;
+    }
+  }
 
   return supabaseResponse;
 }
