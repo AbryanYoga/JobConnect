@@ -240,6 +240,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T5 `docs: perbarui spesifikasi tata letak UI di PRD`
 - [x] T6 `docs: sinkronkan centang commit fase 3 dan fase 4 di COMMIT-PLAN`
 - [x] T7 `fix(ui): samakan nilai Badge dengan database dan warna StatusBadge dengan PRD`
+- [x] T8 `refactor(ui): jadikan aksi EmptyState wajib dan satukan gaya tombol link lewat ButtonLink`
 
 ## Catatan Penting Agent
 

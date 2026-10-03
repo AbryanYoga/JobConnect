@@ -1,38 +1,69 @@
 import React from "react";
-import Link from "next/link";
 import { FolderOpen } from "lucide-react";
 import { Button } from "./Button";
+import { ButtonLink } from "./ButtonLink";
+
+export type EmptyStateLinkAction = {
+  label: string;
+  href: string;
+};
+
+export type EmptyStateClickAction = {
+  label: string;
+  onClick: () => void;
+};
+
+export type EmptyStateAction = EmptyStateLinkAction | EmptyStateClickAction;
 
 export interface EmptyStateProps {
   title: string;
   description?: string;
   icon?: React.ReactNode;
-  actionLabel?: string;
-  actionHref?: string;
-  onAction?: () => void;
-  secondaryActionLabel?: string;
-  secondaryActionHref?: string;
-  onSecondaryAction?: () => void;
+  action: EmptyStateAction;
+  secondaryAction?: EmptyStateAction;
+  headingLevel?: "h2" | "h3";
   className?: string;
+}
+
+function renderAction(
+  actionItem: EmptyStateAction,
+  variant: "primary" | "outline"
+) {
+  if ("href" in actionItem) {
+    return (
+      <ButtonLink
+        href={actionItem.href}
+        variant={variant}
+        size="md"
+        className="w-full sm:w-auto"
+      >
+        {actionItem.label}
+      </ButtonLink>
+    );
+  }
+
+  return (
+    <Button
+      onClick={actionItem.onClick}
+      variant={variant}
+      size="md"
+      className="w-full sm:w-auto"
+    >
+      {actionItem.label}
+    </Button>
+  );
 }
 
 export function EmptyState({
   title,
   description,
   icon,
-  actionLabel,
-  actionHref,
-  onAction,
-  secondaryActionLabel,
-  secondaryActionHref,
-  onSecondaryAction,
+  action,
+  secondaryAction,
+  headingLevel = "h3",
   className = "",
 }: EmptyStateProps) {
-  const linkPrimaryClass =
-    "min-h-[44px] px-4 py-2.5 rounded-control text-sm font-medium text-white bg-navy-700 hover:bg-navy-800 active:bg-navy-900 transition-colors shadow-xs inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 w-full sm:w-auto";
-
-  const linkOutlineClass =
-    "min-h-[44px] px-4 py-2.5 rounded-control text-sm font-medium border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:text-navy-700 hover:border-slate-400 active:bg-slate-100 transition-colors inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 w-full sm:w-auto";
+  const Heading = headingLevel;
 
   return (
     <div
@@ -45,9 +76,9 @@ export function EmptyState({
         {icon || <FolderOpen className="w-6 h-6" />}
       </div>
 
-      <h3 className="text-base font-semibold text-slate-900 mb-1 tracking-tight">
+      <Heading className="text-base font-semibold text-slate-900 mb-1 tracking-tight">
         {title}
-      </h3>
+      </Heading>
 
       {description && (
         <p className="text-sm text-slate-600 mb-6 leading-relaxed">
@@ -55,43 +86,10 @@ export function EmptyState({
         </p>
       )}
 
-      {(actionLabel || secondaryActionLabel) && (
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-          {actionLabel && actionHref && (
-            <Link href={actionHref} className={linkPrimaryClass}>
-              {actionLabel}
-            </Link>
-          )}
-
-          {actionLabel && !actionHref && onAction && (
-            <Button
-              onClick={onAction}
-              variant="primary"
-              size="md"
-              className="w-full sm:w-auto"
-            >
-              {actionLabel}
-            </Button>
-          )}
-
-          {secondaryActionLabel && secondaryActionHref && (
-            <Link href={secondaryActionHref} className={linkOutlineClass}>
-              {secondaryActionLabel}
-            </Link>
-          )}
-
-          {secondaryActionLabel && !secondaryActionHref && onSecondaryAction && (
-            <Button
-              onClick={onSecondaryAction}
-              variant="outline"
-              size="md"
-              className="w-full sm:w-auto"
-            >
-              {secondaryActionLabel}
-            </Button>
-          )}
-        </div>
-      )}
+      <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+        {renderAction(action, "primary")}
+        {secondaryAction && renderAction(secondaryAction, "outline")}
+      </div>
     </div>
   );
 }

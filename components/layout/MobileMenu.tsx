@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { NavAction, NavItem } from "@/lib/navigation";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 import { NavLink } from "./NavLink";
 
 interface MobileMenuProps {
@@ -107,39 +107,46 @@ export function MobileMenu({ links, actions }: MobileMenuProps) {
                 {actions.map((action) => {
                   if (action.variant === "primary") {
                     return (
-                      <Link
+                      <ButtonLink
                         key={action.href}
                         href={action.href}
                         onClick={closeMenu}
-                        className="w-full min-h-[44px] px-4 py-2.5 rounded-control text-sm font-medium text-white bg-navy-700 hover:bg-navy-800 transition-colors shadow-xs flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
+                        variant="primary"
+                        size="md"
+                        fullWidth
                       >
                         {action.label}
-                      </Link>
+                      </ButtonLink>
                     );
                   }
 
                   if (action.variant === "outline") {
                     return (
-                      <Link
+                      <ButtonLink
                         key={action.href}
                         href={action.href}
                         onClick={closeMenu}
-                        className="w-full min-h-[44px] px-4 py-2.5 rounded-control text-sm font-medium text-navy-700 border border-navy-700 hover:bg-navy-50 transition-colors flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
+                        variant="outline"
+                        size="md"
+                        fullWidth
                       >
                         {action.label}
-                      </Link>
+                      </ButtonLink>
                     );
                   }
 
                   return (
-                    <Link
+                    <ButtonLink
                       key={action.href}
                       href={action.href}
                       onClick={closeMenu}
-                      className="w-full min-h-[44px] px-3 py-2.5 rounded-control text-sm font-medium text-slate-700 hover:text-navy-900 hover:bg-slate-100 transition-colors flex items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
+                      variant="ghost"
+                      size="md"
+                      fullWidth
+                      className="justify-start px-3"
                     >
                       {action.label}
-                    </Link>
+                    </ButtonLink>
                   );
                 })}
               </div>

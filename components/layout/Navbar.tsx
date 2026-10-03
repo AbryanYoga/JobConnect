@@ -5,6 +5,7 @@ import {
   NAV_LINKS_BY_ROLE,
   Role,
 } from "@/lib/navigation";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 import { NavLink } from "./NavLink";
 import { MobileMenu } from "./MobileMenu";
 
@@ -52,36 +53,39 @@ export function Navbar({ role = "tamu" }: NavbarProps) {
           {actions.map((action) => {
             if (action.variant === "primary") {
               return (
-                <Link
+                <ButtonLink
                   key={action.href}
                   href={action.href}
-                  className="min-h-[44px] px-4 py-2 rounded-control text-sm font-medium text-white bg-navy-700 hover:bg-navy-800 transition-colors shadow-xs inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
+                  variant="primary"
+                  size="md"
                 >
                   {action.label}
-                </Link>
+                </ButtonLink>
               );
             }
 
             if (action.variant === "outline") {
               return (
-                <Link
+                <ButtonLink
                   key={action.href}
                   href={action.href}
-                  className="min-h-[44px] px-4 py-2 rounded-control text-sm font-medium text-navy-700 border border-navy-700 hover:bg-navy-50 transition-colors inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
+                  variant="outline"
+                  size="md"
                 >
                   {action.label}
-                </Link>
+                </ButtonLink>
               );
             }
 
             return (
-              <Link
+              <ButtonLink
                 key={action.href}
                 href={action.href}
-                className="min-h-[44px] px-3 py-2 rounded-control text-sm font-medium text-slate-600 hover:text-navy-700 transition-colors inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
+                variant="ghost"
+                size="md"
               >
                 {action.label}
-              </Link>
+              </ButtonLink>
             );
           })}
         </div>
