@@ -91,7 +91,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 6: Autentikasi dan Profil Pengguna
 
-- [ ] 069 `feat(auth): buat halaman register dengan pilihan Pelamar atau Perusahaan`
+- [x] 069 `feat(auth): buat halaman register dengan pilihan Pelamar atau Perusahaan`
 - [ ] 070 `feat(auth): sambungkan register ke Supabase Auth dengan metadata peran`
 - [ ] 071 `feat(auth): buat halaman login dengan validasi email dan password`
 - [ ] 072 `feat(auth): sambungkan login ke Supabase Auth dan tangani pesan error`
