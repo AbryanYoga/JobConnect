@@ -30,42 +30,42 @@ export const APPLICATION_STATUS_CONFIG: Record<
 > = {
   dikirim: {
     label: "Dikirim",
-    badgeClass: "bg-slate-100 text-slate-700 border-slate-200",
+    badgeClass: "bg-status-gray-bg text-status-gray-fg border-slate-200",
     dotClass: "bg-slate-400",
   },
   ditinjau: {
     label: "Ditinjau",
-    badgeClass: "bg-yellow-50 text-yellow-800 border-yellow-200",
+    badgeClass: "bg-status-yellow-bg text-status-yellow-fg border-yellow-200",
     dotClass: "bg-yellow-500",
   },
   shortlist: {
     label: "Shortlist",
-    badgeClass: "bg-blue-50 text-blue-800 border-blue-200",
-    dotClass: "bg-blue-500",
+    badgeClass: "bg-status-blue-bg text-status-blue-fg border-blue-200",
+    dotClass: "bg-blue-600",
   },
   wawancara: {
     label: "Wawancara",
-    badgeClass: "bg-purple-50 text-purple-800 border-purple-200",
-    dotClass: "bg-purple-500",
+    badgeClass: "bg-status-blue-bg text-status-blue-fg border-blue-200",
+    dotClass: "bg-blue-600",
   },
   ditawari: {
     label: "Ditawari",
-    badgeClass: "bg-amber-50 text-amber-800 border-amber-200",
-    dotClass: "bg-amber-500",
+    badgeClass: "bg-status-green-bg text-status-green-fg border-green-200",
+    dotClass: "bg-green-600",
   },
   diterima: {
     label: "Diterima",
-    badgeClass: "bg-emerald-50 text-emerald-800 border-emerald-200",
-    dotClass: "bg-emerald-600",
+    badgeClass: "bg-status-green-bg text-status-green-fg border-green-200",
+    dotClass: "bg-green-600",
   },
   ditolak: {
     label: "Ditolak",
-    badgeClass: "bg-red-50 text-red-800 border-red-200",
+    badgeClass: "bg-status-red-bg text-status-red-fg border-red-200",
     dotClass: "bg-red-500",
   },
   ditarik: {
     label: "Ditarik",
-    badgeClass: "bg-slate-100 text-slate-600 border-slate-200",
+    badgeClass: "bg-status-gray-bg text-status-gray-fg border-slate-200",
     dotClass: "bg-slate-400",
   },
 };
@@ -73,33 +73,33 @@ export const APPLICATION_STATUS_CONFIG: Record<
 export const JOB_STATUS_CONFIG: Record<JobStatus, StatusConfig> = {
   draft: {
     label: "Draf",
-    badgeClass: "bg-slate-100 text-slate-700 border-slate-200",
+    badgeClass: "bg-status-gray-bg text-status-gray-fg border-slate-200",
     dotClass: "bg-slate-400",
   },
   pending: {
     label: "Menunggu ACC",
-    badgeClass: "bg-amber-50 text-amber-800 border-amber-200",
-    dotClass: "bg-amber-500",
+    badgeClass: "bg-status-yellow-bg text-status-yellow-fg border-yellow-200",
+    dotClass: "bg-yellow-500",
   },
   open: {
     label: "Tayang",
-    badgeClass: "bg-emerald-50 text-emerald-800 border-emerald-200",
-    dotClass: "bg-emerald-600",
+    badgeClass: "bg-status-green-bg text-status-green-fg border-green-200",
+    dotClass: "bg-green-600",
   },
   rejected: {
     label: "Ditolak",
-    badgeClass: "bg-red-50 text-red-800 border-red-200",
+    badgeClass: "bg-status-red-bg text-status-red-fg border-red-200",
     dotClass: "bg-red-500",
   },
   closed: {
     label: "Ditutup",
-    badgeClass: "bg-slate-100 text-slate-600 border-slate-200",
+    badgeClass: "bg-status-gray-bg text-status-gray-fg border-slate-200",
     dotClass: "bg-slate-400",
   },
   removed: {
     label: "Diturunkan",
-    badgeClass: "bg-red-50 text-red-800 border-red-200",
-    dotClass: "bg-red-600",
+    badgeClass: "bg-status-red-bg text-status-red-fg border-red-200",
+    dotClass: "bg-red-500",
   },
 };
 
@@ -116,7 +116,7 @@ export function StatusBadge({
 }: StatusBadgeProps) {
   const config = APPLICATION_STATUS_CONFIG[status] || {
     label: status,
-    badgeClass: "bg-slate-100 text-slate-700 border-slate-200",
+    badgeClass: "bg-status-gray-bg text-status-gray-fg border-slate-200",
     dotClass: "bg-slate-400",
   };
 
@@ -146,7 +146,7 @@ export function JobStatusBadge({
 }) {
   const config = JOB_STATUS_CONFIG[status] || {
     label: status,
-    badgeClass: "bg-slate-100 text-slate-700 border-slate-200",
+    badgeClass: "bg-status-gray-bg text-status-gray-fg border-slate-200",
     dotClass: "bg-slate-400",
   };
 

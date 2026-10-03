@@ -1,15 +1,12 @@
 import React from "react";
+import {
+  JOB_TYPE_LABEL,
+  JobType,
+  WORK_MODE_LABEL,
+  WorkMode,
+} from "@/lib/labels";
 
-export type BadgeVariant =
-  | "neutral"
-  | "navy"
-  | "amber"
-  | "green"
-  | "blue"
-  | "purple";
-
-export type WorkType = "full_time" | "part_time" | "magang" | "kontrak";
-export type WorkMode = "wfo" | "remote" | "hybrid";
+export type BadgeVariant = "neutral" | "navy" | "accent";
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
@@ -25,16 +22,13 @@ export function Badge({
 }: BadgeProps) {
   const variantStyles: Record<BadgeVariant, string> = {
     neutral: "bg-slate-100 text-slate-700 border-slate-200",
-    navy: "bg-navy-50 text-navy-700 border-navy-200",
-    amber: "bg-amber-50 text-amber-800 border-amber-200",
-    green: "bg-green-50 text-green-800 border-green-200",
-    blue: "bg-blue-50 text-blue-800 border-blue-200",
-    purple: "bg-purple-50 text-purple-800 border-purple-200",
+    navy: "bg-navy-50 text-navy-800 border-navy-200",
+    accent: "bg-accent-100 text-accent-900 border-accent-400",
   };
 
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border select-none ${variantStyles[variant]} ${className}`.trim()}
+      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-medium border select-none ${variantStyles[variant]} ${className}`.trim()}
       {...props}
     >
       {icon && (
@@ -47,39 +41,17 @@ export function Badge({
   );
 }
 
-export const WORK_TYPE_CONFIG: Record<
-  WorkType,
-  { label: string; variant: BadgeVariant }
-> = {
-  full_time: { label: "Full-time", variant: "navy" },
-  part_time: { label: "Part-time", variant: "amber" },
-  magang: { label: "Magang", variant: "purple" },
-  kontrak: { label: "Kontrak", variant: "neutral" },
-};
-
-export const WORK_MODE_CONFIG: Record<
-  WorkMode,
-  { label: string; variant: BadgeVariant }
-> = {
-  wfo: { label: "WFO", variant: "neutral" },
-  remote: { label: "Remote", variant: "green" },
-  hybrid: { label: "Hybrid", variant: "blue" },
-};
-
 export function WorkTypeBadge({
   type,
   className = "",
 }: {
-  type: WorkType;
+  type: JobType;
   className?: string;
 }) {
-  const config = WORK_TYPE_CONFIG[type] || {
-    label: type,
-    variant: "neutral",
-  };
+  const label = JOB_TYPE_LABEL[type] || type;
   return (
-    <Badge variant={config.variant} className={className}>
-      {config.label}
+    <Badge variant="neutral" className={className}>
+      {label}
     </Badge>
   );
 }
@@ -91,13 +63,11 @@ export function WorkModeBadge({
   mode: WorkMode;
   className?: string;
 }) {
-  const config = WORK_MODE_CONFIG[mode] || {
-    label: mode,
-    variant: "neutral",
-  };
+  const label = WORK_MODE_LABEL[mode] || mode;
+  const variant: BadgeVariant = mode === "remote" ? "navy" : "neutral";
   return (
-    <Badge variant={config.variant} className={className}>
-      {config.label}
+    <Badge variant={variant} className={className}>
+      {label}
     </Badge>
   );
 }
