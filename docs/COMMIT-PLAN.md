@@ -107,7 +107,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 - [x] 080 `feat(middleware): buat middleware untuk refresh sesi Supabase`
 - [x] 081 `feat(middleware): proteksi rute mitra khusus akun perusahaan`
-- [ ] 082 `feat(middleware): proteksi rute admin khusus akun berkedudukan admin`
+- [x] 082 `feat(middleware): proteksi rute admin khusus akun berkedudukan admin`
 - [ ] 083 `feat(middleware): proteksi rute pelamar agar wajib login`
 - [ ] 084 `feat(auth): buat halaman tidak berwenang 403`
 
