@@ -84,7 +84,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 062 `feat(supabase): buat client Supabase sisi server`
 - [x] 063 `feat(supabase): buat helper admin service role terisolasi untuk AI`
 - [x] 064 `chore: buat definisi tipe TypeScript database Supabase`
-- [ ] 065 `feat(validasi): buat skema Zod untuk registrasi dan login`
+- [x] 065 `feat(validasi): buat skema Zod untuk registrasi dan login`
 - [ ] 066 `feat(validasi): buat skema Zod untuk profil pelamar dan perusahaan`
 - [ ] 067 `feat(validasi): buat skema Zod untuk kriteria lowongan terstruktur`
 - [ ] 068 `feat(validasi): buat skema Zod untuk form lamaran dan file CV`
