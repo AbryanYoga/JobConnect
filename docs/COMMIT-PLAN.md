@@ -243,6 +243,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T8 `refactor(ui): jadikan aksi EmptyState wajib dan satukan gaya tombol link lewat ButtonLink`
 - [x] T9 `docs: samakan AGENTS.md bagian 5 dengan PRD v2.0`
 - [x] T10 `chore: pasang dependensi animasi gsap dan @gsap/react`
+- [x] T11 `fix(auth): dukung publishable key dan pengalihan rute dashboard mitra`
 
 ## Catatan Penting Agent
 
