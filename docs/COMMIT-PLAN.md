@@ -81,7 +81,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 ## Fase 5: Integrasi Klien Supabase dan Validasi Zod
 
 - [x] 061 `feat(supabase): buat client Supabase sisi browser`
-- [ ] 062 `feat(supabase): buat client Supabase sisi server`
+- [x] 062 `feat(supabase): buat client Supabase sisi server`
 - [ ] 063 `feat(supabase): buat helper admin service role terisolasi untuk AI`
 - [ ] 064 `chore: buat definisi tipe TypeScript database Supabase`
 - [ ] 065 `feat(validasi): buat skema Zod untuk registrasi dan login`
