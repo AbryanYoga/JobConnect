@@ -25,3 +25,13 @@ export const EDUCATION_LABEL = {
 } as const;
 
 export type EducationMin = keyof typeof EDUCATION_LABEL;
+
+export const COMPANY_SIZE_OPTIONS = {
+  "1-10": "1 sampai 10 karyawan",
+  "11-50": "11 sampai 50 karyawan",
+  "51-200": "51 sampai 200 karyawan",
+  "201-500": "201 sampai 500 karyawan",
+  "501+": "Lebih dari 500 karyawan",
+} as const;
+
+export type CompanySize = keyof typeof COMPANY_SIZE_OPTIONS;
