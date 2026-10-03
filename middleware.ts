@@ -106,6 +106,25 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Proteksi rute pelamar (/profil, /lamaran-saya, /tersimpan, /notifikasi): wajib login
+  const isPelamarRoute =
+    pathname.startsWith("/profil") ||
+    pathname.startsWith("/lamaran-saya") ||
+    pathname.startsWith("/tersimpan") ||
+    pathname.startsWith("/notifikasi");
+
+  if (isPelamarRoute) {
+    if (!user) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirectTo", pathname);
+      const redirectResponse = NextResponse.redirect(loginUrl);
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+      });
+      return redirectResponse;
+    }
+  }
+
   return supabaseResponse;
 }
 
