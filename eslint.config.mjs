@@ -13,6 +13,31 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "@/lib/supabase/admin*",
+                "**/lib/supabase/admin*",
+                "../*supabase/admin*",
+              ],
+              message: "service_role hanya boleh diimpor dari lib/ai/",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["lib/ai/**"],
+    rules: {
+      "no-restricted-imports": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;
