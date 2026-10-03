@@ -2,14 +2,26 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { User, Building2, Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  User,
+  Building2,
+  Mail,
+  Lock,
+  ArrowRight,
+  ShieldCheck,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { registerSchema, type Peran } from "@/lib/validation/auth";
+import { ButtonLink } from "@/components/ui/ButtonLink";
+import { createClient } from "@/lib/supabase/client";
+import { registerSchema, peranToRole, type Peran } from "@/lib/validation/auth";
 import { fieldErrors } from "@/lib/validation/helpers";
 
 export function RegisterForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialPeran: Peran =
     searchParams.get("peran") === "perusahaan" ? "perusahaan" : "pelamar";
@@ -20,11 +32,13 @@ export function RegisterForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setServerError(null);
 
     const validationResult = registerSchema.safeParse({
       name,
@@ -36,15 +50,97 @@ export function RegisterForm() {
 
     if (!validationResult.success) {
       setErrors(fieldErrors(validationResult.error));
-      setIsSubmitting(false);
       return;
     }
 
     setErrors({});
-    setIsSubmitting(false);
+    setIsSubmitting(true);
+
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.signUp({
+        email: validationResult.data.email,
+        password: validationResult.data.password,
+        options: {
+          data: {
+            name: validationResult.data.name,
+            role: peranToRole(validationResult.data.peran),
+          },
+        },
+      });
+
+      if (error) {
+        const lowerMsg = error.message.toLowerCase();
+        if (
+          lowerMsg.includes("already registered") ||
+          lowerMsg.includes("user_already_exists")
+        ) {
+          setServerError(
+            "Email ini sudah terdaftar. Silakan gunakan email lain atau masuk ke akun Anda."
+          );
+        } else {
+          setServerError(
+            error.message || "Pendaftaran gagal. Silakan coba beberapa saat lagi."
+          );
+        }
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Jika sesi langsung terbentuk (tanpa verifikasi email)
+      if (data.session) {
+        router.refresh();
+        if (peran === "perusahaan") {
+          router.push("/mitra");
+        } else {
+          router.push("/profil");
+        }
+        return;
+      }
+
+      // Tampilkan notifikasi konfirmasi jika butuh verifikasi email
+      setIsSuccess(true);
+      setIsSubmitting(false);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Terjadi gangguan koneksi saat mendaftar. Silakan coba lagi.";
+      setServerError(message);
+      setIsSubmitting(false);
+    }
   };
 
   const isCompany = peran === "perusahaan";
+
+  if (isSuccess) {
+    return (
+      <div className="w-full max-w-md mx-auto">
+        <div className="bg-white rounded-card border border-slate-200 shadow-sm p-6 sm:p-8 text-center">
+          <div className="w-12 h-12 rounded-full bg-green-50 text-green-600 mx-auto flex items-center justify-center mb-4">
+            <CheckCircle2 className="w-6 h-6" aria-hidden="true" />
+          </div>
+          <h2 className="text-xl font-bold text-navy-950 tracking-tight">
+            Pendaftaran Berhasil!
+          </h2>
+          <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+            Akun Anda berhasil didaftarkan sebagai{" "}
+            <span className="font-semibold text-navy-900">
+              {isCompany ? "Perusahaan Mitra" : "Pelamar Kerja"}
+            </span>
+            . Silakan periksa kotak masuk email{" "}
+            <span className="font-medium text-slate-900">{email}</span> untuk
+            mengonfirmasi akun sebelum masuk.
+          </p>
+          <div className="mt-6">
+            <ButtonLink href="/login" variant="primary" size="md" fullWidth>
+              Menuju Halaman Masuk
+            </ButtonLink>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -62,6 +158,16 @@ export function RegisterForm() {
             Pilih peran Anda dan mulai temukan lowongan atau pasang lowongan kerja.
           </p>
         </div>
+
+        {serverError && (
+          <div
+            role="alert"
+            className="p-3.5 rounded-control bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2.5 mb-4"
+          >
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" aria-hidden="true" />
+            <span className="leading-snug">{serverError}</span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           {/* Pemilihan Peran (Segmented Radio Cards) */}
