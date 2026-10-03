@@ -65,10 +65,10 @@ Aturan tambahan:
 ## 5. Keamanan (tidak boleh dilanggar)
 
 - Jangan pernah commit `.env`, `.env.local`, atau kunci rahasia. Hanya `.env.example` (tanpa nilai asli) yang boleh masuk repo.
-- Hanya `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` yang dipakai di kode. **Kunci `service_role` tidak pernah dipakai.**
+- Hanya `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` yang dipakai di kode. Kunci `service_role` hanya boleh dipakai di `lib/supabase/admin.ts`, hanya diimpor dari `lib/ai/`, dan tidak pernah diberi awalan `NEXT_PUBLIC_` (PRD 9.2 poin 6).
 - Jika file rahasia terlanjur ter-stage, batalkan dengan `git restore --staged <file>` sebelum commit.
 - Perbaikan keamanan RLS berikut berlaku di atas PRD:
-  1. User hanya boleh mengubah kolom `name` dan `phone` di `profiles` (bukan `role`). Gunakan `REVOKE UPDATE` lalu `GRANT UPDATE (name, phone)`.
+  1. User hanya boleh mengubah kolom `name`, `phone`, `headline`, dan `email_notifications` di `profiles` (bukan `role`). Gunakan `REVOKE UPDATE` lalu `GRANT UPDATE (name, phone, headline, email_notifications)`.
   2. Policy insert `applications` harus memakai `user_id = auth.uid() AND status = 'dikirim'`.
 
 ## 6. Standar desain dan tulisan (Antislop)
