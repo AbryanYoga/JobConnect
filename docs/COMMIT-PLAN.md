@@ -100,7 +100,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 075 `feat(profil): buat halaman profil pelamar`
 - [x] 076 `feat(profil): aktifkan simpan perubahan nama, telepon, dan headline`
 - [x] 077 `feat(mitra): buat halaman profil perusahaan mitra`
-- [ ] 078 `feat(mitra): aktifkan simpan identitas, industri, lokasi, dan deskripsi perusahaan`
+- [x] 078 `feat(mitra): aktifkan simpan identitas, industri, lokasi, dan deskripsi perusahaan`
 - [ ] 079 `feat(mitra): tambah fitur unggah logo perusahaan ke bucket storage`
 
 ## Fase 7: Middleware Proteksi Rute dan Sesi

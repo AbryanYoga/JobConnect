@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Building2, ShieldCheck, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { updateProfilPerusahaanAction } from "@/app/actions/mitra";
 import {
   ProfilPerusahaanForm,
   type ProfilPerusahaanData,
@@ -150,6 +151,7 @@ export default async function ProfilPerusahaanPage() {
           initialData={companyData}
           provinces={provinces}
           cities={cities}
+          onSave={updateProfilPerusahaanAction}
         />
       </div>
     </div>

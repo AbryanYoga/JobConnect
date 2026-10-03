@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import {
   Building2,
   Globe,
@@ -65,6 +66,7 @@ export function ProfilPerusahaanForm({
   onSave,
   logoUploadComponent,
 }: ProfilPerusahaanFormProps) {
+  const router = useRouter();
   const [name, setName] = useState(initialData.name);
   const [website, setWebsite] = useState(initialData.website || "");
   const [industry, setIndustry] = useState(initialData.industry || "");
@@ -133,6 +135,7 @@ export function ProfilPerusahaanForm({
 
       if (res.success) {
         setSuccessMessage("Profil perusahaan berhasil diperbarui.");
+        router.refresh();
       } else if (res.error) {
         setErrors({ general: res.error });
       }
