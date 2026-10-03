@@ -195,3 +195,99 @@ export const profilPerusahaanSchema = z
   );
 
 export type ProfilPerusahaanInput = z.infer<typeof profilPerusahaanSchema>;
+
+export const LOGO_MAX_BYTES = 2 * 1024 * 1024;
+export const LOGO_BUCKET = "company-logos";
+export const LOGO_ALLOWED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+] as const;
+export const LOGO_ERROR_MESSAGE =
+  "Logo harus berformat PNG, JPG, atau WEBP dan maksimal 2 MB";
+
+export type LogoExtension = "jpg" | "png" | "webp";
+
+/**
+ * Validasi berkas logo perusahaan.
+ * Memeriksa tipe MIME, batas ukuran (maksimal 2 MB), dan magic bytes berkas.
+ */
+export async function validateLogoFile(
+  file: File
+): Promise<
+  { ok: true; extension: LogoExtension } | { ok: false; message: string }
+> {
+  if (!file || typeof file.slice !== "function") {
+    return { ok: false, message: LOGO_ERROR_MESSAGE };
+  }
+
+  if (
+    !LOGO_ALLOWED_TYPES.includes(
+      file.type as (typeof LOGO_ALLOWED_TYPES)[number]
+    )
+  ) {
+    return { ok: false, message: LOGO_ERROR_MESSAGE };
+  }
+
+  if (file.size <= 0 || file.size > LOGO_MAX_BYTES) {
+    return { ok: false, message: LOGO_ERROR_MESSAGE };
+  }
+
+  try {
+    const slice = file.slice(0, 12);
+    const buffer = await slice.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    if (file.type === "image/png") {
+      if (
+        bytes.length >= 8 &&
+        bytes[0] === 0x89 &&
+        bytes[1] === 0x50 &&
+        bytes[2] === 0x4e &&
+        bytes[3] === 0x47
+      ) {
+        return { ok: true, extension: "png" };
+      }
+    } else if (file.type === "image/jpeg") {
+      if (
+        bytes.length >= 3 &&
+        bytes[0] === 0xff &&
+        bytes[1] === 0xd8 &&
+        bytes[2] === 0xff
+      ) {
+        return { ok: true, extension: "jpg" };
+      }
+    } else if (file.type === "image/webp") {
+      if (
+        bytes.length >= 12 &&
+        bytes[0] === 0x52 &&
+        bytes[1] === 0x49 &&
+        bytes[2] === 0x46 &&
+        bytes[3] === 0x46 &&
+        bytes[8] === 0x57 &&
+        bytes[9] === 0x45 &&
+        bytes[10] === 0x42 &&
+        bytes[11] === 0x50
+      ) {
+        return { ok: true, extension: "webp" };
+      }
+    }
+  } catch {
+    return { ok: false, message: LOGO_ERROR_MESSAGE };
+  }
+
+  return { ok: false, message: LOGO_ERROR_MESSAGE };
+}
+
+/**
+ * Menghasilkan jalur penyimpanan logo di bucket 'company-logos'.
+ * Format: "${companyId}/logo-${timestamp}.${extension}" selaras dengan
+ * fungsi database owns_logo_folder() yang memeriksa folder level pertama.
+ */
+export function buildLogoPath(
+  companyId: number | string,
+  extension: LogoExtension
+): string {
+  return `${companyId}/logo-${Date.now()}.${extension}`;
+}
+

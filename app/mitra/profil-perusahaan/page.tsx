@@ -3,7 +3,12 @@ import type { Metadata } from "next";
 import { Building2, ShieldCheck, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { updateProfilPerusahaanAction } from "@/app/actions/mitra";
+import {
+  updateProfilPerusahaanAction,
+  uploadCompanyLogoAction,
+  deleteCompanyLogoAction,
+} from "@/app/actions/mitra";
+import { LogoUpload } from "./LogoUpload";
 import {
   ProfilPerusahaanForm,
   type ProfilPerusahaanData,
@@ -32,6 +37,7 @@ export default async function ProfilPerusahaanPage() {
   };
   let provinces: ProvinceOption[] = [];
   let cities: CityOption[] = [];
+  let logoUrl: string | null = null;
 
   try {
     const supabase = await createClient();
@@ -78,6 +84,13 @@ export default async function ProfilPerusahaanPage() {
 
     if (company) {
       const currentCity = cities.find((c) => c.id === company.city_id);
+      if (company.logo_path) {
+        const { data: publicUrlData } = supabase.storage
+          .from("company-logos")
+          .getPublicUrl(company.logo_path);
+        logoUrl = publicUrlData.publicUrl;
+      }
+
       companyData = {
         name: company.name || profile.name || "",
         website: company.website,
@@ -125,8 +138,17 @@ export default async function ProfilPerusahaanPage() {
         <div className="bg-white rounded-card border border-slate-200 shadow-sm p-6 sm:p-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div className="flex items-center gap-4 sm:gap-5">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-card bg-navy-700 text-white font-bold text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-xs border-2 border-white ring-2 ring-navy-100">
-                <Building2 className="w-8 h-8" aria-hidden="true" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-card bg-navy-700 text-white font-bold text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-xs border-2 border-white ring-2 ring-navy-100 overflow-hidden">
+                {logoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={logoUrl}
+                    alt={`Logo ${companyData.name}`}
+                    className="w-full h-full object-contain p-1.5 bg-white"
+                  />
+                ) : (
+                  <Building2 className="w-8 h-8" aria-hidden="true" />
+                )}
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -152,8 +174,17 @@ export default async function ProfilPerusahaanPage() {
           provinces={provinces}
           cities={cities}
           onSave={updateProfilPerusahaanAction}
+          logoUploadComponent={
+            <LogoUpload
+              initialLogoUrl={logoUrl}
+              companyName={companyData.name}
+              onUploadAction={uploadCompanyLogoAction}
+              onDeleteAction={deleteCompanyLogoAction}
+            />
+          }
         />
       </div>
     </div>
   );
 }
+
