@@ -242,6 +242,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T7 `fix(ui): samakan nilai Badge dengan database dan warna StatusBadge dengan PRD`
 - [x] T8 `refactor(ui): jadikan aksi EmptyState wajib dan satukan gaya tombol link lewat ButtonLink`
 - [x] T9 `docs: samakan AGENTS.md bagian 5 dengan PRD v2.0`
+- [x] T10 `chore: pasang dependensi animasi gsap dan @gsap/react`
 
 ## Catatan Penting Agent
 
