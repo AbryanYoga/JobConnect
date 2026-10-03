@@ -6,6 +6,8 @@ import {
   Role,
 } from "@/lib/navigation";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { LogoutButton } from "@/components/auth/LogoutButton";
+import { createClient } from "@/lib/supabase/server";
 import { NavLink } from "./NavLink";
 import { MobileMenu } from "./MobileMenu";
 
@@ -13,9 +15,38 @@ interface NavbarProps {
   role?: Role;
 }
 
-export function Navbar({ role = "tamu" }: NavbarProps) {
-  const links = NAV_LINKS_BY_ROLE[role] || NAV_LINKS_BY_ROLE.tamu;
-  const actions = NAV_ACTIONS_BY_ROLE[role] || [];
+export async function Navbar({ role }: NavbarProps = {}) {
+  let userRole: Role = role || "tamu";
+
+  if (!role) {
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        if (profile?.role === "admin") {
+          userRole = "admin";
+        } else if (profile?.role === "company") {
+          userRole = "perusahaan";
+        } else {
+          userRole = "pelamar";
+        }
+      }
+    } catch {
+      userRole = "tamu";
+    }
+  }
+
+  const links = NAV_LINKS_BY_ROLE[userRole] || NAV_LINKS_BY_ROLE.tamu;
+  const actions = NAV_ACTIONS_BY_ROLE[userRole] || [];
 
   return (
     <header className="sticky top-0 z-40 w-full h-16 bg-white/85 backdrop-blur-sm border-b border-slate-200">
@@ -88,10 +119,12 @@ export function Navbar({ role = "tamu" }: NavbarProps) {
               </ButtonLink>
             );
           })}
+
+          {userRole !== "tamu" && <LogoutButton variant="ghost" size="md" />}
         </div>
 
         {/* Menu Navigasi Layar Kecil (Mobile) */}
-        <MobileMenu links={links} actions={actions} />
+        <MobileMenu links={links} actions={actions} role={userRole} />
       </div>
     </header>
   );

@@ -40,7 +40,7 @@ export default function RootLayout({
         >
           Lewati ke konten
         </a>
-        <Navbar role="tamu" />
+        <Navbar />
         <main id="konten" className="flex-1">
           {children}
         </main>

@@ -96,7 +96,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 071 `feat(auth): buat halaman login dengan validasi email dan password`
 - [x] 072 `feat(auth): sambungkan login ke Supabase Auth dan tangani pesan error`
 - [x] 073 `feat(auth): buat fungsionalitas logout`
-- [ ] 074 `feat(navbar): sesuaikan menu navigasi berdasarkan sesi dan peran pengguna`
+- [x] 074 `feat(navbar): sesuaikan menu navigasi berdasarkan sesi dan peran pengguna`
 - [ ] 075 `feat(profil): buat halaman profil pelamar`
 - [ ] 076 `feat(profil): aktifkan simpan perubahan nama, telepon, dan headline`
 - [ ] 077 `feat(mitra): buat halaman profil perusahaan mitra`

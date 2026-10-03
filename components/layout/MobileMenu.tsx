@@ -2,16 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { NavAction, NavItem } from "@/lib/navigation";
+import { NavAction, NavItem, Role } from "@/lib/navigation";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 import { NavLink } from "./NavLink";
 
 interface MobileMenuProps {
   links: NavItem[];
   actions: NavAction[];
+  role?: Role;
 }
 
-export function MobileMenu({ links, actions }: MobileMenuProps) {
+export function MobileMenu({ links, actions, role = "tamu" }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -149,6 +151,24 @@ export function MobileMenu({ links, actions }: MobileMenuProps) {
                     </ButtonLink>
                   );
                 })}
+
+                {role !== "tamu" && (
+                  <LogoutButton
+                    variant="outline"
+                    size="md"
+                    className="w-full justify-center mt-1"
+                  />
+                )}
+              </div>
+            )}
+
+            {actions.length === 0 && role !== "tamu" && (
+              <div className="mt-3 pt-3 border-t border-slate-200">
+                <LogoutButton
+                  variant="outline"
+                  size="md"
+                  className="w-full justify-center"
+                />
               </div>
             )}
           </nav>
