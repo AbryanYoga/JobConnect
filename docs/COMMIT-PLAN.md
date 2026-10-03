@@ -109,7 +109,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 081 `feat(middleware): proteksi rute mitra khusus akun perusahaan`
 - [x] 082 `feat(middleware): proteksi rute admin khusus akun berkedudukan admin`
 - [x] 083 `feat(middleware): proteksi rute pelamar agar wajib login`
-- [ ] 084 `feat(auth): buat halaman tidak berwenang 403`
+- [x] 084 `feat(auth): buat halaman tidak berwenang 403`
 
 ## Fase 8: Halaman Publik Beranda dan Jelajah Wilayah
 
