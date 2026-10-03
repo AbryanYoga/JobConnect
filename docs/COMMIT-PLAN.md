@@ -114,7 +114,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 ## Fase 8: Halaman Publik Beranda dan Jelajah Wilayah
 
 - [x] 085 `feat(beranda): buat section hero dengan kolom pencarian kata kunci`
-- [ ] 086 `feat(beranda): buat bar chip jelajah provinsi dengan scroll horizontal`
+- [x] 086 `feat(beranda): buat bar chip jelajah provinsi dengan scroll horizontal`
 - [ ] 087 `feat(beranda): buat section daftar kategori pekerjaan dengan jumlah lowongan`
 - [ ] 088 `feat(beranda): buat section kartu lowongan terbaru berstatus open`
 - [ ] 089 `feat(wilayah): buat halaman indeks seluruh 38 provinsi di /wilayah`
