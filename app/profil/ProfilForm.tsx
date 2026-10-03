@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { User, Phone, Mail, Sparkles, Bell, Check } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -29,6 +30,7 @@ interface ProfilFormProps {
 }
 
 export function ProfilForm({ initialData, onSave }: ProfilFormProps) {
+  const router = useRouter();
   const [name, setName] = useState(initialData.name);
   const [phone, setPhone] = useState(initialData.phone || "");
   const [headline, setHeadline] = useState(initialData.headline || "");
@@ -64,6 +66,7 @@ export function ProfilForm({ initialData, onSave }: ProfilFormProps) {
 
       if (res.success) {
         setSuccessMessage("Profil Anda berhasil diperbarui.");
+        router.refresh();
       } else if (res.error) {
         setErrors({ general: res.error });
       }
