@@ -60,23 +60,23 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 044 `chore: pasang dependensi supabase, zod, lucide-react`
 - [x] 045 `chore: tambah .env.example tanpa nilai rahasia`
 - [x] 046 `style: konfigurasi palet navy, slate, amber dan font Inter di Tailwind`
-- [ ] 047 `feat(layout): buat root layout dengan font Inter dan metadata`
-- [ ] 048 `feat(layout): buat komponen Navbar dengan deteksi peran`
-- [ ] 049 `feat(layout): buat komponen Footer dua kolom sederhana`
-- [ ] 050 `chore: siapkan arsitektur folder app, components, lib`
+- [x] 047 `feat(layout): buat root layout dengan font Inter dan metadata`
+- [x] 048 `feat(layout): buat komponen Navbar dengan deteksi peran`
+- [x] 049 `feat(layout): buat komponen Footer dua kolom sederhana`
+- [x] 050 `chore: siapkan arsitektur folder app, components, lib`
 
 ## Fase 4: Komponen UI Dasar (Antislop Design System)
 
-- [ ] 051 `feat(ui): buat komponen Button dengan varian tombol dan ukuran`
-- [ ] 052 `feat(ui): buat komponen Badge untuk tipe kerja dan mode kerja`
-- [ ] 053 `feat(ui): buat komponen StatusBadge untuk delapan status lamaran`
-- [ ] 054 `feat(ui): buat komponen EmptyState dengan tombol aksi lanjutan`
-- [ ] 055 `feat(ui): buat komponen Skeleton untuk indikator loading data`
-- [ ] 056 `feat(ui): buat komponen ErrorState dengan tombol coba lagi`
-- [ ] 057 `feat(ui): buat komponen Modal yang dapat ditutup dengan tombol Escape`
-- [ ] 058 `feat(ui): buat komponen Input, Select, Textarea dengan label dan error`
-- [ ] 059 `style(ui): tambah focus ring yang kontras pada seluruh elemen interaktif`
-- [ ] 060 `feat(ui): buat halaman not-found 404 kustom`
+- [x] 051 `feat(ui): buat komponen Button dengan varian tombol dan ukuran`
+- [x] 052 `feat(ui): buat komponen Badge untuk tipe kerja dan mode kerja`
+- [x] 053 `feat(ui): buat komponen StatusBadge untuk delapan status lamaran`
+- [x] 054 `feat(ui): buat komponen EmptyState dengan tombol aksi lanjutan`
+- [x] 055 `feat(ui): buat komponen Skeleton untuk indikator loading data`
+- [x] 056 `feat(ui): buat komponen ErrorState dengan tombol coba lagi`
+- [x] 057 `feat(ui): buat komponen Modal yang dapat ditutup dengan tombol Escape`
+- [x] 058 `feat(ui): buat komponen Input, Select, Textarea dengan label dan error`
+- [x] 059 `style(ui): tambah focus ring yang kontras pada seluruh elemen interaktif`
+- [x] 060 `feat(ui): buat halaman not-found 404 kustom`
 
 ## Fase 5: Integrasi Klien Supabase dan Validasi Zod
 
@@ -237,6 +237,8 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T2 `docs: netralkan penyebutan nama platform di README dan PRD`
 - [x] T3 `docs: jadikan analisis AI opsional bagi pelamar di PRD dan rencana commit`
 - [x] T4 `db: izinkan lamaran tanpa persetujuan AI dan lewati analisis otomatis`
+- [x] T5 `docs: perbarui spesifikasi tata letak UI di PRD`
+- [x] T6 `docs: sinkronkan centang commit fase 3 dan fase 4 di COMMIT-PLAN`
 
 ## Catatan Penting Agent
 
