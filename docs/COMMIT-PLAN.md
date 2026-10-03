@@ -87,7 +87,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 065 `feat(validasi): buat skema Zod untuk registrasi dan login`
 - [x] 066 `feat(validasi): buat skema Zod untuk profil pelamar dan perusahaan`
 - [x] 067 `feat(validasi): buat skema Zod untuk kriteria lowongan terstruktur`
-- [ ] 068 `feat(validasi): buat skema Zod untuk form lamaran dan file CV`
+- [x] 068 `feat(validasi): buat skema Zod untuk form lamaran dan file CV`
 
 ## Fase 6: Autentikasi dan Profil Pengguna
 
