@@ -163,7 +163,7 @@ export default async function HomePage() {
 
   return (
     <main id="main-content" className="min-h-screen bg-slate-50">
-      <HeroSection />
+      <HeroSection provinces={provinces} />
       <ProvinceChipsBar provinces={provinces} />
       <CategorySection categories={categoriesWithCount} />
       <LatestJobsSection jobs={latestJobs} />

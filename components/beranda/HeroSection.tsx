@@ -4,25 +4,27 @@ import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import {
-  Search,
-  ShieldCheck,
-  Clock,
-  Cpu,
-  MapPin,
-  ArrowRight,
-  Sparkles,
-} from "lucide-react";
+import { Search, MapPin, ShieldCheck, CheckCircle2, CircleDollarSign } from "lucide-react";
 import Link from "next/link";
 
-export function HeroSection() {
+export interface ProvinceOption {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+interface HeroSectionProps {
+  provinces?: ProvinceOption[];
+}
+
+export function HeroSection({ provinces = [] }: HeroSectionProps) {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const [keyword, setKeyword] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
 
   useGSAP(
     () => {
-      // Periksa preferensi reduced motion pengguna
       const prefersReducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
       ).matches;
@@ -31,49 +33,48 @@ export function HeroSection() {
         return;
       }
 
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
 
       tl.from(".hero-badge", {
-        y: -15,
         opacity: 0,
-        duration: 0.6,
+        y: -10,
+        duration: 0.5,
       })
         .from(
           ".hero-title",
           {
-            y: 20,
             opacity: 0,
-            duration: 0.7,
+            y: 15,
+            duration: 0.6,
           },
-          "-=0.3"
+          "-=0.2"
         )
         .from(
           ".hero-subtitle",
           {
-            y: 15,
             opacity: 0,
-            duration: 0.6,
+            y: 12,
+            duration: 0.5,
           },
-          "-=0.4"
+          "-=0.3"
         )
         .from(
           ".hero-search",
           {
-            y: 25,
             opacity: 0,
-            duration: 0.7,
+            y: 15,
+            duration: 0.6,
           },
-          "-=0.3"
+          "-=0.2"
         )
         .from(
-          ".hero-pillar",
+          ".hero-guarantee",
           {
-            y: 20,
             opacity: 0,
+            y: 10,
             duration: 0.5,
-            stagger: 0.1,
           },
-          "-=0.3"
+          "-=0.2"
         );
     },
     { scope: containerRef }
@@ -82,8 +83,21 @@ export function HeroSection() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const query = keyword.trim();
+    const params = new URLSearchParams();
+
     if (query) {
-      router.push(`/lowongan?q=${encodeURIComponent(query)}`);
+      params.set("q", query);
+    }
+
+    if (selectedLocation === "remote") {
+      params.set("mode", "remote");
+    } else if (selectedLocation) {
+      params.set("wilayah", selectedLocation);
+    }
+
+    const queryString = params.toString();
+    if (queryString) {
+      router.push(`/lowongan?${queryString}`);
     } else {
       router.push("/lowongan");
     }
@@ -91,8 +105,8 @@ export function HeroSection() {
 
   const popularKeywords = [
     "Operator Produksi",
-    "Teknisi Listrik",
     "Staff Administrasi",
+    "Teknisi Listrik",
     "Akuntansi",
     "Teknologi Informasi",
   ];
@@ -101,54 +115,45 @@ export function HeroSection() {
     <section
       ref={containerRef}
       aria-labelledby="hero-heading"
-      className="relative overflow-hidden bg-gradient-to-b from-navy-950 via-navy-900 to-slate-900 text-white pt-16 pb-20 sm:pt-24 sm:pb-28"
+      className="bg-white border-b border-slate-200 pt-12 pb-14 sm:pt-16 sm:pb-20"
     >
-      {/* Aksen Latar Belakang Geometris Halus */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-15"
-        aria-hidden="true"
-      >
-        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-navy-500 blur-3xl" />
-        <div className="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-amber-500/30 blur-3xl" />
-      </div>
-
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center space-y-6">
-          {/* Lencana Pil Penanda Jangkauan */}
-          <div className="hero-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-xs border border-white/15 text-xs sm:text-sm font-medium text-navy-100 shadow-xs">
-            <span className="flex h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-            <span>Portal Lowongan Terverifikasi • 38 Provinsi</span>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl">
+          {/* Label Kontekstual Tanpa Efek AI */}
+          <div className="hero-badge mb-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm text-xs font-semibold uppercase tracking-wider bg-navy-50 text-navy-800 border border-navy-100">
+              <ShieldCheck className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
+              <span>Portal Bursa Kerja Terverifikasi Indonesia</span>
+            </span>
           </div>
 
-          {/* Judul Utama Berkekuatan Tinggi */}
+          {/* Judul Utama yang Kuat dan Manusiawi */}
           <h1
             id="hero-heading"
-            className="hero-title text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]"
+            className="hero-title text-3xl sm:text-4xl lg:text-5xl font-black text-navy-950 tracking-tight leading-[1.2]"
           >
-            Temukan Karier Impian,{" "}
-            <span className="text-amber-400">Terhubung Langsung</span> ke Seluruh
-            Indonesia
+            Lowongan Kerja Resmi dan Terverifikasi di 38 Provinsi
           </h1>
 
-          {/* Subjudul Penjelas Nilai Platform */}
-          <p className="hero-subtitle text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto">
-            Platform bursa kerja transparan dengan verifikasi manual oleh admin,
-            bebas risiko penipuan, bebas ghosting, dan seleksi adil untuk talenta
-            di 514 kota dan kabupaten.
+          {/* Subjudul Lugas */}
+          <p className="hero-subtitle text-base sm:text-lg text-slate-600 mt-4 leading-relaxed">
+            Temukan kesempatan karier dari perusahaan yang dimoderasi manual oleh admin.
+            Proses seleksi transparan, tanpa risiko ghosting, dan bebas pungutan liar.
           </p>
 
-          {/* Kotak Pencarian Terpadu Melayang */}
-          <div className="hero-search pt-2 max-w-2xl mx-auto">
+          {/* Konsol Pencarian Terpadu Dua Kolom */}
+          <div className="hero-search mt-8">
             <form
               onSubmit={handleSearchSubmit}
               noValidate
               role="search"
-              aria-label="Pencarian lowongan di beranda"
-              className="p-2 sm:p-2.5 rounded-card bg-white text-slate-900 shadow-lg border border-slate-200/80 flex flex-col sm:flex-row items-stretch gap-2"
+              aria-label="Pencarian lowongan kerja"
+              className="bg-slate-50 p-2 sm:p-2.5 rounded-card border border-slate-300 shadow-sm flex flex-col md:flex-row items-stretch gap-2"
             >
-              <div className="flex-1 relative flex items-center">
+              {/* Kolom Kata Kunci */}
+              <div className="flex-1 relative flex items-center bg-white rounded-control border border-slate-200 focus-within:border-navy-600 focus-within:ring-1 focus-within:ring-navy-600">
                 <Search
-                  className="w-5 h-5 text-slate-400 absolute left-3.5 pointer-events-none"
+                  className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none"
                   aria-hidden="true"
                 />
                 <input
@@ -156,33 +161,56 @@ export function HeroSection() {
                   type="text"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="Cari posisi kerja, keahlian, atau profesi..."
-                  className="w-full pl-11 pr-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0 rounded-control min-h-[44px]"
-                  aria-label="Kata kunci pencarian lowongan"
+                  placeholder="Posisi kerja, keahlian, atau perusahaan..."
+                  className="w-full pl-10 pr-3 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none min-h-[44px] rounded-control"
+                  aria-label="Kata kunci lowongan kerja"
                 />
               </div>
 
+              {/* Kolom Pemilih Wilayah / Provinsi */}
+              <div className="md:w-64 relative flex items-center bg-white rounded-control border border-slate-200 focus-within:border-navy-600 focus-within:ring-1 focus-within:ring-navy-600">
+                <MapPin
+                  className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none"
+                  aria-hidden="true"
+                />
+                <select
+                  id="hero-location-select"
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                  className="w-full pl-10 pr-8 py-3 text-sm text-slate-800 bg-transparent focus:outline-none min-h-[44px] rounded-control appearance-none cursor-pointer"
+                  aria-label="Pilih wilayah atau provinsi"
+                >
+                  <option value="">Semua Wilayah</option>
+                  <option value="remote">Kerja Remote (Dari Mana Saja)</option>
+                  {provinces.map((prov) => (
+                    <option key={prov.id} value={prov.slug}>
+                      {prov.name}
+                    </option>
+                  ))}
+                </select>
+                <span className="pointer-events-none absolute right-3 text-xs text-slate-400">
+                  ▼
+                </span>
+              </div>
+
+              {/* Tombol Eksekusi Pencarian */}
               <button
                 type="submit"
                 id="hero-search-button"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-control bg-navy-700 hover:bg-navy-800 active:bg-navy-900 text-white font-medium text-sm transition-colors shadow-xs min-h-[44px] shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-500"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-control bg-navy-800 hover:bg-navy-900 active:bg-navy-950 text-white font-medium text-sm transition-colors shadow-xs min-h-[44px] shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-700"
               >
-                <span>Cari Lowongan</span>
-                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                Cari Lowongan
               </button>
             </form>
 
-            {/* Tag Kata Kunci Populer */}
-            <div className="flex items-center justify-center gap-1.5 flex-wrap pt-3 text-xs text-slate-300">
-              <span className="text-slate-400 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
-                Pencarian populer:
-              </span>
+            {/* Kata Kunci Sering Dicari (Tanpa Ikon Sparkles AI) */}
+            <div className="flex items-center gap-2 flex-wrap mt-3 text-xs text-slate-600">
+              <span className="text-slate-500 font-medium">Sering dicari:</span>
               {popularKeywords.map((item) => (
                 <Link
                   key={item}
                   href={`/lowongan?q=${encodeURIComponent(item)}`}
-                  className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white transition-colors border border-white/10"
+                  className="px-2.5 py-1 rounded-sm bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-navy-950 transition-colors border border-slate-200"
                 >
                   {item}
                 </Link>
@@ -191,62 +219,48 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* 4 Pilar Kepercayaan JobConnect */}
-        <div className="mt-16 sm:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {/* Pilar 1 */}
-          <div className="hero-pillar p-5 rounded-card bg-white/5 backdrop-blur-xs border border-white/10 hover:border-white/25 transition-all">
-            <div className="w-10 h-10 rounded-control bg-amber-400/20 text-amber-400 flex items-center justify-center mb-3.5">
-              <ShieldCheck className="w-5 h-5" aria-hidden="true" />
+        {/* Jalur Transparansi dan Kepastian (Bukan 4 Kartu Seragam AI) */}
+        <div className="hero-guarantee mt-12 pt-8 border-t border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-sm bg-navy-50 text-navy-800 border border-navy-100 flex items-center justify-center shrink-0 mt-0.5">
+              <ShieldCheck className="w-4 h-4" aria-hidden="true" />
             </div>
-            <h2 className="text-base font-bold text-white tracking-tight">
-              Verifikasi ACC Admin
-            </h2>
-            <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-              Seluruh lowongan dimoderasi manual sebelum tayang untuk melindungi
-              pelamar dari penipuan dan pungutan liar.
-            </p>
+            <div>
+              <h2 className="text-sm font-bold text-navy-950">
+                Moderasi Manual Admin
+              </h2>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                Setiap lowongan dan profil perusahaan diverifikasi keabsahannya sebelum tayang guna mencegah penipuan.
+              </p>
+            </div>
           </div>
 
-          {/* Pilar 2 */}
-          <div className="hero-pillar p-5 rounded-card bg-white/5 backdrop-blur-xs border border-white/10 hover:border-white/25 transition-all">
-            <div className="w-10 h-10 rounded-control bg-sky-400/20 text-sky-400 flex items-center justify-center mb-3.5">
-              <Clock className="w-5 h-5" aria-hidden="true" />
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-sm bg-navy-50 text-navy-800 border border-navy-100 flex items-center justify-center shrink-0 mt-0.5">
+              <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
             </div>
-            <h2 className="text-base font-bold text-white tracking-tight">
-              Bebas Ghosting
-            </h2>
-            <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-              Kepastian status dengan 8 tahapan lamaran transparan dan riwayat
-              waktu pembaruan secara real-time.
-            </p>
+            <div>
+              <h2 className="text-sm font-bold text-navy-950">
+                Transparansi 8 Status Seleksi
+              </h2>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                Pelamar dapat memantau setiap langkah proses rekrutmen secara real-time tanpa ketidakpastian.
+              </p>
+            </div>
           </div>
 
-          {/* Pilar 3 */}
-          <div className="hero-pillar p-5 rounded-card bg-white/5 backdrop-blur-xs border border-white/10 hover:border-white/25 transition-all">
-            <div className="w-10 h-10 rounded-control bg-emerald-400/20 text-emerald-400 flex items-center justify-center mb-3.5">
-              <Cpu className="w-5 h-5" aria-hidden="true" />
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-sm bg-navy-50 text-navy-800 border border-navy-100 flex items-center justify-center shrink-0 mt-0.5">
+              <CircleDollarSign className="w-4 h-4" aria-hidden="true" />
             </div>
-            <h2 className="text-base font-bold text-white tracking-tight">
-              Seleksi Adil & Opsional
-            </h2>
-            <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-              Analisis kesesuaian CV oleh AI bersifat pilihan mandiri tanpa
-              menolak pelamar secara otomatis.
-            </p>
-          </div>
-
-          {/* Pilar 4 */}
-          <div className="hero-pillar p-5 rounded-card bg-white/5 backdrop-blur-xs border border-white/10 hover:border-white/25 transition-all">
-            <div className="w-10 h-10 rounded-control bg-indigo-400/20 text-indigo-400 flex items-center justify-center mb-3.5">
-              <MapPin className="w-5 h-5" aria-hidden="true" />
+            <div>
+              <h2 className="text-sm font-bold text-navy-950">
+                Nol Pungutan Biaya
+              </h2>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                Seluruh tahapan pendaftaran akun, pencarian lowongan, hingga pengiriman berkas 100% gratis bagi pencari kerja.
+              </p>
             </div>
-            <h2 className="text-base font-bold text-white tracking-tight">
-              Jangkauan 38 Provinsi
-            </h2>
-            <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-              Data wilayah resmi Kemendagri menjangkau peluang kerja di 514 kota,
-              kabupaten, hingga lowongan kerja remote.
-            </p>
           </div>
         </div>
       </div>

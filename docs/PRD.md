@@ -245,26 +245,38 @@ Blok yang kosong (nilai tambah, benefit) disembunyikan. Form lowongan **tidak me
 
 Proteksi rute lewat `middleware.ts`: `/mitra/*` untuk peran `company`, `/admin/*` untuk peran `admin`, halaman pelamar butuh login. Peran diperiksa dari `profiles.role`, bukan dari data yang bisa diubah pengguna.
 
-### 4.1 Rancangan Tata Letak Halaman Publik (Inspirasi Desain Modern)
+### 4.1 Rancangan Tata Letak Halaman Publik (Inspirasi Desain Modern MotionSites)
 
-Untuk memberikan kesan pertama yang tepercaya, elegan, dan profesional bagi pengguna baru, tata letak halaman publik mengadopsi pola antarmuka modern yang terstruktur rapi:
+Mengadopsi referensi arsitektur visual modern dari MotionSites (seperti pola direktori Zenith Realty, hero berdaya tarik tinggi EMBER, dan kartu pilar Glow Features), tata letak halaman publik JobConnect dirancang terstruktur, profesional, dan meyakinkan bagi pengguna baru:
 
 1. **Halaman Beranda (`/`):**
-   - **Hero Perkenalan:** Memuat lencana pil (*pill badge*) penanda di atas judul ("Portal Lowongan Terverifikasi - 38 Provinsi"), judul utama (*high-impact headline*) yang lugas, dan subjudul penjelas yang menumbuhkan rasa percaya pelamar serta perusahaan mitra.
-   - **Kotak Pencarian Terpadu:** Kolom input kata kunci posisi, pilihan ringkas wilayah, dan tombol aksi "Cari Lowongan".
-   - **Pilar Kepercayaan (Trust Pillars):** 4 blok ringkas penyampai nilai pembeda utama JobConnect:
-     - *Verifikasi ACC Admin:* Seluruh lowongan dimoderasi manual sebelum tayang bebas penipuan.
-     - *Bebas Ghosting:* Transparansi alur 8 status lamaran dengan catatan riwayat waktu nyata.
-     - *Seleksi Adil & Opsional:* Analisis CV oleh AI bersifat pilihan mandiri pelamar tanpa diskriminasi.
-     - *Jangkauan 38 Provinsi:* Data wilayah resmi hingga tingkat kota dan kabupaten di Indonesia.
-   - **Bar Jelajah Wilayah:** Baris chip interaktif provinsi yang memiliki lowongan aktif (dapat digeser horizontal di ponsel).
-   - **Kategori Pekerjaan & Lowongan Terbaru:** Daftar kategori dengan jumlah lowongan aktif serta grid kartu lowongan terbaru berstatus `open`.
+   - **Hero Modern (Inspirasi: EMBER / NOVA Space Systems):**
+     - *Pill Badge Penanda:* Lencana membulat di atas judul ("Portal Lowongan Terverifikasi • 38 Provinsi") sebagai sinyal kualitas dan jangkauan nasional.
+     - *High-Impact Headline:* Judul tebal berjarak huruf rapat (*tight tracking*) yang lugas: mempertemukan pencari kerja dengan perusahaan mitra terverifikasi.
+     - *Kotak Pencarian Terpadu (Floating Search Box):* Kotak pencarian melayang dengan bayangan halus yang menyatukan input kata kunci posisi, pilihan cepat wilayah, dan tombol utama "Cari Lowongan".
+   - **Pilar Kepercayaan (Inspirasi: Glow Features / AKOR Security):**
+     - 4 kartu fitur berlatar bersih dengan batas tipis yang meyakinkan pengguna baru:
+       1. *Verifikasi ACC Admin:* Setiap lowongan diperiksa dan disetujui admin sebelum tayang untuk mencegah penipuan.
+       2. *Bebas Ghosting:* Transparansi alur 8 status lamaran dengan riwayat waktu yang jelas.
+       3. *Seleksi Adil & Opsional:* Analisis CV oleh AI bersifat pilihan sukarela pelamar tanpa diskriminasi.
+       4. *Jelajah Wilayah 38 Provinsi:* Data wilayah resmi Kemendagri hingga 514 kota dan kabupaten se-Indonesia.
+   - **Bar Jelajah Wilayah:** Baris chip horizontal provinsi berlowongan aktif yang dapat digeser mulus di perangkat mobile.
+   - **Kategori Pekerjaan & Lowongan Terbaru:** Segmentasi kategori berindikator jumlah lowongan serta kartu lowongan terbaru berstatus `open`.
+   - **Banner Ajakan (Inspirasi: Community CTA):** Kotak ajakan ganda di bagian bawah halaman untuk pelamar ("Mulai Melamar Pekerjaan") dan perusahaan ("Pasang Lowongan Perusahaan").
 
-2. **Halaman Eksplorasi Lowongan (`/lowongan`):**
+2. **Halaman Eksplorasi Lowongan (`/lowongan`) (Inspirasi: Zenith Realty):**
    - **Tata Letak Dua Kolom Desktop:**
-     - **Kolom Kiri (Sidebar Filter Menetap):** Panel filter di sisi kiri layar yang memuat pencarian kata kunci, dropdown berjenjang (Provinsi lalu Kota/Kabupaten), pilihan kategori, tipe kerja (Full-time, Part-time, Kontrak), dan mode kerja (WFO, Remote, Hybrid).
-     - **Kolom Kanan (Daftar Kartu Lowongan):** Grid kartu lowongan bersih dengan logo perusahaan, judul posisi, lencana tipe kerja, tag keahlian wajib, rentang gaji, dan kontrol paginasi 10 data per halaman.
-   - **Responsif Layar Ponsel (Mobile):** Pada layar di bawah 768px, sidebar filter di sisi kiri disembunyikan dan dapat dibuka lewat tombol "Filter Lowongan" (drawer pop-up) dengan target sentuh minimal 44x44px tanpa scroll horizontal.
+     - **Kolom Kiri (Sidebar Filter Menetap):** Panel navigasi filter di sisi kiri yang menetap (*sticky sidebar*) berisi:
+       - Kolom pencarian kata kunci dengan pembaruan otomatis (*debounce*).
+       - Pemilihan wilayah berjenjang (pilih Provinsi, lalu pilih Kota/Kabupaten).
+       - Pilihan kategori pekerjaan berbentuk daftar centang dengan penghitung lowongan.
+       - Filter tipe kerja (Full-time, Part-time, Kontrak) dan mode kerja (WFO, Remote, Hybrid) berbentuk tombol pil (*pill chips*).
+     - **Kolom Kanan (Katalog Kartu Lowongan):**
+       - Ringkasan jumlah lowongan yang ditemukan.
+       - Grid kartu lowongan (*Job Cards*) interaktif dengan logo perusahaan (atau avatar inisial), nama posisi, lencana tipe kerja, tag keahlian wajib, rentang gaji, dan tanggal tayang.
+       - Navigasi paginasi bersih (10 lowongan per halaman).
+   - **Responsif Layar Ponsel (Mobile):**
+     - Di layar ponsel (< 768px), sidebar filter di kiri disembunyikan dan dapat dipanggil melalui tombol mengambang "Filter Lowongan" (drawer modal) dengan target sentuh minimal 44x44px tanpa scroll horizontal di 360px.
 
 ## 5. Alur lamaran dan keputusan akhir
 

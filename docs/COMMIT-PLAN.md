@@ -244,6 +244,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T9 `docs: samakan AGENTS.md bagian 5 dengan PRD v2.0`
 - [x] T10 `chore: pasang dependensi animasi gsap dan @gsap/react`
 - [x] T11 `fix(auth): dukung publishable key dan pengalihan rute dashboard mitra`
+- [x] T12 `style(beranda): desain ulang beranda bebas template AI dengan standar antislop`
 
 ## Catatan Penting Agent
 
