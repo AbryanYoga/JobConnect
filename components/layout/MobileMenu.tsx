@@ -11,9 +11,26 @@ interface MobileMenuProps {
   links: NavItem[];
   actions: NavAction[];
   role?: Role;
+  userName?: string | null;
 }
 
-export function MobileMenu({ links, actions, role = "tamu" }: MobileMenuProps) {
+const ROLE_LABEL: Record<Role, string> = {
+  tamu: "",
+  pelamar: "Pencari Kerja",
+  perusahaan: "Perusahaan Mitra",
+  admin: "Admin",
+};
+
+function getUserInitials(name: string): string {
+  if (!name) return "?";
+  const words = name.trim().split(/\s+/);
+  if (words.length >= 2) {
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+}
+
+export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -92,6 +109,25 @@ export function MobileMenu({ links, actions, role = "tamu" }: MobileMenuProps) {
             className="absolute top-16 left-0 right-0 bg-white border-b border-slate-200 shadow-modal z-40 px-4 py-4 max-h-[calc(100dvh-4rem)] overflow-y-auto"
           >
             <div className="flex flex-col gap-1">
+              {role !== "tamu" && userName && (
+                <div className="flex items-center gap-3 px-3 py-3 mb-2 bg-slate-50 rounded-card border border-slate-200">
+                  <span
+                    className="w-10 h-10 rounded-sm bg-navy-700 text-white text-sm font-bold flex items-center justify-center shrink-0"
+                    aria-hidden="true"
+                  >
+                    {getUserInitials(userName)}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-navy-950 truncate">
+                      {userName}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {ROLE_LABEL[role]}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {links.map((link) => (
                 <NavLink
                   key={link.href}

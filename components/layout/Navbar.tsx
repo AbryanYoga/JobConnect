@@ -11,12 +11,22 @@ import { createClient } from "@/lib/supabase/server";
 import { NavLink } from "./NavLink";
 import { MobileMenu } from "./MobileMenu";
 
+function getUserInitials(name: string): string {
+  if (!name) return "?";
+  const words = name.trim().split(/\s+/);
+  if (words.length >= 2) {
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+}
+
 interface NavbarProps {
   role?: Role;
 }
 
 export async function Navbar({ role }: NavbarProps = {}) {
   let userRole: Role = role || "tamu";
+  let userName: string | null = null;
 
   if (!role) {
     try {
@@ -28,9 +38,11 @@ export async function Navbar({ role }: NavbarProps = {}) {
       if (user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("role")
+          .select("role, name")
           .eq("id", user.id)
           .single();
+
+        userName = profile?.name || null;
 
         if (profile?.role === "admin") {
           userRole = "admin";
@@ -79,8 +91,25 @@ export async function Navbar({ role }: NavbarProps = {}) {
           </nav>
         </div>
 
-        {/* Sisi Kanan Desktop: Tombol Aksi */}
+        {/* Sisi Kanan Desktop: Identitas Pengguna dan Tombol Aksi */}
         <div className="hidden md:flex items-center gap-3">
+          {userRole !== "tamu" && userName && (
+            <Link
+              href={userRole === "perusahaan" ? "/mitra/profil-perusahaan" : "/profil"}
+              className="flex items-center gap-2 rounded-control px-2 py-1.5 hover:bg-slate-100 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 min-h-[44px]"
+            >
+              <span
+                className="w-8 h-8 rounded-sm bg-navy-700 text-white text-xs font-bold flex items-center justify-center shrink-0"
+                aria-hidden="true"
+              >
+                {getUserInitials(userName)}
+              </span>
+              <span className="text-sm font-medium text-navy-950 max-w-[120px] truncate">
+                {userName}
+              </span>
+            </Link>
+          )}
+
           {actions.map((action) => {
             if (action.variant === "primary") {
               return (
@@ -124,7 +153,7 @@ export async function Navbar({ role }: NavbarProps = {}) {
         </div>
 
         {/* Menu Navigasi Layar Kecil (Mobile) */}
-        <MobileMenu links={links} actions={actions} role={userRole} />
+        <MobileMenu links={links} actions={actions} role={userRole} userName={userName} />
       </div>
     </header>
   );
