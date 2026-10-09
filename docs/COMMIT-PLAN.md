@@ -117,7 +117,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 086 `feat(beranda): buat bar chip jelajah provinsi dengan scroll horizontal`
 - [x] 087 `feat(beranda): buat section daftar kategori pekerjaan dengan jumlah lowongan`
 - [x] 088 `feat(beranda): buat section kartu lowongan terbaru berstatus open`
-- [ ] 089 `feat(wilayah): buat halaman indeks seluruh 38 provinsi di /wilayah`
+- [x] 089 `feat(wilayah): buat halaman indeks seluruh 38 provinsi di /wilayah`
 - [ ] 090 `feat(wilayah): buat halaman daftar kota kabupaten per provinsi`
 - [ ] 091 `feat(wilayah): buat halaman daftar lowongan per kota`
 - [ ] 092 `feat(wilayah): buat halaman khusus lowongan kerja remote`
