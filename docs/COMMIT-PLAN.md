@@ -120,7 +120,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 089 `feat(wilayah): buat halaman indeks seluruh 38 provinsi di /wilayah`
 - [x] 090 `feat(wilayah): buat halaman daftar kota kabupaten per provinsi`
 - [x] 091 `feat(wilayah): buat halaman daftar lowongan per kota`
-- [ ] 092 `feat(wilayah): buat halaman khusus lowongan kerja remote`
+- [x] 092 `feat(wilayah): buat halaman khusus lowongan kerja remote`
 - [ ] 093 `feat(ui): buat komponen Breadcrumb untuk navigasi hierarki wilayah`
 
 ## Fase 9: Eksplorasi Lowongan dan Profil Publik Perusahaan
