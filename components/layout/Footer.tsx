@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -9,9 +10,15 @@ export function Footer() {
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
           {/* Kolom Kiri: Identitas dan Deskripsi */}
           <div className="max-w-sm">
-            <span className="text-lg font-semibold text-white tracking-tight">
-              JobConnect
-            </span>
+            <Link href="/" className="inline-block mb-1" aria-label="JobConnect Beranda">
+              <Image
+                src="/logos/concept-2-lockup-dark.svg"
+                alt="JobConnect"
+                width={176}
+                height={32}
+                className="h-8 w-auto"
+              />
+            </Link>
             <p className="mt-2 text-sm text-slate-300 leading-relaxed">
               Portal lowongan kerja yang mempertemukan pencari kerja dengan
               perusahaan mitra.

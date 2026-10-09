@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <title>JobConnect - The Gateway Bridge (Symbol)</title>
+
+    <g transform="translate(4.0, 4.0) scale(0.92)">
+      <path fill="#0F172A" d="M 14 86 V 46 C 14 26 30 14 50 14 C 56 14 62 16 67 19 L 60 30 C 57 28 54 26 50 26 C 35 26 25 35 25 47 V 86 Z" />
+      <path fill="#2563EB" d="M 86 14 V 54 C 86 74 70 86 50 86 C 44 86 38 84 33 81 L 40 70 C 43 72 46 74 50 74 C 63 74 73 65 73 53 V 14 Z" />
+      <path fill="#F59E0B" fill-rule="evenodd" d="M 50 38 A 12 12 0 1 0 50 62 A 12 12 0 1 0 50 38 Z M 50 45 A 5 5 0 1 1 50 55 A 5 5 0 1 1 50 45 Z" />
+    </g>
+</svg>

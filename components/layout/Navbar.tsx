@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Briefcase } from "lucide-react";
+import Image from "next/image";
 import {
   NAV_ACTIONS_BY_ROLE,
   NAV_LINKS_BY_ROLE,
@@ -67,15 +67,17 @@ export async function Navbar({ role }: NavbarProps = {}) {
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="flex items-center gap-2.5 rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
+            className="flex items-center rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
             aria-label="JobConnect Beranda"
           >
-            <div className="w-9 h-9 rounded-control bg-navy-700 flex items-center justify-center text-white shrink-0 shadow-xs">
-              <Briefcase className="w-5 h-5" aria-hidden="true" />
-            </div>
-            <span className="font-semibold text-lg text-navy-900 tracking-tight">
-              JobConnect
-            </span>
+            <Image
+              src="/logos/concept-2-lockup-dark.svg"
+              alt="JobConnect"
+              width={187}
+              height={34}
+              className="h-8.5 w-auto"
+              priority
+            />
           </Link>
 
           {/* Navigasi Utama Desktop */}

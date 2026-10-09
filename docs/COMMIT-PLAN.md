@@ -246,6 +246,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T11 `fix(auth): dukung publishable key dan pengalihan rute dashboard mitra`
 - [x] T12 `style(beranda): desain ulang beranda bebas template AI dengan standar antislop`
 - [x] T13 `feat(navbar): tampilkan nama dan inisial pengguna di navbar setelah login`
+- [x] T14 `feat(brand): pasang logo resmi JobConnect pada navbar, footer, dan favicon`
 
 ## Catatan Penting Agent
 

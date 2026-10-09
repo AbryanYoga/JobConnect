@@ -20,6 +20,13 @@ export const metadata: Metadata = {
   },
   description:
     "Cari lowongan kerja berdasarkan kata kunci, kategori, dan wilayah di Indonesia lalu lamar pekerjaan langsung dengan mengunggah CV.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/logos/concept-2-symbol.png",
+  },
 };
 
 export const viewport: Viewport = {
