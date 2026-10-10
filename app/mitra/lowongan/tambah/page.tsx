@@ -51,6 +51,20 @@ export default async function TambahLowonganPage() {
 
   const categories = categoriesData || [];
 
+  // Ambil daftar provinsi dan kota resmi untuk dropdown berjenjang
+  const { data: provincesData } = await supabase
+    .from("provinces")
+    .select("id, name")
+    .order("name", { ascending: true });
+
+  const { data: citiesData } = await supabase
+    .from("cities")
+    .select("id, province_id, name, type")
+    .order("name", { ascending: true });
+
+  const provinces = provincesData || [];
+  const cities = citiesData || [];
+
   return (
     <div className="space-y-8">
       {/* Breadcrumb Navigasi */}
@@ -77,8 +91,8 @@ export default async function TambahLowonganPage() {
         </p>
       </div>
 
-      {/* Form Kriteria Terstruktur */}
-      <JobForm categories={categories} />
+      {/* Form Kriteria Terstruktur dengan Lokasi Berjenjang */}
+      <JobForm categories={categories} provinces={provinces} cities={cities} />
     </div>
   );
 }

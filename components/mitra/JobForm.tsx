@@ -10,6 +10,7 @@ import {
   Trash2,
   ArrowLeft,
   Bot,
+  MapPin,
 } from "lucide-react";
 import {
   JOB_TYPE_LABEL,
@@ -25,6 +26,18 @@ export interface CategoryOption {
   id: number;
   name: string;
   slug: string;
+}
+
+export interface ProvinceOption {
+  id: number;
+  name: string;
+}
+
+export interface CityOption {
+  id: number;
+  province_id: number;
+  name: string;
+  type?: string;
 }
 
 export interface JobFormData {
@@ -50,6 +63,8 @@ export interface JobFormData {
 
 interface JobFormProps {
   categories: CategoryOption[];
+  provinces?: ProvinceOption[];
+  cities?: CityOption[];
   initialData?: Partial<JobFormData>;
   isEditing?: boolean;
   onSubmitDraft?: (data: JobFormData) => Promise<void>;
@@ -58,6 +73,8 @@ interface JobFormProps {
 
 export function JobForm({
   categories,
+  provinces = [],
+  cities = [],
   initialData,
   isEditing = false,
 }: JobFormProps) {
@@ -79,6 +96,26 @@ export function JobForm({
   const [experienceMinYears, setExperienceMinYears] = useState<number>(
     initialData?.experienceMinYears ?? 0
   );
+
+  // Lokasi penempatan kerja (Provinsi dan Kota berjenjang)
+  const [provinceId, setProvinceId] = useState<number | "">(
+    initialData?.provinceId ?? ""
+  );
+  const [cityId, setCityId] = useState<number | "">(
+    initialData?.cityId ?? ""
+  );
+  const [locationDetail, setLocationDetail] = useState(
+    initialData?.locationDetail || ""
+  );
+
+  const availableCities = cities.filter(
+    (city) => city.province_id === Number(provinceId)
+  );
+
+  const handleProvinceChange = (newProvId: number | "") => {
+    setProvinceId(newProvId);
+    setCityId("");
+  };
 
   // Array kriteria terstruktur
   const [skills, setSkills] = useState<string[]>(
@@ -418,7 +455,97 @@ export function JobForm({
         </div>
       </section>
 
-      {/* 3. Tugas Utama & Fasilitas */}
+      {/* 3. Lokasi & Penempatan Kerja */}
+      <section className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-6">
+        <div className="flex items-center gap-2 pb-4 border-b border-black/[0.06]">
+          <div className="w-9 h-9 rounded-full bg-[#FAF8F0] border border-black/[0.08] flex items-center justify-center text-black shadow-2xs">
+            <MapPin className="w-4 h-4" aria-hidden="true" />
+          </div>
+          <div>
+            <h2 className="text-lg font-black text-black">
+              3. Lokasi & Penempatan Kerja
+            </h2>
+            <p className="text-xs text-slate-500 font-medium">
+              Provinsi dan kota penempatan kerja (berjenjang sesuai Kemendagri).
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {/* Dropdown Provinsi */}
+          <div className="space-y-2">
+            <label htmlFor="province" className="block text-sm font-bold text-black">
+              Provinsi Penempatan {workMode !== "remote" && <span className="text-red-500">*</span>}
+            </label>
+            <select
+              id="province"
+              name="province"
+              value={provinceId}
+              onChange={(e) => handleProvinceChange(e.target.value ? Number(e.target.value) : "")}
+              className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+            >
+              <option value="">-- Pilih Provinsi --</option>
+              {provinces.map((prov) => (
+                <option key={prov.id} value={prov.id}>
+                  {prov.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Dropdown Kota / Kabupaten Berjenjang */}
+          <div className="space-y-2">
+            <label htmlFor="city" className="block text-sm font-bold text-black">
+              Kota / Kabupaten Penempatan {workMode !== "remote" && <span className="text-red-500">*</span>}
+            </label>
+            <select
+              id="city"
+              name="city"
+              disabled={!provinceId}
+              value={cityId}
+              onChange={(e) => setCityId(e.target.value ? Number(e.target.value) : "")}
+              className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black disabled:opacity-50"
+            >
+              <option value="">
+                {!provinceId ? "-- Pilih Provinsi Terlebih Dahulu --" : "-- Pilih Kota / Kabupaten --"}
+              </option>
+              {availableCities.map((city) => (
+                <option key={city.id} value={city.id}>
+                  {city.type ? `${city.type} ` : ""}{city.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Catatan Area / Alamat Singkat */}
+        <div className="space-y-2">
+          <label htmlFor="locationDetail" className="block text-sm font-bold text-black">
+            Area atau Alamat Singkat Kantor (Opsional)
+          </label>
+          <input
+            id="locationDetail"
+            name="locationDetail"
+            type="text"
+            maxLength={JOB_LIMITS.locationDetail.max}
+            placeholder="Contoh: Dekat Tol Pasteur, Kawasan Industri Jababeka, atau nama gedung"
+            value={locationDetail}
+            onChange={(e) => setLocationDetail(e.target.value)}
+            className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+          />
+          {workMode === "remote" ? (
+            <p className="text-xs text-emerald-700 font-medium">
+              Mode kerja Remote: pemilihan lokasi bersifat opsional jika posisi dapat dikerjakan sepenuhnya dari mana saja.
+            </p>
+          ) : (
+            <p className="text-xs text-slate-500 font-medium">
+              Kota dan provinsi wajib dipilih untuk lowongan Onsite atau Hybrid.
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* 4. Rincian Tanggung Jawab & Benefit */}
       <section className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-6">
         <div className="flex items-center gap-2 pb-4 border-b border-black/[0.06]">
           <div className="w-9 h-9 rounded-full bg-[#FAF8F0] border border-black/[0.08] flex items-center justify-center text-black shadow-2xs">
@@ -426,7 +553,7 @@ export function JobForm({
           </div>
           <div>
             <h2 className="text-lg font-black text-black">
-              3. Rincian Tanggung Jawab & Benefit
+              4. Rincian Tanggung Jawab & Benefit
             </h2>
             <p className="text-xs text-slate-500 font-medium">
               Poin tugas utama, nilai tambah, dan fasilitas yang didapatkan.
