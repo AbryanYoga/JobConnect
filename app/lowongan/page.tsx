@@ -5,6 +5,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { SearchBar } from "@/components/lowongan/SearchBar";
 import { FilterPanel } from "@/components/lowongan/FilterPanel";
 import { JobCard } from "@/components/lowongan/JobCard";
+import { Pagination } from "@/components/ui/Pagination";
 import { Briefcase } from "lucide-react";
 import {
   type JobType,
@@ -286,6 +287,13 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
                 {jobs.map((job) => (
                   <JobCard key={job.id} job={job} />
                 ))}
+
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalItems={totalCount}
+                  pageSize={PAGE_SIZE}
+                />
               </div>
             )}
           </div>
