@@ -137,7 +137,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 10: Pengajuan Lowongan oleh Perusahaan dan ACC Admin
 
-- [ ] 103 `feat(mitra): buat layout dashboard mitra dengan navigasi samping`
+- [x] 103 `feat(mitra): buat layout dashboard mitra dengan navigasi samping`
 - [ ] 104 `feat(mitra): buat halaman ringkasan dashboard mitra`
 - [ ] 105 `feat(mitra): buat halaman daftar lowongan milik perusahaan`
 - [ ] 106 `feat(mitra): buat form tambah lowongan dengan kriteria terstruktur`
