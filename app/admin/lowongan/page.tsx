@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ApproveJobModal } from "@/components/admin/ApproveJobModal";
+import { RejectJobModal } from "@/components/admin/RejectJobModal";
 import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
@@ -477,11 +478,18 @@ export default async function AdminLowonganPage({
                     )}
 
                     {job.status === "pending" && (
-                      <ApproveJobModal
-                        jobId={job.id}
-                        jobTitle={job.title}
-                        companyName={companyName}
-                      />
+                      <>
+                        <ApproveJobModal
+                          jobId={job.id}
+                          jobTitle={job.title}
+                          companyName={companyName}
+                        />
+                        <RejectJobModal
+                          jobId={job.id}
+                          jobTitle={job.title}
+                          companyName={companyName}
+                        />
+                      </>
                     )}
                   </div>
                 </div>
