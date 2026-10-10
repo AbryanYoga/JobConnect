@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { JobForm, type JobFormData } from "@/components/mitra/JobForm";
+import { CloseJobButton } from "@/components/mitra/CloseJobButton";
 import {
   AlertTriangle,
   Clock,
@@ -176,19 +177,25 @@ export default async function EditLowonganPage({
             </h1>
           </div>
 
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-bold border ${
-              job.status === "open"
-                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                : job.status === "pending"
-                ? "bg-amber-50 text-amber-900 border-amber-300"
-                : job.status === "rejected"
-                ? "bg-red-50 text-red-800 border-red-200"
-                : "bg-slate-100 text-slate-800 border-slate-300"
-            }`}
-          >
-            Status Saat Ini: {job.status.toUpperCase()}
-          </span>
+          <div className="flex items-center gap-2">
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                job.status === "open"
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                  : job.status === "pending"
+                  ? "bg-amber-50 text-amber-900 border-amber-300"
+                  : job.status === "rejected"
+                  ? "bg-red-50 text-red-800 border-red-200"
+                  : "bg-slate-100 text-slate-800 border-slate-300"
+              }`}
+            >
+              Status Saat Ini: {job.status.toUpperCase()}
+            </span>
+
+            {job.status === "open" && (
+              <CloseJobButton jobId={job.id} jobTitle={job.title} />
+            )}
+          </div>
         </div>
 
         <p className="text-sm text-slate-600 font-medium max-w-2xl leading-relaxed">

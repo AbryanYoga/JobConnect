@@ -584,3 +584,79 @@ export async function submitJobAction(rawData: {
     return { success: false, error: msg };
   }
 }
+
+/**
+ * Server Action untuk menutup lowongan perusahaan (mengubah status open menjadi closed).
+ */
+export async function closeJobAction(jobId: number) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login telah berakhir. Silakan masuk kembali." };
+    }
+
+    const { data: company } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("owner_id", user.id)
+      .maybeSingle();
+
+    if (!company) {
+      return { success: false, error: "Profil perusahaan tidak ditemukan." };
+    }
+
+    // Ambil data lowongan
+    const { data: job, error: jobError } = await supabase
+      .from("jobs")
+      .select("id, status, slug")
+      .eq("id", jobId)
+      .eq("company_id", company.id)
+      .maybeSingle();
+
+    if (jobError || !job) {
+      return {
+        success: false,
+        error: "Lowongan tidak ditemukan atau Anda tidak berwenang mengelolanya.",
+      };
+    }
+
+    if (job.status === "closed") {
+      return { success: false, error: "Lowongan ini sudah dalam status ditutup." };
+    }
+
+    if (job.status !== "open") {
+      return {
+        success: false,
+        error: `Lowongan dengan status ${job.status} tidak dapat ditutup langsung.`,
+      };
+    }
+
+    const { error: updateError } = await supabase
+      .from("jobs")
+      .update({ status: "closed" })
+      .eq("id", jobId)
+      .eq("company_id", company.id);
+
+    if (updateError) {
+      return { success: false, error: updateError.message || "Gagal menutup lowongan." };
+    }
+
+    revalidatePath("/mitra/lowongan");
+    revalidatePath("/mitra");
+    if (job.slug) {
+      revalidatePath(`/lowongan/${job.slug}`);
+    }
+    revalidatePath("/lowongan");
+
+    return { success: true };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Terjadi kesalahan saat menutup lowongan.";
+    return { success: false, error: msg };
+  }
+}
+

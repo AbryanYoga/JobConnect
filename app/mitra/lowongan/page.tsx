@@ -15,6 +15,7 @@ import {
   FileText,
   ChevronRight,
 } from "lucide-react";
+import { CloseJobButton } from "@/components/mitra/CloseJobButton";
 import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
@@ -351,6 +352,10 @@ export default async function MitraLowonganPage({
                       <Edit3 className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>Edit Lowongan</span>
                     </Link>
+
+                    {job.status === "open" && (
+                      <CloseJobButton jobId={job.id} jobTitle={job.title} />
+                    )}
                   </div>
                 </div>
               </div>
