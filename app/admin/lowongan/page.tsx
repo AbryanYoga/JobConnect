@@ -17,6 +17,7 @@ import {
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ApproveJobModal } from "@/components/admin/ApproveJobModal";
 import { RejectJobModal } from "@/components/admin/RejectJobModal";
+import { TakedownJobModal } from "@/components/admin/TakedownJobModal";
 import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
@@ -465,16 +466,25 @@ export default async function AdminLowonganPage({
                   </span>
 
                   <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-                    {job.status === "open" && job.slug && (
-                      <Link
-                        href={`/lowongan/${job.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full hover:bg-black/[0.05] text-slate-700 hover:text-black font-bold border border-black/[0.08] transition min-h-[44px]"
-                      >
-                        <span>Lihat Tampilan Publik</span>
-                        <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-                      </Link>
+                    {job.status === "open" && (
+                      <>
+                        {job.slug && (
+                          <Link
+                            href={`/lowongan/${job.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full hover:bg-black/[0.05] text-slate-700 hover:text-black font-bold border border-black/[0.08] transition min-h-[44px]"
+                          >
+                            <span>Lihat Tampilan Publik</span>
+                            <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                          </Link>
+                        )}
+                        <TakedownJobModal
+                          jobId={job.id}
+                          jobTitle={job.title}
+                          companyName={companyName}
+                        />
+                      </>
                     )}
 
                     {job.status === "pending" && (

@@ -110,3 +110,62 @@ export async function rejectJobAction(jobId: number, reason: string) {
   }
 }
 
+/**
+ * Server Action untuk men-takedown lowongan aktif (open) yang bermasalah ke status removed.
+ */
+export async function takedownJobAction(jobId: number, reason: string) {
+  try {
+    const cleanReason = reason?.trim() || "";
+    if (!cleanReason || cleanReason.length < 5) {
+      return {
+        success: false,
+        error: "Alasan takedown wajib diisi minimal 5 karakter.",
+      };
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login Anda telah berakhir. Silakan masuk kembali." };
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role !== "admin") {
+      return { success: false, error: "Hanya admin moderator yang berwenang men-takedown lowongan." };
+    }
+
+    const { error: rpcError } = await supabase.rpc("review_job", {
+      p_job_id: jobId,
+      p_decision: "takedown",
+      p_note: cleanReason,
+    });
+
+    if (rpcError) {
+      return {
+        success: false,
+        error: rpcError.message || "Gagal melakukan takedown lowongan.",
+      };
+    }
+
+    revalidatePath("/admin/lowongan");
+    revalidatePath("/admin");
+    revalidatePath("/lowongan");
+    revalidatePath("/mitra/lowongan");
+
+    return { success: true };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Terjadi kesalahan saat melakukan takedown lowongan.";
+    return { success: false, error: msg };
+  }
+}
+
+
