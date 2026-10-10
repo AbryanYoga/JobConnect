@@ -3,7 +3,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { SearchBar } from "@/components/lowongan/SearchBar";
-import { Search, MapPin, Briefcase, Building2, Banknote, GraduationCap } from "lucide-react";
+import { FilterPanel } from "@/components/lowongan/FilterPanel";
+import { MapPin, Briefcase, Building2, Banknote, GraduationCap } from "lucide-react";
 import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
@@ -272,101 +273,21 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
         {/* Tata Letak Dua Kolom Inspirasi Zenith Realty */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
           {/* Kolom Kiri: Sidebar Filter */}
-          <aside className="lg:col-span-1 space-y-6 bg-white p-5 rounded-card border border-slate-200 shadow-2xs">
-            <div className="border-b border-slate-200 pb-3">
-              <h2 className="text-sm font-bold text-navy-950 uppercase tracking-wider">
-                Filter Lowongan
-              </h2>
-            </div>
-
-            {/* Form Filter Sederhana */}
-            <form method="GET" action="/lowongan" className="space-y-4">
-              <div>
-                <label
-                  htmlFor="filter-keyword"
-                  className="block text-xs font-semibold text-slate-700 mb-1"
-                >
-                  Kata Kunci
-                </label>
-                <div className="relative">
-                  <Search
-                    className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                    aria-hidden="true"
-                  />
-                  <input
-                    id="filter-keyword"
-                    type="text"
-                    name="q"
-                    defaultValue={searchQuery || ""}
-                    placeholder="Posisi, keahlian..."
-                    className="w-full pl-9 pr-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 bg-slate-50 border border-slate-300 rounded-control focus:outline-none min-h-[44px]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="filter-kategori-select"
-                  className="block text-xs font-semibold text-slate-700 mb-1"
-                >
-                  Kategori Bidang
-                </label>
-                <select
-                  id="filter-kategori-select"
-                  name="kategori"
-                  defaultValue={categorySlug || ""}
-                  className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-control text-slate-800 focus:outline-none min-h-[44px]"
-                >
-                  <option value="">Semua Kategori</option>
-                  {(categories || []).map((cat) => (
-                    <option key={cat.id} value={cat.slug}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="filter-wilayah-select"
-                  className="block text-xs font-semibold text-slate-700 mb-1"
-                >
-                  Provinsi
-                </label>
-                <select
-                  id="filter-wilayah-select"
-                  name="wilayah"
-                  defaultValue={provinceSlug || ""}
-                  className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-300 rounded-control text-slate-800 focus:outline-none min-h-[44px]"
-                >
-                  <option value="">Semua Provinsi</option>
-                  {(provinces || []).map((prov) => (
-                    <option key={prov.id} value={prov.slug}>
-                      {prov.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="pt-2 flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="w-full py-2.5 px-4 rounded-control bg-navy-800 hover:bg-navy-900 text-white font-semibold text-xs transition-colors min-h-[44px]"
-                >
-                  Terapkan Filter
-                </button>
-                <Link
-                  href="/lowongan"
-                  className="py-2.5 px-3 rounded-control bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors min-h-[44px] inline-flex items-center justify-center shrink-0"
-                >
-                  Reset
-                </Link>
-              </div>
-            </form>
-          </aside>
+          <div className="lg:col-span-1">
+            <FilterPanel
+              categories={categories || []}
+              provinces={provinces || []}
+              cities={cities || []}
+              selectedCategory={categorySlug}
+              selectedJobType={jobTypeParam}
+              selectedWorkMode={workModeParam}
+              selectedProvince={provinceSlug}
+              selectedCity={citySlug}
+            />
+          </div>
 
           {/* Kolom Kanan: Katalog Lowongan */}
-          <main className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             <SearchBar placeholder="Cari posisi kerja, keahlian, atau profesi..." />
 
             <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-3">
@@ -484,7 +405,7 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
                 })}
               </div>
             )}
-          </main>
+          </div>
         </div>
       </div>
     </div>
