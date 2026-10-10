@@ -125,7 +125,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 9: Eksplorasi Lowongan dan Profil Publik Perusahaan
 
-- [ ] 094 `feat(lowongan): buat halaman daftar pencarian lowongan /lowongan`
+- [x] 094 `feat(lowongan): buat halaman daftar pencarian lowongan /lowongan`
 - [ ] 095 `feat(lowongan): buat komponen SearchBar dengan debounce pencarian`
 - [ ] 096 `feat(lowongan): buat panel filter kategori, tipe kerja, mode, dan wilayah`
 - [ ] 097 `feat(lowongan): buat kartu JobCard dengan info ringkas dan lencana demo`
