@@ -142,7 +142,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 105 `feat(mitra): buat halaman daftar lowongan milik perusahaan`
 - [x] 106 `feat(mitra): buat form tambah lowongan dengan kriteria terstruktur`
 - [x] 107 `feat(mitra): buat dropdown berjenjang provinsi dan kota untuk lokasi`
-- [ ] 108 `feat(mitra): tambah penghitung karakter pada form lowongan`
+- [x] 108 `feat(mitra): tambah penghitung karakter pada form lowongan`
 - [ ] 109 `feat(mitra): aktifkan simpan draft dan fungsi submit_job ke pending`
 - [ ] 110 `feat(mitra): buat halaman edit lowongan perusahaan`
 - [ ] 111 `feat(mitra): tambah fitur tutup lowongan menjadi closed`

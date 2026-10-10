@@ -71,6 +71,36 @@ interface JobFormProps {
   onSubmitPending?: (data: JobFormData) => Promise<void>;
 }
 
+function CharCounter({
+  current,
+  min,
+  max,
+}: {
+  current: number;
+  min?: number;
+  max: number;
+}) {
+  const isTooShort = min !== undefined && current > 0 && current < min;
+  const isAtLimit = current >= max;
+  return (
+    <span
+      className={`text-xs font-semibold tabular-nums ${
+        isTooShort
+          ? "text-amber-600"
+          : isAtLimit
+          ? "text-red-600 font-bold"
+          : "text-slate-400"
+      }`}
+      aria-live="polite"
+    >
+      {current}/{max}
+      {min !== undefined && current < min && (
+        <span className="ml-1 text-[11px] font-normal">(min. {min})</span>
+      )}
+    </span>
+  );
+}
+
 export function JobForm({
   categories,
   provinces = [],
@@ -243,9 +273,16 @@ export function JobForm({
 
         {/* Input Judul Lowongan */}
         <div className="space-y-2">
-          <label htmlFor="title" className="block text-sm font-bold text-black">
-            Judul Lowongan <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center justify-between">
+            <label htmlFor="title" className="block text-sm font-bold text-black">
+              Judul Lowongan <span className="text-red-500">*</span>
+            </label>
+            <CharCounter
+              current={title.length}
+              min={JOB_LIMITS.title.min}
+              max={JOB_LIMITS.title.max}
+            />
+          </div>
           <input
             id="title"
             name="title"
@@ -285,9 +322,16 @@ export function JobForm({
 
         {/* Ringkasan Satu Paragraf */}
         <div className="space-y-2">
-          <label htmlFor="summary" className="block text-sm font-bold text-black">
-            Ringkasan Pekerjaan <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center justify-between">
+            <label htmlFor="summary" className="block text-sm font-bold text-black">
+              Ringkasan Pekerjaan <span className="text-red-500">*</span>
+            </label>
+            <CharCounter
+              current={summary.length}
+              min={JOB_LIMITS.summary.min}
+              max={JOB_LIMITS.summary.max}
+            />
+          </div>
           <textarea
             id="summary"
             name="summary"
@@ -405,9 +449,15 @@ export function JobForm({
 
         {/* Tag Input Keahlian Wajib (Skills) */}
         <div className="space-y-3 pt-2">
-          <label className="block text-sm font-bold text-black">
-            Keahlian Wajib (1 hingga 8 Keahlian) <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="block text-sm font-bold text-black">
+              Keahlian Wajib ({skills.filter(Boolean).length} dari maks. {JOB_LIMITS.skills.max}) <span className="text-red-500">*</span>
+            </label>
+            <CharCounter
+              current={currentSkillInput.length}
+              max={JOB_LIMITS.skills.itemMax}
+            />
+          </div>
           <div className="flex gap-2">
             <input
               type="text"
@@ -520,9 +570,15 @@ export function JobForm({
 
         {/* Catatan Area / Alamat Singkat */}
         <div className="space-y-2">
-          <label htmlFor="locationDetail" className="block text-sm font-bold text-black">
-            Area atau Alamat Singkat Kantor (Opsional)
-          </label>
+          <div className="flex items-center justify-between">
+            <label htmlFor="locationDetail" className="block text-sm font-bold text-black">
+              Area atau Alamat Singkat Kantor (Opsional)
+            </label>
+            <CharCounter
+              current={locationDetail.length}
+              max={JOB_LIMITS.locationDetail.max}
+            />
+          </div>
           <input
             id="locationDetail"
             name="locationDetail"
@@ -585,14 +641,20 @@ export function JobForm({
                 <span className="w-6 text-center text-xs font-black text-slate-400">
                   {idx + 1}.
                 </span>
-                <input
-                  type="text"
-                  maxLength={JOB_LIMITS.responsibilities.itemMax}
-                  placeholder={`Tugas pokok ke-${idx + 1}`}
-                  value={item}
-                  onChange={(e) => handleResponsibilityChange(idx, e.target.value)}
-                  className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
-                />
+                <div className="flex-1 flex items-center gap-2">
+                  <input
+                    type="text"
+                    maxLength={JOB_LIMITS.responsibilities.itemMax}
+                    placeholder={`Tugas pokok ke-${idx + 1}`}
+                    value={item}
+                    onChange={(e) => handleResponsibilityChange(idx, e.target.value)}
+                    className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+                  />
+                  <CharCounter
+                    current={item.length}
+                    max={JOB_LIMITS.responsibilities.itemMax}
+                  />
+                </div>
                 {responsibilities.length > JOB_LIMITS.responsibilities.min && (
                   <button
                     type="button"
@@ -632,14 +694,20 @@ export function JobForm({
                 <span className="w-6 text-center text-xs font-black text-slate-400">
                   +
                 </span>
-                <input
-                  type="text"
-                  maxLength={JOB_LIMITS.niceToHave.itemMax}
-                  placeholder="Kriteria nilai tambah yang disukai"
-                  value={item}
-                  onChange={(e) => handleNiceToHaveChange(idx, e.target.value)}
-                  className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
-                />
+                <div className="flex-1 flex items-center gap-2">
+                  <input
+                    type="text"
+                    maxLength={JOB_LIMITS.niceToHave.itemMax}
+                    placeholder="Kriteria nilai tambah yang disukai"
+                    value={item}
+                    onChange={(e) => handleNiceToHaveChange(idx, e.target.value)}
+                    className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+                  />
+                  <CharCounter
+                    current={item.length}
+                    max={JOB_LIMITS.niceToHave.itemMax}
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={() => handleRemoveNiceToHave(idx)}
@@ -677,14 +745,20 @@ export function JobForm({
                 <span className="w-6 text-center text-xs font-black text-slate-400">
                   •
                 </span>
-                <input
-                  type="text"
-                  maxLength={JOB_LIMITS.benefits.itemMax}
-                  placeholder="Contoh: BPJS Kesehatan, Tunjangan Makan, Laptop Perusahaan"
-                  value={item}
-                  onChange={(e) => handleBenefitChange(idx, e.target.value)}
-                  className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
-                />
+                <div className="flex-1 flex items-center gap-2">
+                  <input
+                    type="text"
+                    maxLength={JOB_LIMITS.benefits.itemMax}
+                    placeholder="Contoh: BPJS Kesehatan, Tunjangan Makan, Laptop Perusahaan"
+                    value={item}
+                    onChange={(e) => handleBenefitChange(idx, e.target.value)}
+                    className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+                  />
+                  <CharCounter
+                    current={item.length}
+                    max={JOB_LIMITS.benefits.itemMax}
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={() => handleRemoveBenefit(idx)}
