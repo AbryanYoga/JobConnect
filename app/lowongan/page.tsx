@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { SearchBar } from "@/components/lowongan/SearchBar";
 import { Search, MapPin, Briefcase, Building2, Banknote, GraduationCap } from "lucide-react";
 import {
   JOB_TYPE_LABEL,
@@ -366,6 +367,8 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
 
           {/* Kolom Kanan: Katalog Lowongan */}
           <main className="lg:col-span-3 space-y-6">
+            <SearchBar placeholder="Cari posisi kerja, keahlian, atau profesi..." />
+
             <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-3">
               <span className="text-xs font-semibold text-slate-600">
                 Menampilkan {jobs.length} dari {totalCount} lowongan kerja
