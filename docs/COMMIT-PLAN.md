@@ -152,7 +152,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 115 `feat(admin): buat modal ACC lowongan menjadi open`
 - [x] 116 `feat(admin): buat modal tolak lowongan dengan alasan wajib`
 - [x] 117 `feat(admin): buat fitur takedown lowongan bermasalah ke status removed`
-- [ ] 118 `feat(admin): buat halaman kelola kategori lowongan`
+- [x] 118 `feat(admin): buat halaman kelola kategori lowongan`
 
 ## Fase 11: Proses Melamar Kerja dan Manajemen Lamaran
 
