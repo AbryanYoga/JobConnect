@@ -140,7 +140,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 103 `feat(mitra): buat layout dashboard mitra dengan navigasi samping`
 - [x] 104 `feat(mitra): buat halaman ringkasan dashboard mitra`
 - [x] 105 `feat(mitra): buat halaman daftar lowongan milik perusahaan`
-- [ ] 106 `feat(mitra): buat form tambah lowongan dengan kriteria terstruktur`
+- [x] 106 `feat(mitra): buat form tambah lowongan dengan kriteria terstruktur`
 - [ ] 107 `feat(mitra): buat dropdown berjenjang provinsi dan kota untuk lokasi`
 - [ ] 108 `feat(mitra): tambah penghitung karakter pada form lowongan`
 - [ ] 109 `feat(mitra): aktifkan simpan draft dan fungsi submit_job ke pending`
