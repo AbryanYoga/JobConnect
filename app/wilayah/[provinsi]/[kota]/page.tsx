@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Filter,
 } from "lucide-react";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
@@ -262,46 +263,14 @@ export default async function CityDetailPage({
     <div className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         {/* Breadcrumb Navigasi */}
-        <nav aria-label="Breadcrumb" className="text-xs text-slate-500">
-          <ol className="flex items-center gap-1.5 flex-wrap">
-            <li>
-              <Link
-                href="/"
-                className="hover:text-navy-900 transition-colors focus-visible:outline-2 focus-visible:outline-navy-700 rounded-xs"
-              >
-                Beranda
-              </Link>
-            </li>
-            <li aria-hidden="true" className="text-slate-400">
-              /
-            </li>
-            <li>
-              <Link
-                href="/wilayah"
-                className="hover:text-navy-900 transition-colors focus-visible:outline-2 focus-visible:outline-navy-700 rounded-xs"
-              >
-                Wilayah
-              </Link>
-            </li>
-            <li aria-hidden="true" className="text-slate-400">
-              /
-            </li>
-            <li>
-              <Link
-                href={`/wilayah/${province.slug}`}
-                className="hover:text-navy-900 transition-colors focus-visible:outline-2 focus-visible:outline-navy-700 rounded-xs"
-              >
-                {province.name}
-              </Link>
-            </li>
-            <li aria-hidden="true" className="text-slate-400">
-              /
-            </li>
-            <li className="font-semibold text-slate-800" aria-current="page">
-              {city.name}
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumb
+          items={[
+            { label: "Beranda", href: "/" },
+            { label: "Wilayah", href: "/wilayah" },
+            { label: province.name, href: `/wilayah/${province.slug}` },
+            { label: city.name },
+          ]}
+        />
 
         {/* Header Kota/Kabupaten */}
         <div className="space-y-2 border-b border-slate-200 pb-6">
