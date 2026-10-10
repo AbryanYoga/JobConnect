@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Briefcase,
   GraduationCap,
@@ -11,6 +12,10 @@ import {
   ArrowLeft,
   Bot,
   MapPin,
+  Send,
+  Save,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import {
   JOB_TYPE_LABEL,
@@ -21,6 +26,10 @@ import {
   type EducationMin,
 } from "@/lib/labels";
 import { JOB_LIMITS } from "@/lib/validation/lowongan";
+import {
+  saveJobDraftAction,
+  submitJobAction,
+} from "@/app/actions/mitra";
 
 export interface CategoryOption {
   id: number;
@@ -41,6 +50,7 @@ export interface CityOption {
 }
 
 export interface JobFormData {
+  id?: number;
   title: string;
   summary: string;
   categoryId: number | "";
@@ -179,6 +189,119 @@ export function JobForm({
     initialData?.aiScreening ?? true
   );
 
+  const router = useRouter();
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formSuccess, setFormSuccess] = useState<string | null>(null);
+
+  const handleSaveDraft = async () => {
+    setFormError(null);
+    setFormSuccess(null);
+    setIsSavingDraft(true);
+    try {
+      const res = await saveJobDraftAction({
+        id: initialData?.id,
+        title,
+        summary,
+        categoryId,
+        provinceId,
+        cityId,
+        locationDetail,
+        workMode,
+        jobType,
+        educationMin,
+        experienceMinYears,
+        skills,
+        responsibilities,
+        niceToHave,
+        benefits,
+        salaryMin,
+        salaryMax,
+        deadline,
+        aiScreening,
+      });
+
+      if (!res.success) {
+        setFormError(res.error || "Gagal menyimpan draft lowongan.");
+      } else {
+        setFormSuccess(res.message || "Draft berhasil disimpan!");
+        router.push("/mitra/lowongan");
+      }
+    } catch {
+      setFormError("Terjadi kesalahan teknis saat menyimpan draft.");
+    } finally {
+      setIsSavingDraft(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setFormError(null);
+    setFormSuccess(null);
+
+    if (!title.trim() || title.trim().length < JOB_LIMITS.title.min) {
+      setFormError(`Judul lowongan minimal ${JOB_LIMITS.title.min} karakter.`);
+      return;
+    }
+    if (!summary.trim() || summary.trim().length < JOB_LIMITS.summary.min) {
+      setFormError(`Ringkasan pekerjaan minimal ${JOB_LIMITS.summary.min} karakter.`);
+      return;
+    }
+    const validSkills = skills.filter(Boolean);
+    if (validSkills.length < 1) {
+      setFormError("Keahlian wajib minimal 1 item.");
+      return;
+    }
+    const validResp = responsibilities.filter(Boolean);
+    if (validResp.length < 3) {
+      setFormError("Tanggung jawab utama wajib diisi minimal 3 poin.");
+      return;
+    }
+    if (workMode !== "remote" && !cityId) {
+      setFormError("Kota penempatan wajib dipilih untuk mode kerja Onsite atau Hybrid.");
+      return;
+    }
+    if (!deadline.trim()) {
+      setFormError("Batas waktu lamaran (deadline) wajib diisi untuk pengajuan lowongan.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await submitJobAction({
+        id: initialData?.id,
+        title,
+        summary,
+        categoryId,
+        cityId,
+        locationDetail,
+        workMode,
+        jobType,
+        educationMin,
+        experienceMinYears,
+        skills: validSkills,
+        responsibilities: validResp,
+        niceToHave,
+        benefits,
+        salaryMin,
+        salaryMax,
+        deadline,
+        aiScreening,
+      });
+
+      if (!res.success) {
+        setFormError(res.error || "Gagal mengajukan lowongan.");
+      } else {
+        setFormSuccess(res.message || "Lowongan berhasil diajukan!");
+        router.push("/mitra/lowongan");
+      }
+    } catch {
+      setFormError("Terjadi kesalahan teknis saat mengajukan lowongan.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Helper tambah skill
   const handleAddSkill = () => {
     const trimmed = currentSkillInput.trim();
@@ -255,6 +378,30 @@ export function JobForm({
 
   return (
     <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+      {/* Alert Error / Sukses */}
+      {formError && (
+        <div
+          role="alert"
+          className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3 font-medium"
+        >
+          <AlertCircle className="w-5 h-5 shrink-0 text-red-600 mt-0.5" aria-hidden="true" />
+          <div className="space-y-0.5">
+            <span className="font-bold block">Terdapat kesalahan isian:</span>
+            <span>{formError}</span>
+          </div>
+        </div>
+      )}
+
+      {formSuccess && (
+        <div
+          role="status"
+          className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-start gap-3 font-medium"
+        >
+          <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600 mt-0.5" aria-hidden="true" />
+          <span>{formSuccess}</span>
+        </div>
+      )}
+
       {/* 1. Informasi Dasar Posisi */}
       <section className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-6">
         <div className="flex items-center gap-2 pb-4 border-b border-black/[0.06]">
@@ -863,15 +1010,37 @@ export function JobForm({
         </div>
       </section>
 
-      {/* Navigasi Bawah */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+      {/* Navigasi & Tombol Aksi Simpan Draft / Submit */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-black/[0.08]">
         <Link
           href="/mitra/lowongan"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full hover:bg-black/[0.05] text-black font-bold text-sm transition min-h-[44px]"
+          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full hover:bg-black/[0.05] text-black font-bold text-sm transition min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{isEditing ? "Batal Perubahan" : "Batal"}</span>
         </Link>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <button
+            type="button"
+            disabled={isSavingDraft || isSubmitting}
+            onClick={handleSaveDraft}
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-black/[0.04] text-black font-bold text-sm border border-black/[0.12] transition min-h-[44px] disabled:opacity-50 cursor-pointer"
+          >
+            <Save className="w-4 h-4" />
+            <span>{isSavingDraft ? "Menyimpan Draft..." : "Simpan sebagai Draft"}</span>
+          </button>
+
+          <button
+            type="button"
+            disabled={isSavingDraft || isSubmitting}
+            onClick={handleSubmit}
+            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] active:scale-95 text-black font-black text-sm shadow-2xs hover:shadow transition min-h-[44px] disabled:opacity-50 cursor-pointer"
+          >
+            <Send className="w-4 h-4 stroke-[2.2]" />
+            <span>{isSubmitting ? "Mengajukan..." : "Ajukan Lowongan"}</span>
+          </button>
+        </div>
       </div>
     </form>
   );

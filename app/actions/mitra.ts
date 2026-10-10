@@ -351,3 +351,236 @@ export async function deleteCompanyLogoAction() {
     return { success: false, error: message };
   }
 }
+
+/**
+ * Server Action untuk menyimpan lowongan sebagai draft.
+ */
+export async function saveJobDraftAction(rawData: {
+  id?: number;
+  title: string;
+  summary?: string;
+  categoryId?: number | "";
+  cityId?: number | "";
+  locationDetail?: string;
+  workMode: string;
+  jobType: string;
+  educationMin: string;
+  experienceMinYears?: number;
+  skills: string[];
+  responsibilities: string[];
+  niceToHave?: string[];
+  benefits?: string[];
+  salaryMin?: number | "";
+  salaryMax?: number | "";
+  deadline?: string;
+  aiScreening?: boolean;
+}) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login Anda telah berakhir." };
+    }
+
+    const { data: company } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("owner_id", user.id)
+      .maybeSingle();
+
+    if (!company) {
+      return { success: false, error: "Profil perusahaan belum terdaftar." };
+    }
+
+    const cleanTitle = rawData.title?.trim() || "Draft Lowongan";
+    const baseSlug = slugify(cleanTitle) || "lowongan";
+    const uniqueSlug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
+
+    const payload = {
+      company_id: company.id,
+      title: cleanTitle,
+      category_id: rawData.categoryId ? Number(rawData.categoryId) : null,
+      city_id: rawData.cityId ? Number(rawData.cityId) : null,
+      location_detail: rawData.locationDetail?.trim() || null,
+      work_mode: rawData.workMode || "onsite",
+      job_type: rawData.jobType || "full_time",
+      education_min: rawData.educationMin || "sma_smk",
+      experience_min_years: Number(rawData.experienceMinYears) || 0,
+      skills: rawData.skills.filter(Boolean),
+      summary: rawData.summary?.trim() || null,
+      responsibilities: rawData.responsibilities.filter(Boolean),
+      nice_to_have: (rawData.niceToHave || []).filter(Boolean),
+      benefits: (rawData.benefits || []).filter(Boolean),
+      salary_min: rawData.salaryMin ? Number(rawData.salaryMin) : null,
+      salary_max: rawData.salaryMax ? Number(rawData.salaryMax) : null,
+      deadline: rawData.deadline?.trim() || null,
+      ai_screening: Boolean(rawData.aiScreening),
+      status: "draft",
+    };
+
+    if (rawData.id) {
+      const { error: updateError } = await supabase
+        .from("jobs")
+        .update(payload)
+        .eq("id", rawData.id)
+        .eq("company_id", company.id);
+
+      if (updateError) {
+        return { success: false, error: updateError.message };
+      }
+      revalidatePath("/mitra/lowongan");
+      return { success: true, jobId: rawData.id, message: "Draft lowongan berhasil diperbarui." };
+    } else {
+      const { data: newJob, error: insertError } = await supabase
+        .from("jobs")
+        .insert({
+          ...payload,
+          slug: uniqueSlug,
+        })
+        .select("id")
+        .single();
+
+      if (insertError) {
+        return { success: false, error: insertError.message };
+      }
+      revalidatePath("/mitra/lowongan");
+      return { success: true, jobId: newJob.id, message: "Draft lowongan berhasil disimpan." };
+    }
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Gagal menyimpan draft.";
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Server Action untuk mengajukan lowongan ke admin (memanggil fungsi submit_job).
+ */
+export async function submitJobAction(rawData: {
+  id?: number;
+  title: string;
+  summary: string;
+  categoryId: number | "";
+  cityId?: number | "";
+  locationDetail?: string;
+  workMode: string;
+  jobType: string;
+  educationMin: string;
+  experienceMinYears?: number;
+  skills: string[];
+  responsibilities: string[];
+  niceToHave?: string[];
+  benefits?: string[];
+  salaryMin?: number | "";
+  salaryMax?: number | "";
+  deadline: string;
+  aiScreening?: boolean;
+}) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login Anda telah berakhir." };
+    }
+
+    const { data: company } = await supabase
+      .from("companies")
+      .select("id, name, city_id")
+      .eq("owner_id", user.id)
+      .maybeSingle();
+
+    if (!company) {
+      return { success: false, error: "Profil perusahaan belum terdaftar." };
+    }
+
+    if (!company.name || !company.city_id) {
+      return { success: false, error: "Profil perusahaan wajib dilengkapi sebelum mengajukan lowongan." };
+    }
+
+    // 1. Simpan atau perbarui data lowongan terlebih dahulu
+    const cleanTitle = rawData.title.trim();
+    const baseSlug = slugify(cleanTitle) || "lowongan";
+    const uniqueSlug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
+
+    const payload = {
+      company_id: company.id,
+      title: cleanTitle,
+      category_id: rawData.categoryId ? Number(rawData.categoryId) : null,
+      city_id: rawData.cityId ? Number(rawData.cityId) : null,
+      location_detail: rawData.locationDetail?.trim() || null,
+      work_mode: rawData.workMode,
+      job_type: rawData.jobType,
+      education_min: rawData.educationMin,
+      experience_min_years: Number(rawData.experienceMinYears) || 0,
+      skills: rawData.skills.filter(Boolean),
+      summary: rawData.summary.trim(),
+      responsibilities: rawData.responsibilities.filter(Boolean),
+      nice_to_have: (rawData.niceToHave || []).filter(Boolean),
+      benefits: (rawData.benefits || []).filter(Boolean),
+      salary_min: rawData.salaryMin ? Number(rawData.salaryMin) : null,
+      salary_max: rawData.salaryMax ? Number(rawData.salaryMax) : null,
+      deadline: rawData.deadline.trim(),
+      ai_screening: Boolean(rawData.aiScreening),
+      status: "draft",
+    };
+
+    let targetJobId: number;
+
+    if (rawData.id) {
+      targetJobId = rawData.id;
+      const { error: updateError } = await supabase
+        .from("jobs")
+        .update(payload)
+        .eq("id", targetJobId)
+        .eq("company_id", company.id);
+
+      if (updateError) {
+        return { success: false, error: updateError.message };
+      }
+    } else {
+      const { data: newJob, error: insertError } = await supabase
+        .from("jobs")
+        .insert({
+          ...payload,
+          slug: uniqueSlug,
+        })
+        .select("id")
+        .single();
+
+      if (insertError) {
+        return { success: false, error: insertError.message };
+      }
+      targetJobId = newJob.id;
+    }
+
+    // 2. Panggil fungsi database submit_job untuk validasi menyeluruh dan mengubah status menjadi pending
+    const { error: rpcError } = await supabase.rpc("submit_job", {
+      p_job_id: targetJobId,
+    });
+
+    if (rpcError) {
+      return {
+        success: false,
+        error: rpcError.message || "Gagal mengajukan lowongan untuk peninjauan admin.",
+      };
+    }
+
+    revalidatePath("/mitra/lowongan");
+    revalidatePath("/mitra");
+    return {
+      success: true,
+      jobId: targetJobId,
+      message: "Lowongan berhasil diajukan dan sedang dalam antrean review admin.",
+    };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Gagal mengajukan lowongan.";
+    return { success: false, error: msg };
+  }
+}
