@@ -33,7 +33,7 @@ export default async function MitraLayout({ children }: MitraLayoutProps) {
   const { data: company } = await supabase
     .from("companies")
     .select("id, name, logo_path")
-    .eq("user_id", user.id)
+    .eq("owner_id", user.id)
     .maybeSingle();
 
   let logoUrl: string | null = null;
