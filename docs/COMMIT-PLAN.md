@@ -147,7 +147,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 110 `feat(mitra): buat halaman edit lowongan perusahaan`
 - [x] 111 `feat(mitra): tambah fitur tutup lowongan menjadi closed`
 - [x] 112 `feat(admin): buat layout dashboard admin moderator`
-- [ ] 113 `feat(admin): buat halaman dashboard statistik platform admin`
+- [x] 113 `feat(admin): buat halaman dashboard statistik platform admin`
 - [ ] 114 `feat(admin): buat halaman antrean review lowongan pending`
 - [ ] 115 `feat(admin): buat modal ACC lowongan menjadi open`
 - [ ] 116 `feat(admin): buat modal tolak lowongan dengan alasan wajib`
