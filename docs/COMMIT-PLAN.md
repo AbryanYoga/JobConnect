@@ -133,7 +133,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 099 `feat(lowongan): buat halaman detail lowongan /lowongan/[slug]`
 - [x] 100 `feat(lowongan): tampilkan kartu Kriteria Utama terstruktur`
 - [x] 101 `feat(lowongan): buat halaman profil publik perusahaan /perusahaan/[slug]`
-- [ ] 102 `feat(lowongan): tambah loading skeleton dan error boundary pada lowongan`
+- [x] 102 `feat(lowongan): tambah loading skeleton dan error boundary pada lowongan`
 
 ## Fase 10: Pengajuan Lowongan oleh Perusahaan dan ACC Admin
 
