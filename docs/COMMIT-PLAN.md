@@ -131,7 +131,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 097 `feat(lowongan): buat kartu JobCard dengan info ringkas dan lencana demo`
 - [x] 098 `feat(lowongan): buat komponen Pagination 10 data per halaman`
 - [x] 099 `feat(lowongan): buat halaman detail lowongan /lowongan/[slug]`
-- [ ] 100 `feat(lowongan): tampilkan kartu Kriteria Utama terstruktur`
+- [x] 100 `feat(lowongan): tampilkan kartu Kriteria Utama terstruktur`
 - [ ] 101 `feat(lowongan): buat halaman profil publik perusahaan /perusahaan/[slug]`
 - [ ] 102 `feat(lowongan): tambah loading skeleton dan error boundary pada lowongan`
 

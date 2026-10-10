@@ -4,6 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { MainCriteriaCard } from "@/components/lowongan/MainCriteriaCard";
 import {
   MapPin,
   Building2,
@@ -433,79 +434,21 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
             </section>
           </div>
 
-          {/* Kolom Kanan: Sidebar Kriteria (Akan dilengkapi komponen MainCriteriaCard di commit 100) */}
+          {/* Kolom Kanan: Sidebar Kriteria Utama */}
           <aside className="lg:col-span-1 space-y-6">
-            <div className="bg-white rounded-card border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-5">
-              <h2 className="text-xs font-bold text-navy-950 uppercase tracking-wider border-b border-slate-100 pb-3">
-                Kriteria Utama Lowongan
-              </h2>
-
-              <div className="space-y-4 text-xs sm:text-sm">
-                <div>
-                  <span className="text-slate-500 block text-xs">Kisaran Gaji</span>
-                  <span className="font-bold text-navy-950 text-base">
-                    {formatSalary(job.salary_min, job.salary_max)}
-                  </span>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100">
-                  <span className="text-slate-500 block text-xs">Pendidikan Minimal</span>
-                  <span className="font-semibold text-slate-800">
-                    {EDUCATION_LABEL[job.education_min as EducationMin] || job.education_min}
-                  </span>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100">
-                  <span className="text-slate-500 block text-xs">Pengalaman Kerja</span>
-                  <span className="font-semibold text-slate-800">
-                    {job.experience_min_years && job.experience_min_years > 0
-                      ? `${job.experience_min_years} Tahun`
-                      : "Terbuka untuk Fresh Graduate"}
-                  </span>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100">
-                  <span className="text-slate-500 block text-xs">Tipe Pekerjaan</span>
-                  <span className="font-semibold text-slate-800">
-                    {JOB_TYPE_LABEL[job.job_type as JobType] || job.job_type}
-                  </span>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100">
-                  <span className="text-slate-500 block text-xs">Mode Bekerja</span>
-                  <span className="font-semibold text-slate-800">
-                    {WORK_MODE_LABEL[job.work_mode as WorkMode] || job.work_mode}
-                  </span>
-                </div>
-
-                {job.deadline && (
-                  <div className="pt-2 border-t border-slate-100">
-                    <span className="text-slate-500 block text-xs">Batas Waktu Lamaran</span>
-                    <span className="font-bold text-rose-700">
-                      {formatDateIndo(job.deadline)}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {job.skills && job.skills.length > 0 && (
-                <div className="pt-4 border-t border-slate-100 space-y-2">
-                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wide block">
-                    Keahlian yang Dibutuhkan
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {job.skills.map((skill: string, index: number) => (
-                      <span
-                        key={index}
-                        className="text-xs bg-slate-100 text-slate-800 px-2.5 py-1 rounded-sm border border-slate-200 font-medium"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            <MainCriteriaCard
+              salaryMin={job.salary_min}
+              salaryMax={job.salary_max}
+              educationMin={job.education_min}
+              experienceMinYears={job.experience_min_years}
+              jobType={job.job_type}
+              workMode={job.work_mode}
+              deadline={job.deadline}
+              skills={job.skills}
+              locationText={locationText}
+              locationDetail={job.location_detail}
+              isOpen={isOpen}
+            />
           </aside>
         </div>
       </div>
