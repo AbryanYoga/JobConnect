@@ -21,6 +21,7 @@ import {
   type ApplicationStatus,
   APPLICATION_STATUS_CONFIG,
 } from "@/components/ui/StatusBadge";
+import { TombolTarikLamaran } from "@/components/lamaran/TombolTarikLamaran";
 
 interface DetailLamaranPageProps {
   params: Promise<{
@@ -266,9 +267,15 @@ export default async function DetailLamaranPage({ params }: DetailLamaranPagePro
               </div>
             </div>
 
-            {/* Aksi Buka Lowongan Asli */}
-            {jobData?.slug && (
-              <div className="shrink-0">
+            {/* Aksi Halaman Lowongan & Penarikan Lamaran */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+              <TombolTarikLamaran
+                applicationId={application.id}
+                currentStatus={application.status}
+                jobTitle={jobData?.title || "Posisi Pekerjaan"}
+                companyName={companyName}
+              />
+              {jobData?.slug && (
                 <Link
                   href={`/lowongan/${jobData.slug}`}
                   className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition min-h-[44px]"
@@ -276,8 +283,8 @@ export default async function DetailLamaranPage({ params }: DetailLamaranPagePro
                   <span>Buka Halaman Lowongan</span>
                   <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                 </Link>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </section>
 
