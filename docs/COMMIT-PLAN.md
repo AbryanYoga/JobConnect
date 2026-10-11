@@ -171,7 +171,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 ## Fase 12: Review Pelamar oleh Perusahaan dan Keputusan Akhir
 
 - [x] 130 `feat(mitra): buat halaman daftar pelamar per lowongan`
-- [ ] 131 `feat(mitra): buat halaman detail kandidat pelamar`
+- [x] 131 `feat(mitra): buat halaman detail kandidat pelamar`
 - [ ] 132 `feat(mitra): buat fungsi buka CV pelamar menggunakan signed URL aman`
 - [ ] 133 `feat(mitra): buat form catatan internal perusahaan pada kandidat`
 - [ ] 134 `feat(mitra): buat alur pengubah status lamaran kandidat`
