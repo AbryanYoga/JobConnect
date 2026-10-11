@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Send, FileText, AlertCircle, LogIn, ShieldAlert } from "lucide-react";
+import { Send, FileText, AlertCircle, LogIn, ShieldAlert, Info } from "lucide-react";
 import { COVER_LETTER_MAX } from "@/lib/validation/lamaran";
 
 export interface FormLamaranProps {
@@ -24,6 +24,7 @@ export function FormLamaran({
   userRole = "user",
 }: FormLamaranProps) {
   const [coverLetter, setCoverLetter] = useState("");
+  const [aiConsent, setAiConsent] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Jika lowongan sudah ditutup oleh perusahaan atau moderator
@@ -184,6 +185,37 @@ export function FormLamaran({
             placeholder="Tuliskan perkenalan singkat, ketertarikan Anda pada posisi ini, atau catatan tambahan untuk HRD..."
             className="w-full rounded-2xl border border-black/[0.12] bg-[#FAF8F0]/40 p-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-black focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 transition resize-y min-h-[110px]"
           />
+        </div>
+
+        {/* Kotak Centang Analisis AI (Opsional) */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] space-y-3">
+          <label
+            htmlFor="ai-consent"
+            className="flex items-start gap-3 cursor-pointer select-none"
+          >
+            <input
+              type="checkbox"
+              id="ai-consent"
+              name="aiConsent"
+              checked={aiConsent}
+              onChange={(e) => setAiConsent(e.target.checked)}
+              className="mt-1 h-5 w-5 rounded-md border-black/20 text-[#0A2540] focus:ring-black focus:ring-offset-0 cursor-pointer accent-[#0A2540]"
+            />
+            <div className="space-y-1">
+              <span className="text-sm font-bold text-slate-900 block">
+                Izinkan analisis kecocokan berkas dengan bantuan AI (Opsional)
+              </span>
+              <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                Sistem akan membaca ringkasan kualifikasi CV Anda dan memberikan saran estimasi kecocokan kepada HRD perusahaan mitra.
+              </p>
+            </div>
+          </label>
+          <div className="text-[11px] text-slate-500 bg-white/80 p-3 rounded-xl border border-black/[0.04] leading-normal flex items-start gap-2">
+            <Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" aria-hidden="true" />
+            <span>
+              Catatan: Analisis ini hanya berperan sebagai panduan awal bagi rekruter. Keputusan seleksi berkas, panggilan wawancara, dan penerimaan tetap 100% diputuskan oleh manusia.
+            </span>
+          </div>
         </div>
 
         {/* Tombol Kirim Lamaran */}
