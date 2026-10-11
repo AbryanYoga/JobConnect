@@ -163,7 +163,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 123 `feat(lamar): simpan baris lamaran dengan status awal dikirim`
 - [x] 124 `fix(lamar): cegah melamar ganda ke lowongan yang sama`
 - [x] 125 `fix(lamar): blokir aksi melamar jika lowongan closed atau expired`
-- [ ] 126 `feat(lamar): tampilkan banner status sudah melamar pada detail lowongan`
+- [x] 126 `feat(lamar): tampilkan banner status sudah melamar pada detail lowongan`
 - [ ] 127 `feat(lamaran-saya): buat halaman riwayat lamaran pencari kerja`
 - [ ] 128 `feat(lamaran-saya): buat halaman detail status lamaran dan timeline`
 - [ ] 129 `feat(lamaran-saya): tambah fitur penarikan lamaran oleh pelamar`

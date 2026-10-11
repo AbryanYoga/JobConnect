@@ -12,9 +12,11 @@ import {
   CheckCircle2,
   Gift,
   ArrowLeft,
+  ArrowRight,
   ExternalLink,
 } from "lucide-react";
 import { FormLamaran } from "@/components/lowongan/FormLamaran";
+import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge";
 
 interface JobDetailPageProps {
   params: Promise<{
@@ -223,6 +225,40 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
           </Link>
         </div>
 
+        {/* Banner Status Pelamar Sudah Melamar */}
+        {existingApplication && (
+          <aside
+            aria-label="Status Lamaran Anda"
+            className="rounded-[24px] bg-blue-50/90 border border-blue-200/90 p-5 sm:p-6 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          >
+            <div className="flex items-start sm:items-center gap-3.5 min-w-0">
+              <div className="w-10 h-10 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center shrink-0 text-blue-700">
+                <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
+              </div>
+              <div className="space-y-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm font-bold text-slate-900">
+                    Anda Telah Melamar Posisi Ini
+                  </span>
+                  <StatusBadge
+                    status={existingApplication.status as ApplicationStatus}
+                  />
+                </div>
+                <p className="text-xs text-slate-600 font-medium">
+                  Lamaran dikirimkan pada {formatDateIndo(existingApplication.created_at)}. Anda dapat memantau proses seleksi melalui timeline lamaran.
+                </p>
+              </div>
+            </div>
+            <Link
+              href={`/lamaran-saya/${existingApplication.id}`}
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-white hover:bg-slate-50 text-navy-950 font-bold text-xs transition border border-black/10 shadow-2xs shrink-0 min-h-[44px]"
+            >
+              <span>Lihat Detail Lamaran</span>
+              <ArrowRight className="w-3.5 h-3.5 text-navy-800" aria-hidden="true" />
+            </Link>
+          </aside>
+        )}
+
         {/* Kartu Header Utama Lowongan */}
         <section className="bg-white rounded-card border border-slate-200 p-6 sm:p-8 shadow-2xs space-y-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -305,7 +341,15 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
             {/* Tombol CTA Lamar di Header */}
             <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-              {isApplyAllowed ? (
+              {existingApplication ? (
+                <Link
+                  href={`/lamaran-saya/${existingApplication.id}`}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition shadow-2xs min-h-[44px]"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-white" aria-hidden="true" />
+                  <span>Sudah Melamar (Lihat Status)</span>
+                </Link>
+              ) : isApplyAllowed ? (
                 <a
                   href="#formulir-lamaran"
                   className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-navy-900 hover:bg-navy-950 text-white font-bold text-sm transition shadow-2xs min-h-[44px]"
