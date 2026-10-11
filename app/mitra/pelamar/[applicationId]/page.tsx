@@ -16,6 +16,10 @@ import {
 import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge";
 import { ViewCvButton } from "@/components/mitra/ViewCvButton";
 import {
+  CandidateNotes,
+  type CandidateNoteItem,
+} from "@/components/mitra/CandidateNotes";
+import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
   type JobType,
@@ -178,6 +182,15 @@ export default async function DetailPelamarPage({
   };
 
   const statusHistory = (rawHistory as unknown as HistoryItem[]) || [];
+
+  // Ambil seluruh catatan internal perusahaan untuk kandidat ini
+  const { data: rawNotes } = await supabase
+    .from("application_notes")
+    .select("id, application_id, author_id, note, created_at")
+    .eq("application_id", appId)
+    .order("created_at", { ascending: false });
+
+  const notes = (rawNotes as unknown as CandidateNoteItem[]) || [];
 
   const applicant = application.profiles;
   const applicantName = applicant?.name || "Kandidat Pelamar";
@@ -349,8 +362,14 @@ export default async function DetailPelamarPage({
           </div>
         </div>
 
-        {/* Kolom Kanan: Timeline Riwayat Status */}
+        {/* Kolom Kanan: Catatan Internal Tim & Timeline Riwayat Status */}
         <div className="space-y-6">
+          <CandidateNotes
+            applicationId={application.id}
+            notes={notes}
+            currentUserId={user.id}
+          />
+
           <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-5">
             <div className="flex items-center gap-2">
               <History className="w-5 h-5 text-black" aria-hidden="true" />

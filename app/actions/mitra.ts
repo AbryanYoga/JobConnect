@@ -740,3 +740,142 @@ export async function getApplicantCvUrlAction(applicationId: number) {
   }
 }
 
+/**
+ * Server Action untuk menambahkan catatan internal perusahaan pada kandidat pelamar.
+ * Catatan ini bersifat privat dan hanya dapat dibaca oleh tim perusahaan pemilik lowongan.
+ */
+export async function addApplicationNoteAction(
+  applicationId: number,
+  noteText: string
+) {
+  try {
+    const cleanNote = noteText?.trim();
+    if (!cleanNote || cleanNote.length === 0) {
+      return { success: false, error: "Catatan internal tidak boleh kosong." };
+    }
+    if (cleanNote.length > 2000) {
+      return {
+        success: false,
+        error: "Catatan internal maksimal 2000 karakter.",
+      };
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login Anda telah berakhir." };
+    }
+
+    const { data: company } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("owner_id", user.id)
+      .maybeSingle();
+
+    if (!company) {
+      return { success: false, error: "Profil perusahaan belum terdaftar." };
+    }
+
+    // Periksa kepemilikan lowongan dari lamaran ini
+    const { data: application, error: appError } = await supabase
+      .from("applications")
+      .select(`
+        id,
+        job_id,
+        jobs:job_id (
+          company_id
+        )
+      `)
+      .eq("id", applicationId)
+      .maybeSingle();
+
+    if (appError || !application) {
+      return { success: false, error: "Lamaran tidak ditemukan." };
+    }
+
+    type AppWithJob = {
+      id: number;
+      job_id: number;
+      jobs: { company_id: number } | { company_id: number }[] | null;
+    };
+    const typedApp = application as unknown as AppWithJob;
+    const job = Array.isArray(typedApp.jobs) ? typedApp.jobs[0] : typedApp.jobs;
+    if (!job || job.company_id !== company.id) {
+      return {
+        success: false,
+        error: "Anda tidak berhak menambah catatan pada lamaran ini.",
+      };
+    }
+
+    const { error: insertError } = await supabase
+      .from("application_notes")
+      .insert({
+        application_id: applicationId,
+        author_id: user.id,
+        note: cleanNote,
+      });
+
+    if (insertError) {
+      return {
+        success: false,
+        error: insertError.message || "Gagal menyimpan catatan internal.",
+      };
+    }
+
+    revalidatePath(`/mitra/pelamar/${applicationId}`);
+    return { success: true };
+  } catch (err: unknown) {
+    const msg =
+      err instanceof Error
+        ? err.message
+        : "Terjadi kesalahan saat menyimpan catatan.";
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Server Action untuk menghapus catatan internal perusahaan pada kandidat pelamar.
+ */
+export async function deleteApplicationNoteAction(
+  noteId: number,
+  applicationId: number
+) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login Anda telah berakhir." };
+    }
+
+    const { error: deleteError } = await supabase
+      .from("application_notes")
+      .delete()
+      .eq("id", noteId)
+      .eq("application_id", applicationId);
+
+    if (deleteError) {
+      return {
+        success: false,
+        error: deleteError.message || "Gagal menghapus catatan.",
+      };
+    }
+
+    revalidatePath(`/mitra/pelamar/${applicationId}`);
+    return { success: true };
+  } catch (err: unknown) {
+    const msg =
+      err instanceof Error
+        ? err.message
+        : "Terjadi kesalahan saat menghapus catatan.";
+    return { success: false, error: msg };
+  }
+}
+
