@@ -247,6 +247,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T12 `style(beranda): desain ulang beranda bebas template AI dengan standar antislop`
 - [x] T13 `feat(navbar): tampilkan nama dan inisial pengguna di navbar setelah login`
 - [x] T14 `feat(brand): pasang logo resmi JobConnect pada navbar, footer, dan favicon`
+- [x] T15 `feat(footer): desain ulang footer bergaya layered card dan efek teks glass JobConnect`
 
 ## Catatan Penting Agent
 
