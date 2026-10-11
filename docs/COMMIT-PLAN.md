@@ -156,7 +156,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 11: Proses Melamar Kerja dan Manajemen Lamaran
 
-- [ ] 119 `feat(lamar): buat komponen form melamar kerja pada detail lowongan`
+- [x] 119 `feat(lamar): buat komponen form melamar kerja pada detail lowongan`
 - [ ] 120 `feat(lamar): tambah kotak centang opsional analisis AI pada form lamar`
 - [ ] 121 `feat(lamar): tambah upload file CV format PDF maksimal 2 MB`
 - [ ] 122 `feat(lamar): unggah CV ke bucket privat cvs di Supabase Storage`

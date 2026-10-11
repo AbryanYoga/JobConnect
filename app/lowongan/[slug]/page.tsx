@@ -9,49 +9,17 @@ import {
   MapPin,
   Building2,
   Calendar,
-  Clock,
-  Briefcase,
-  GraduationCap,
   CheckCircle2,
   Gift,
   ArrowLeft,
   ExternalLink,
-  Share2,
 } from "lucide-react";
-import {
-  JOB_TYPE_LABEL,
-  WORK_MODE_LABEL,
-  EDUCATION_LABEL,
-  type JobType,
-  type WorkMode,
-  type EducationMin,
-} from "@/lib/labels";
+import { FormLamaran } from "@/components/lowongan/FormLamaran";
 
 interface JobDetailPageProps {
   params: Promise<{
     slug: string;
   }>;
-}
-
-function formatRupiah(amount: number): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-function formatSalary(min: number | null, max: number | null): string {
-  if (min && max) {
-    return `${formatRupiah(min)} - ${formatRupiah(max)}`;
-  }
-  if (min) {
-    return `Mulai ${formatRupiah(min)}`;
-  }
-  if (max) {
-    return `Hingga ${formatRupiah(max)}`;
-  }
-  return "Gaji dapat dinegosiasikan";
 }
 
 function formatDateIndo(dateStr: string): string {
@@ -162,6 +130,21 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
     notFound();
   }
 
+  // Ambil sesi pengguna yang sedang masuk untuk formulir lamaran
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let userRole: string | null = null;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    userRole = profile?.role || "user";
+  }
+
   const companyData = Array.isArray(job.company) ? job.company[0] : job.company;
   const categoryData = Array.isArray(job.category) ? job.category[0] : job.category;
 
@@ -200,6 +183,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
           items={[
             { label: "Beranda", href: "/" },
             { label: "Lowongan", href: "/lowongan" },
+            ...(categoryData?.name
+              ? [{ label: categoryData.name, href: `/lowongan?kategori=${categoryData.slug}` }]
+              : []),
             { label: job.title },
           ]}
         />
@@ -406,32 +392,16 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               </section>
             )}
 
-            {/* 6. Bagian Formulir Lamaran (Anchor formulir lamaran untuk Fase 11) */}
-            <section
-              id="formulir-lamaran"
-              className="bg-navy-950 text-white rounded-card p-6 sm:p-8 shadow-sm space-y-4"
-            >
-              <h2 className="text-lg sm:text-xl font-bold tracking-tight">
-                Tertarik Mengisi Posisi Ini?
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
-                Pastikan data profil dan CV terbaru Anda sudah siap. Kirimkan lamaran secara resmi langsung kepada pihak HRD perusahaan mitra.
-              </p>
-              {isOpen ? (
-                <div className="pt-2">
-                  <Link
-                    href={`/masuk?redirect=/lowongan/${job.slug}`}
-                    className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-white text-navy-950 hover:bg-slate-100 font-bold text-sm transition min-h-[44px]"
-                  >
-                    Masuk untuk Melamar
-                  </Link>
-                </div>
-              ) : (
-                <div className="text-xs text-rose-300 font-medium pt-1">
-                  Penerimaan lamaran untuk posisi ini telah resmi ditutup oleh perusahaan.
-                </div>
-              )}
-            </section>
+            {/* 6. Formulir Pengajuan Lamaran Pekerjaan */}
+            <FormLamaran
+              jobId={job.id}
+              jobTitle={job.title}
+              jobSlug={job.slug}
+              companyName={companyName}
+              isOpen={isOpen}
+              isLoggedIn={Boolean(user)}
+              userRole={userRole}
+            />
           </div>
 
           {/* Kolom Kanan: Sidebar Kriteria Utama */}
