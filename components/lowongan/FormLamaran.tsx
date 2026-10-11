@@ -48,6 +48,8 @@ export function FormLamaran({
   const [aiConsent, setAiConsent] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [submittedAppId, setSubmittedAppId] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -214,12 +216,78 @@ export function FormLamaran({
         return;
       }
 
+      // 2. Simpan baris lamaran dengan status awal 'dikirim'
+      const { data: newApp, error: insertError } = await supabase
+        .from("applications")
+        .insert({
+          job_id: jobId,
+          user_id: user.id,
+          cv_path: cvPath,
+          cover_letter: coverLetter.trim() || null,
+          ai_consent: aiConsent,
+          status: "dikirim",
+        })
+        .select("id")
+        .single();
+
+      if (insertError) {
+        setErrorMessage(
+          insertError.message ||
+            "Gagal menyimpan data lamaran. Silakan coba kembali."
+        );
+        setIsUploading(false);
+        return;
+      }
+
       setIsUploading(false);
+      setIsSuccess(true);
+      if (newApp?.id) {
+        setSubmittedAppId(newApp.id);
+      }
     } catch {
-      setErrorMessage("Terjadi gangguan koneksi saat mengunggah CV.");
+      setErrorMessage("Terjadi gangguan koneksi saat mengirimkan lamaran.");
       setIsUploading(false);
     }
   };
+
+  if (isSuccess) {
+    return (
+      <section
+        id="formulir-lamaran"
+        aria-label="Lamaran Berhasil Dikirimkan"
+        className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] p-6 sm:p-9 shadow-card text-center space-y-5"
+      >
+        <div className="w-16 h-16 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center mx-auto text-emerald-700 shadow-2xs">
+          <CheckCircle2 className="w-8 h-8" aria-hidden="true" />
+        </div>
+        <div className="space-y-2 max-w-lg mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
+            <span>Lamaran Terkirim</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
+            Lamaran Anda Berhasil Terkirim
+          </h2>
+          <p className="text-sm text-slate-600 leading-relaxed font-medium">
+            Berkas lamaran dan CV Anda untuk posisi <span className="font-bold text-slate-900">{jobTitle}</span> telah resmi diterima oleh <span className="font-bold text-slate-900">{companyName}</span>. Pihak HRD akan meninjau kualifikasi Anda.
+          </p>
+        </div>
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href={submittedAppId ? `/lamaran-saya/${submittedAppId}` : "/lamaran-saya"}
+            className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F2D200] text-black font-black text-sm transition shadow-card border border-black/10 min-h-[44px]"
+          >
+            Lihat Status Lamaran Saya
+          </Link>
+          <Link
+            href="/lowongan"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm transition min-h-[44px]"
+          >
+            Eksplorasi Lowongan Lain
+          </Link>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
