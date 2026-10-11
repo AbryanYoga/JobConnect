@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { motion } from "motion/react";
 
 /**
  * Komponen LogoIcon JobConnect:
@@ -281,93 +280,12 @@ function FooterCard() {
 }
 
 /**
- * Komponen GlassText:
- * Menampilkan tipografi latar belakang berukuran besar dengan filter SVG glass handcrafted dan animasi Framer Motion.
- */
-function GlassText() {
-  return (
-    <div className="relative w-full flex items-center justify-center select-none pt-0 overflow-hidden pointer-events-none -mt-4 sm:-mt-8 md:-mt-12">
-      {/* Definisi Filter SVG Tak Terlihat */}
-      <svg className="absolute w-0 h-0" aria-hidden="true" focusable="false">
-        <defs>
-          <filter id="glass-effect" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow
-              dx="0"
-              dy="4"
-              stdDeviation="6"
-              floodColor="#000000"
-              floodOpacity="0.25"
-              result="outer-shadow"
-            />
-            <feComponentTransfer in="SourceAlpha" result="alpha">
-              <feFuncA type="linear" slope="1" />
-            </feComponentTransfer>
-            <feOffset in="alpha" dx="0" dy="4" result="offset-white" />
-            <feGaussianBlur in="offset-white" stdDeviation="4" result="blur-white" />
-            <feComposite
-              in="alpha"
-              in2="blur-white"
-              operator="out"
-              result="inner-white-mask"
-            />
-            <feFlood floodColor="#ffffff" floodOpacity="0.25" result="white-fill" />
-            <feComposite
-              in="white-fill"
-              in2="inner-white-mask"
-              operator="in"
-              result="inner-white-final"
-            />
-            <feGaussianBlur in="alpha" stdDeviation="6" result="blur-black" />
-            <feComposite
-              in="alpha"
-              in2="blur-black"
-              operator="out"
-              result="inner-black-mask"
-            />
-            <feFlood floodColor="#000000" floodOpacity="0.25" result="black-fill" />
-            <feComposite
-              in="black-fill"
-              in2="inner-black-mask"
-              operator="in"
-              result="inner-black-final"
-            />
-            <feMerge>
-              <feMergeNode in="outer-shadow" />
-              <feMergeNode in="SourceGraphic" />
-              <feMergeNode in="inner-white-final" />
-              <feMergeNode in="inner-black-final" />
-            </feMerge>
-          </filter>
-        </defs>
-      </svg>
-
-      {/* Elemen Teks Motion dengan Filter SVG */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-        className="relative"
-      >
-        <span
-          className="block text-[min(18vw,260px)] font-bold tracking-normal leading-none select-none text-white px-4 text-center"
-          style={{ filter: "url(#glass-effect)" }}
-        >
-          JobConnect
-        </span>
-      </motion.div>
-    </div>
-  );
-}
-
-/**
  * Komponen Footer Utama JobConnect
  */
 export function Footer() {
   return (
-    <footer className="w-full flex flex-col items-center gap-0 mt-auto pt-10 pb-4 bg-[#FAF8F0]/30 overflow-hidden">
+    <footer className="w-full flex flex-col items-center gap-0 mt-auto pt-8 pb-12 bg-transparent">
       <FooterCard />
-      <GlassText />
     </footer>
   );
 }
