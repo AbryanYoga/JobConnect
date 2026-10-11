@@ -15,10 +15,12 @@ import {
 } from "lucide-react";
 import { updateApplicationStatusAction } from "@/app/actions/mitra";
 import { type ApplicationStatus } from "@/components/ui/StatusBadge";
+import { RejectCandidateModal } from "./RejectCandidateModal";
 
 interface ApplicationStatusActionsProps {
   applicationId: number;
   currentStatus: ApplicationStatus;
+  candidateName?: string;
   onOpenRejectModal?: () => void;
   onOpenInterviewModal?: () => void;
 }
@@ -26,11 +28,13 @@ interface ApplicationStatusActionsProps {
 export function ApplicationStatusActions({
   applicationId,
   currentStatus,
+  candidateName = "Kandidat",
   onOpenRejectModal,
   onOpenInterviewModal,
 }: ApplicationStatusActionsProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const handleProgressStatus = async (nextStatus: ApplicationStatus) => {
     setErrorMessage(null);
@@ -188,19 +192,17 @@ export function ApplicationStatusActions({
           )}
 
           {/* Tombol Tolak Lamaran (Tersedia dari status apa pun sebelum diterima) */}
-          {onOpenRejectModal && (
-            <div className="pt-2 border-t border-black/[0.06]">
-              <button
-                type="button"
-                disabled={isUpdating}
-                onClick={onOpenRejectModal}
-                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full hover:bg-red-50 text-red-600 hover:text-red-700 font-bold text-xs sm:text-sm border border-red-200 transition min-h-[44px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <XCircle className="w-4 h-4" aria-hidden="true" />
-                <span>Tolak Lamaran Kandidat</span>
-              </button>
-            </div>
-          )}
+          <div className="pt-2 border-t border-black/[0.06]">
+            <button
+              type="button"
+              disabled={isUpdating}
+              onClick={onOpenRejectModal || (() => setIsRejectModalOpen(true))}
+              className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full hover:bg-red-50 text-red-600 hover:text-red-700 font-bold text-xs sm:text-sm border border-red-200 transition min-h-[44px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <XCircle className="w-4 h-4" aria-hidden="true" />
+              <span>Tolak Lamaran Kandidat</span>
+            </button>
+          </div>
         </div>
       )}
 
@@ -213,6 +215,14 @@ export function ApplicationStatusActions({
           <span>{errorMessage}</span>
         </div>
       )}
+
+      {/* Modal Penolakan Lamaran */}
+      <RejectCandidateModal
+        isOpen={isRejectModalOpen}
+        onClose={() => setIsRejectModalOpen(false)}
+        applicationId={applicationId}
+        candidateName={candidateName}
+      />
     </div>
   );
 }

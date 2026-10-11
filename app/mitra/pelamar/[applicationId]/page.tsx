@@ -368,6 +368,7 @@ export default async function DetailPelamarPage({
           <ApplicationStatusActions
             applicationId={application.id}
             currentStatus={application.status}
+            candidateName={applicantName}
           />
 
           <CandidateNotes
