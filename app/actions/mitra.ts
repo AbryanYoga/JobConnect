@@ -879,3 +879,61 @@ export async function deleteApplicationNoteAction(
   }
 }
 
+/**
+ * Server Action untuk mengubah status lamaran kerja menggunakan fungsi change_application_status.
+ * Memvalidasi transisi status sah dan mencatat riwayat perubahan status di database.
+ */
+export async function updateApplicationStatusAction({
+  applicationId,
+  toStatus,
+  message,
+  interviewAt,
+  interviewPlace,
+}: {
+  applicationId: number;
+  toStatus: string;
+  message?: string;
+  interviewAt?: string;
+  interviewPlace?: string;
+}) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login Anda telah berakhir." };
+    }
+
+    const { error: rpcError } = await supabase.rpc(
+      "change_application_status",
+      {
+        p_application_id: applicationId,
+        p_to_status: toStatus,
+        p_message: message || null,
+        p_interview_at: interviewAt || null,
+        p_interview_place: interviewPlace || null,
+      }
+    );
+
+    if (rpcError) {
+      return {
+        success: false,
+        error: rpcError.message || "Gagal memperbarui status lamaran.",
+      };
+    }
+
+    revalidatePath(`/mitra/pelamar/${applicationId}`);
+    return { success: true };
+  } catch (err: unknown) {
+    const msg =
+      err instanceof Error
+        ? err.message
+        : "Terjadi kesalahan saat memproses status lamaran.";
+    return { success: false, error: msg };
+  }
+}
+
+

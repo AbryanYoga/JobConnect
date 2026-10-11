@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge";
 import { ViewCvButton } from "@/components/mitra/ViewCvButton";
+import { ApplicationStatusActions } from "@/components/mitra/ApplicationStatusActions";
 import {
   CandidateNotes,
   type CandidateNoteItem,
@@ -362,8 +363,13 @@ export default async function DetailPelamarPage({
           </div>
         </div>
 
-        {/* Kolom Kanan: Catatan Internal Tim & Timeline Riwayat Status */}
+        {/* Kolom Kanan: Aksi Status, Catatan Internal Tim & Timeline Riwayat Status */}
         <div className="space-y-6">
+          <ApplicationStatusActions
+            applicationId={application.id}
+            currentStatus={application.status}
+          />
+
           <CandidateNotes
             applicationId={application.id}
             notes={notes}
