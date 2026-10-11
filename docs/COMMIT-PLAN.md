@@ -176,7 +176,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 133 `feat(mitra): buat form catatan internal perusahaan pada kandidat`
 - [x] 134 `feat(mitra): buat alur pengubah status lamaran kandidat`
 - [x] 135 `feat(mitra): tambah form pesan penolakan saat kandidat ditolak`
-- [ ] 136 `feat(mitra): buat form penjadwalan wawancara tanggal dan tempat`
+- [x] 136 `feat(mitra): buat form penjadwalan wawancara tanggal dan tempat`
 
 ## Fase 13: Screening CV Berbantuan AI (Claude API)
 

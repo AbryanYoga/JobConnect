@@ -252,21 +252,19 @@ export default async function PelamarPage({
 
       {/* Daftar Kandidat Pelamar */}
       {applications.length === 0 ? (
-        <EmptyState
-          title="Belum ada yang melamar"
-          description="Belum ada pencari kerja yang mengirimkan lamaran untuk posisi ini. Bagikan tautan lowongan agar kandidat potensial dapat menemukan dan melamar pekerjaan Anda."
-          action={
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-              <CopyJobLinkButton jobSlug={job.slug} />
-              <Link
-                href="/mitra/lowongan"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full border border-black/[0.08] hover:bg-black/[0.04] text-black font-bold text-xs sm:text-sm transition min-h-[44px]"
-              >
-                Kembali ke Kelola Lowongan
-              </Link>
-            </div>
-          }
-        />
+        <div className="space-y-4">
+          <EmptyState
+            title="Belum ada yang melamar"
+            description="Belum ada pencari kerja yang mengirimkan lamaran untuk posisi ini. Bagikan tautan lowongan agar kandidat potensial dapat menemukan dan melamar pekerjaan Anda."
+            action={{
+              label: "Kembali ke Kelola Lowongan",
+              href: "/mitra/lowongan",
+            }}
+          />
+          <div className="flex justify-center pt-2">
+            <CopyJobLinkButton jobSlug={job.slug} />
+          </div>
+        </div>
       ) : filteredApplications.length === 0 ? (
         <div className="bg-white rounded-3xl border border-black/[0.08] p-8 sm:p-12 text-center shadow-card space-y-4">
           <div className="w-12 h-12 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] flex items-center justify-center mx-auto text-slate-500">

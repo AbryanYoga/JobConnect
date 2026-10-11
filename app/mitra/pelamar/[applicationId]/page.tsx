@@ -321,6 +321,50 @@ export default async function DetailPelamarPage({
             </div>
           </div>
 
+          {/* Jadwal Wawancara (Jika Sudah Ditentukan) */}
+          {application.interview_at && (
+            <div className="bg-white rounded-3xl border border-blue-200 p-6 sm:p-7 shadow-card space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-blue-600" aria-hidden="true" />
+                  <h2 className="text-base sm:text-lg font-black text-black">
+                    Jadwal Wawancara Terjadwal
+                  </h2>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-900 text-xs font-bold border border-blue-200">
+                  Tahap Wawancara Aktif
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm font-medium">
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-1">
+                  <span className="text-slate-500 text-xs block">Waktu Wawancara:</span>
+                  <strong className="text-black font-black text-sm block">
+                    {formatDateIndo(application.interview_at)}
+                  </strong>
+                </div>
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-1">
+                  <span className="text-slate-500 text-xs block">Lokasi atau Tautan Pertemuan:</span>
+                  {application.interview_place?.startsWith("http") ? (
+                    <a
+                      href={application.interview_place}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 font-bold text-xs sm:text-sm inline-flex items-center gap-1 underline break-all"
+                    >
+                      <span>Buka Tautan Pertemuan</span>
+                      <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <strong className="text-black font-bold text-xs sm:text-sm block">
+                      {application.interview_place || "Lokasi belum ditentukan"}
+                    </strong>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Surat Lamaran (Cover Letter) */}
           <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4">
             <div className="flex items-center gap-2">
@@ -369,6 +413,8 @@ export default async function DetailPelamarPage({
             applicationId={application.id}
             currentStatus={application.status}
             candidateName={applicantName}
+            initialInterviewAt={application.interview_at}
+            initialInterviewPlace={application.interview_place}
           />
 
           <CandidateNotes
