@@ -136,6 +136,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   } = await supabase.auth.getUser();
 
   let userRole: string | null = null;
+  let existingApplication: { id: number; status: string; created_at: string } | null = null;
+
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -143,6 +145,18 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
       .eq("id", user.id)
       .single();
     userRole = profile?.role || "user";
+
+    // Cek apakah pengguna sudah pernah melamar ke lowongan ini
+    const { data: appData } = await supabase
+      .from("applications")
+      .select("id, status, created_at")
+      .eq("job_id", job.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (appData) {
+      existingApplication = appData;
+    }
   }
 
   const companyData = Array.isArray(job.company) ? job.company[0] : job.company;
@@ -401,6 +415,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               isOpen={isOpen}
               isLoggedIn={Boolean(user)}
               userRole={userRole}
+              hasApplied={Boolean(existingApplication)}
+              existingApplicationId={existingApplication?.id}
             />
           </div>
 

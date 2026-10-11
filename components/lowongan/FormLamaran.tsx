@@ -31,6 +31,8 @@ export interface FormLamaranProps {
   isOpen: boolean;
   isLoggedIn: boolean;
   userRole?: string | null;
+  hasApplied?: boolean;
+  existingApplicationId?: number | null;
 }
 
 export function FormLamaran({
@@ -41,6 +43,8 @@ export function FormLamaran({
   isOpen,
   isLoggedIn,
   userRole = "user",
+  hasApplied = false,
+  existingApplicationId,
 }: FormLamaranProps) {
   const [coverLetter, setCoverLetter] = useState("");
   const [cvFile, setCvFile] = useState<File | null>(null);
@@ -49,6 +53,8 @@ export function FormLamaran({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [alreadyApplied, setAlreadyApplied] = useState(hasApplied);
+  const appId = existingApplicationId || submittedAppId;
   const [submittedAppId, setSubmittedAppId] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -231,10 +237,19 @@ export function FormLamaran({
         .single();
 
       if (insertError) {
-        setErrorMessage(
-          insertError.message ||
-            "Gagal menyimpan data lamaran. Silakan coba kembali."
-        );
+        if (
+          insertError.code === "23505" ||
+          insertError.message.toLowerCase().includes("unique") ||
+          insertError.message.toLowerCase().includes("duplicate")
+        ) {
+          setAlreadyApplied(true);
+          setErrorMessage("Anda sudah pernah mengirimkan lamaran untuk lowongan ini.");
+        } else {
+          setErrorMessage(
+            insertError.message ||
+              "Gagal menyimpan data lamaran. Silakan coba kembali."
+          );
+        }
         setIsUploading(false);
         return;
       }
@@ -283,6 +298,45 @@ export function FormLamaran({
             className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm transition min-h-[44px]"
           >
             Eksplorasi Lowongan Lain
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
+  if (alreadyApplied) {
+    return (
+      <section
+        id="formulir-lamaran"
+        aria-label="Status Lamaran Sudah Dikirimkan"
+        className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] p-6 sm:p-9 shadow-card text-center space-y-4"
+      >
+        <div className="w-14 h-14 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center mx-auto text-blue-700 shadow-2xs">
+          <CheckCircle2 className="w-7 h-7" aria-hidden="true" />
+        </div>
+        <div className="space-y-1.5 max-w-md mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-800 text-xs font-bold border border-blue-200">
+            <span>Sudah Pernah Melamar</span>
+          </div>
+          <h2 className="text-2xl font-black text-black tracking-tight">
+            Anda Sudah Melamar Posisi Ini
+          </h2>
+          <p className="text-sm text-slate-600 leading-relaxed font-medium">
+            Anda telah mengirimkan berkas lamaran untuk lowongan <span className="font-bold text-slate-900">{jobTitle}</span> di {companyName}. Sistem mencegah pengiriman berkas ganda untuk lowongan yang sama.
+          </p>
+        </div>
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href={appId ? `/lamaran-saya/${appId}` : "/lamaran-saya"}
+            className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F2D200] text-black font-black text-sm transition shadow-card border border-black/10 min-h-[44px]"
+          >
+            Lihat Status Lamaran Saya
+          </Link>
+          <Link
+            href="/lowongan"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm transition min-h-[44px]"
+          >
+            Cari Lowongan Lain
           </Link>
         </div>
       </section>

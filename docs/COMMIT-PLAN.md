@@ -161,7 +161,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 121 `feat(lamar): tambah upload file CV format PDF maksimal 2 MB`
 - [x] 122 `feat(lamar): unggah CV ke bucket privat cvs di Supabase Storage`
 - [x] 123 `feat(lamar): simpan baris lamaran dengan status awal dikirim`
-- [ ] 124 `fix(lamar): cegah melamar ganda ke lowongan yang sama`
+- [x] 124 `fix(lamar): cegah melamar ganda ke lowongan yang sama`
 - [ ] 125 `fix(lamar): blokir aksi melamar jika lowongan closed atau expired`
 - [ ] 126 `feat(lamar): tampilkan banner status sudah melamar pada detail lowongan`
 - [ ] 127 `feat(lamaran-saya): buat halaman riwayat lamaran pencari kerja`
