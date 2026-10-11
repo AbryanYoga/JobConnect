@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { Send, FileText, AlertCircle, LogIn, ShieldAlert, Info } from "lucide-react";
-import { COVER_LETTER_MAX } from "@/lib/validation/lamaran";
+import { Send, FileText, AlertCircle, LogIn, ShieldAlert, Info, Upload, X, CheckCircle2 } from "lucide-react";
+import { COVER_LETTER_MAX, validateCvFile, CV_ERROR_MESSAGE } from "@/lib/validation/lamaran";
 
 export interface FormLamaranProps {
   jobId: number;
@@ -24,8 +24,41 @@ export function FormLamaran({
   userRole = "user",
 }: FormLamaranProps) {
   const [coverLetter, setCoverLetter] = useState("");
+  const [cvFile, setCvFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const [aiConsent, setAiConsent] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileError(null);
+    setErrorMessage(null);
+    const file = e.target.files?.[0];
+    if (!file) {
+      setCvFile(null);
+      return;
+    }
+
+    const validation = await validateCvFile(file);
+    if (!validation.ok) {
+      setCvFile(null);
+      setFileError(validation.message || CV_ERROR_MESSAGE);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
+    setCvFile(file);
+  };
+
+  const handleRemoveFile = () => {
+    setCvFile(null);
+    setFileError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   // Jika lowongan sudah ditutup oleh perusahaan atau moderator
   if (!isOpen) {
@@ -119,6 +152,12 @@ export function FormLamaran({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+    setFileError(null);
+
+    if (!cvFile) {
+      setFileError("Silakan unggah berkas CV Anda terlebih dahulu.");
+      return;
+    }
 
     if (coverLetter.length > COVER_LETTER_MAX) {
       setErrorMessage(`Surat pengantar maksimal ${COVER_LETTER_MAX} karakter.`);
@@ -158,6 +197,95 @@ export function FormLamaran({
       )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        {/* Kolom Unggah Berkas CV */}
+        <div className="space-y-2">
+          <label
+            htmlFor="cv-file"
+            className="text-sm font-bold text-slate-900 flex items-center justify-between"
+          >
+            <span>
+              Berkas CV (Curriculum Vitae) <span className="text-red-500">*</span>
+            </span>
+            <span className="text-xs font-semibold text-slate-500">
+              PDF, Maksimal 2 MB
+            </span>
+          </label>
+
+          <input
+            ref={fileInputRef}
+            id="cv-file"
+            name="cvFile"
+            type="file"
+            accept=".pdf,application/pdf"
+            onChange={handleFileChange}
+            className="sr-only"
+          />
+
+          {!cvFile ? (
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  fileInputRef.current?.click();
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label="Pilih berkas CV format PDF maksimal 2 MB"
+              className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition ${
+                fileError
+                  ? "border-red-300 bg-red-50/40 hover:bg-red-50/70"
+                  : "border-black/[0.12] bg-[#FAF8F0]/50 hover:bg-[#FAF8F0] hover:border-black/30"
+              }`}
+            >
+              <div className="w-12 h-12 rounded-full bg-white border border-black/[0.08] flex items-center justify-center mx-auto text-slate-700 shadow-2xs mb-3">
+                <Upload className="w-5 h-5 text-slate-700" aria-hidden="true" />
+              </div>
+              <p className="text-sm font-bold text-slate-900">
+                Pilih Berkas CV Anda
+              </p>
+              <p className="text-xs text-slate-500 mt-1">
+                Format resmi wajib PDF dengan ukuran maksimal 2 MB
+              </p>
+            </div>
+          ) : (
+            <div className="p-4 rounded-2xl bg-white border border-black/[0.12] shadow-2xs flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 text-amber-900 font-bold text-xs border border-amber-200">
+                  PDF
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-slate-900 truncate">
+                    {cvFile.name}
+                  </p>
+                  <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+                    <span>
+                      {(cvFile.size / (1024 * 1024)).toFixed(2)} MB • Berkas siap dikirim
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleRemoveFile}
+                className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
+                aria-label="Hapus berkas CV yang dipilih"
+              >
+                <X className="w-5 h-5" aria-hidden="true" />
+              </button>
+            </div>
+          )}
+
+          {fileError && (
+            <p className="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              <span>{fileError}</span>
+            </p>
+          )}
+        </div>
+
         {/* Kolom Surat Pengantar */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
