@@ -14,6 +14,7 @@ import {
   History,
 } from "lucide-react";
 import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge";
+import { ViewCvButton } from "@/components/mitra/ViewCvButton";
 import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
@@ -187,6 +188,19 @@ export default async function DetailPelamarPage({
   const jobTypeLabel = JOB_TYPE_LABEL[job.job_type as JobType] || job.job_type;
   const workModeLabel = WORK_MODE_LABEL[job.work_mode as WorkMode] || job.work_mode;
 
+  // Siapkan signed URL awal (berlaku 5 menit) untuk berkas CV privat
+  let initialSignedCvUrl: string | null = null;
+  if (application.cv_path) {
+    try {
+      const { data: signedData } = await supabase.storage
+        .from("cvs")
+        .createSignedUrl(application.cv_path, 300);
+      initialSignedCvUrl = signedData?.signedUrl || null;
+    } catch {
+      initialSignedCvUrl = null;
+    }
+  }
+
   return (
     <div className="space-y-8">
       {/* Navigasi Kembali */}
@@ -311,6 +325,27 @@ export default async function DetailPelamarPage({
                 Kandidat tidak menyertakan surat lamaran tertulis khusus saat mengirimkan lamaran ini.
               </div>
             )}
+          </div>
+
+          {/* Berkas Curriculum Vitae (CV) */}
+          <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4">
+            <div className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-black" aria-hidden="true" />
+              <h2 className="text-base sm:text-lg font-black text-black">
+                Berkas Curriculum Vitae (CV)
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+              Berkas CV pelamar disimpan dalam ruang penyimpanan privat terenkripsi. Tautan akses dibuat menggunakan signed URL aman yang berlaku selama 5 menit untuk menjaga kerahasiaan data pelamar.
+            </p>
+
+            <div className="pt-2">
+              <ViewCvButton
+                applicationId={application.id}
+                initialSignedUrl={initialSignedCvUrl}
+              />
+            </div>
           </div>
         </div>
 

@@ -360,6 +360,7 @@ export async function saveJobDraftAction(rawData: {
   title: string;
   summary?: string;
   categoryId?: number | "";
+  provinceId?: number | "";
   cityId?: number | "";
   locationDetail?: string;
   workMode: string;
@@ -656,6 +657,85 @@ export async function closeJobAction(jobId: number) {
     return { success: true };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Terjadi kesalahan saat menutup lowongan.";
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Server Action untuk mendapatkan signed URL berkas CV pelamar (berlaku 5 menit).
+ * Memeriksa hak kepemilikan lowongan oleh perusahaan sebelum membuat URL aman.
+ */
+export async function getApplicantCvUrlAction(applicationId: number) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login Anda telah berakhir." };
+    }
+
+    const { data: company } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("owner_id", user.id)
+      .maybeSingle();
+
+    if (!company) {
+      return { success: false, error: "Profil perusahaan belum terdaftar." };
+    }
+
+    // Ambil data lamaran beserta relasi lowongannya
+    const { data: application, error: appError } = await supabase
+      .from("applications")
+      .select(`
+        id,
+        cv_path,
+        job_id,
+        jobs:job_id (
+          company_id
+        )
+      `)
+      .eq("id", applicationId)
+      .maybeSingle();
+
+    if (appError || !application) {
+      return { success: false, error: "Lamaran tidak ditemukan." };
+    }
+
+    type AppWithJob = {
+      id: number;
+      cv_path: string;
+      job_id: number;
+      jobs: { company_id: number } | { company_id: number }[] | null;
+    };
+
+    const typedApp = application as unknown as AppWithJob;
+    const job = Array.isArray(typedApp.jobs) ? typedApp.jobs[0] : typedApp.jobs;
+    if (!job || job.company_id !== company.id) {
+      return {
+        success: false,
+        error: "Anda tidak memiliki wewenang untuk mengakses CV pelamar ini.",
+      };
+    }
+
+    // Buat signed URL dari bucket privat cvs (berlaku 300 detik / 5 menit)
+    const { data: signedData, error: signError } = await supabase.storage
+      .from("cvs")
+      .createSignedUrl(typedApp.cv_path, 300);
+
+    if (signError || !signedData?.signedUrl) {
+      return {
+        success: false,
+        error: signError?.message || "Gagal membuat URL aman untuk berkas CV.",
+      };
+    }
+
+    return { success: true, signedUrl: signedData.signedUrl };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Terjadi kesalahan saat memproses CV.";
     return { success: false, error: msg };
   }
 }

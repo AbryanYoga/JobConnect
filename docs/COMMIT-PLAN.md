@@ -172,7 +172,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 - [x] 130 `feat(mitra): buat halaman daftar pelamar per lowongan`
 - [x] 131 `feat(mitra): buat halaman detail kandidat pelamar`
-- [ ] 132 `feat(mitra): buat fungsi buka CV pelamar menggunakan signed URL aman`
+- [x] 132 `feat(mitra): buat fungsi buka CV pelamar menggunakan signed URL aman`
 - [ ] 133 `feat(mitra): buat form catatan internal perusahaan pada kandidat`
 - [ ] 134 `feat(mitra): buat alur pengubah status lamaran kandidat`
 - [ ] 135 `feat(mitra): tambah form pesan penolakan saat kandidat ditolak`
