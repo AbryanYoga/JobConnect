@@ -34,6 +34,12 @@ function formatDateIndo(dateStr: string): string {
   }
 }
 
+function checkIsExpired(deadline?: string | null): boolean {
+  if (!deadline) return false;
+  const today = new Date().toISOString().slice(0, 10);
+  return deadline < today;
+}
+
 function getCompanyInitials(name: string): string {
   if (!name) return "CO";
   const words = name
@@ -188,6 +194,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
     (job.work_mode === "remote" ? "Kerja Remote" : "Indonesia");
 
   const isOpen = job.status === "open";
+  const isExpired = checkIsExpired(job.deadline);
+  const isApplyAllowed = isOpen && !isExpired;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -249,12 +257,16 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                   )}
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-bold border ${
-                      isOpen
+                      isApplyAllowed
                         ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                         : "bg-slate-100 text-slate-700 border-slate-300"
                     }`}
                   >
-                    {isOpen ? "Lowongan Dibuka" : "Lowongan Ditutup"}
+                    {isApplyAllowed
+                      ? "Lowongan Dibuka"
+                      : isExpired
+                      ? "Batas Waktu Berakhir"
+                      : "Lowongan Ditutup"}
                   </span>
                 </div>
 
@@ -293,7 +305,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
             {/* Tombol CTA Lamar di Header */}
             <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-              {isOpen ? (
+              {isApplyAllowed ? (
                 <a
                   href="#formulir-lamaran"
                   className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-navy-900 hover:bg-navy-950 text-white font-bold text-sm transition shadow-2xs min-h-[44px]"
@@ -306,7 +318,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                   disabled
                   className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-slate-200 text-slate-500 font-semibold text-sm cursor-not-allowed min-h-[44px]"
                 >
-                  Lowongan Sudah Ditutup
+                  {isExpired ? "Batas Waktu Berakhir" : "Lowongan Sudah Ditutup"}
                 </button>
               )}
             </div>
@@ -413,6 +425,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               jobSlug={job.slug}
               companyName={companyName}
               isOpen={isOpen}
+              isExpired={isExpired}
+              deadline={job.deadline}
               isLoggedIn={Boolean(user)}
               userRole={userRole}
               hasApplied={Boolean(existingApplication)}
@@ -433,7 +447,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               skills={job.skills}
               locationText={locationText}
               locationDetail={job.location_detail}
-              isOpen={isOpen}
+              isOpen={isApplyAllowed}
             />
           </aside>
         </div>

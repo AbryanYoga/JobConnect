@@ -29,6 +29,8 @@ export interface FormLamaranProps {
   jobSlug: string;
   companyName: string;
   isOpen: boolean;
+  isExpired?: boolean;
+  deadline?: string | null;
   isLoggedIn: boolean;
   userRole?: string | null;
   hasApplied?: boolean;
@@ -41,6 +43,8 @@ export function FormLamaran({
   jobSlug,
   companyName,
   isOpen,
+  isExpired = false,
+  deadline,
   isLoggedIn,
   userRole = "user",
   hasApplied = false,
@@ -88,22 +92,34 @@ export function FormLamaran({
     }
   };
 
-  // Jika lowongan sudah ditutup oleh perusahaan atau moderator
-  if (!isOpen) {
+  // Jika lowongan sudah ditutup oleh perusahaan atau masa pendaftaran telah berakhir
+  if (!isOpen || isExpired) {
+    const formattedDeadline = deadline
+      ? new Intl.DateTimeFormat("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }).format(new Date(deadline))
+      : null;
+
     return (
       <section
         id="formulir-lamaran"
-        aria-label="Status Lowongan Ditutup"
+        aria-label={isExpired ? "Batas Waktu Lamaran Telah Berakhir" : "Status Lowongan Ditutup"}
         className="bg-white rounded-[28px] border border-black/[0.08] p-6 sm:p-8 shadow-card text-center space-y-3"
       >
         <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-500">
           <ShieldAlert className="w-6 h-6" aria-hidden="true" />
         </div>
         <h2 className="text-xl font-black text-black tracking-tight">
-          Penerimaan Lamaran Telah Ditutup
+          {isExpired ? "Batas Waktu Lamaran Berakhir" : "Penerimaan Lamaran Telah Ditutup"}
         </h2>
         <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-          Lowongan untuk posisi <span className="font-semibold">{jobTitle}</span> di {companyName} sudah tidak menerima lamaran baru. Silakan eksplorasi lowongan aktif lainnya.
+          {isExpired
+            ? `Masa penerimaan berkas untuk posisi ${jobTitle} di ${companyName} telah berakhir${
+                formattedDeadline ? ` pada ${formattedDeadline}` : ""
+              }. Silakan eksplorasi lowongan aktif lainnya.`
+            : `Lowongan untuk posisi ${jobTitle} di ${companyName} sudah tidak menerima lamaran baru. Silakan eksplorasi lowongan aktif lainnya.`}
         </p>
         <div className="pt-2">
           <Link
@@ -181,6 +197,15 @@ export function FormLamaran({
     e.preventDefault();
     setErrorMessage(null);
     setFileError(null);
+
+    if (!isOpen || isExpired) {
+      setErrorMessage(
+        isExpired
+          ? "Batas waktu penerimaan lamaran untuk lowongan ini telah berakhir."
+          : "Lowongan ini sudah ditutup dan tidak menerima lamaran baru."
+      );
+      return;
+    }
 
     if (!cvFile) {
       setFileError("Silakan unggah berkas CV Anda terlebih dahulu.");
