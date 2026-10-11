@@ -165,7 +165,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 125 `fix(lamar): blokir aksi melamar jika lowongan closed atau expired`
 - [x] 126 `feat(lamar): tampilkan banner status sudah melamar pada detail lowongan`
 - [x] 127 `feat(lamaran-saya): buat halaman riwayat lamaran pencari kerja`
-- [ ] 128 `feat(lamaran-saya): buat halaman detail status lamaran dan timeline`
+- [x] 128 `feat(lamaran-saya): buat halaman detail status lamaran dan timeline`
 - [ ] 129 `feat(lamaran-saya): tambah fitur penarikan lamaran oleh pelamar`
 
 ## Fase 12: Review Pelamar oleh Perusahaan dan Keputusan Akhir
