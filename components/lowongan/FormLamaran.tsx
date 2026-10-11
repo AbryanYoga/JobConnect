@@ -2,8 +2,26 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { Send, FileText, AlertCircle, LogIn, ShieldAlert, Info, Upload, X, CheckCircle2 } from "lucide-react";
-import { COVER_LETTER_MAX, validateCvFile, CV_ERROR_MESSAGE } from "@/lib/validation/lamaran";
+import {
+  Send,
+  FileText,
+  AlertCircle,
+  LogIn,
+  ShieldAlert,
+  Info,
+  Upload,
+  X,
+  CheckCircle2,
+  Loader2,
+} from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import {
+  COVER_LETTER_MAX,
+  validateCvFile,
+  CV_ERROR_MESSAGE,
+  CV_BUCKET,
+  buildCvPath,
+} from "@/lib/validation/lamaran";
 
 export interface FormLamaranProps {
   jobId: number;
@@ -16,6 +34,7 @@ export interface FormLamaranProps {
 }
 
 export function FormLamaran({
+  jobId,
   jobTitle,
   jobSlug,
   companyName,
@@ -28,6 +47,7 @@ export function FormLamaran({
   const [fileError, setFileError] = useState<string | null>(null);
   const [aiConsent, setAiConsent] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,7 +169,7 @@ export function FormLamaran({
     );
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     setFileError(null);
@@ -162,6 +182,42 @@ export function FormLamaran({
     if (coverLetter.length > COVER_LETTER_MAX) {
       setErrorMessage(`Surat pengantar maksimal ${COVER_LETTER_MAX} karakter.`);
       return;
+    }
+
+    setIsUploading(true);
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        setErrorMessage("Sesi masuk Anda telah berakhir. Silakan masuk kembali.");
+        setIsUploading(false);
+        return;
+      }
+
+      // Unggah berkas CV ke bucket privat cvs di Supabase Storage
+      const cvPath = buildCvPath(user.id, jobId);
+      const { error: uploadError } = await supabase.storage
+        .from(CV_BUCKET)
+        .upload(cvPath, cvFile, {
+          upsert: true,
+          contentType: "application/pdf",
+        });
+
+      if (uploadError) {
+        setErrorMessage(
+          "Gagal mengunggah berkas CV ke penyimpanan aman. Silakan coba kembali."
+        );
+        setIsUploading(false);
+        return;
+      }
+
+      setIsUploading(false);
+    } catch {
+      setErrorMessage("Terjadi gangguan koneksi saat mengunggah CV.");
+      setIsUploading(false);
     }
   };
 
@@ -350,10 +406,20 @@ export function FormLamaran({
         <div className="pt-2">
           <button
             type="submit"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F2D200] active:scale-[0.99] text-black font-black text-sm transition shadow-card border border-black/10 min-h-[44px]"
+            disabled={isUploading}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F2D200] active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed text-black font-black text-sm transition shadow-card border border-black/10 min-h-[44px]"
           >
-            <Send className="w-4 h-4" aria-hidden="true" />
-            <span>Kirim Lamaran</span>
+            {isUploading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-black" aria-hidden="true" />
+                <span>Mengunggah Berkas CV...</span>
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4" aria-hidden="true" />
+                <span>Kirim Lamaran</span>
+              </>
+            )}
           </button>
         </div>
       </form>
