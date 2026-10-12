@@ -12,6 +12,7 @@ export interface JobEvaluationCriteria {
   skills: string[];
   responsibilities: string[];
   niceToHave?: string[];
+  injectionWarning?: string;
 }
 
 export const NEUTRAL_EVALUATION_SYSTEM_PROMPT = `Anda adalah asisten evaluator kesesuaian kandidat kerja (Job-Fit Evaluator) profesional dan objektif untuk platform JobConnect.
@@ -68,9 +69,6 @@ Berikan respons HANYA berupa objek JSON yang valid tanpa pengantar, tanpa penutu
   "suspicious": false
 }`;
 
-/**
- * Menyusun prompt pengguna yang berisi rincian kriteria lowongan pekerjaan.
- */
 export function buildEvaluationUserPrompt(
   job: JobEvaluationCriteria
 ): string {
@@ -85,6 +83,10 @@ export function buildEvaluationUserPrompt(
       ? job.niceToHave.map((n, i) => `  ${i + 1}. ${n}`).join("\n")
       : "  Tidak ada nilai tambah khusus";
 
+  const securityNote = job.injectionWarning
+    ? `\n\nPERINGATAN INTEGRITAS DOKUMEN:\n${job.injectionWarning}\n`
+    : "";
+
   return `Berikut adalah kriteria lowongan pekerjaan yang menjadi acuan penilaian:
 
 Judul Posisi: ${job.title}
@@ -97,7 +99,7 @@ Tanggung Jawab Utama:
 ${respList}
 
 Nilai Tambah (Nice-to-Have):
-${niceToHaveList}
+${niceToHaveList}${securityNote}
 
 TUGAS:
 Silakan telaah dokumen CV pelamar yang terlampir di atas, bandingkan dengan kriteria lowongan ini, dan berikan evaluasi objektif dalam format JSON sesuai spesifikasi sistem prompt.`;
