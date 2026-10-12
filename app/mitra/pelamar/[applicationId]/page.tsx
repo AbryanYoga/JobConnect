@@ -21,6 +21,10 @@ import {
   type CandidateNoteItem,
 } from "@/components/mitra/CandidateNotes";
 import {
+  AiReviewPanel,
+  type AiReviewData,
+} from "@/components/mitra/AiReviewPanel";
+import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
   type JobType,
@@ -123,7 +127,8 @@ export default async function DetailPelamarPage({
         status,
         job_type,
         work_mode,
-        company_id
+        company_id,
+        ai_screening
       )
     `)
     .eq("id", appId)
@@ -158,6 +163,7 @@ export default async function DetailPelamarPage({
       job_type: string;
       work_mode: string;
       company_id: number;
+      ai_screening: boolean;
     } | null;
   };
 
@@ -166,6 +172,15 @@ export default async function DetailPelamarPage({
   if (!application || !application.jobs || application.jobs.company_id !== company.id) {
     notFound();
   }
+
+  // Ambil data hasil evaluasi AI (jika tersedia)
+  const { data: rawAiReview } = await supabase
+    .from("application_ai_reviews")
+    .select("id, status, score, level, summary, matched_skills, missing_skills, interview_questions, suspicious, attempts, error_message, model, completed_at")
+    .eq("application_id", appId)
+    .maybeSingle();
+
+  const aiReview = rawAiReview as unknown as AiReviewData | null;
 
   // Ambil riwayat pembaruan status lamaran
   const { data: rawHistory } = await supabase
@@ -384,6 +399,14 @@ export default async function DetailPelamarPage({
               </div>
             )}
           </div>
+
+          {/* Panel Hasil Review AI */}
+          <AiReviewPanel
+            applicationId={application.id}
+            aiConsent={application.ai_consent}
+            jobAiScreening={Boolean(job.ai_screening)}
+            review={aiReview}
+          />
 
           {/* Berkas Curriculum Vitae (CV) */}
           <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4">
