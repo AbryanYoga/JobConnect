@@ -11,6 +11,10 @@ import {
   type AiEvaluationResult,
 } from "@/lib/validation/ai";
 import { detectPromptInjection } from "@/lib/ai/sanitizer";
+import {
+  checkDailyAiQuota,
+  MAX_AI_ATTEMPTS_PER_APPLICATION,
+} from "@/lib/ai/quota";
 
 export interface ScreeningResult {
   success: boolean;
@@ -182,6 +186,52 @@ export async function screenApplicationCv(
 
   const currentAttempts = (existingReview?.attempts || 0) + 1;
   const currentModel = getClaudeModel();
+
+  // 4a. Periksa batas maksimal percobaan analisis ulang untuk satu lamaran (PRD 7.5)
+  if (currentAttempts > MAX_AI_ATTEMPTS_PER_APPLICATION) {
+    const errorMsg = "Batas maksimal percobaan analisis AI (3 kali) untuk lamaran ini telah tercapai.";
+    await adminClient
+      .from("application_ai_reviews")
+      .update({
+        status: "skipped",
+        error_message: errorMsg,
+      })
+      .eq("application_id", applicationId);
+
+    return {
+      success: false,
+      applicationId,
+      status: "skipped",
+      error: errorMsg,
+      statusCode: 429,
+    };
+  }
+
+  // 4b. Periksa batas kuota harian total pemindaian AI (PRD 7.5: AI_MAX_SCANS_PER_DAY)
+  const quota = await checkDailyAiQuota(adminClient);
+  if (!quota.allowed) {
+    const errorMsg = `Batas kuota harian screening AI telah tercapai (${quota.currentCount}/${quota.maxLimit}). Dokumen CV tetap dapat ditinjau secara manual oleh perusahaan.`;
+    await adminClient
+      .from("application_ai_reviews")
+      .upsert(
+        {
+          application_id: applicationId,
+          status: "skipped",
+          attempts: currentAttempts,
+          error_message: errorMsg,
+          model: currentModel,
+        },
+        { onConflict: "application_id" }
+      );
+
+    return {
+      success: false,
+      applicationId,
+      status: "skipped",
+      error: errorMsg,
+      statusCode: 429,
+    };
+  }
 
   // 5. Update status review menjadi processing
   await adminClient.from("application_ai_reviews").upsert(

@@ -185,7 +185,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 139 `feat(ai): buat skema Zod validasi skor, level, dan ringkasan AI`
 - [x] 140 `feat(ai): buat API route POST /api/ai/screen untuk pemrosesan CV`
 - [x] 141 `feat(ai): buat proteksi manipulasi prompt injection pada teks CV`
-- [ ] 142 `feat(ai): buat pembatasan kuota harian screening AI`
+- [x] 142 `feat(ai): buat pembatasan kuota harian screening AI`
 - [ ] 143 `feat(mitra): buat panel hasil review AI pada detail pelamar`
 - [ ] 144 `feat(mitra): tambah tombol analisis ulang jika screening gagal`
 - [ ] 145 `feat(mitra): tambah pengurutan dan filter pelamar berdasarkan skor AI dan label tanpa analisis`
