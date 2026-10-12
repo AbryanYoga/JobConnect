@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Sparkles,
   CheckCircle2,
@@ -9,6 +10,8 @@ import {
   AlertTriangle,
   Clock,
   ShieldAlert,
+  RotateCcw,
+  Loader2,
 } from "lucide-react";
 
 export interface AiReviewData {
@@ -49,10 +52,40 @@ function formatDateIndo(dateStr: string): string {
 }
 
 export function AiReviewPanel({
+  applicationId,
   aiConsent,
   jobAiScreening,
   review,
 }: AiReviewPanelProps) {
+  const router = useRouter();
+  const [isRetrying, setIsRetrying] = useState(false);
+  const [retryError, setRetryError] = useState<string | null>(null);
+
+  const handleRetry = async () => {
+    setRetryError(null);
+    setIsRetrying(true);
+    try {
+      const res = await fetch("/api/ai/screen", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ applicationId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRetryError(data.error || "Gagal melakukan analisis ulang.");
+      } else {
+        router.refresh();
+      }
+    } catch {
+      setRetryError(
+        "Terjadi kendala koneksi ke server saat meminta analisis ulang."
+      );
+    } finally {
+      setIsRetrying(false);
+    }
+  };
   // 1. Kasus Pelamar Tidak Menyetujui Analisis AI
   if (!aiConsent) {
     return (
@@ -150,6 +183,9 @@ export function AiReviewPanel({
 
   // 5. Kasus Gagal (Failed)
   if (review?.status === "failed") {
+    const attempts = review.attempts || 1;
+    const canRetry = attempts < 3;
+
     return (
       <div className="bg-white rounded-3xl border border-red-200 p-6 sm:p-7 shadow-card space-y-4">
         <div className="flex items-center justify-between gap-4">
@@ -162,7 +198,7 @@ export function AiReviewPanel({
                 Evaluasi AI Belum Berhasil
               </h2>
               <p className="text-xs text-slate-500 font-medium">
-                Percobaan {review.attempts || 1} dari 3 kali
+                Percobaan {attempts} dari 3 kali
               </p>
             </div>
           </div>
@@ -173,6 +209,45 @@ export function AiReviewPanel({
         <div className="p-4 rounded-2xl bg-red-50/50 border border-red-100 text-xs sm:text-sm text-red-800 font-medium leading-relaxed">
           {review.error_message ||
             "Terjadi kendala saat memproses berkas CV. Silakan periksa kembali berkas CV atau lakukan analisis ulang."}
+        </div>
+
+        {retryError && (
+          <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs sm:text-sm text-rose-900 font-medium leading-relaxed">
+            {retryError}
+          </div>
+        )}
+
+        <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-red-100">
+          {canRetry ? (
+            <button
+              type="button"
+              onClick={handleRetry}
+              disabled={isRetrying}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-black text-[#FFDD00] text-xs font-bold hover:bg-black/85 disabled:opacity-50 disabled:cursor-not-allowed transition min-h-[44px] shadow-2xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-black w-full sm:w-auto"
+            >
+              {isRetrying ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-[#FFDD00]" aria-hidden="true" />
+                  <span>Menganalisis Ulang...</span>
+                </>
+              ) : (
+                <>
+                  <RotateCcw className="w-4 h-4 text-[#FFDD00]" aria-hidden="true" />
+                  <span>Analisis Ulang CV</span>
+                </>
+              )}
+            </button>
+          ) : (
+            <p className="text-xs text-slate-600 font-medium">
+              Batas maksimal 3 kali percobaan screening AI telah tercapai. Anda dapat meninjau CV pelamar secara manual.
+            </p>
+          )}
+
+          {canRetry && (
+            <span className="text-xs text-slate-500 font-medium">
+              Sisa kesempatan: {3 - attempts} kali
+            </span>
+          )}
         </div>
       </div>
     );
@@ -197,6 +272,33 @@ export function AiReviewPanel({
         </div>
         <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
           Berkas lamaran ini siap diproses untuk analisis kecocokan profil dengan kriteria lowongan pekerjaan.
+        </div>
+
+        {retryError && (
+          <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs sm:text-sm text-rose-900 font-medium leading-relaxed">
+            {retryError}
+          </div>
+        )}
+
+        <div className="pt-2">
+          <button
+            type="button"
+            onClick={handleRetry}
+            disabled={isRetrying}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-black text-[#FFDD00] text-xs font-bold hover:bg-black/85 disabled:opacity-50 disabled:cursor-not-allowed transition min-h-[44px] shadow-2xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-black w-full sm:w-auto"
+          >
+            {isRetrying ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-[#FFDD00]" aria-hidden="true" />
+                <span>Memproses Analisis...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 text-[#FFDD00]" aria-hidden="true" />
+                <span>Jalankan Screening AI</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     );
