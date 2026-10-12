@@ -183,7 +183,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 137 `feat(ai): buat modul klien Claude API di lib/ai`
 - [x] 138 `feat(ai): buat prompt evaluasi netral tanpa bias demografi`
 - [x] 139 `feat(ai): buat skema Zod validasi skor, level, dan ringkasan AI`
-- [ ] 140 `feat(ai): buat API route POST /api/ai/screen untuk pemrosesan CV`
+- [x] 140 `feat(ai): buat API route POST /api/ai/screen untuk pemrosesan CV`
 - [ ] 141 `feat(ai): buat proteksi manipulasi prompt injection pada teks CV`
 - [ ] 142 `feat(ai): buat pembatasan kuota harian screening AI`
 - [ ] 143 `feat(mitra): buat panel hasil review AI pada detail pelamar`
