@@ -189,7 +189,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 143 `feat(mitra): buat panel hasil review AI pada detail pelamar`
 - [x] 144 `feat(mitra): tambah tombol analisis ulang jika screening gagal`
 - [x] 145 `feat(mitra): tambah pengurutan dan filter pelamar berdasarkan skor AI dan label tanpa analisis`
-- [ ] 146 `feat(lamaran-saya): tampilkan status proses analisis tanpa membocorkan skor`
+- [x] 146 `feat(lamaran-saya): tampilkan status proses analisis tanpa membocorkan skor`
 
 ## Fase 14: Notifikasi Realtime dan Email
 

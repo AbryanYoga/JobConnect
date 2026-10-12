@@ -13,6 +13,7 @@ import {
   Bot,
   AlertCircle,
   CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -143,6 +144,17 @@ export default async function DetailLamaranPage({ params }: DetailLamaranPagePro
   // Keamanan: hanya pemilik lamaran yang boleh melihat halaman ini
   if (application.user_id !== user.id) {
     notFound();
+  }
+
+  // Ambil status proses analisis AI secara aman via RPC (tanpa membocorkan skor/level)
+  type AiProcessStatus = "pending" | "processing" | "done" | "failed" | "skipped";
+  let aiReviewStatus: AiProcessStatus | null = null;
+  if (application.ai_consent) {
+    const { data: rawAiStatus } = await supabase.rpc(
+      "get_my_ai_review_status",
+      { p_application_id: applicationId }
+    );
+    aiReviewStatus = (rawAiStatus as AiProcessStatus) || "pending";
   }
 
   // 2. Ambil riwayat timeline perubahan status
@@ -459,24 +471,113 @@ export default async function DetailLamaranPage({ params }: DetailLamaranPagePro
                 </div>
               </div>
 
-              {/* Opsi Analisis AI */}
+              {/* Status Analisis AI Dokumen CV (Tanpa Membocorkan Skor) */}
               <div className="space-y-2">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Analisis AI
+                  Status Analisis AI
                 </span>
-                <div className="p-3.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] flex items-start gap-2.5 text-xs">
-                  <Bot className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" aria-hidden="true" />
-                  <div>
-                    <span className="font-bold text-slate-900 block">
-                      {application.ai_consent ? "Izin Analisis Aktif" : "Analisis Tidak Diaktifkan"}
-                    </span>
-                    <span className="text-slate-500 text-[11px] leading-snug block mt-0.5">
-                      {application.ai_consent
-                        ? "Anda menyetujui analisis kecocokan profil oleh sistem AI saat melamar."
-                        : "Anda memilih agar berkas dinilai secara langsung tanpa ekstraksi AI."}
-                    </span>
+
+                {!application.ai_consent ? (
+                  <div className="p-3.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] flex items-start gap-2.5 text-xs">
+                    <Bot className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" aria-hidden="true" />
+                    <div className="space-y-1">
+                      <span className="font-bold text-slate-900 block">
+                        Analisis Tidak Diaktifkan
+                      </span>
+                      <p className="text-slate-600 text-[11px] leading-relaxed font-medium">
+                        Anda memilih agar berkas CV dinilai secara manual oleh tim rekruter perusahaan tanpa bantuan AI.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ) : aiReviewStatus === "done" ? (
+                  <div className="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-2 text-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-950 font-black text-[10px] border border-blue-200">
+                        Selesai
+                      </span>
+                      <span className="text-[11px] text-blue-900 font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-700" aria-hidden="true" />
+                        Terkirim ke Perusahaan
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      <strong className="font-bold text-blue-950 block">
+                        Analisis CV Telah Selesai
+                      </strong>
+                      <p className="text-blue-900/90 text-[11px] leading-relaxed font-medium">
+                        Berkas CV Anda telah berhasil dianalisis secara objektif. Ringkasan kesesuaian kualifikasi telah diteruskan kepada pihak perusahaan mitra sebagai bahan pertimbangan seleksi.
+                      </p>
+                    </div>
+                    <div className="pt-2 border-t border-blue-200/60 text-[10px] text-slate-500 font-medium italic">
+                      Catatan: Rincian skor dan pertimbangan internal hanya dapat diakses oleh perusahaan mitra demi menjaga kerahasiaan proses seleksi.
+                    </div>
+                  </div>
+                ) : aiReviewStatus === "processing" ? (
+                  <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 space-y-2 text-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-950 font-black text-[10px] border border-amber-200">
+                        Sedang Berjalan
+                      </span>
+                      <Clock className="w-3.5 h-3.5 text-amber-700" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-1">
+                      <strong className="font-bold text-amber-950 block">
+                        Proses Analisis Berlangsung
+                      </strong>
+                      <p className="text-amber-900 text-[11px] leading-relaxed font-medium">
+                        Sistem sedang mengevaluasi kecocokan dokumen CV Anda terhadap kriteria kualifikasi lowongan kerja ini.
+                      </p>
+                    </div>
+                  </div>
+                ) : aiReviewStatus === "failed" ? (
+                  <div className="p-3.5 rounded-2xl bg-rose-50/80 border border-rose-200 space-y-2 text-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-950 font-black text-[10px] border border-rose-200">
+                        Terkendala
+                      </span>
+                      <AlertCircle className="w-3.5 h-3.5 text-rose-700" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-1">
+                      <strong className="font-bold text-rose-950 block">
+                        Analisis Otomatis Terkendala
+                      </strong>
+                      <p className="text-rose-900 text-[11px] leading-relaxed font-medium">
+                        Terjadi kendala saat membaca dokumen CV secara otomatis. Berkas CV Anda tetap aman dan dapat ditinjau secara langsung oleh tim rekruter.
+                      </p>
+                    </div>
+                  </div>
+                ) : aiReviewStatus === "skipped" ? (
+                  <div className="p-3.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-1 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 font-bold text-[10px]">
+                        Dilewati
+                      </span>
+                      <strong className="font-bold text-slate-900">
+                        Analisis AI Dilewati
+                      </strong>
+                    </div>
+                    <p className="text-slate-600 text-[11px] leading-relaxed font-medium">
+                      Screening AI dilewati untuk lamaran ini. Peninjauan akan dilakukan secara langsung oleh tim rekruter.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="p-3.5 rounded-2xl bg-blue-50/50 border border-blue-100 space-y-2 text-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 font-black text-[10px] border border-blue-200">
+                        Menunggu
+                      </span>
+                      <Sparkles className="w-3.5 h-3.5 text-blue-700" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-1">
+                      <strong className="font-bold text-blue-950 block">
+                        Dalam Antrean Analisis
+                      </strong>
+                      <p className="text-blue-900/90 text-[11px] leading-relaxed font-medium">
+                        Berkas lamaran Anda menunggu giliran untuk diproses oleh sistem analisis AI.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Surat Pengantar jika Ada */}

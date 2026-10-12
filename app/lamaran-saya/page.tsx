@@ -10,6 +10,8 @@ import {
   Briefcase,
   Clock,
   Video,
+  CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -137,6 +139,27 @@ export default async function LamaranSayaPage() {
   }
 
   const applicationList = applications || [];
+
+  // Ambil status proses analisis AI pelamar via RPC tanpa membocorkan skor
+  const aiStatusMap: Record<number, string> = {};
+  if (applicationList.length > 0) {
+    const aiConsentApps = applicationList.filter((a) => a.ai_consent);
+    if (aiConsentApps.length > 0) {
+      const results = await Promise.all(
+        aiConsentApps.map(async (a) => {
+          const { data } = await supabase.rpc("get_my_ai_review_status", {
+            p_application_id: a.id,
+          });
+          return { id: a.id, status: data as string | null };
+        })
+      );
+      results.forEach((r) => {
+        if (r.status) {
+          aiStatusMap[r.id] = r.status;
+        }
+      });
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF8F0]/40 py-8 sm:py-12">
@@ -285,9 +308,35 @@ export default async function LamaranSayaPage() {
                       </div>
                     </div>
 
-                    {/* Status Badge */}
-                    <div className="self-start sm:self-center shrink-0">
+                    {/* Status Badge & Status Proses AI */}
+                    <div className="self-start sm:self-center shrink-0 flex items-center gap-2 flex-wrap sm:flex-nowrap">
                       <StatusBadge status={app.status as ApplicationStatus} />
+
+                      {/* Lencana Status Analisis AI Khusus Pelamar */}
+                      {!app.ai_consent ? (
+                        <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-semibold border border-slate-200">
+                          Tanpa Analisis AI
+                        </span>
+                      ) : aiStatusMap[app.id] === "done" ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-900 text-[11px] font-bold border border-blue-200">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-blue-700" aria-hidden="true" />
+                          <span>Analisis AI Selesai</span>
+                        </span>
+                      ) : aiStatusMap[app.id] === "processing" ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 text-[11px] font-bold border border-amber-200">
+                          <Clock className="w-3.5 h-3.5 text-amber-700" aria-hidden="true" />
+                          <span>Memproses AI</span>
+                        </span>
+                      ) : aiStatusMap[app.id] === "failed" ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-50 text-rose-900 text-[11px] font-bold border border-rose-200">
+                          <span>Analisis Terkendala</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-900 text-[11px] font-bold border border-blue-200">
+                          <Sparkles className="w-3.5 h-3.5 text-blue-700" aria-hidden="true" />
+                          <span>Menunggu AI</span>
+                        </span>
+                      )}
                     </div>
                   </div>
 
