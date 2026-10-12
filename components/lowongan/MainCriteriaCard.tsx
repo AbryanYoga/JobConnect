@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import {
-  Banknote,
   GraduationCap,
   Clock,
   Briefcase,
@@ -11,7 +10,6 @@ import {
   MapPin,
   Share2,
   Check,
-  Bookmark,
   ShieldCheck,
 } from "lucide-react";
 import {
@@ -22,6 +20,7 @@ import {
   type WorkMode,
   type EducationMin,
 } from "@/lib/labels";
+import { useLanguage } from "@/lib/i18n";
 
 export interface MainCriteriaCardProps {
   salaryMin?: number | null;
@@ -45,22 +44,22 @@ function formatRupiah(amount: number): string {
   }).format(amount);
 }
 
-function formatSalary(min?: number | null, max?: number | null): string {
+function formatSalary(min: number | null | undefined, max: number | null | undefined, t: (idText: string, enText?: string) => string): string {
   if (min && max) {
     return `${formatRupiah(min)} - ${formatRupiah(max)}`;
   }
   if (min) {
-    return `Mulai ${formatRupiah(min)}`;
+    return `${t("Mulai")} ${formatRupiah(min)}`;
   }
   if (max) {
-    return `Hingga ${formatRupiah(max)}`;
+    return `${t("Hingga")} ${formatRupiah(max)}`;
   }
-  return "Gaji dapat dinegosiasikan";
+  return t("Gaji dapat dinegosiasikan");
 }
 
-function formatDateIndo(dateStr: string): string {
+function formatDateIndo(dateStr: string, language: string): string {
   try {
-    return new Intl.DateTimeFormat("id-ID", {
+    return new Intl.DateTimeFormat(language === "en" ? "en-US" : "id-ID", {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -84,6 +83,7 @@ export function MainCriteriaCard({
   isOpen,
 }: MainCriteriaCardProps) {
   const [copied, setCopied] = useState(false);
+  const { t, language } = useLanguage();
 
   const handleShare = async () => {
     if (typeof window === "undefined") return;
@@ -92,7 +92,7 @@ export function MainCriteriaCard({
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Lowongan Kerja di JobConnect",
+          title: t("Lowongan Kerja di JobConnect", "Job Vacancy at JobConnect"),
           url,
         });
         return;
@@ -116,18 +116,18 @@ export function MainCriteriaCard({
       <div className="bg-navy-900 text-white p-5 sm:p-6 space-y-1">
         <div className="flex items-center justify-between gap-2">
           <span className="text-[11px] font-bold uppercase tracking-wider text-navy-200">
-            Kriteria Utama
+            {t("Kriteria Utama")}
           </span>
           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-300">
             <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Terverifikasi</span>
+            <span>{t("Terverifikasi")}</span>
           </span>
         </div>
         <div className="text-xl sm:text-2xl font-black text-white tracking-tight pt-1">
-          {formatSalary(salaryMin, salaryMax)}
+          {formatSalary(salaryMin, salaryMax, t)}
         </div>
         <span className="text-xs text-navy-200 block">
-          Perkiraan kompensasi bulanan
+          {t("Perkiraan kompensasi bulanan")}
         </span>
       </div>
 
@@ -140,9 +140,9 @@ export function MainCriteriaCard({
               <GraduationCap className="w-4 h-4" aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
-              <span className="text-xs text-slate-500 block">Pendidikan Minimal</span>
+              <span className="text-xs text-slate-500 block">{t("Pendidikan Minimal")}</span>
               <span className="text-xs sm:text-sm font-bold text-navy-950">
-                {EDUCATION_LABEL[educationMin as EducationMin] || educationMin}
+                {t(EDUCATION_LABEL[educationMin as EducationMin] || educationMin)}
               </span>
             </div>
           </div>
@@ -153,11 +153,11 @@ export function MainCriteriaCard({
               <Clock className="w-4 h-4" aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
-              <span className="text-xs text-slate-500 block">Pengalaman Kerja</span>
+              <span className="text-xs text-slate-500 block">{t("Pengalaman Kerja")}</span>
               <span className="text-xs sm:text-sm font-bold text-navy-950">
                 {experienceMinYears && experienceMinYears > 0
-                  ? `Minimal ${experienceMinYears} tahun`
-                  : "Terbuka bagi lulusan baru (Fresh Graduate)"}
+                  ? (language === "en" ? `Minimum ${experienceMinYears} years` : `Minimal ${experienceMinYears} tahun`)
+                  : t("Terbuka bagi lulusan baru (Fresh Graduate)")}
               </span>
             </div>
           </div>
@@ -168,9 +168,9 @@ export function MainCriteriaCard({
               <Briefcase className="w-4 h-4" aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
-              <span className="text-xs text-slate-500 block">Tipe Pekerjaan</span>
+              <span className="text-xs text-slate-500 block">{t("Tipe Pekerjaan")}</span>
               <span className="text-xs sm:text-sm font-bold text-navy-950">
-                {JOB_TYPE_LABEL[jobType as JobType] || jobType}
+                {t(JOB_TYPE_LABEL[jobType as JobType] || jobType)}
               </span>
             </div>
           </div>
@@ -181,9 +181,9 @@ export function MainCriteriaCard({
               <Laptop className="w-4 h-4" aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
-              <span className="text-xs text-slate-500 block">Mode Bekerja</span>
+              <span className="text-xs text-slate-500 block">{t("Mode Bekerja")}</span>
               <span className="text-xs sm:text-sm font-bold text-navy-950">
-                {WORK_MODE_LABEL[workMode as WorkMode] || workMode}
+                {t(WORK_MODE_LABEL[workMode as WorkMode] || workMode)}
               </span>
             </div>
           </div>
@@ -195,9 +195,9 @@ export function MainCriteriaCard({
                 <Calendar className="w-4 h-4" aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
-                <span className="text-xs text-slate-500 block">Batas Waktu Lamaran</span>
+                <span className="text-xs text-slate-500 block">{t("Batas Waktu Lamaran")}</span>
                 <span className="text-xs sm:text-sm font-bold text-rose-700">
-                  {formatDateIndo(deadline)}
+                  {formatDateIndo(deadline, language)}
                 </span>
               </div>
             </div>
@@ -209,7 +209,7 @@ export function MainCriteriaCard({
               <MapPin className="w-4 h-4" aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
-              <span className="text-xs text-slate-500 block">Lokasi Penempatan</span>
+              <span className="text-xs text-slate-500 block">{t("Lokasi Penempatan")}</span>
               <span className="text-xs sm:text-sm font-bold text-navy-950 block">
                 {locationText}
               </span>
@@ -226,7 +226,7 @@ export function MainCriteriaCard({
         {skills && skills.length > 0 && (
           <div className="pt-4 border-t border-slate-100 space-y-2">
             <span className="text-xs font-bold text-slate-800 uppercase tracking-wide block">
-              Keahlian yang Dibutuhkan
+              {t("Keahlian yang Dibutuhkan")}
             </span>
             <div className="flex flex-wrap gap-1.5">
               {skills.map((skill, index) => (
@@ -248,7 +248,7 @@ export function MainCriteriaCard({
               href="#formulir-lamaran"
               className="w-full inline-flex items-center justify-center px-4 py-3 rounded-md bg-navy-900 hover:bg-navy-950 text-white font-bold text-xs sm:text-sm transition shadow-2xs min-h-[44px]"
             >
-              Lamar Posisi Ini
+              {t("Lamar Posisi Ini")}
             </a>
           ) : (
             <button
@@ -256,7 +256,7 @@ export function MainCriteriaCard({
               disabled
               className="w-full inline-flex items-center justify-center px-4 py-3 rounded-md bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm cursor-not-allowed min-h-[44px]"
             >
-              Penerimaan Lamaran Ditutup
+              {t("Penerimaan Lamaran Ditutup")}
             </button>
           )}
 
@@ -268,12 +268,12 @@ export function MainCriteriaCard({
             {copied ? (
               <>
                 <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" />
-                <span className="text-emerald-700">Tautan Disalin</span>
+                <span className="text-emerald-700">{t("Tautan Disalin")}</span>
               </>
             ) : (
               <>
                 <Share2 className="w-4 h-4 text-slate-500" aria-hidden="true" />
-                <span>Bagikan Lowongan</span>
+                <span>{t("Bagikan Lowongan")}</span>
               </>
             )}
           </button>

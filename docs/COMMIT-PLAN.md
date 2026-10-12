@@ -249,6 +249,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T14 `feat(brand): pasang logo resmi JobConnect pada navbar, footer, dan favicon`
 - [x] T15 `feat(footer): desain ulang footer bergaya layered card dan efek teks glass JobConnect`
 - [x] T16 `fix(footer): hapus elemen teks glass raksasa di bawah footer`
+- [x] T17 `feat(navbar): ganti search dengan dropdown pemilih bahasa dan integrasi i18n`
 
 ## Catatan Penting Agent
 

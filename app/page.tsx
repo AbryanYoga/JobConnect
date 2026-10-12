@@ -1,31 +1,50 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { HeroSection } from "@/components/beranda/HeroSection";
-import { ProvinceChipsBar } from "@/components/beranda/ProvinceChipsBar";
+import { BmcLandingPage } from "@/components/beranda/BmcLandingPage";
 import {
-  CategorySection,
-  type CategoryWithCount,
-} from "@/components/beranda/CategorySection";
-import {
-  LatestJobsSection,
-  type LatestJobItem,
-} from "@/components/beranda/LatestJobsSection";
+  type JobType,
+  type WorkMode,
+  type EducationMin,
+} from "@/lib/labels";
 
 export const metadata: Metadata = {
   title: "JobConnect - Portal Lowongan Kerja Terverifikasi 38 Provinsi",
   description:
-    "Cari dan lamar lowongan kerja terverifikasi di 38 provinsi dan 514 kota se-Indonesia. Bebas penipuan, bebas ghosting, dengan transparansi alur lamaran.",
+    "Cari dan lamar lowongan kerja resmi terverifikasi dari mitra di 38 provinsi di Indonesia. Bebas penipuan dan calo, gaji transparan, dan kriteria terstruktur.",
 };
 
 export default async function HomePage() {
   let provinces: { id: number; name: string; slug: string }[] = [];
-  let categoriesWithCount: CategoryWithCount[] = [];
-  let latestJobs: LatestJobItem[] = [];
+  let categoriesWithCount: { id: number; name: string; slug: string; jobCount: number }[] = [];
+  let latestJobs: {
+    id: number;
+    title: string;
+    slug: string;
+    workMode: WorkMode;
+    jobType: JobType;
+    educationMin: EducationMin;
+    experienceMinYears?: number;
+    skills?: string[];
+    summary?: string | null;
+    salaryMin?: number | null;
+    salaryMax?: number | null;
+    isDemo?: boolean;
+    createdAt?: string;
+    company: {
+      id: number;
+      name: string;
+      slug?: string;
+      logoUrl?: string | null;
+      cityName?: string | null;
+      provinceName?: string | null;
+    } | null;
+  }[] = [];
+  let totalJobs = 0;
 
   try {
     const supabase = await createClient();
 
-    // 1. Ambil daftar provinsi untuk bar chip
+    // 1. Ambil daftar provinsi untuk filter wilayah
     const { data: provincesData } = await supabase
       .from("provinces")
       .select("id, name, slug")
@@ -35,7 +54,7 @@ export default async function HomePage() {
       provinces = provincesData;
     }
 
-    // 2. Ambil daftar kategori dan hitung jumlah lowongan berstatus open dari database
+    // 2. Ambil daftar kategori dan hitung jumlah lowongan berstatus open
     const { data: categoriesData } = await supabase
       .from("categories")
       .select("id, name, slug")
@@ -67,7 +86,17 @@ export default async function HomePage() {
       }));
     }
 
-    // 3. Ambil lowongan terbaru berstatus open
+    // 3. Ambil total jumlah lowongan open
+    const { count: totalCount } = await supabase
+      .from("jobs")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "open");
+
+    if (totalCount !== null) {
+      totalJobs = totalCount;
+    }
+
+    // 4. Ambil 6 lowongan terbaru berstatus open
     let jobsQuery = supabase
       .from("jobs")
       .select(
@@ -88,6 +117,7 @@ export default async function HomePage() {
         company:companies(
           id,
           name,
+          slug,
           logo_path,
           city:cities(
             name,
@@ -134,9 +164,9 @@ export default async function HomePage() {
           id: j.id,
           title: j.title,
           slug: j.slug,
-          workMode: j.work_mode as LatestJobItem["workMode"],
-          jobType: j.job_type as LatestJobItem["jobType"],
-          educationMin: j.education_min as LatestJobItem["educationMin"],
+          workMode: j.work_mode as WorkMode,
+          jobType: j.job_type as JobType,
+          educationMin: j.education_min as EducationMin,
           experienceMinYears: j.experience_min_years,
           skills: j.skills,
           summary: j.summary,
@@ -148,7 +178,7 @@ export default async function HomePage() {
             ? {
                 id: companyData.id,
                 name: companyData.name,
-                logoPath: companyData.logo_path,
+                slug: companyData.slug,
                 logoUrl,
                 cityName: cityData?.name || null,
                 provinceName: provinceData?.name || null,
@@ -158,15 +188,15 @@ export default async function HomePage() {
       });
     }
   } catch {
-    // Graceful fallback bila database belum terhubung
+    // Fallback jika database belum terhubung
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <HeroSection provinces={provinces} />
-      <ProvinceChipsBar provinces={provinces} />
-      <CategorySection categories={categoriesWithCount} />
-      <LatestJobsSection jobs={latestJobs} />
-    </div>
+    <BmcLandingPage
+      provinces={provinces}
+      categories={categoriesWithCount}
+      latestJobs={latestJobs}
+      totalJobsCount={totalJobs || latestJobs.length}
+    />
   );
 }

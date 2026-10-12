@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { cookies } from "next/headers";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { LanguageProvider, type Language } from "@/lib/i18n";
 import "./globals.css";
 
 const inter = Inter({
@@ -33,25 +35,38 @@ export const viewport: Viewport = {
   themeColor: "#1F3A64",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  let initialLang: Language = "id";
+  try {
+    const cookieStore = await cookies();
+    const cookieVal = cookieStore.get("jobconnect_lang")?.value;
+    if (cookieVal === "en" || cookieVal === "id") {
+      initialLang = cookieVal;
+    }
+  } catch {
+    initialLang = "id";
+  }
+
   return (
-    <html lang="id" className={inter.variable}>
-      <body className="min-h-dvh flex flex-col font-sans">
-        <a
-          href="#konten"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-navy-700 focus:text-white focus:rounded-control focus:shadow-modal focus:outline-2 focus:outline-offset-2 focus:outline-accent-400 font-medium text-sm"
-        >
-          Lewati ke konten
-        </a>
-        <Navbar />
-        <main id="konten" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+    <html lang={initialLang} className={inter.variable}>
+      <body className="min-h-dvh flex flex-col font-sans bg-[#FAF8F0]">
+        <LanguageProvider initialLanguage={initialLang}>
+          <a
+            href="#konten"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-navy-700 focus:text-white focus:rounded-control focus:shadow-modal focus:outline-2 focus:outline-offset-2 focus:outline-accent-400 font-medium text-sm"
+          >
+            {initialLang === "en" ? "Skip to content" : "Lewati ke konten"}
+          </a>
+          <Navbar />
+          <main id="konten" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   );

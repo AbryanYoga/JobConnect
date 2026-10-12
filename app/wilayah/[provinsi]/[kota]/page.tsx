@@ -260,7 +260,7 @@ export default async function CityDetailPage({
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#FAF8F0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         {/* Breadcrumb Navigasi */}
         <Breadcrumb
@@ -273,116 +273,98 @@ export default async function CityDetailPage({
         />
 
         {/* Header Kota/Kabupaten */}
-        <div className="space-y-2 border-b border-slate-200 pb-6">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-navy-50 text-navy-800 border border-navy-100 text-xs font-semibold">
-            <MapPin className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
+        <div className="space-y-3 pb-2">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black border border-black/10 text-xs font-bold shadow-2xs">
+            <MapPin className="w-3.5 h-3.5 text-black" aria-hidden="true" />
             <span>
               {city.type === "kota" ? "Kota" : "Kabupaten"} • {province.name}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black text-navy-950 tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-black text-black tracking-tight">
             Lowongan Kerja di {city.name}
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-700 max-w-2xl leading-relaxed font-medium">
             Menampilkan lowongan resmi berstatus aktif yang terverifikasi di wilayah {city.name}.
             Terdapat {totalCount} lowongan kerja yang tersedia.
           </p>
         </div>
 
         {/* Bar Filter Kategori dan Tipe Kerja */}
-        <div className="rounded-card border border-slate-200 bg-white p-4 shadow-2xs space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-navy-950 uppercase tracking-wider">
-            <Filter className="w-3.5 h-3.5 text-navy-800" aria-hidden="true" />
+        <div className="rounded-[28px] border border-black/[0.08] bg-white p-5 sm:p-6 shadow-card space-y-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-black uppercase tracking-wider">
+            <Filter className="w-3.5 h-3.5 text-black" aria-hidden="true" />
             <span>Filter Cepat Lowongan</span>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-3">
-            {/* Filter Kategori */}
-            <div className="flex-1">
-              <label
-                htmlFor="filter-kategori"
-                className="block text-xs font-medium text-slate-600 mb-1"
-              >
-                Bidang Kategori:
-              </label>
-              <select
-                id="filter-kategori"
-                value={categorySlug || ""}
-                onChange={(e) => {
-                  // Redirect via simple anchor/form pattern or client link
-                }}
-                className="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-300 rounded-control text-slate-800 focus:outline-none min-h-[44px]"
-                aria-label="Pilih kategori pekerjaan"
-              >
-                <option value="">Semua Kategori</option>
-                {(categories || []).map((cat) => (
-                  <option key={cat.id} value={cat.slug}>
+          {/* Filter Kategori */}
+          {categories && categories.length > 0 && (
+            <div className="space-y-1.5">
+              <span className="text-xs font-bold text-slate-700">Kategori Bidang:</span>
+              <div className="flex items-center gap-2 flex-wrap text-xs">
+                <Link
+                  href={createFilterUrl({ kategori: "" })}
+                  className={`px-3.5 py-1.5 rounded-full border transition-all min-h-[38px] inline-flex items-center font-bold ${
+                    !categorySlug
+                      ? "bg-black text-white border-black shadow-2xs"
+                      : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
+                  }`}
+                >
+                  Semua Kategori
+                </Link>
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={createFilterUrl({ kategori: cat.slug })}
+                    className={`px-3.5 py-1.5 rounded-full border transition-all min-h-[38px] inline-flex items-center font-bold ${
+                      categorySlug === cat.slug
+                        ? "bg-black text-white border-black shadow-2xs"
+                        : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
+                    }`}
+                  >
                     {cat.name}
-                  </option>
+                  </Link>
                 ))}
-              </select>
+              </div>
             </div>
-
-            {/* Filter Tipe Kerja */}
-            <div className="flex-1">
-              <label
-                htmlFor="filter-tipe"
-                className="block text-xs font-medium text-slate-600 mb-1"
-              >
-                Tipe Komitmen:
-              </label>
-              <select
-                id="filter-tipe"
-                value={jobTypeParam || ""}
-                onChange={() => {}}
-                className="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-300 rounded-control text-slate-800 focus:outline-none min-h-[44px]"
-                aria-label="Pilih tipe pekerjaan"
-              >
-                <option value="">Semua Tipe Kerja</option>
-                {jobTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {JOB_TYPE_LABEL[type]}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+          )}
 
           {/* Tombol Chip Cepat Tipe Kerja */}
-          <div className="flex items-center gap-1.5 flex-wrap pt-1 text-xs">
-            <span className="text-slate-500 font-medium">Tipe:</span>
-            <Link
-              href={createFilterUrl({ tipe: "" })}
-              className={`px-2.5 py-1 rounded-sm border transition-colors min-h-[44px] inline-flex items-center ${
-                !jobTypeParam
-                  ? "bg-navy-800 text-white border-navy-800 font-semibold"
-                  : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-              }`}
-            >
-              Semua
-            </Link>
-            {jobTypes.map((type) => (
+          <div className="space-y-1.5 pt-2 border-t border-black/[0.06]">
+            <span className="text-xs font-bold text-slate-700">Tipe Komitmen:</span>
+            <div className="flex items-center gap-2 flex-wrap text-xs">
               <Link
-                key={type}
-                href={createFilterUrl({ tipe: type })}
-                className={`px-2.5 py-1 rounded-sm border transition-colors min-h-[44px] inline-flex items-center ${
-                  jobTypeParam === type
-                    ? "bg-navy-800 text-white border-navy-800 font-semibold"
-                    : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                href={createFilterUrl({ tipe: "" })}
+                className={`px-3.5 py-1.5 rounded-full border transition-all min-h-[38px] inline-flex items-center font-bold ${
+                  !jobTypeParam
+                    ? "bg-black text-white border-black shadow-2xs"
+                    : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
                 }`}
               >
-                {JOB_TYPE_LABEL[type]}
+                Semua Tipe
               </Link>
-            ))}
+              {jobTypes.map((type) => (
+                <Link
+                  key={type}
+                  href={createFilterUrl({ tipe: type })}
+                  className={`px-3.5 py-1.5 rounded-full border transition-all min-h-[38px] inline-flex items-center font-bold ${
+                    jobTypeParam === type
+                      ? "bg-black text-white border-black shadow-2xs"
+                      : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
+                  }`}
+                >
+                  {JOB_TYPE_LABEL[type]}
+                </Link>
+              ))}
 
-            {(categorySlug || jobTypeParam) && (
-              <Link
-                href={`/wilayah/${province.slug}/${city.slug}`}
-                className="ml-auto text-xs font-semibold text-rose-700 hover:underline min-h-[44px] inline-flex items-center"
-              >
-                Reset Filter
-              </Link>
-            )}
+              {(categorySlug || jobTypeParam) && (
+                <Link
+                  href={`/wilayah/${province.slug}/${city.slug}`}
+                  className="ml-auto text-xs font-bold text-rose-700 hover:underline min-h-[38px] inline-flex items-center"
+                >
+                  Reset Filter
+                </Link>
+              )}
+            </div>
           </div>
         </div>
 

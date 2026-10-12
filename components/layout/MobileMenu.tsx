@@ -6,6 +6,8 @@ import { NavAction, NavItem, Role } from "@/lib/navigation";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { NavLink } from "./NavLink";
+import { useLanguage } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 interface MobileMenuProps {
   links: NavItem[];
@@ -33,6 +35,7 @@ function getUserInitials(name: string): string {
 export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   // Tutup panel dengan tombol Escape
   useEffect(() => {
@@ -83,7 +86,7 @@ export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMe
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
         aria-controls="mobile-nav-panel"
-        aria-label={isOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
+        aria-label={isOpen ? t("Tutup menu navigasi", "Close navigation menu") : t("Buka menu navigasi", "Open navigation menu")}
         className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 rounded-control text-slate-700 hover:text-navy-900 hover:bg-slate-100 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
       >
         {isOpen ? (
@@ -97,7 +100,7 @@ export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMe
         <>
           {/* Latar redup untuk klik di luar */}
           <div
-            className="fixed inset-0 top-16 bg-slate-900/20 backdrop-blur-xs z-30"
+            className="fixed inset-0 top-20 bg-slate-900/20 backdrop-blur-xs z-30"
             onClick={closeMenu}
             aria-hidden="true"
           />
@@ -105,9 +108,12 @@ export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMe
           {/* Panel navigasi mobile */}
           <nav
             id="mobile-nav-panel"
-            aria-label="Navigasi Ponsel"
-            className="absolute top-16 left-0 right-0 bg-white border-b border-slate-200 shadow-modal z-40 px-4 py-4 max-h-[calc(100dvh-4rem)] overflow-y-auto"
+            aria-label={t("Navigasi Ponsel", "Mobile Navigation")}
+            className="absolute top-20 left-0 right-0 bg-[#FAF8F0] border-b border-[#222222]/15 shadow-modal z-40 px-5 py-5 max-h-[calc(100dvh-5rem)] overflow-y-auto space-y-4"
           >
+            {/* Switcher Bahasa di Menu Mobile */}
+            <LanguageSwitcher variant="mobile" />
+
             <div className="flex flex-col gap-1">
               {role !== "tamu" && userName && (
                 <div className="flex items-center gap-3 px-3 py-3 mb-2 bg-slate-50 rounded-card border border-slate-200">
@@ -122,7 +128,7 @@ export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMe
                       {userName}
                     </p>
                     <p className="text-xs text-slate-500">
-                      {ROLE_LABEL[role]}
+                      {t(ROLE_LABEL[role])}
                     </p>
                   </div>
                 </div>
@@ -141,7 +147,7 @@ export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMe
             </div>
 
             {actions.length > 0 && (
-              <div className="mt-3 pt-3 border-t border-slate-200 flex flex-col gap-2">
+              <div className="pt-3 border-t border-slate-200 flex flex-col gap-2">
                 {actions.map((action) => {
                   if (action.variant === "primary") {
                     return (
@@ -153,7 +159,7 @@ export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMe
                         size="md"
                         fullWidth
                       >
-                        {action.label}
+                        {t(action.label)}
                       </ButtonLink>
                     );
                   }
@@ -168,7 +174,7 @@ export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMe
                         size="md"
                         fullWidth
                       >
-                        {action.label}
+                        {t(action.label)}
                       </ButtonLink>
                     );
                   }
@@ -183,7 +189,7 @@ export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMe
                       fullWidth
                       className="justify-start px-3"
                     >
-                      {action.label}
+                      {t(action.label)}
                     </ButtonLink>
                   );
                 })}
@@ -199,7 +205,7 @@ export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMe
             )}
 
             {actions.length === 0 && role !== "tamu" && (
-              <div className="mt-3 pt-3 border-t border-slate-200">
+              <div className="pt-3 border-t border-slate-200">
                 <LogoutButton
                   variant="outline"
                   size="md"

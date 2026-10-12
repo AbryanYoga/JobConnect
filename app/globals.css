@@ -47,7 +47,7 @@
 */
 
 body {
-  background-color: var(--color-slate-50);
+  background-color: #FAF8F0;
   color: var(--color-slate-900);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

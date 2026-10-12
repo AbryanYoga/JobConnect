@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Filter, X, ChevronDown, ChevronUp, MapPin, Briefcase, Laptop, Layers } from "lucide-react";
 import { JOB_TYPE_LABEL, WORK_MODE_LABEL, type JobType, type WorkMode } from "@/lib/labels";
+import { CustomSelect } from "@/components/ui/CustomSelect";
+import { useLanguage } from "@/lib/i18n";
 
 interface CategoryOption {
   id: number;
@@ -48,6 +50,7 @@ export function FilterPanel({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const { t } = useLanguage();
 
   // State untuk toggle accordion mobile
   const [isOpenMobile, setIsOpenMobile] = useState(false);
@@ -101,16 +104,16 @@ export function FilterPanel({
   };
 
   return (
-    <aside className="w-full bg-white rounded-card border border-slate-200 shadow-2xs overflow-hidden">
+    <aside className="w-full bg-white rounded-[28px] border border-black/[0.08] shadow-card overflow-hidden">
       {/* Header Panel (di mobile berfungsi sebagai tombol buka/tutup) */}
-      <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
+      <div className="p-5 border-b border-black/[0.06] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-navy-800" aria-hidden="true" />
-          <h2 className="text-sm font-bold text-navy-950 uppercase tracking-wider">
-            Filter Lowongan
+          <Filter className="w-4 h-4 text-black" aria-hidden="true" />
+          <h2 className="text-sm font-bold text-black uppercase tracking-wider">
+            {t("Filter Lowongan")}
           </h2>
           {activeCount > 0 && (
-            <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-navy-100 text-navy-900">
+            <span className="inline-flex items-center justify-center px-2.5 py-0.5 text-xs font-bold rounded-full bg-[#FFDD00] text-black">
               {activeCount}
             </span>
           )}
@@ -122,9 +125,9 @@ export function FilterPanel({
               type="button"
               onClick={resetAllFilters}
               disabled={isPending}
-              className="text-xs font-semibold text-rose-600 hover:text-rose-700 underline underline-offset-2 px-2 py-1 min-h-[36px] flex items-center"
+              className="text-xs font-bold text-rose-600 hover:text-rose-700 underline underline-offset-2 px-2 py-1 min-h-[36px] flex items-center"
             >
-              Reset
+              {t("Reset")}
             </button>
           )}
 
@@ -132,11 +135,11 @@ export function FilterPanel({
           <button
             type="button"
             onClick={() => setIsOpenMobile(!isOpenMobile)}
-            className="lg:hidden inline-flex items-center gap-1 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-md min-h-[44px]"
+            className="lg:hidden inline-flex items-center gap-1 text-xs font-bold text-black bg-[#FAF8F0] hover:bg-black/5 px-3.5 py-2 rounded-full min-h-[44px] border border-black/[0.08]"
             aria-expanded={isOpenMobile}
             aria-controls="filter-content-panel"
           >
-            <span>{isOpenMobile ? "Tutup" : "Buka"}</span>
+            <span>{isOpenMobile ? t("Tutup") : t("Buka")}</span>
             {isOpenMobile ? (
               <ChevronUp className="w-4 h-4" aria-hidden="true" />
             ) : (
@@ -149,62 +152,58 @@ export function FilterPanel({
       {/* Konten Filter (selalu tampil di layar besar, di mobile tergantung toggle) */}
       <div
         id="filter-content-panel"
-        className={`p-4 sm:p-5 space-y-6 ${
+        className={`p-5 sm:p-6 space-y-6 ${
           isOpenMobile ? "block" : "hidden lg:block"
         }`}
       >
         {/* Indikator Loading Transisi */}
         {isPending && (
-          <div className="text-xs text-navy-700 bg-navy-50 border border-navy-100 rounded p-2 text-center animate-pulse">
-            Memperbarui data lowongan...
+          <div className="text-xs font-bold text-black bg-[#FFDD00]/30 border border-[#FFDD00] rounded-xl p-2 text-center animate-pulse">
+            {t("Memperbarui data lowongan...")}
           </div>
         )}
 
         {/* 1. Filter Kategori Pekerjaan */}
         <div className="space-y-2">
-          <label
-            htmlFor="filter-kategori-select"
-            className="flex items-center gap-1.5 text-xs font-bold text-slate-800 uppercase tracking-wide"
-          >
-            <Layers className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
-            <span>Kategori Bidang</span>
-          </label>
-          <div className="relative">
-            <select
-              id="filter-kategori-select"
-              value={selectedCategory}
-              onChange={(e) => updateParam("kategori", e.target.value)}
-              disabled={isPending}
-              className="w-full text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-md py-2.5 px-3 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-navy-600 focus:border-navy-600 transition min-h-[44px]"
-            >
-              <option value="">Semua Kategori</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.slug}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <span className="flex items-center gap-1.5 text-xs font-bold text-black uppercase tracking-wide">
+            <Layers className="w-3.5 h-3.5 text-black" aria-hidden="true" />
+            <span>{t("Kategori Bidang")}</span>
+          </span>
+          <CustomSelect
+            options={[
+              { value: "", label: t("Semua Kategori") },
+              ...categories.map((cat) => ({
+                value: cat.slug,
+                label: cat.name,
+              })),
+            ]}
+            value={selectedCategory}
+            onChange={(val) => updateParam("kategori", val)}
+            placeholder={t("Semua Kategori")}
+            disabled={isPending}
+            searchable={categories.length > 8}
+            searchPlaceholder={t("Cari kategori...")}
+          />
         </div>
 
         {/* 2. Filter Tipe Pekerjaan */}
         <div className="space-y-2">
-          <span className="flex items-center gap-1.5 text-xs font-bold text-slate-800 uppercase tracking-wide">
-            <Briefcase className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
-            <span>Tipe Kontrak</span>
+          <span className="flex items-center gap-1.5 text-xs font-bold text-black uppercase tracking-wide">
+            <Briefcase className="w-3.5 h-3.5 text-black" aria-hidden="true" />
+            <span>{t("Tipe Kontrak")}</span>
           </span>
           <div className="flex flex-wrap gap-1.5">
             <button
               type="button"
               onClick={() => updateParam("tipe", "")}
               disabled={isPending}
-              className={`text-xs px-2.5 py-1.5 rounded border transition font-medium min-h-[38px] flex items-center ${
+              className={`text-xs px-3.5 py-1.5 rounded-full border transition-all font-bold min-h-[38px] flex items-center ${
                 !selectedJobType
-                  ? "bg-navy-900 text-white border-navy-900"
-                  : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                  ? "bg-black text-white border-black shadow-2xs"
+                  : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
               }`}
             >
-              Semua
+              {t("Semua")}
             </button>
             {(Object.keys(JOB_TYPE_LABEL) as JobType[]).map((typeKey) => {
               const isActive = selectedJobType === typeKey;
@@ -214,13 +213,13 @@ export function FilterPanel({
                   type="button"
                   onClick={() => updateParam("tipe", isActive ? "" : typeKey)}
                   disabled={isPending}
-                  className={`text-xs px-2.5 py-1.5 rounded border transition font-medium min-h-[38px] flex items-center ${
+                  className={`text-xs px-3.5 py-1.5 rounded-full border transition-all font-bold min-h-[38px] flex items-center ${
                     isActive
-                      ? "bg-navy-900 text-white border-navy-900 shadow-2xs"
-                      : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                      ? "bg-black text-white border-black shadow-2xs"
+                      : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
                   }`}
                 >
-                  {JOB_TYPE_LABEL[typeKey]}
+                  {t(JOB_TYPE_LABEL[typeKey])}
                 </button>
               );
             })}
@@ -229,11 +228,11 @@ export function FilterPanel({
 
         {/* 3. Filter Mode Kerja (Onsite, Hybrid, Remote) */}
         <div className="space-y-2">
-          <span className="flex items-center gap-1.5 text-xs font-bold text-slate-800 uppercase tracking-wide">
-            <Laptop className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
-            <span>Mode Kerja</span>
+          <span className="flex items-center gap-1.5 text-xs font-bold text-black uppercase tracking-wide">
+            <Laptop className="w-3.5 h-3.5 text-black" aria-hidden="true" />
+            <span>{t("Mode Kerja")}</span>
           </span>
-          <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-md">
+          <div className="grid grid-cols-3 gap-1 bg-[#FAF8F0] p-1.5 rounded-2xl border border-black/[0.06]">
             {(Object.keys(WORK_MODE_LABEL) as WorkMode[]).map((modeKey) => {
               const isActive = selectedWorkMode === modeKey;
               return (
@@ -242,13 +241,13 @@ export function FilterPanel({
                   type="button"
                   onClick={() => updateParam("mode", isActive ? "" : modeKey)}
                   disabled={isPending}
-                  className={`text-xs py-2 px-1 rounded font-semibold transition text-center min-h-[40px] flex items-center justify-center ${
+                  className={`text-xs py-2 px-1 rounded-xl font-bold transition text-center min-h-[40px] flex items-center justify-center ${
                     isActive
-                      ? "bg-white text-navy-950 shadow-2xs border border-slate-200"
-                      : "text-slate-600 hover:text-navy-900"
+                      ? "bg-white text-black shadow-2xs border border-black/[0.08]"
+                      : "text-slate-600 hover:text-black"
                   }`}
                 >
-                  {WORK_MODE_LABEL[modeKey]}
+                  {t(WORK_MODE_LABEL[modeKey])}
                 </button>
               );
             })}
@@ -256,136 +255,133 @@ export function FilterPanel({
         </div>
 
         {/* 4. Filter Wilayah Hierarkis (Provinsi & Kota) */}
-        <div className="space-y-3 pt-2 border-t border-slate-100">
-          <span className="flex items-center gap-1.5 text-xs font-bold text-slate-800 uppercase tracking-wide">
-            <MapPin className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
-            <span>Lokasi Penempatan</span>
+        <div className="space-y-3.5 pt-2 border-t border-black/[0.06]">
+          <span className="flex items-center gap-1.5 text-xs font-bold text-black uppercase tracking-wide">
+            <MapPin className="w-3.5 h-3.5 text-black" aria-hidden="true" />
+            <span>{t("Lokasi Penempatan")}</span>
           </span>
 
           {/* Dropdown Provinsi */}
           <div className="space-y-1">
-            <label
-              htmlFor="filter-provinsi-select"
-              className="block text-[11px] font-semibold text-slate-600"
-            >
-              Provinsi
-            </label>
-            <select
-              id="filter-provinsi-select"
+            <span className="block text-[11px] font-bold text-slate-700">
+              {t("Provinsi")}
+            </span>
+            <CustomSelect
+              options={[
+                { value: "", label: t("Seluruh Indonesia") },
+                ...provinces.map((prov) => ({
+                  value: prov.slug,
+                  label: prov.name,
+                })),
+              ]}
               value={selectedProvince}
-              onChange={(e) => updateParam("wilayah", e.target.value)}
+              onChange={(val) => updateParam("wilayah", val)}
+              placeholder={t("Seluruh Indonesia")}
               disabled={isPending}
-              className="w-full text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-md py-2.5 px-3 text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-navy-600 focus:border-navy-600 transition min-h-[44px]"
-            >
-              <option value="">Seluruh Indonesia</option>
-              {provinces.map((prov) => (
-                <option key={prov.id} value={prov.slug}>
-                  {prov.name}
-                </option>
-              ))}
-            </select>
+              searchable={true}
+              searchPlaceholder={t("Cari nama provinsi...")}
+            />
           </div>
 
           {/* Dropdown Kota/Kabupaten */}
           <div className="space-y-1">
-            <label
-              htmlFor="filter-kota-select"
-              className="block text-[11px] font-semibold text-slate-600"
-            >
-              Kota atau Kabupaten
-            </label>
-            <select
-              id="filter-kota-select"
+            <span className="block text-[11px] font-bold text-slate-700">
+              {t("Kota atau Kabupaten")}
+            </span>
+            <CustomSelect
+              options={[
+                {
+                  value: "",
+                  label: !selectedProvince
+                    ? t("Pilih provinsi terlebih dahulu")
+                    : t("Semua Kota di Provinsi Ini"),
+                },
+                ...cities.map((city) => ({
+                  value: city.slug,
+                  label: city.name,
+                })),
+              ]}
               value={selectedCity}
-              onChange={(e) => updateParam("kota", e.target.value)}
-              disabled={isPending || !selectedProvince || cities.length === 0}
-              className={`w-full text-xs sm:text-sm border rounded-md py-2.5 px-3 transition min-h-[44px] ${
+              onChange={(val) => updateParam("kota", val)}
+              placeholder={
                 !selectedProvince
-                  ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-                  : "bg-slate-50 text-slate-800 border-slate-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-navy-600 focus:border-navy-600"
-              }`}
-            >
-              <option value="">
-                {!selectedProvince
-                  ? "Pilih provinsi terlebih dahulu"
-                  : "Semua Kota di Provinsi Ini"}
-              </option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.slug}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
+                  ? t("Pilih provinsi terlebih dahulu")
+                  : t("Semua Kota di Provinsi Ini")
+              }
+              disabled={isPending || !selectedProvince || cities.length === 0}
+              searchable={cities.length > 5}
+              searchPlaceholder={t("Cari nama kota...")}
+            />
           </div>
         </div>
 
         {/* Active Filters Badges */}
         {activeCount > 0 && (
-          <div className="pt-3 border-t border-slate-100 space-y-2">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
-              Filter Terpasang
+          <div className="pt-3 border-t border-black/[0.06] space-y-2">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              {t("Filter Terpasang")}
             </span>
             <div className="flex flex-wrap gap-1.5">
               {selectedCategory && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-medium">
-                  Kat: {categories.find((c) => c.slug === selectedCategory)?.name || selectedCategory}
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FAF8F0] text-black border border-black/[0.08] text-xs font-bold">
+                  {t("Kategori Bidang")}: {categories.find((c) => c.slug === selectedCategory)?.name || selectedCategory}
                   <button
                     type="button"
                     onClick={() => updateParam("kategori", "")}
                     className="text-slate-500 hover:text-rose-600 p-0.5"
-                    aria-label="Hapus filter kategori"
+                    aria-label={t("Hapus filter kategori")}
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
               {selectedJobType && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-medium">
-                  {JOB_TYPE_LABEL[selectedJobType as JobType] || selectedJobType}
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FAF8F0] text-black border border-black/[0.08] text-xs font-bold">
+                  {t(JOB_TYPE_LABEL[selectedJobType as JobType] || selectedJobType)}
                   <button
                     type="button"
                     onClick={() => updateParam("tipe", "")}
                     className="text-slate-500 hover:text-rose-600 p-0.5"
-                    aria-label="Hapus filter tipe kerja"
+                    aria-label={t("Hapus filter tipe kerja")}
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
               {selectedWorkMode && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-medium">
-                  {WORK_MODE_LABEL[selectedWorkMode as WorkMode] || selectedWorkMode}
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FAF8F0] text-black border border-black/[0.08] text-xs font-bold">
+                  {t(WORK_MODE_LABEL[selectedWorkMode as WorkMode] || selectedWorkMode)}
                   <button
                     type="button"
                     onClick={() => updateParam("mode", "")}
                     className="text-slate-500 hover:text-rose-600 p-0.5"
-                    aria-label="Hapus filter mode kerja"
+                    aria-label={t("Hapus filter mode kerja")}
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
               {selectedProvince && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-medium">
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FAF8F0] text-black border border-black/[0.08] text-xs font-bold">
                   {provinces.find((p) => p.slug === selectedProvince)?.name || selectedProvince}
                   <button
                     type="button"
                     onClick={() => updateParam("wilayah", "")}
                     className="text-slate-500 hover:text-rose-600 p-0.5"
-                    aria-label="Hapus filter provinsi"
+                    aria-label={t("Hapus filter provinsi")}
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
               {selectedCity && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-medium">
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FAF8F0] text-black border border-black/[0.08] text-xs font-bold">
                   {cities.find((c) => c.slug === selectedCity)?.name || selectedCity}
                   <button
                     type="button"
                     onClick={() => updateParam("kota", "")}
                     className="text-slate-500 hover:text-rose-600 p-0.5"
-                    aria-label="Hapus filter kota"
+                    aria-label={t("Hapus filter kota")}
                   >
                     <X className="w-3 h-3" />
                   </button>

@@ -249,20 +249,18 @@ Proteksi rute lewat `middleware.ts`: `/mitra/*` untuk peran `company`, `/admin/*
 
 Mengadopsi referensi arsitektur visual modern dari MotionSites (seperti pola direktori Zenith Realty, hero berdaya tarik tinggi EMBER, dan kartu pilar Glow Features), tata letak halaman publik JobConnect dirancang terstruktur, profesional, dan meyakinkan bagi pengguna baru:
 
-1. **Halaman Beranda (`/`):**
-   - **Hero Modern (Inspirasi: EMBER / NOVA Space Systems):**
-     - *Pill Badge Penanda:* Lencana membulat di atas judul ("Portal Lowongan Terverifikasi • 38 Provinsi") sebagai sinyal kualitas dan jangkauan nasional.
-     - *High-Impact Headline:* Judul tebal berjarak huruf rapat (*tight tracking*) yang lugas: mempertemukan pencari kerja dengan perusahaan mitra terverifikasi.
-     - *Kotak Pencarian Terpadu (Floating Search Box):* Kotak pencarian melayang dengan bayangan halus yang menyatukan input kata kunci posisi, pilihan cepat wilayah, dan tombol utama "Cari Lowongan".
-   - **Pilar Kepercayaan (Inspirasi: Glow Features / AKOR Security):**
-     - 4 kartu fitur berlatar bersih dengan batas tipis yang meyakinkan pengguna baru:
-       1. *Verifikasi ACC Admin:* Setiap lowongan diperiksa dan disetujui admin sebelum tayang untuk mencegah penipuan.
-       2. *Bebas Ghosting:* Transparansi alur 8 status lamaran dengan riwayat waktu yang jelas.
-       3. *Seleksi Adil & Opsional:* Analisis CV oleh AI bersifat pilihan sukarela pelamar tanpa diskriminasi.
-       4. *Jelajah Wilayah 38 Provinsi:* Data wilayah resmi Kemendagri hingga 514 kota dan kabupaten se-Indonesia.
-   - **Bar Jelajah Wilayah:** Baris chip horizontal provinsi berlowongan aktif yang dapat digeser mulus di perangkat mobile.
-   - **Kategori Pekerjaan & Lowongan Terbaru:** Segmentasi kategori berindikator jumlah lowongan serta kartu lowongan terbaru berstatus `open`.
-   - **Banner Ajakan (Inspirasi: Community CTA):** Kotak ajakan ganda di bagian bawah halaman untuk pelamar ("Mulai Melamar Pekerjaan") dan perusahaan ("Pasang Lowongan Perusahaan").
+1. **Halaman Beranda (`/`) (Inspirasi: Buy Me a Coffee - Ramah, Hangat, & Interaktif):**
+   - **Hero Interaktif (Gaya Buy Me a Coffee):**
+     - *Lencana Rating & Kepercayaan:* Badge hijau membulat ("100% Terverifikasi Admin • Bebas Calo & Pungli") untuk membangun kepercayaan sejak awal.
+     - *Headline Hangat & Tegas:* Judul besar ekspresif ("Mulai langkah karier impianmu tanpa rasa cemas.") berlatar warna gading hangat (`#FAF8F0`).
+     - *Widget Pencarian Terpadu:* Input pencarian berbentuk pil dengan pemilih wilayah dan tombol kuning cerah khas BMC ("Cari Lowongan").
+     - *Kartu Mengambang (Floating Preview Badges):* Elemen visual mengambang di sekitar hero yang menampilkan kartu perusahaan mitra terverifikasi, status lamaran realtime, lencana moderasi admin, dan emoji reaksi interaktif.
+   - **Pilar Fitur Utama (Container Besar Membulat 32-48px Khas BMC):**
+     - *Fitur Pencari Kerja:* Mockup interaktif simulasi kirim lamaran kerja dengan CV terlampir, kriteria jelas, dan tombol aksi kuning.
+     - *Fitur Transparansi Karier:* 3 kartu mode kerja (Onsite, Hybrid sebagai pilihan populer, dan Remote) dengan rincian fasilitas dan jaminan gaji transparan.
+     - *Fitur Perusahaan Mitra:* Pratinjau dashboard mitra untuk rekrutmen terpercaya tanpa calo.
+   - **Katalog Lowongan Terbaru:** Kartu lowongan berstatus `open` langsung dari database dengan sudut membulat 24px dan bayangan halus.
+   - **Banner Ajakan Bawah (Bottom Rounded CTA Banner):** Kotak melengkung ramah di bagian bawah dengan ajakan "Eksplorasi Lowongan Sekarang" dan "Daftar Akun Gratis".
 
 2. **Halaman Eksplorasi Lowongan (`/lowongan`) (Inspirasi: Zenith Realty):**
    - **Tata Letak Dua Kolom Desktop:**

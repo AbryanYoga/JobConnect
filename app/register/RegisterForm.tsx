@@ -14,15 +14,15 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { ButtonLink } from "@/components/ui/ButtonLink";
 import { createClient } from "@/lib/supabase/client";
 import { registerSchema, peranToRole, type Peran } from "@/lib/validation/auth";
 import { fieldErrors } from "@/lib/validation/helpers";
+import { useLanguage } from "@/lib/i18n";
 
 export function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t, language } = useLanguage();
   const initialPeran: Peran =
     searchParams.get("peran") === "perusahaan" ? "perusahaan" : "pelamar";
 
@@ -116,26 +116,43 @@ export function RegisterForm() {
   if (isSuccess) {
     return (
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-white rounded-card border border-slate-200 shadow-sm p-6 sm:p-8 text-center">
-          <div className="w-12 h-12 rounded-full bg-green-50 text-green-600 mx-auto flex items-center justify-center mb-4">
-            <CheckCircle2 className="w-6 h-6" aria-hidden="true" />
+        <div className="bg-white rounded-[32px] sm:rounded-[40px] border border-black/[0.08] shadow-card p-8 sm:p-10 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-[#FFDD00] text-black mx-auto flex items-center justify-center mb-5 shadow-2xs">
+            <CheckCircle2 className="w-7 h-7" aria-hidden="true" />
           </div>
-          <h2 className="text-xl font-bold text-navy-950 tracking-tight">
-            Pendaftaran Berhasil!
+          <h2 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
+            {t("Pendaftaran Berhasil!")}
           </h2>
-          <p className="text-sm text-slate-600 mt-2 leading-relaxed">
-            Akun Anda berhasil didaftarkan sebagai{" "}
-            <span className="font-semibold text-navy-900">
-              {isCompany ? "Perusahaan Mitra" : "Pelamar Kerja"}
-            </span>
-            . Silakan periksa kotak masuk email{" "}
-            <span className="font-medium text-slate-900">{email}</span> untuk
-            mengonfirmasi akun sebelum masuk.
+          <p className="text-sm text-slate-600 mt-2.5 leading-relaxed font-medium">
+            {language === "en" ? (
+              <>
+                Your account was successfully registered as{" "}
+                <span className="font-bold text-black">
+                  {isCompany ? "Partner Company" : "Job Seeker"}
+                </span>
+                . Please check the email inbox of{" "}
+                <span className="font-bold text-black">{email}</span> to confirm
+                your account before signing in.
+              </>
+            ) : (
+              <>
+                Akun Anda berhasil didaftarkan sebagai{" "}
+                <span className="font-bold text-black">
+                  {isCompany ? "Perusahaan Mitra" : "Pelamar Kerja"}
+                </span>
+                . Silakan periksa kotak masuk email{" "}
+                <span className="font-bold text-black">{email}</span> untuk
+                mengonfirmasi akun sebelum masuk.
+              </>
+            )}
           </p>
-          <div className="mt-6">
-            <ButtonLink href="/login" variant="primary" size="md" fullWidth>
-              Menuju Halaman Masuk
-            </ButtonLink>
+          <div className="mt-8">
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center w-full px-6 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] text-black font-black text-sm transition-all shadow-2xs"
+            >
+              {t("Menuju Halaman Masuk")}
+            </Link>
           </div>
         </div>
       </div>
@@ -145,24 +162,24 @@ export function RegisterForm() {
   return (
     <div className="w-full max-w-md mx-auto">
       {/* Header Kartu Pendaftaran */}
-      <div className="bg-white rounded-card border border-slate-200 shadow-sm p-6 sm:p-8">
-        <div className="mb-6 text-center">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-navy-50 text-navy-800 text-xs font-medium mb-3 border border-navy-100">
-            <ShieldCheck className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
-            <span>Pendaftaran Akun Terverifikasi</span>
+      <div className="bg-white rounded-[32px] sm:rounded-[40px] border border-black/[0.08] shadow-card p-8 sm:p-10">
+        <div className="mb-8 text-center space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black text-xs font-bold border border-black/10 shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-black" aria-hidden="true" />
+            <span>{t("Pendaftaran Akun Terverifikasi")}</span>
           </div>
-          <h1 className="text-2xl font-bold text-navy-950 tracking-tight">
-            Buat Akun Baru
+          <h1 className="text-3xl sm:text-4xl font-black text-black tracking-tight pt-1">
+            {t("Buat Akun Baru")}
           </h1>
-          <p className="text-sm text-slate-600 mt-1.5">
-            Pilih peran Anda dan mulai temukan lowongan atau pasang lowongan kerja.
+          <p className="text-sm text-slate-600 leading-relaxed font-medium">
+            {t("Pilih peran Anda dan mulai temukan lowongan atau pasang lowongan kerja.")}
           </p>
         </div>
 
         {serverError && (
           <div
             role="alert"
-            className="p-3.5 rounded-control bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2.5 mb-4"
+            className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2.5 mb-5 font-medium"
           >
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" aria-hidden="true" />
             <span className="leading-snug">{serverError}</span>
@@ -170,15 +187,15 @@ export function RegisterForm() {
         )}
 
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          {/* Pemilihan Peran (Segmented Radio Cards) */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Daftar Sebagai
-            </label>
+          {/* Pemilihan Peran (Segmented Radio Cards Gaya BMC) */}
+          <div className="space-y-2">
+            <span className="block text-xs font-bold text-black uppercase tracking-wide">
+              {t("Daftar Sebagai")}
+            </span>
             <div
               className="grid grid-cols-2 gap-3"
               role="radiogroup"
-              aria-label="Pilihan Peran Pendaftaran"
+              aria-label={t("Daftar Sebagai")}
             >
               <button
                 type="button"
@@ -190,26 +207,30 @@ export function RegisterForm() {
                     setErrors((prev) => ({ ...prev, name: "" }));
                   }
                 }}
-                className={`flex flex-col items-start p-3.5 rounded-card border text-left transition-all min-h-[5.25rem] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 ${
+                className={`flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all min-h-[5.5rem] cursor-pointer focus-visible:outline-2 focus-visible:outline-black ${
                   peran === "pelamar"
-                    ? "border-navy-600 bg-navy-50/70 text-navy-950 ring-1 ring-navy-600 shadow-xs"
-                    : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                    ? "border-black bg-black text-white shadow-2xs"
+                    : "border-black/[0.08] bg-[#FAF8F0] text-slate-800 hover:bg-black/5"
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1.5">
                   <div
-                    className={`w-7 h-7 rounded-control flex items-center justify-center shrink-0 ${
+                    className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${
                       peran === "pelamar"
-                        ? "bg-navy-700 text-white"
-                        : "bg-slate-100 text-slate-600"
+                        ? "bg-[#FFDD00] text-black"
+                        : "bg-white text-slate-700 border border-black/[0.08]"
                     }`}
                   >
                     <User className="w-4 h-4" aria-hidden="true" />
                   </div>
-                  <span className="font-semibold text-sm">Pelamar</span>
+                  <span className="font-bold text-sm">{t("Pelamar")}</span>
                 </div>
-                <span className="text-xs text-slate-500 leading-snug">
-                  Cari dan lamar lowongan kerja
+                <span
+                  className={`text-[11px] leading-snug ${
+                    peran === "pelamar" ? "text-slate-300" : "text-slate-500"
+                  }`}
+                >
+                  {t("Cari dan lamar lowongan kerja")}
                 </span>
               </button>
 
@@ -223,26 +244,30 @@ export function RegisterForm() {
                     setErrors((prev) => ({ ...prev, name: "" }));
                   }
                 }}
-                className={`flex flex-col items-start p-3.5 rounded-card border text-left transition-all min-h-[5.25rem] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 ${
+                className={`flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all min-h-[5.5rem] cursor-pointer focus-visible:outline-2 focus-visible:outline-black ${
                   peran === "perusahaan"
-                    ? "border-navy-600 bg-navy-50/70 text-navy-950 ring-1 ring-navy-600 shadow-xs"
-                    : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                    ? "border-black bg-black text-white shadow-2xs"
+                    : "border-black/[0.08] bg-[#FAF8F0] text-slate-800 hover:bg-black/5"
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1.5">
                   <div
-                    className={`w-7 h-7 rounded-control flex items-center justify-center shrink-0 ${
+                    className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${
                       peran === "perusahaan"
-                        ? "bg-navy-700 text-white"
-                        : "bg-slate-100 text-slate-600"
+                        ? "bg-[#FFDD00] text-black"
+                        : "bg-white text-slate-700 border border-black/[0.08]"
                     }`}
                   >
                     <Building2 className="w-4 h-4" aria-hidden="true" />
                   </div>
-                  <span className="font-semibold text-sm">Perusahaan</span>
+                  <span className="font-bold text-sm">{t("Perusahaan")}</span>
                 </div>
-                <span className="text-xs text-slate-500 leading-snug">
-                  Pasang lowongan dan rekrut tim
+                <span
+                  className={`text-[11px] leading-snug ${
+                    peran === "perusahaan" ? "text-slate-300" : "text-slate-500"
+                  }`}
+                >
+                  {t("Pasang lowongan dan rekrut tim")}
                 </span>
               </button>
             </div>
@@ -251,18 +276,20 @@ export function RegisterForm() {
           {/* Input Nama Lengkap / Nama Perusahaan */}
           <Input
             id="register-name"
-            label={isCompany ? "Nama Perusahaan" : "Nama Lengkap"}
+            label={isCompany ? t("Nama Perusahaan") : t("Nama Lengkap")}
             required
             type="text"
             autoComplete={isCompany ? "organization" : "name"}
             placeholder={
-              isCompany ? "Contoh: PT Teknologi Bangsa" : "Contoh: Budi Santoso"
+              isCompany
+                ? (language === "en" ? "e.g. Acme Corporation" : "Contoh: PT Teknologi Bangsa")
+                : (language === "en" ? "e.g. John Doe" : "Contoh: Budi Santoso")
             }
             leftIcon={
               isCompany ? (
-                <Building2 className="w-4 h-4" />
+                <Building2 className="w-4 h-4 text-slate-400" />
               ) : (
-                <User className="w-4 h-4" />
+                <User className="w-4 h-4 text-slate-400" />
               )
             }
             value={name}
@@ -271,35 +298,37 @@ export function RegisterForm() {
               if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
             }}
             error={errors.name}
+            className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
           />
 
           {/* Input Alamat Email */}
           <Input
             id="register-email"
-            label="Alamat Email"
+            label={t("Alamat Email")}
             required
             type="email"
             autoComplete="email"
             placeholder="nama@email.com"
-            leftIcon={<Mail className="w-4 h-4" />}
+            leftIcon={<Mail className="w-4 h-4 text-slate-400" />}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
               if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
             }}
             error={errors.email}
+            className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
           />
 
           {/* Input Kata Sandi */}
           <Input
             id="register-password"
-            label="Kata Sandi"
+            label={t("Kata Sandi")}
             required
             type="password"
             autoComplete="new-password"
-            placeholder="Minimal 8 karakter"
-            helperText="Gunakan minimal 8 karakter gabungan huruf dan angka."
-            leftIcon={<Lock className="w-4 h-4" />}
+            placeholder={t("Minimal 8 karakter")}
+            helperText={t("Gunakan minimal 8 karakter gabungan huruf dan angka.")}
+            leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -307,17 +336,18 @@ export function RegisterForm() {
                 setErrors((prev) => ({ ...prev, password: "" }));
             }}
             error={errors.password}
+            className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
           />
 
           {/* Input Konfirmasi Kata Sandi */}
           <Input
             id="register-confirm-password"
-            label="Konfirmasi Kata Sandi"
+            label={t("Konfirmasi Kata Sandi")}
             required
             type="password"
             autoComplete="new-password"
-            placeholder="Ulangi kata sandi"
-            leftIcon={<Lock className="w-4 h-4" />}
+            placeholder={t("Ulangi kata sandi")}
+            leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
             value={confirmPassword}
             onChange={(e) => {
               setConfirmPassword(e.target.value);
@@ -325,37 +355,41 @@ export function RegisterForm() {
                 setErrors((prev) => ({ ...prev, confirmPassword: "" }));
             }}
             error={errors.confirmPassword}
+            className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
           />
 
-          {/* Tombol Submit Pendaftaran */}
-          <div className="pt-2">
-            <Button
+          {/* Tombol Submit Pendaftaran (Gaya BMC Pill Kuning) */}
+          <div className="pt-3">
+            <button
               type="submit"
-              variant="primary"
-              size="lg"
-              fullWidth
-              isLoading={isSubmitting}
-              rightIcon={<ArrowRight className="w-4 h-4" aria-hidden="true" />}
-              className="gap-2 font-medium"
+              disabled={isSubmitting}
+              className="w-full py-3.5 px-6 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] active:scale-98 text-black font-black text-base transition-all shadow-2xs hover:shadow flex items-center justify-center gap-2 min-h-[48px] disabled:opacity-50 cursor-pointer"
             >
-              <span>
-                {isCompany
-                  ? "Daftar sebagai Perusahaan"
-                  : "Daftar sebagai Pelamar"}
-              </span>
-            </Button>
+              {isSubmitting ? (
+                <span>{t("Memproses pendaftaran...")}</span>
+              ) : (
+                <>
+                  <span>
+                    {isCompany
+                      ? t("Daftar sebagai Perusahaan")
+                      : t("Daftar sebagai Pelamar")}
+                  </span>
+                  <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
+                </>
+              )}
+            </button>
           </div>
         </form>
 
         {/* Tautan Masuk */}
-        <div className="mt-6 pt-5 border-t border-slate-100 text-center">
-          <p className="text-sm text-slate-600">
-            Sudah memiliki akun JobConnect?{" "}
+        <div className="mt-8 pt-6 border-t border-black/[0.06] text-center">
+          <p className="text-sm text-slate-600 font-medium">
+            {t("Sudah memiliki akun JobConnect?")}{" "}
             <Link
               href="/login"
-              className="font-semibold text-navy-700 hover:text-navy-900 underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 rounded-xs"
+              className="font-bold text-black hover:underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-black rounded-xs"
             >
-              Masuk di sini
+              {t("Masuk di sini")}
             </Link>
           </p>
         </div>

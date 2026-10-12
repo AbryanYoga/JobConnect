@@ -1,24 +1,16 @@
-import Link from "next/link";
+  import Link from "next/link";
 import Image from "next/image";
 import {
   NAV_ACTIONS_BY_ROLE,
   NAV_LINKS_BY_ROLE,
   Role,
 } from "@/lib/navigation";
-import { ButtonLink } from "@/components/ui/ButtonLink";
-import { LogoutButton } from "@/components/auth/LogoutButton";
 import { createClient } from "@/lib/supabase/server";
 import { NavLink } from "./NavLink";
 import { MobileMenu } from "./MobileMenu";
-
-function getUserInitials(name: string): string {
-  if (!name) return "?";
-  const words = name.trim().split(/\s+/);
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
+import { NavbarHeader } from "./NavbarHeader";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { NavbarAuthButtons } from "./NavbarAuthButtons";
 
 interface NavbarProps {
   role?: Role;
@@ -61,29 +53,30 @@ export async function Navbar({ role }: NavbarProps = {}) {
   const actions = NAV_ACTIONS_BY_ROLE[userRole] || [];
 
   return (
-    <header className="sticky top-0 z-40 w-full h-16 bg-white/85 backdrop-blur-sm border-b border-slate-200">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-        {/* Sisi Kiri: Logo dan Brand */}
-        <div className="flex items-center gap-8">
+    <NavbarHeader>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+        {/* Sisi Kiri: Navigasi Menu Desktop (Sesuai BMC: Links di sisi kiri) */}
+        <div className="flex items-center gap-2">
+          {/* Logo Mobile (Hanya tampil di ponsel) */}
           <Link
             href="/"
-            className="flex items-center rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
+            className="md:hidden flex items-center rounded-full transition hover:opacity-90"
             aria-label="JobConnect Beranda"
           >
             <Image
-              src="/logos/concept-2-lockup-dark.svg"
+              src="/logos/concept-2-lockup-light.svg"
               alt="JobConnect"
-              width={187}
-              height={34}
-              className="h-8.5 w-auto"
+              width={160}
+              height={32}
+              className="h-7 w-auto"
               priority
             />
           </Link>
 
-          {/* Navigasi Utama Desktop */}
+          {/* Menu Navigasi Desktop Kiri */}
           <nav
             aria-label="Navigasi Utama"
-            className="hidden md:flex items-center gap-1"
+            className="hidden md:flex items-center gap-1 lg:gap-1.5"
           >
             {links.map((link) => (
               <NavLink key={link.href} href={link.href}>
@@ -93,70 +86,45 @@ export async function Navbar({ role }: NavbarProps = {}) {
           </nav>
         </div>
 
-        {/* Sisi Kanan Desktop: Identitas Pengguna dan Tombol Aksi */}
-        <div className="hidden md:flex items-center gap-3">
-          {userRole !== "tamu" && userName && (
-            <Link
-              href={userRole === "perusahaan" ? "/mitra/profil-perusahaan" : "/profil"}
-              className="flex items-center gap-2 rounded-control px-2 py-1.5 hover:bg-slate-100 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 min-h-[44px]"
-            >
-              <span
-                className="w-8 h-8 rounded-sm bg-navy-700 text-white text-xs font-bold flex items-center justify-center shrink-0"
-                aria-hidden="true"
-              >
-                {getUserInitials(userName)}
-              </span>
-              <span className="text-sm font-medium text-navy-950 max-w-[120px] truncate">
-                {userName}
-              </span>
-            </Link>
-          )}
+        {/* Tengah: Logo Brand JobConnect (Persis Buy Me a Coffee di tengah) */}
+        <div className="hidden md:flex items-center justify-center">
+          <Link
+            href="/"
+            className="flex items-center rounded-full transition hover:opacity-90 px-3 py-1"
+            aria-label="JobConnect Beranda"
+          >
+            <Image
+              src="/logos/concept-2-lockup-light.svg"
+              alt="JobConnect"
+              width={175}
+              height={35}
+              className="h-8 w-auto"
+              priority
+            />
+          </Link>
+        </div>
 
-          {actions.map((action) => {
-            if (action.variant === "primary") {
-              return (
-                <ButtonLink
-                  key={action.href}
-                  href={action.href}
-                  variant="primary"
-                  size="md"
-                >
-                  {action.label}
-                </ButtonLink>
-              );
-            }
+        {/* Sisi Kanan: Button Ganti Bahasa & Masuk / Daftar Akun */}
+        <div className="hidden md:flex items-center gap-2.5 lg:gap-3">
+          {/* Button Ganti Bahasa (Menggantikan Quick Search Pill) */}
+          <LanguageSwitcher />
 
-            if (action.variant === "outline") {
-              return (
-                <ButtonLink
-                  key={action.href}
-                  href={action.href}
-                  variant="outline"
-                  size="md"
-                >
-                  {action.label}
-                </ButtonLink>
-              );
-            }
-
-            return (
-              <ButtonLink
-                key={action.href}
-                href={action.href}
-                variant="ghost"
-                size="md"
-              >
-                {action.label}
-              </ButtonLink>
-            );
-          })}
-
-          {userRole !== "tamu" && <LogoutButton variant="ghost" size="md" />}
+          {/* Tombol Aksi Autentikasi / Profil */}
+          <NavbarAuthButtons
+            userRole={userRole}
+            userName={userName}
+            actions={actions}
+          />
         </div>
 
         {/* Menu Navigasi Layar Kecil (Mobile) */}
-        <MobileMenu links={links} actions={actions} role={userRole} userName={userName} />
+        <MobileMenu
+          links={links}
+          actions={actions}
+          role={userRole}
+          userName={userName}
+        />
       </div>
-    </header>
+    </NavbarHeader>
   );
 }

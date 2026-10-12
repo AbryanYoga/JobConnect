@@ -15,8 +15,10 @@ export interface NavAction {
 
 export const NAV_LINKS_BY_ROLE: Record<Role, NavItem[]> = {
   tamu: [
+    { label: "Beranda", href: "/" },
     { label: "Lowongan", href: "/lowongan" },
     { label: "Wilayah", href: "/wilayah" },
+    { label: "Tentang Kami", href: "/tentang" },
   ],
   pelamar: [
     { label: "Lowongan", href: "/lowongan" },

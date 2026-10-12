@@ -14,7 +14,7 @@ export default async function AdminKategoriPage() {
   // Ambil seluruh kategori
   const { data: categoriesData } = await supabase
     .from("categories")
-    .select("id, name, slug, created_at")
+    .select("id, name, slug")
     .order("name", { ascending: true });
 
   const categoriesList = categoriesData || [];
@@ -37,7 +37,6 @@ export default async function AdminKategoriPage() {
     id: c.id,
     name: c.name,
     slug: c.slug,
-    created_at: c.created_at,
     jobCount: jobCounts[c.id] || 0,
   }));
 

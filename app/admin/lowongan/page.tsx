@@ -329,7 +329,7 @@ export default async function AdminLowonganPage({
                   </span>
                   <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#FAF8F0] border border-black/[0.06] font-medium">
                     <Calendar className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
-                    <span>Batas Lamaran: <strong className="text-black">{formatDateIndo(job.deadline)}</strong></span>
+                    <span>Batas Lamaran: <strong className="text-black">{job.deadline ? formatDateIndo(job.deadline) : "Tidak ditentukan"}</strong></span>
                   </span>
                 </div>
 

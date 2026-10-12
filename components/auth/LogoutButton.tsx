@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useLanguage } from "@/lib/i18n";
 
 interface LogoutButtonProps {
   variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
@@ -18,10 +19,14 @@ export function LogoutButton({
   size = "md",
   className = "",
   showIcon = true,
-  children = "Keluar",
+  children,
 }: LogoutButtonProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
+
+  const defaultLabel = t("Keluar", "Log Out");
+  const displayLabel = children ?? defaultLabel;
 
   const handleLogout = async () => {
     try {
@@ -58,11 +63,11 @@ export function LogoutButton({
       type="button"
       onClick={handleLogout}
       disabled={isLoading}
-      aria-label="Keluar dari akun"
+      aria-label={t("Keluar dari akun", "Log out from account")}
       className={`inline-flex items-center gap-2 font-medium rounded-control transition-colors select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 disabled:opacity-50 disabled:cursor-not-allowed ${sizeClasses} ${variantClasses} ${className}`.trim()}
     >
       {showIcon && <LogOut className="w-4 h-4 shrink-0" aria-hidden="true" />}
-      <span>{isLoading ? "Keluar..." : children}</span>
+      <span>{isLoading ? t("Keluar...", "Logging out...") : displayLabel}</span>
     </button>
   );
 }

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" width="420" height="120">
+  <defs>
+    <linearGradient id="telkomRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ED1C24" />
+      <stop offset="100%" stop-color="#C10E15" />
+    </linearGradient>
+    <linearGradient id="telkomGrey" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#707070" />
+      <stop offset="100%" stop-color="#4A4A4A" />
+    </linearGradient>
+  </defs>
+  <!-- Telkom Globe & Hand Mark -->
+  <g transform="translate(10, 10)">
+    <!-- Red circle sphere -->
+    <circle cx="50" cy="50" r="42" fill="url(#telkomRed)" />
+    <!-- White hand sweeping gesture silhouette -->
+    <path d="M 28 50 C 28 35 42 26 56 26 C 68 26 78 33 82 42 C 78 38 70 34 60 34 C 46 34 38 42 38 52 C 38 64 48 72 62 72 C 74 72 82 66 86 58 C 84 72 70 82 54 82 C 38 82 28 68 28 50 Z" fill="#FFFFFF" opacity="0.95" />
+    <!-- Grey arc accent representing Telkom world reach -->
+    <path d="M 64 22 C 78 26 88 38 90 52 C 86 46 80 40 72 36 C 68 34 62 33 58 33 C 60 29 62 25 64 22 Z" fill="url(#telkomGrey)" />
+  </g>
+  <!-- Wordmark Telkom Indonesia -->
+  <g transform="translate(125, 42)">
+    <text x="0" y="24" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="900" font-size="34" fill="#ED1C24" letter-spacing="-0.5">Telkom</text>
+    <text x="0" y="52" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="700" font-size="20" fill="#333333" letter-spacing="1">INDONESIA</text>
+  </g>
+</svg>

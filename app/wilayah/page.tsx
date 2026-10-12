@@ -88,7 +88,7 @@ export default async function WilayahIndexPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#FAF8F0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <ProvinceIndexView
           provinces={provinces}

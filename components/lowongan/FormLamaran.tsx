@@ -22,6 +22,7 @@ import {
   CV_BUCKET,
   buildCvPath,
 } from "@/lib/validation/lamaran";
+import { useLanguage } from "@/lib/i18n";
 
 export interface FormLamaranProps {
   jobId: number;
@@ -50,6 +51,7 @@ export function FormLamaran({
   hasApplied = false,
   existingApplicationId,
 }: FormLamaranProps) {
+  const { t, language } = useLanguage();
   const [coverLetter, setCoverLetter] = useState("");
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
@@ -58,8 +60,8 @@ export function FormLamaran({
   const [isUploading, setIsUploading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [alreadyApplied, setAlreadyApplied] = useState(hasApplied);
-  const appId = existingApplicationId || submittedAppId;
   const [submittedAppId, setSubmittedAppId] = useState<number | null>(null);
+  const appId = existingApplicationId || submittedAppId;
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +97,7 @@ export function FormLamaran({
   // Jika lowongan sudah ditutup oleh perusahaan atau masa pendaftaran telah berakhir
   if (!isOpen || isExpired) {
     const formattedDeadline = deadline
-      ? new Intl.DateTimeFormat("id-ID", {
+      ? new Intl.DateTimeFormat(language === "en" ? "en-US" : "id-ID", {
           day: "numeric",
           month: "long",
           year: "numeric",
@@ -105,28 +107,34 @@ export function FormLamaran({
     return (
       <section
         id="formulir-lamaran"
-        aria-label={isExpired ? "Batas Waktu Lamaran Telah Berakhir" : "Status Lowongan Ditutup"}
+        aria-label={isExpired ? t("Batas Waktu Lamaran Telah Berakhir") : t("Status Lowongan Ditutup")}
         className="bg-white rounded-[28px] border border-black/[0.08] p-6 sm:p-8 shadow-card text-center space-y-3"
       >
         <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-500">
           <ShieldAlert className="w-6 h-6" aria-hidden="true" />
         </div>
         <h2 className="text-xl font-black text-black tracking-tight">
-          {isExpired ? "Batas Waktu Lamaran Berakhir" : "Penerimaan Lamaran Telah Ditutup"}
+          {isExpired ? t("Batas Waktu Lamaran Berakhir") : t("Penerimaan Lamaran Telah Ditutup")}
         </h2>
         <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
           {isExpired
-            ? `Masa penerimaan berkas untuk posisi ${jobTitle} di ${companyName} telah berakhir${
-                formattedDeadline ? ` pada ${formattedDeadline}` : ""
-              }. Silakan eksplorasi lowongan aktif lainnya.`
-            : `Lowongan untuk posisi ${jobTitle} di ${companyName} sudah tidak menerima lamaran baru. Silakan eksplorasi lowongan aktif lainnya.`}
+            ? (language === "en"
+                ? `The application period for ${jobTitle} at ${companyName} has ended${
+                    formattedDeadline ? ` on ${formattedDeadline}` : ""
+                  }. Please explore other active vacancies.`
+                : `Masa penerimaan berkas untuk posisi ${jobTitle} di ${companyName} telah berakhir${
+                    formattedDeadline ? ` pada ${formattedDeadline}` : ""
+                  }. Silakan eksplorasi lowongan aktif lainnya.`)
+            : (language === "en"
+                ? `Applications for ${jobTitle} at ${companyName} are no longer accepted. Please explore other active vacancies.`
+                : `Lowongan untuk posisi ${jobTitle} di ${companyName} sudah tidak menerima lamaran baru. Silakan eksplorasi lowongan aktif lainnya.`)}
         </p>
         <div className="pt-2">
           <Link
             href="/lowongan"
             className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-sm transition min-h-[44px]"
           >
-            Lihat Lowongan Lain
+            {t("Lihat Lowongan Lain")}
           </Link>
         </div>
       </section>
@@ -138,19 +146,21 @@ export function FormLamaran({
     return (
       <section
         id="formulir-lamaran"
-        aria-label="Ajakan Masuk Akun untuk Melamar"
+        aria-label={t("Ajakan Masuk Akun untuk Melamar", "Sign in invitation to apply")}
         className="bg-white rounded-[28px] border border-black/[0.08] p-6 sm:p-8 shadow-card text-center space-y-4"
       >
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFDD00] text-black text-xs font-bold border border-black/10">
           <LogIn className="w-3.5 h-3.5" aria-hidden="true" />
-          <span>Wajib Masuk Akun</span>
+          <span>{t("Wajib Masuk Akun")}</span>
         </div>
         <div className="space-y-1.5">
           <h2 className="text-2xl font-black text-black tracking-tight">
-            Tertarik Mengisi Posisi Ini?
+            {t("Tertarik Mengisi Posisi Ini?")}
           </h2>
           <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-            Masuk ke akun pencari kerja Anda untuk mengirimkan lamaran resmi dan CV langsung kepada {companyName}.
+            {language === "en"
+              ? `Sign in to your job seeker account to submit your official application and CV directly to ${companyName}.`
+              : `Masuk ke akun pencari kerja Anda untuk mengirimkan lamaran resmi dan CV langsung kepada ${companyName}.`}
           </p>
         </div>
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -159,13 +169,13 @@ export function FormLamaran({
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#FFDD00] hover:bg-[#F2D200] text-black font-black text-sm transition shadow-2xs border border-black/10 min-h-[44px]"
           >
             <LogIn className="w-4 h-4" aria-hidden="true" />
-            <span>Masuk untuk Melamar</span>
+            <span>{t("Masuk untuk Melamar")}</span>
           </Link>
           <Link
             href="/register"
             className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm transition min-h-[44px]"
           >
-            Daftar Akun Baru
+            {t("Daftar Akun Baru")}
           </Link>
         </div>
       </section>
@@ -177,17 +187,19 @@ export function FormLamaran({
     return (
       <section
         id="formulir-lamaran"
-        aria-label="Pemberitahuan Peran Akun"
+        aria-label={t("Pemberitahuan Peran Akun", "Account role notice")}
         className="bg-amber-50/80 rounded-[28px] border border-amber-200/80 p-6 sm:p-8 text-center space-y-3"
       >
         <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto text-amber-800">
           <ShieldAlert className="w-6 h-6" aria-hidden="true" />
         </div>
         <h2 className="text-xl font-black text-amber-950 tracking-tight">
-          Akses Khusus Akun Pencari Kerja
+          {t("Akses Khusus Akun Pencari Kerja")}
         </h2>
         <p className="text-sm text-amber-900/80 max-w-md mx-auto leading-relaxed">
-          Anda sedang masuk dengan akun berstatus <span className="font-bold capitalize">{userRole === "company" ? "Mitra Perusahaan" : userRole}</span>. Formulir lamaran kerja hanya dapat diajukan oleh akun Pencari Kerja.
+          {language === "en"
+            ? `You are logged in with role: ${userRole === "company" ? "Partner Company" : userRole}. Job application forms can only be submitted by Job Seeker accounts.`
+            : `Anda sedang masuk dengan akun berstatus ${userRole === "company" ? "Mitra Perusahaan" : userRole}. Formulir lamaran kerja hanya dapat diajukan oleh akun Pencari Kerja.`}
         </p>
       </section>
     );
@@ -294,7 +306,7 @@ export function FormLamaran({
     return (
       <section
         id="formulir-lamaran"
-        aria-label="Lamaran Berhasil Dikirimkan"
+        aria-label={t("Lamaran Berhasil Dikirimkan")}
         className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] p-6 sm:p-9 shadow-card text-center space-y-5"
       >
         <div className="w-16 h-16 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center mx-auto text-emerald-700 shadow-2xs">
@@ -302,13 +314,15 @@ export function FormLamaran({
         </div>
         <div className="space-y-2 max-w-lg mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
-            <span>Lamaran Terkirim</span>
+            <span>{t("Lamaran Terkirim")}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-            Lamaran Anda Berhasil Terkirim
+            {t("Lamaran Anda Berhasil Terkirim")}
           </h2>
           <p className="text-sm text-slate-600 leading-relaxed font-medium">
-            Berkas lamaran dan CV Anda untuk posisi <span className="font-bold text-slate-900">{jobTitle}</span> telah resmi diterima oleh <span className="font-bold text-slate-900">{companyName}</span>. Pihak HRD akan meninjau kualifikasi Anda.
+            {language === "en"
+              ? `Your application and CV for ${jobTitle} have been officially received by ${companyName}. The HR team will review your qualifications.`
+              : `Berkas lamaran dan CV Anda untuk posisi ${jobTitle} telah resmi diterima oleh ${companyName}. Pihak HRD akan meninjau kualifikasi Anda.`}
           </p>
         </div>
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -316,13 +330,13 @@ export function FormLamaran({
             href={submittedAppId ? `/lamaran-saya/${submittedAppId}` : "/lamaran-saya"}
             className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F2D200] text-black font-black text-sm transition shadow-card border border-black/10 min-h-[44px]"
           >
-            Lihat Status Lamaran Saya
+            {t("Lihat Status Lamaran Saya")}
           </Link>
           <Link
             href="/lowongan"
             className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm transition min-h-[44px]"
           >
-            Eksplorasi Lowongan Lain
+            {t("Eksplorasi Lowongan Lain")}
           </Link>
         </div>
       </section>
@@ -333,7 +347,7 @@ export function FormLamaran({
     return (
       <section
         id="formulir-lamaran"
-        aria-label="Status Lamaran Sudah Dikirimkan"
+        aria-label={t("Status Lamaran Sudah Dikirimkan", "Application status already sent")}
         className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] p-6 sm:p-9 shadow-card text-center space-y-4"
       >
         <div className="w-14 h-14 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center mx-auto text-blue-700 shadow-2xs">
@@ -341,13 +355,15 @@ export function FormLamaran({
         </div>
         <div className="space-y-1.5 max-w-md mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-800 text-xs font-bold border border-blue-200">
-            <span>Sudah Pernah Melamar</span>
+            <span>{t("Sudah Pernah Melamar")}</span>
           </div>
           <h2 className="text-2xl font-black text-black tracking-tight">
-            Anda Sudah Melamar Posisi Ini
+            {t("Anda Sudah Melamar Posisi Ini")}
           </h2>
           <p className="text-sm text-slate-600 leading-relaxed font-medium">
-            Anda telah mengirimkan berkas lamaran untuk lowongan <span className="font-bold text-slate-900">{jobTitle}</span> di {companyName}. Sistem mencegah pengiriman berkas ganda untuk lowongan yang sama.
+            {language === "en"
+              ? `You have already submitted an application for ${jobTitle} at ${companyName}. The system prevents duplicate applications for the same opening.`
+              : `Anda telah mengirimkan berkas lamaran untuk lowongan ${jobTitle} di ${companyName}. Sistem mencegah pengiriman berkas ganda untuk lowongan yang sama.`}
           </p>
         </div>
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -355,13 +371,13 @@ export function FormLamaran({
             href={appId ? `/lamaran-saya/${appId}` : "/lamaran-saya"}
             className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F2D200] text-black font-black text-sm transition shadow-card border border-black/10 min-h-[44px]"
           >
-            Lihat Status Lamaran Saya
+            {t("Lihat Status Lamaran Saya")}
           </Link>
           <Link
             href="/lowongan"
             className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm transition min-h-[44px]"
           >
-            Cari Lowongan Lain
+            {t("Cari Lowongan Lain")}
           </Link>
         </div>
       </section>
@@ -371,20 +387,22 @@ export function FormLamaran({
   return (
     <section
       id="formulir-lamaran"
-      aria-label="Formulir Lamaran Pekerjaan"
+      aria-label={t("Formulir Lamaran Pekerjaan")}
       className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] p-6 sm:p-9 shadow-card space-y-6"
     >
       {/* Header Formulir */}
       <div className="space-y-2 border-b border-black/[0.06] pb-5">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFDD00] text-black text-xs font-bold border border-black/10">
           <FileText className="w-3.5 h-3.5" aria-hidden="true" />
-          <span>Formulir Lamaran Resmi</span>
+          <span>{t("Formulir Lamaran Resmi")}</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-          Kirim Lamaran Pekerjaan
+          {t("Kirim Lamaran Pekerjaan")}
         </h2>
         <p className="text-sm text-slate-600 leading-relaxed font-medium">
-          Lengkapi surat pengantar dan pastikan informasi yang Anda berikan akurat untuk posisi <span className="font-bold text-slate-900">{jobTitle}</span> di {companyName}.
+          {language === "en"
+            ? `Complete your cover letter and ensure your info is accurate for ${jobTitle} at ${companyName}.`
+            : `Lengkapi surat pengantar dan pastikan informasi yang Anda berikan akurat untuk posisi ${jobTitle} di ${companyName}.`}
         </p>
       </div>
 
@@ -407,10 +425,10 @@ export function FormLamaran({
             className="text-sm font-bold text-slate-900 flex items-center justify-between"
           >
             <span>
-              Berkas CV (Curriculum Vitae) <span className="text-red-500">*</span>
+              {t("Berkas CV (Curriculum Vitae)")} <span className="text-red-500">*</span>
             </span>
             <span className="text-xs font-semibold text-slate-500">
-              PDF, Maksimal 2 MB
+              {t("PDF, Maksimal 2 MB")}
             </span>
           </label>
 
@@ -435,7 +453,7 @@ export function FormLamaran({
               }}
               tabIndex={0}
               role="button"
-              aria-label="Pilih berkas CV format PDF maksimal 2 MB"
+              aria-label={t("Pilih berkas CV format PDF maksimal 2 MB", "Choose CV PDF file maximum 2 MB")}
               className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition ${
                 fileError
                   ? "border-red-300 bg-red-50/40 hover:bg-red-50/70"
@@ -446,10 +464,10 @@ export function FormLamaran({
                 <Upload className="w-5 h-5 text-slate-700" aria-hidden="true" />
               </div>
               <p className="text-sm font-bold text-slate-900">
-                Pilih Berkas CV Anda
+                {t("Pilih Berkas CV Anda")}
               </p>
               <p className="text-xs text-slate-500 mt-1">
-                Format resmi wajib PDF dengan ukuran maksimal 2 MB
+                {t("Format resmi wajib PDF dengan ukuran maksimal 2 MB")}
               </p>
             </div>
           ) : (
@@ -465,7 +483,7 @@ export function FormLamaran({
                   <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
                     <span>
-                      {(cvFile.size / (1024 * 1024)).toFixed(2)} MB • Berkas siap dikirim
+                      {(cvFile.size / (1024 * 1024)).toFixed(2)} MB • {t("Berkas siap dikirim")}
                     </span>
                   </p>
                 </div>
@@ -474,7 +492,7 @@ export function FormLamaran({
                 type="button"
                 onClick={handleRemoveFile}
                 className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
-                aria-label="Hapus berkas CV yang dipilih"
+                aria-label={t("Hapus berkas CV yang dipilih")}
               >
                 <X className="w-5 h-5" aria-hidden="true" />
               </button>
@@ -496,7 +514,7 @@ export function FormLamaran({
               htmlFor="cover-letter"
               className="text-sm font-bold text-slate-900"
             >
-              Surat Pengantar Singkat <span className="text-xs font-normal text-slate-500">(Opsional)</span>
+              {t("Surat Pengantar Singkat")} <span className="text-xs font-normal text-slate-500">{t("(Opsional)")}</span>
             </label>
             <span
               className={`text-xs font-semibold ${
@@ -513,7 +531,7 @@ export function FormLamaran({
             maxLength={COVER_LETTER_MAX}
             value={coverLetter}
             onChange={(e) => setCoverLetter(e.target.value)}
-            placeholder="Tuliskan perkenalan singkat, ketertarikan Anda pada posisi ini, atau catatan tambahan untuk HRD..."
+            placeholder={t("Tuliskan perkenalan singkat, ketertarikan Anda pada posisi ini, atau catatan tambahan untuk HRD...")}
             className="w-full rounded-2xl border border-black/[0.12] bg-[#FAF8F0]/40 p-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-black focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 transition resize-y min-h-[110px]"
           />
         </div>
@@ -534,17 +552,17 @@ export function FormLamaran({
             />
             <div className="space-y-1">
               <span className="text-sm font-bold text-slate-900 block">
-                Izinkan analisis kecocokan berkas dengan bantuan AI (Opsional)
+                {t("Izinkan analisis kecocokan berkas dengan bantuan AI (Opsional)")}
               </span>
               <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                Sistem akan membaca ringkasan kualifikasi CV Anda dan memberikan saran estimasi kecocokan kepada HRD perusahaan mitra.
+                {t("Sistem akan membaca ringkasan kualifikasi CV Anda dan memberikan saran estimasi kecocokan kepada HRD perusahaan mitra.")}
               </p>
             </div>
           </label>
           <div className="text-[11px] text-slate-500 bg-white/80 p-3 rounded-xl border border-black/[0.04] leading-normal flex items-start gap-2">
             <Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" aria-hidden="true" />
             <span>
-              Catatan: Analisis ini hanya berperan sebagai panduan awal bagi rekruter. Keputusan seleksi berkas, panggilan wawancara, dan penerimaan tetap 100% diputuskan oleh manusia.
+              {t("Catatan: Analisis ini hanya berperan sebagai panduan awal bagi rekruter. Keputusan seleksi berkas, panggilan wawancara, dan penerimaan tetap 100% diputuskan oleh manusia.")}
             </span>
           </div>
         </div>
@@ -559,12 +577,12 @@ export function FormLamaran({
             {isUploading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-black" aria-hidden="true" />
-                <span>Mengunggah Berkas CV...</span>
+                <span>{t("Mengunggah Berkas CV...")}</span>
               </>
             ) : (
               <>
                 <Send className="w-4 h-4" aria-hidden="true" />
-                <span>Kirim Lamaran</span>
+                <span>{t("Kirim Lamaran")}</span>
               </>
             )}
           </button>

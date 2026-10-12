@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, MapPin, Globe, ChevronRight } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { useLanguage } from "@/lib/i18n";
 
 export interface ProvinceWithCount {
   id: number;
@@ -25,6 +26,7 @@ export function ProvinceIndexView({
 }: ProvinceIndexViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterMode, setFilterMode] = useState<"all" | "active">("all");
+  const { t, language } = useLanguage();
 
   const filteredProvinces = useMemo(() => {
     let result = provinces;
@@ -56,46 +58,49 @@ export function ProvinceIndexView({
       />
 
       {/* Header Halaman */}
-      <div className="space-y-2 border-b border-slate-200 pb-6">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-navy-50 text-navy-800 border border-navy-100 text-xs font-semibold">
-          <MapPin className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
-          <span>Jelajah Nusantara</span>
+      <div className="space-y-3 pb-2">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black border border-black/10 text-xs font-bold shadow-2xs">
+          <MapPin className="w-3.5 h-3.5 text-black" aria-hidden="true" />
+          <span>{t("Jelajah 38 Provinsi Nusantara")}</span>
         </div>
-        <h1 className="text-2xl sm:text-4xl font-black text-navy-950 tracking-tight">
-          Jelajah Lowongan Berdasarkan Wilayah
+        <h1 className="text-3xl sm:text-5xl font-black text-black tracking-tight">
+          {t("Jelajah Lowongan Berdasarkan Wilayah")}
         </h1>
-        <p className="text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed">
-          Temukan lowongan kerja resmi yang tersebar di 38 provinsi di Indonesia serta opsi
-          kerja jarak jauh (remote). Terdapat {totalOpenJobs} lowongan aktif di {activeProvincesCount} provinsi.
+        <p className="text-sm sm:text-base text-slate-700 max-w-2xl leading-relaxed font-medium">
+          {language === "en"
+            ? `Find official job vacancies spread across 38 provinces in Indonesia and remote options. There are ${totalOpenJobs} active vacancies in ${activeProvincesCount} provinces.`
+            : `Temukan lowongan kerja resmi yang tersebar di 38 provinsi di Indonesia serta opsi kerja jarak jauh (remote). Terdapat ${totalOpenJobs} lowongan aktif di ${activeProvincesCount} provinsi.`}
         </p>
       </div>
 
-      {/* Kartu Khusus Lowongan Remote */}
-      <div className="rounded-card border border-navy-200 bg-navy-50/50 p-5 sm:p-6 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-start gap-3.5">
-          <div className="w-11 h-11 rounded-sm bg-navy-700 text-white flex items-center justify-center shrink-0 shadow-xs">
+      {/* Kartu Khusus Lowongan Remote (Gaya Buy Me a Coffee) */}
+      <div className="rounded-[28px] sm:rounded-[36px] bg-[#222222] text-white p-6 sm:p-8 shadow-card border border-black/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-[#FFDD00] text-black flex items-center justify-center shrink-0 shadow-md">
             <Globe className="w-6 h-6" aria-hidden="true" />
           </div>
           <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-base font-bold text-navy-950">
-                Kerja Remote (Bebas Lokasi)
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                {t("Kerja Remote (Bebas Lokasi)")}
               </h2>
-              <span className="px-2 py-0.5 rounded-sm text-[11px] font-semibold bg-white text-navy-800 border border-navy-200">
-                {remoteCount > 0 ? `${remoteCount} lowongan aktif` : "Belum ada lowongan"}
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-[#FFDD00] border border-white/15">
+                {remoteCount > 0
+                  ? (language === "en" ? `${remoteCount} active vacancies` : `${remoteCount} lowongan aktif`)
+                  : t("Belum ada lowongan")}
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl leading-relaxed">
-              Peluang karier yang dapat dikerjakan dari mana saja tanpa batasan domisili atau kewajiban hadir di kantor fisik.
+            <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed">
+              {t("Peluang karier yang dapat dikerjakan dari mana saja tanpa batasan domisili atau kewajiban hadir di kantor fisik.")}
             </p>
           </div>
         </div>
 
         <Link
           href="/wilayah/remote"
-          className="inline-flex items-center justify-center px-4 py-2.5 rounded-control bg-navy-800 hover:bg-navy-900 active:bg-navy-950 text-white font-medium text-xs sm:text-sm transition-colors shadow-xs shrink-0 min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-700"
+          className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] active:scale-95 text-black font-bold text-xs sm:text-sm transition-all shadow-md shrink-0 min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFDD00]"
         >
-          Lihat Lowongan Remote
+          {t("Lihat Lowongan Remote")}
         </Link>
       </div>
 
@@ -104,55 +109,57 @@ export function ProvinceIndexView({
         {/* Input Pencarian Nama Provinsi */}
         <div className="relative flex-1 max-w-md">
           <Search
-            className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+            className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
             aria-hidden="true"
           />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari nama provinsi (misal: Jawa, Bali, Papua)..."
-            className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 bg-white border border-slate-300 rounded-control focus:outline-none focus:border-navy-700 focus:ring-1 focus:ring-navy-700 min-h-[44px]"
-            aria-label="Cari nama provinsi"
+            placeholder={t("Cari nama provinsi (misal: Jawa, Bali, Papua)...")}
+            className="w-full pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 bg-white border border-black/[0.08] rounded-full focus:outline-none focus:border-black focus:ring-2 focus:ring-black/5 shadow-2xs min-h-[44px] font-medium"
+            aria-label={t("Cari nama provinsi")}
           />
         </div>
 
         {/* Filter Tombol Pil */}
-        <div className="flex items-center gap-1.5 shrink-0" role="group" aria-label="Filter status lowongan">
+        <div className="flex items-center gap-2 shrink-0" role="group" aria-label={t("Filter status lowongan", "Job status filter")}>
           <button
             type="button"
             onClick={() => setFilterMode("all")}
-            className={`px-3 py-2 rounded-sm text-xs font-semibold transition-colors min-h-[44px] border ${
+            className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all min-h-[44px] border ${
               filterMode === "all"
-                ? "bg-navy-800 text-white border-navy-800"
-                : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                ? "bg-black text-white border-black shadow-2xs"
+                : "bg-white text-slate-700 border-black/[0.08] hover:bg-black/5"
             }`}
           >
-            Semua ({provinces.length})
+            {t("Semua")} ({provinces.length})
           </button>
           <button
             type="button"
             onClick={() => setFilterMode("active")}
-            className={`px-3 py-2 rounded-sm text-xs font-semibold transition-colors min-h-[44px] border ${
+            className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all min-h-[44px] border ${
               filterMode === "active"
-                ? "bg-navy-800 text-white border-navy-800"
-                : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                ? "bg-black text-white border-black shadow-2xs"
+                : "bg-white text-slate-700 border-black/[0.08] hover:bg-black/5"
             }`}
           >
-            Ada Lowongan ({activeProvincesCount})
+            {t("Ada Lowongan")} ({activeProvincesCount})
           </button>
         </div>
       </div>
 
       {/* Grid 38 Provinsi */}
       {filteredProvinces.length === 0 ? (
-        <div className="rounded-card border border-dashed border-slate-300 p-8 sm:p-12 text-center bg-white">
+        <div className="rounded-[28px] border border-dashed border-black/15 p-8 sm:p-12 text-center bg-white shadow-2xs">
           <MapPin className="w-8 h-8 text-slate-400 mx-auto mb-2" aria-hidden="true" />
-          <h3 className="text-sm font-bold text-navy-950">
-            Provinsi tidak ditemukan
+          <h3 className="text-base font-bold text-black">
+            {t("Provinsi tidak ditemukan")}
           </h3>
-          <p className="text-xs text-slate-500 mt-1">
-            Tidak ada provinsi yang cocok dengan kata kunci &quot;{searchQuery}&quot;.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            {language === "en"
+              ? `No provinces found matching "${searchQuery}".`
+              : `Tidak ada provinsi yang cocok dengan kata kunci "${searchQuery}".`}
           </p>
           <button
             type="button"
@@ -160,13 +167,13 @@ export function ProvinceIndexView({
               setSearchQuery("");
               setFilterMode("all");
             }}
-            className="mt-3 text-xs font-semibold text-navy-800 hover:underline min-h-[44px] inline-flex items-center"
+            className="mt-4 px-5 py-2.5 rounded-full bg-black text-white text-xs font-bold hover:bg-black/80 transition-all min-h-[44px] inline-flex items-center"
           >
-            Reset Pencarian
+            {t("Reset Pencarian")}
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
           {filteredProvinces.map((province) => {
             const hasJobs = province.jobCount > 0;
 
@@ -174,37 +181,45 @@ export function ProvinceIndexView({
               <Link
                 key={province.id}
                 href={`/wilayah/${province.slug}`}
-                className={`p-4 rounded-card border transition-all flex items-center justify-between gap-3 min-h-[64px] group focus-visible:outline-2 focus-visible:outline-navy-700 ${
+                className={`p-4 sm:p-5 rounded-[22px] border transition-all duration-200 flex items-center justify-between gap-3 min-h-[68px] group focus-visible:outline-2 focus-visible:outline-black ${
                   hasJobs
-                    ? "bg-white border-slate-200 hover:border-navy-400 hover:bg-slate-50/50 shadow-2xs"
-                    : "bg-slate-50/70 border-slate-200/70 hover:border-slate-300 opacity-75"
+                    ? "bg-white border-black/[0.08] hover:border-black/20 hover:shadow-card hover:-translate-y-1 shadow-2xs"
+                    : "bg-white/60 border-black/[0.04] hover:border-black/10 opacity-70"
                 }`}
               >
-                <div className="min-w-0 space-y-0.5">
+                <div className="min-w-0 space-y-1">
                   <h3
                     className={`text-sm font-bold truncate transition-colors ${
                       hasJobs
-                        ? "text-navy-950 group-hover:text-navy-800"
+                        ? "text-black group-hover:text-black"
                         : "text-slate-600"
                     }`}
                   >
                     {province.name}
                   </h3>
-                  <p
-                    className={`text-xs ${
-                      hasJobs ? "text-navy-800 font-medium" : "text-slate-400"
-                    }`}
-                  >
-                    {hasJobs ? `${province.jobCount} lowongan aktif` : "Belum ada lowongan"}
-                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                        hasJobs
+                          ? "bg-[#FAF8F0] text-black border border-black/[0.08]"
+                          : "text-slate-400"
+                      }`}
+                    >
+                      {hasJobs
+                        ? `${province.jobCount} ${t("lowongan")}`
+                        : `0 ${t("lowongan")}`}
+                    </span>
+                  </div>
                 </div>
 
-                <ChevronRight
-                  className={`w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5 ${
-                    hasJobs ? "text-navy-700" : "text-slate-300"
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform group-hover:translate-x-1 ${
+                    hasJobs ? "bg-[#FAF8F0] text-black group-hover:bg-[#FFDD00]" : "text-slate-300"
                   }`}
                   aria-hidden="true"
-                />
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </div>
               </Link>
             );
           })}

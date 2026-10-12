@@ -22,7 +22,7 @@ export interface CategoryItem {
   id: number;
   name: string;
   slug: string;
-  created_at: string;
+  created_at?: string;
   jobCount: number;
 }
 

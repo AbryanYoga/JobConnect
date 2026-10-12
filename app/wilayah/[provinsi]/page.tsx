@@ -107,7 +107,7 @@ export default async function ProvinceDetailPage({ params }: ProvincePageProps) 
     .sort((a, b) => b.jobCount - a.jobCount || a.name.localeCompare(b.name, "id"));
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#FAF8F0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         {/* Breadcrumb Navigasi */}
         <Breadcrumb
@@ -119,15 +119,15 @@ export default async function ProvinceDetailPage({ params }: ProvincePageProps) 
         />
 
         {/* Header Provinsi */}
-        <div className="space-y-2 border-b border-slate-200 pb-6">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-navy-50 text-navy-800 border border-navy-100 text-xs font-semibold">
-            <MapPin className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
+        <div className="space-y-3 pb-2">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black border border-black/10 text-xs font-bold shadow-2xs">
+            <MapPin className="w-3.5 h-3.5 text-black" aria-hidden="true" />
             <span>Provinsi</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black text-navy-950 tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-black text-black tracking-tight">
             Lowongan Kerja di {province.name}
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-700 max-w-2xl leading-relaxed font-medium">
             Daftar kota dan kabupaten yang memiliki lowongan kerja aktif dan terverifikasi.
             Terdapat {totalJobsInProvince} lowongan yang tersedia di {citiesWithJobs.length} daerah.
           </p>
@@ -135,25 +135,25 @@ export default async function ProvinceDetailPage({ params }: ProvincePageProps) 
 
         {/* Daftar Kota/Kabupaten Berlowongan Aktif */}
         {citiesWithJobs.length === 0 ? (
-          <div className="rounded-card border border-dashed border-slate-300 p-8 sm:p-12 text-center bg-white space-y-3">
+          <div className="rounded-[28px] border border-dashed border-black/15 p-8 sm:p-12 text-center bg-white shadow-2xs space-y-3">
             <Building2 className="w-10 h-10 text-slate-400 mx-auto" aria-hidden="true" />
-            <h2 className="text-base font-bold text-navy-950">
+            <h2 className="text-lg font-bold text-black">
               Belum ada lowongan aktif di {province.name}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
               Saat ini belum ada perusahaan yang membuka lowongan baru di wilayah ini.
               Anda dapat menjelajahi lowongan di provinsi lain atau melamar lowongan kerja jarak jauh (remote).
             </p>
             <div className="pt-3 flex items-center justify-center gap-3 flex-wrap">
               <Link
                 href="/wilayah"
-                className="inline-flex items-center justify-center px-4 py-2.5 rounded-control bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold transition-colors min-h-[44px]"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-black text-xs sm:text-sm font-bold transition-all min-h-[44px]"
               >
                 Pilih Provinsi Lain
               </Link>
               <Link
                 href="/wilayah/remote"
-                className="inline-flex items-center justify-center px-4 py-2.5 rounded-control bg-navy-800 hover:bg-navy-900 text-white text-xs sm:text-sm font-semibold transition-colors min-h-[44px]"
+                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] text-black text-xs sm:text-sm font-bold transition-all shadow-2xs min-h-[44px]"
               >
                 Lihat Lowongan Remote
               </Link>
@@ -169,21 +169,25 @@ export default async function ProvinceDetailPage({ params }: ProvincePageProps) 
                 <Link
                   key={city.id}
                   href={`/wilayah/${province.slug}/${city.slug}`}
-                  className="p-4 rounded-card bg-white border border-slate-200 hover:border-navy-400 hover:bg-slate-50/50 shadow-2xs transition-all flex items-center justify-between gap-3 min-h-[64px] group focus-visible:outline-2 focus-visible:outline-navy-700"
+                  className="p-4 sm:p-5 rounded-[22px] bg-white border border-black/[0.08] hover:border-black/20 hover:shadow-card hover:-translate-y-1 shadow-2xs transition-all duration-200 flex items-center justify-between gap-3 min-h-[68px] group focus-visible:outline-2 focus-visible:outline-black"
                 >
-                  <div className="min-w-0 space-y-0.5">
-                    <h3 className="text-sm font-bold text-navy-950 group-hover:text-navy-800 truncate transition-colors">
+                  <div className="min-w-0 space-y-1">
+                    <h3 className="text-sm font-bold text-black group-hover:text-black truncate transition-colors">
                       {city.name}
                     </h3>
-                    <p className="text-xs text-navy-800 font-medium">
-                      {city.jobCount} lowongan aktif
-                    </p>
+                    <div>
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FAF8F0] text-black border border-black/[0.08]">
+                        {city.jobCount} lowongan aktif
+                      </span>
+                    </div>
                   </div>
 
-                  <ChevronRight
-                    className="w-4 h-4 text-navy-700 shrink-0 transition-transform group-hover:translate-x-0.5"
+                  <div
+                    className="w-8 h-8 rounded-full bg-[#FAF8F0] group-hover:bg-[#FFDD00] text-black flex items-center justify-center shrink-0 transition-transform group-hover:translate-x-1"
                     aria-hidden="true"
-                  />
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </div>
                 </Link>
               ))}
             </div>
@@ -191,16 +195,16 @@ export default async function ProvinceDetailPage({ params }: ProvincePageProps) 
         )}
 
         {/* Tautan Alternatif */}
-        <div className="pt-6 border-t border-slate-200 flex items-center justify-between gap-4 flex-wrap text-xs">
+        <div className="pt-6 border-t border-black/[0.08] flex items-center justify-between gap-4 flex-wrap text-xs">
           <Link
             href="/wilayah"
-            className="text-navy-800 font-semibold hover:underline inline-flex items-center gap-1 min-h-[44px]"
+            className="text-black font-bold hover:underline inline-flex items-center gap-1 min-h-[44px]"
           >
             Kembali ke Daftar 38 Provinsi
           </Link>
           <Link
             href="/lowongan"
-            className="text-slate-600 hover:text-navy-900 inline-flex items-center gap-1 min-h-[44px]"
+            className="text-slate-600 hover:text-black font-medium inline-flex items-center gap-1 min-h-[44px]"
           >
             <Briefcase className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Lihat Seluruh Lowongan Indonesia</span>

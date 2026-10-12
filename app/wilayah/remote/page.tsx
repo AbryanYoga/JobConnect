@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import {
   Globe,
@@ -62,6 +63,18 @@ function getCompanyInitials(name: string): string {
     return (words[0][0] + words[1][0]).toUpperCase();
   }
   return name.slice(0, 2).toUpperCase();
+}
+
+function getCompanyLogo(name?: string | null): string | null {
+  if (!name) return null;
+  const lower = name.toLowerCase();
+  if (lower.includes("telkom")) return "/logos/companies/telkom.svg";
+  if (lower.includes("mandiri")) return "/logos/companies/mandiri.svg";
+  if (lower.includes("bca")) return "/logos/companies/bca.svg";
+  if (lower.includes("gojek")) return "/logos/companies/gojek.svg";
+  if (lower.includes("bri")) return "/logos/companies/bri.svg";
+  if (lower.includes("solusi")) return "/logos/companies/solusi-pintar.svg";
+  return null;
 }
 
 const PAGE_SIZE = 10;
@@ -202,7 +215,7 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#FAF8F0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         {/* Breadcrumb Navigasi */}
         <Breadcrumb
@@ -214,35 +227,35 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
         />
 
         {/* Header Remote */}
-        <div className="space-y-2 border-b border-slate-200 pb-6">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-navy-50 text-navy-800 border border-navy-100 text-xs font-semibold">
-            <Globe className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
+        <div className="space-y-3 pb-2">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black border border-black/10 text-xs font-bold shadow-2xs">
+            <Globe className="w-3.5 h-3.5 text-black" aria-hidden="true" />
             <span>Peluang Jarak Jauh</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black text-navy-950 tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-black text-black tracking-tight">
             Lowongan Kerja Remote (Bebas Lokasi)
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-700 max-w-2xl leading-relaxed font-medium">
             Pekerjaan resmi berstatus aktif yang dapat dikerjakan dari mana saja di seluruh Indonesia
             tanpa kewajiban hadir fisik di kantor. Terdapat {totalCount} lowongan yang tersedia.
           </p>
         </div>
 
         {/* Filter Bar Kategori dan Tipe Kerja */}
-        <div className="rounded-card border border-slate-200 bg-white p-4 shadow-2xs space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-navy-950 uppercase tracking-wider">
-            <Filter className="w-3.5 h-3.5 text-navy-800" aria-hidden="true" />
+        <div className="rounded-[28px] border border-black/[0.08] bg-white p-5 sm:p-6 shadow-card space-y-3.5">
+          <div className="flex items-center gap-2 text-xs font-bold text-black uppercase tracking-wider">
+            <Filter className="w-3.5 h-3.5 text-black" aria-hidden="true" />
             <span>Filter Lowongan Remote</span>
           </div>
 
-          <div className="flex items-center gap-1.5 flex-wrap pt-1 text-xs">
-            <span className="text-slate-500 font-medium">Tipe:</span>
+          <div className="flex items-center gap-2 flex-wrap pt-1 text-xs">
+            <span className="text-slate-500 font-bold">Tipe:</span>
             <Link
               href={createFilterUrl({ tipe: "" })}
-              className={`px-2.5 py-1 rounded-sm border transition-colors min-h-[44px] inline-flex items-center ${
+              className={`px-3.5 py-1.5 rounded-full border transition-all min-h-[38px] inline-flex items-center font-bold ${
                 !jobTypeParam
-                  ? "bg-navy-800 text-white border-navy-800 font-semibold"
-                  : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                  ? "bg-black text-white border-black shadow-2xs"
+                  : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
               }`}
             >
               Semua
@@ -251,10 +264,10 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
               <Link
                 key={type}
                 href={createFilterUrl({ tipe: type })}
-                className={`px-2.5 py-1 rounded-sm border transition-colors min-h-[44px] inline-flex items-center ${
+                className={`px-3.5 py-1.5 rounded-full border transition-all min-h-[38px] inline-flex items-center font-bold ${
                   jobTypeParam === type
-                    ? "bg-navy-800 text-white border-navy-800 font-semibold"
-                    : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                    ? "bg-black text-white border-black shadow-2xs"
+                    : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
                 }`}
               >
                 {JOB_TYPE_LABEL[type]}
@@ -264,7 +277,7 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
             {(categorySlug || jobTypeParam) && (
               <Link
                 href="/wilayah/remote"
-                className="ml-auto text-xs font-semibold text-rose-700 hover:underline min-h-[44px] inline-flex items-center"
+                className="ml-auto text-xs font-bold text-rose-700 hover:underline min-h-[38px] inline-flex items-center"
               >
                 Reset Filter
               </Link>
@@ -274,25 +287,25 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
 
         {/* Daftar Lowongan Remote */}
         {jobs.length === 0 ? (
-          <div className="rounded-card border border-dashed border-slate-300 p-8 sm:p-12 text-center bg-white space-y-3">
+          <div className="rounded-[28px] border border-dashed border-black/15 p-8 sm:p-12 text-center bg-white shadow-2xs space-y-3">
             <Briefcase className="w-10 h-10 text-slate-400 mx-auto" aria-hidden="true" />
-            <h2 className="text-base font-bold text-navy-950">
+            <h2 className="text-lg font-bold text-black">
               Belum ada lowongan remote yang sesuai
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
               Saat ini belum ada lowongan kerja jarak jauh yang cocok dengan kriteria pencarian Anda.
               Anda juga dapat menjelajahi lowongan berdasarkan wilayah provinsi.
             </p>
             <div className="pt-2 flex items-center justify-center gap-3 flex-wrap">
               <Link
                 href="/wilayah/remote"
-                className="inline-flex items-center justify-center px-4 py-2 rounded-control bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold transition-colors min-h-[44px]"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-black text-xs sm:text-sm font-bold transition-all min-h-[44px]"
               >
                 Hapus Filter
               </Link>
               <Link
                 href="/wilayah"
-                className="inline-flex items-center justify-center px-4 py-2 rounded-control bg-navy-800 hover:bg-navy-900 text-white text-xs sm:text-sm font-semibold transition-colors min-h-[44px]"
+                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] text-black text-xs sm:text-sm font-bold transition-all shadow-2xs min-h-[44px]"
               >
                 Jelajah 38 Provinsi
               </Link>
@@ -303,16 +316,17 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
               {jobs.map((job) => {
                 const companyName = job.company?.name || "Perusahaan Mitra";
+                const companyLogo = getCompanyLogo(companyName);
 
                 return (
                   <div
                     key={job.id}
-                    className="rounded-card border border-slate-200 bg-white p-5 sm:p-6 shadow-2xs hover:border-navy-300 transition-colors flex flex-col justify-between group"
+                    className="rounded-[24px] border border-black/[0.08] hover:border-black/20 bg-white p-5 sm:p-6 shadow-card hover:shadow-card-md hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between group"
                   >
                     <div className="space-y-3.5">
                       {/* Header Kartu: Logo & Identitas */}
                       <div className="flex items-start gap-3.5">
-                        <div className="w-12 h-12 rounded-sm bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center overflow-hidden">
+                        <div className="w-12 h-12 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] shrink-0 flex items-center justify-center overflow-hidden shadow-2xs p-1">
                           {job.company?.logoUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -320,8 +334,16 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
                               alt={`Logo ${companyName}`}
                               className="w-full h-full object-contain p-1"
                             />
+                          ) : companyLogo ? (
+                            <Image
+                              src={companyLogo}
+                              alt={`Logo ${companyName}`}
+                              width={48}
+                              height={48}
+                              className="w-full h-full object-contain p-0.5"
+                            />
                           ) : (
-                            <div className="w-full h-full bg-navy-800 text-white font-bold text-sm flex items-center justify-center">
+                            <div className="w-full h-full bg-[#222222] text-[#FFDD00] font-bold text-sm flex items-center justify-center rounded-xl">
                               {getCompanyInitials(companyName)}
                             </div>
                           )}
@@ -331,18 +353,18 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
                           <div className="flex items-center gap-2 flex-wrap">
                             <Link
                               href={`/lowongan/${job.slug}`}
-                              className="text-base font-bold text-navy-950 group-hover:text-navy-800 transition-colors tracking-tight focus-visible:outline-2 focus-visible:outline-navy-700 rounded-xs"
+                              className="text-base font-bold text-black group-hover:text-black transition-colors tracking-tight focus-visible:outline-2 focus-visible:outline-black rounded-xs"
                             >
                               {job.title}
                             </Link>
                             {job.isDemo && (
-                              <span className="px-2 py-0.5 rounded-sm text-[10px] font-semibold bg-amber-50 text-amber-900 border border-amber-200 shrink-0">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
                                 Data contoh
                               </span>
                             )}
                           </div>
 
-                          <p className="text-sm text-slate-700 truncate mt-0.5">
+                          <p className="text-sm text-slate-700 truncate mt-0.5 font-medium">
                             {companyName}
                           </p>
 
@@ -355,16 +377,16 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
 
                       {/* Lencana Atribut Pekerjaan */}
                       <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF8F0] text-black border border-black/[0.08]">
                           <Briefcase className="w-3 h-3 text-slate-500" aria-hidden="true" />
                           <span>{JOB_TYPE_LABEL[job.jobType] || job.jobType}</span>
                         </span>
 
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm text-xs font-medium bg-navy-50 text-navy-800 border border-navy-100">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-[#FFDD00] text-black border border-black/10">
                           <span>{WORK_MODE_LABEL[job.workMode] || job.workMode}</span>
                         </span>
 
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAF8F0] text-black border border-black/[0.08]">
                           <GraduationCap className="w-3 h-3 text-slate-500" aria-hidden="true" />
                           <span>Min. {EDUCATION_LABEL[job.educationMin] || job.educationMin}</span>
                         </span>
@@ -376,13 +398,13 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
                           {job.skills.slice(0, 3).map((skill, idx) => (
                             <span
                               key={idx}
-                              className="px-2 py-0.5 rounded-sm text-[11px] font-medium bg-slate-50 text-slate-600 border border-slate-200"
+                              className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#FAF8F0] text-slate-700 border border-black/[0.06]"
                             >
                               {skill}
                             </span>
                           ))}
                           {job.skills.length > 3 && (
-                            <span className="text-[11px] text-slate-400">
+                            <span className="text-[11px] text-slate-400 font-medium">
                               +{job.skills.length - 3} lainnya
                             </span>
                           )}
@@ -391,15 +413,15 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
                     </div>
 
                     {/* Footer Kartu: Gaji & Tombol Aksi */}
-                    <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-navy-950">
+                    <div className="mt-5 pt-4 border-t border-black/[0.08] flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-black">
                         <Banknote className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
                         <span>{formatSalary(job.salaryMin, job.salaryMax)}</span>
                       </div>
 
                       <Link
                         href={`/lowongan/${job.slug}`}
-                        className="inline-flex items-center justify-center px-4 py-2 rounded-control bg-slate-100 hover:bg-navy-800 text-slate-800 hover:text-white font-medium text-xs sm:text-sm transition-colors border border-slate-200 hover:border-navy-800 shrink-0 min-h-[44px] focus-visible:outline-2 focus-visible:outline-navy-700"
+                        className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] text-black font-bold text-xs sm:text-sm transition-all shadow-2xs shrink-0 min-h-[44px] focus-visible:outline-2 focus-visible:outline-black"
                       >
                         <span>Detail Lowongan</span>
                       </Link>
@@ -411,8 +433,8 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
 
             {/* Paginasi 10 Data Per Halaman */}
             {totalPages > 1 && (
-              <div className="pt-6 border-t border-slate-200 flex items-center justify-between gap-4">
-                <span className="text-xs text-slate-600">
+              <div className="pt-6 border-t border-black/[0.08] flex items-center justify-between gap-4">
+                <span className="text-xs text-slate-600 font-medium">
                   Halaman {currentPage} dari {totalPages} ({totalCount} lowongan remote)
                 </span>
 
@@ -420,13 +442,13 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
                   {currentPage > 1 ? (
                     <Link
                       href={createFilterUrl({ page: currentPage - 1 })}
-                      className="inline-flex items-center gap-1 px-3 py-2 rounded-sm border border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors min-h-[44px]"
+                      className="inline-flex items-center gap-1 px-4 py-2 rounded-full border border-black/[0.08] bg-white hover:bg-black/5 text-xs font-bold text-black transition-all min-h-[44px]"
                     >
                       <ChevronLeft className="w-4 h-4" aria-hidden="true" />
                       <span>Sebelumnya</span>
                     </Link>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-3 py-2 rounded-sm border border-slate-200 bg-slate-100 text-xs font-semibold text-slate-400 cursor-not-allowed min-h-[44px]">
+                    <span className="inline-flex items-center gap-1 px-4 py-2 rounded-full border border-black/[0.04] bg-white/50 text-xs font-bold text-slate-300 cursor-not-allowed min-h-[44px]">
                       <ChevronLeft className="w-4 h-4" aria-hidden="true" />
                       <span>Sebelumnya</span>
                     </span>
@@ -435,13 +457,13 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
                   {currentPage < totalPages ? (
                     <Link
                       href={createFilterUrl({ page: currentPage + 1 })}
-                      className="inline-flex items-center gap-1 px-3 py-2 rounded-sm border border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors min-h-[44px]"
+                      className="inline-flex items-center gap-1 px-4 py-2 rounded-full border border-black/[0.08] bg-white hover:bg-black/5 text-xs font-bold text-black transition-all min-h-[44px]"
                     >
                       <span>Selanjutnya</span>
                       <ChevronRight className="w-4 h-4" aria-hidden="true" />
                     </Link>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-3 py-2 rounded-sm border border-slate-200 bg-slate-100 text-xs font-semibold text-slate-400 cursor-not-allowed min-h-[44px]">
+                    <span className="inline-flex items-center gap-1 px-4 py-2 rounded-full border border-black/[0.04] bg-white/50 text-xs font-bold text-slate-300 cursor-not-allowed min-h-[44px]">
                       <span>Selanjutnya</span>
                       <ChevronRight className="w-4 h-4" aria-hidden="true" />
                     </span>
@@ -453,16 +475,16 @@ export default async function RemoteJobsPage({ searchParams }: RemotePageProps) 
         )}
 
         {/* Tautan Navigasi Bawah */}
-        <div className="pt-6 border-t border-slate-200 flex items-center justify-between gap-4 flex-wrap text-xs">
+        <div className="pt-6 border-t border-black/[0.08] flex items-center justify-between gap-4 flex-wrap text-xs">
           <Link
             href="/wilayah"
-            className="text-navy-800 font-semibold hover:underline inline-flex items-center gap-1 min-h-[44px]"
+            className="text-black font-bold hover:underline inline-flex items-center gap-1 min-h-[44px]"
           >
             Kembali ke Indeks 38 Wilayah
           </Link>
           <Link
             href="/lowongan"
-            className="text-slate-600 hover:text-navy-900 inline-flex items-center gap-1 min-h-[44px]"
+            className="text-slate-600 hover:text-black font-medium inline-flex items-center gap-1 min-h-[44px]"
           >
             <Briefcase className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Lihat Seluruh Lowongan Indonesia</span>

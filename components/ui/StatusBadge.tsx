@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useLanguage } from "@/lib/i18n";
 
 export type ApplicationStatus =
   | "dikirim"
@@ -114,6 +117,7 @@ export function StatusBadge({
   className = "",
   withDot = true,
 }: StatusBadgeProps) {
+  const { t } = useLanguage();
   const config = APPLICATION_STATUS_CONFIG[status] || {
     label: status,
     badgeClass: "bg-status-gray-bg text-status-gray-fg border-slate-200",
@@ -130,7 +134,7 @@ export function StatusBadge({
           aria-hidden="true"
         />
       )}
-      <span>{config.label}</span>
+      <span>{t(config.label)}</span>
     </span>
   );
 }
@@ -144,6 +148,7 @@ export function JobStatusBadge({
   className?: string;
   withDot?: boolean;
 }) {
+  const { t } = useLanguage();
   const config = JOB_STATUS_CONFIG[status] || {
     label: status,
     badgeClass: "bg-status-gray-bg text-status-gray-fg border-slate-200",
@@ -160,7 +165,7 @@ export function JobStatusBadge({
           aria-hidden="true"
         />
       )}
-      <span>{config.label}</span>
+      <span>{t(config.label)}</span>
     </span>
   );
 }

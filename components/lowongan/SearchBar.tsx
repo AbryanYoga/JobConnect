@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X, Loader2 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 interface SearchBarProps {
   placeholder?: string;
@@ -10,20 +11,27 @@ interface SearchBarProps {
 }
 
 export function SearchBar({
-  placeholder = "Cari posisi kerja, profesi, atau keahlian...",
+  placeholder,
   className = "",
 }: SearchBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const initialQuery = searchParams.get("q") || "";
 
+  const resolvedPlaceholder = placeholder
+    ? t(placeholder)
+    : t("Cari posisi kerja, profesi, atau keahlian...", "Search job title, profession, or skills...");
+
   const [query, setQuery] = useState(initialQuery);
+  const [prevInitialQuery, setPrevInitialQuery] = useState(initialQuery);
   const [isPending, startTransition] = useTransition();
 
-  // Sinkronkan state jika URL berubah dari luar
-  useEffect(() => {
+  // Sinkronkan state jika URL berubah dari luar sesuai panduan React
+  if (initialQuery !== prevInitialQuery) {
+    setPrevInitialQuery(initialQuery);
     setQuery(initialQuery);
-  }, [initialQuery]);
+  }
 
   // Debounce pembaruan URL saat pengguna mengetik
   useEffect(() => {
@@ -60,26 +68,26 @@ export function SearchBar({
   return (
     <div className={`relative flex items-center ${className}`.trim()}>
       <Search
-        className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none"
+        className="w-4 h-4 text-slate-400 absolute left-4.5 pointer-events-none"
         aria-hidden="true"
       />
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={placeholder}
-        className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 bg-white border border-slate-300 rounded-control focus:outline-none focus:border-navy-700 focus:ring-1 focus:ring-navy-700 min-h-[44px] transition-colors"
-        aria-label="Cari lowongan pekerjaan"
+        placeholder={resolvedPlaceholder}
+        className="w-full pl-12 pr-12 py-3.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 bg-white border border-black/[0.08] rounded-full focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 min-h-[48px] shadow-2xs font-medium transition-all"
+        aria-label={t("Cari lowongan pekerjaan", "Search job vacancies")}
       />
-      <div className="absolute right-3 flex items-center">
+      <div className="absolute right-4 flex items-center">
         {isPending ? (
-          <Loader2 className="w-4 h-4 text-navy-700 animate-spin" aria-hidden="true" />
+          <Loader2 className="w-4 h-4 text-black animate-spin" aria-hidden="true" />
         ) : query ? (
           <button
             type="button"
             onClick={handleClear}
-            className="p-1 rounded-sm text-slate-400 hover:text-slate-600 transition-colors focus-visible:outline-2 focus-visible:outline-navy-700"
-            aria-label="Hapus kata kunci pencarian"
+            className="p-1 rounded-full text-slate-400 hover:text-black transition-colors focus-visible:outline-2 focus-visible:outline-black"
+            aria-label={t("Hapus kata kunci pencarian", "Clear search query")}
           >
             <X className="w-4 h-4" />
           </button>

@@ -1,6 +1,9 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 export interface BreadcrumbItem {
   label: string;
@@ -14,6 +17,8 @@ export interface BreadcrumbProps {
 }
 
 export function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
+  const { t } = useLanguage();
+
   if (!items || items.length === 0) {
     return null;
   }
@@ -27,6 +32,7 @@ export function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           const isCurrent = item.current ?? isLast;
+          const translatedLabel = t(item.label);
 
           return (
             <React.Fragment key={`${item.label}-${index}`}>
@@ -41,14 +47,14 @@ export function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
                     className="font-semibold text-slate-800 truncate max-w-[200px] sm:max-w-none"
                     aria-current="page"
                   >
-                    {item.label}
+                    {translatedLabel}
                   </span>
                 ) : (
                   <Link
                     href={item.href}
                     className="hover:text-navy-900 transition-colors focus-visible:outline-2 focus-visible:outline-navy-700 rounded-xs"
                   >
-                    {item.label}
+                    {translatedLabel}
                   </Link>
                 )}
               </li>

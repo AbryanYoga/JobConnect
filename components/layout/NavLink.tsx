@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { useLanguage } from "@/lib/i18n";
 
 interface NavLinkProps {
   href: string;
@@ -13,15 +14,18 @@ interface NavLinkProps {
 
 export function NavLink({ href, children, className = "", onClick }: NavLinkProps) {
   const pathname = usePathname();
+  const { t } = useLanguage();
   const isActive =
     pathname === href || (href !== "/" && pathname.startsWith(href + "/"));
 
   const baseStyles =
-    "inline-flex items-center text-sm transition-colors rounded-control min-h-[44px] px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600";
+    "inline-flex items-center text-sm transition-colors rounded-full min-h-[44px] px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600";
 
   const activeStyles = isActive
-    ? "text-navy-700 font-semibold bg-navy-50"
-    : "text-slate-600 font-medium hover:text-navy-700 hover:bg-slate-100/70";
+    ? "text-[#0D0C23] font-bold bg-black/[0.06]"
+    : "text-slate-700 font-medium hover:text-[#0D0C23] hover:bg-black/[0.04]";
+
+  const content = typeof children === "string" ? t(children) : children;
 
   return (
     <Link
@@ -30,7 +34,7 @@ export function NavLink({ href, children, className = "", onClick }: NavLinkProp
       aria-current={isActive ? "page" : undefined}
       className={`${baseStyles} ${activeStyles} ${className}`.trim()}
     >
-      {children}
+      {content}
     </Link>
   );
 }

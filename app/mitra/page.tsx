@@ -103,9 +103,7 @@ export default async function MitraDashboardPage() {
     .maybeSingle();
 
   // Jika profil perusahaan belum lengkap (nama atau kota belum diisi)
-  const isProfileComplete = Boolean(company && company.name && company.city_id);
-
-  if (!isProfileComplete) {
+  if (!company || !company.name || !company.city_id) {
     return (
       <div className="space-y-6">
         <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-10 shadow-card space-y-6">
