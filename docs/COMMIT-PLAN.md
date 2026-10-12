@@ -180,7 +180,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 13: Screening CV Berbantuan AI (Claude API)
 
-- [ ] 137 `feat(ai): buat modul klien Claude API di lib/ai`
+- [x] 137 `feat(ai): buat modul klien Claude API di lib/ai`
 - [ ] 138 `feat(ai): buat prompt evaluasi netral tanpa bias demografi`
 - [ ] 139 `feat(ai): buat skema Zod validasi skor, level, dan ringkasan AI`
 - [ ] 140 `feat(ai): buat API route POST /api/ai/screen untuk pemrosesan CV`
