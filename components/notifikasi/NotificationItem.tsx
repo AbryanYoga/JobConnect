@@ -1,9 +1,12 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import {
   Bell,
   Briefcase,
   Calendar,
+  Check,
   CheckCircle2,
   Clock,
   Sparkles,
@@ -17,6 +20,7 @@ export type NotificationData = Database["public"]["Tables"]["notifications"]["Ro
 
 interface NotificationItemProps {
   notification: NotificationData;
+  onMarkAsRead?: (id: number) => void;
   onClick?: (notification: NotificationData) => void;
 }
 
@@ -95,11 +99,25 @@ function formatNotificationTime(isoString: string): string {
 
 export function NotificationItem({
   notification,
+  onMarkAsRead,
   onClick,
 }: NotificationItemProps) {
   const isUnread = !notification.read_at;
   const { icon, bg } = getNotificationIcon(notification.type);
   const timeFormatted = formatNotificationTime(notification.created_at);
+
+  const handleItemClick = () => {
+    if (isUnread && onMarkAsRead) {
+      onMarkAsRead(notification.id);
+    }
+    onClick?.(notification);
+  };
+
+  const handleMarkAsReadClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onMarkAsRead?.(notification.id);
+  };
 
   const content = (
     <div
@@ -117,18 +135,32 @@ export function NotificationItem({
       </div>
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <h3
-            className={`text-sm sm:text-base font-semibold truncate ${
-              isUnread ? "text-navy-950 font-bold" : "text-slate-800"
-            }`}
-          >
-            {notification.title}
-          </h3>
-          {isUnread && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
-              Baru
-            </span>
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <div className="flex items-center gap-2 min-w-0">
+            <h3
+              className={`text-sm sm:text-base font-semibold truncate ${
+                isUnread ? "text-navy-950 font-bold" : "text-slate-800"
+              }`}
+            >
+              {notification.title}
+            </h3>
+            {isUnread && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
+                Baru
+              </span>
+            )}
+          </div>
+
+          {isUnread && onMarkAsRead && (
+            <button
+              type="button"
+              onClick={handleMarkAsReadClick}
+              title="Tandai telah dibaca"
+              aria-label="Tandai notifikasi ini telah dibaca"
+              className="inline-flex items-center justify-center p-2 min-w-[44px] min-h-[44px] -my-2 -mr-2 rounded-full text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
+            >
+              <Check className="w-4 h-4" aria-hidden="true" />
+            </button>
           )}
         </div>
 
@@ -155,7 +187,7 @@ export function NotificationItem({
     return (
       <Link
         href={notification.link}
-        onClick={() => onClick?.(notification)}
+        onClick={handleItemClick}
         className="block rounded-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 min-h-[44px]"
       >
         {content}
@@ -165,7 +197,7 @@ export function NotificationItem({
 
   return (
     <div
-      onClick={() => onClick?.(notification)}
+      onClick={handleItemClick}
       className="min-h-[44px]"
     >
       {content}

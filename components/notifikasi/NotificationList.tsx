@@ -1,13 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { BellOff, CheckCheck, Radio } from "lucide-react";
+import React, { useEffect, useState, useTransition } from "react";
+import { BellOff, CheckCheck, Loader2 } from "lucide-react";
 import {
   NotificationItem,
   type NotificationData,
 } from "./NotificationItem";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { createClient } from "@/lib/supabase/client";
+import {
+  markNotificationAsReadAction,
+  markAllNotificationsAsReadAction,
+} from "@/app/actions/notifikasi";
 
 interface NotificationListProps {
   initialNotifications: NotificationData[];
@@ -20,6 +24,7 @@ export function NotificationList({
     useState<NotificationData[]>(initialNotifications);
   const [filter, setFilter] = useState<"all" | "unread">("all");
   const [isRealtimeConnected, setIsRealtimeConnected] = useState<boolean>(false);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     let isMounted = true;
@@ -91,6 +96,33 @@ export function NotificationList({
     };
   }, []);
 
+  const handleMarkAsRead = (id: number) => {
+    // Pembaruan optimistik
+    setNotifications((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, read_at: new Date().toISOString() } : item
+      )
+    );
+
+    startTransition(async () => {
+      await markNotificationAsReadAction(id);
+    });
+  };
+
+  const handleMarkAllAsRead = () => {
+    // Pembaruan optimistik untuk seluruh notifikasi
+    setNotifications((prev) =>
+      prev.map((item) => ({
+        ...item,
+        read_at: item.read_at || new Date().toISOString(),
+      }))
+    );
+
+    startTransition(async () => {
+      await markAllNotificationsAsReadAction();
+    });
+  };
+
   const unreadCount = notifications.filter((item) => !item.read_at).length;
   const filteredNotifications =
     filter === "unread"
@@ -99,7 +131,7 @@ export function NotificationList({
 
   return (
     <div className="space-y-6">
-      {/* Tab Filter Notifikasi & Status Realtime */}
+      {/* Tab Filter Notifikasi, Status Realtime, & Tombol Tandai Semua Dibaca */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
         <div
           role="tablist"
@@ -153,16 +185,35 @@ export function NotificationList({
           </button>
         </div>
 
-        {/* Indikator Pembaruan Realtime */}
-        {isRealtimeConnected && (
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs text-slate-500 bg-slate-50 rounded-full border border-slate-200 self-start sm:self-center">
-            <span
-              className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
-              aria-hidden="true"
-            />
-            <span>Pembaruan realtime aktif</span>
-          </div>
-        )}
+        <div className="flex items-center gap-3 self-start sm:self-center">
+          {/* Tombol Tandai Semua Dibaca */}
+          {unreadCount > 0 && (
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={handleMarkAllAsRead}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold text-navy-900 hover:text-navy-950 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 disabled:opacity-50"
+            >
+              {isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin text-navy-700" aria-hidden="true" />
+              ) : (
+                <CheckCheck className="w-4 h-4 text-emerald-600" aria-hidden="true" />
+              )}
+              <span>Tandai Semua Dibaca</span>
+            </button>
+          )}
+
+          {/* Indikator Pembaruan Realtime */}
+          {isRealtimeConnected && (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs text-slate-500 bg-slate-50 rounded-full border border-slate-200">
+              <span
+                className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
+                aria-hidden="true"
+              />
+              <span>Pembaruan realtime aktif</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Daftar Notifikasi */}
@@ -191,7 +242,11 @@ export function NotificationList({
       ) : (
         <div className="space-y-3" role="feed" aria-label="Daftar notifikasi">
           {filteredNotifications.map((item) => (
-            <NotificationItem key={item.id} notification={item} />
+            <NotificationItem
+              key={item.id}
+              notification={item}
+              onMarkAsRead={handleMarkAsRead}
+            />
           ))}
         </div>
       )}
