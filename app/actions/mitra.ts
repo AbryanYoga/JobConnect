@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { sendApplicationStatusEmailNotification } from "@/lib/email";
 import {
   profilPerusahaanSchema,
   validateLogoFile,
@@ -924,6 +925,17 @@ export async function updateApplicationStatusAction({
         error: rpcError.message || "Gagal memperbarui status lamaran.",
       };
     }
+
+    // Kirim notifikasi email kepada pelamar jika mengaktifkan notifikasi email
+    sendApplicationStatusEmailNotification({
+      applicationId,
+      toStatus,
+      message,
+      interviewAt,
+      interviewPlace,
+    }).catch((err) => {
+      console.error("[Email Notification Trigger Error]", err);
+    });
 
     revalidatePath(`/mitra/pelamar/${applicationId}`);
     return { success: true };
