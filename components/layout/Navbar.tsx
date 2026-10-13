@@ -10,6 +10,7 @@ import { NavLink } from "./NavLink";
 import { MobileMenu } from "./MobileMenu";
 import { NavbarHeader } from "./NavbarHeader";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { NotificationBell } from "@/components/notifikasi/NotificationBell";
 import { NavbarAuthButtons } from "./NavbarAuthButtons";
 
 interface NavbarProps {
@@ -118,12 +119,15 @@ export async function Navbar({ role }: NavbarProps = {}) {
         </div>
 
         {/* Menu Navigasi Layar Kecil (Mobile) */}
-        <MobileMenu
-          links={links}
-          actions={actions}
-          role={userRole}
-          userName={userName}
-        />
+        <div className="flex md:hidden items-center gap-1">
+          {userRole !== "tamu" && <NotificationBell />}
+          <MobileMenu
+            links={links}
+            actions={actions}
+            role={userRole}
+            userName={userName}
+          />
+        </div>
       </div>
     </NavbarHeader>
   );

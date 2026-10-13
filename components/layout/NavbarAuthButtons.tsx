@@ -7,6 +7,8 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { useLanguage } from "@/lib/i18n";
 
+import { NotificationBell } from "@/components/notifikasi/NotificationBell";
+
 function getUserInitials(name: string): string {
   if (!name) return "?";
   const words = name.trim().split(/\s+/);
@@ -50,6 +52,8 @@ export function NavbarAuthButtons({
 
   return (
     <div className="flex items-center gap-2">
+      <NotificationBell />
+
       {userName && (
         <Link
           href={

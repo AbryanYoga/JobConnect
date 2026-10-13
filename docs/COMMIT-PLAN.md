@@ -193,7 +193,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 14: Notifikasi Realtime dan Email
 
-- [ ] 147 `feat(notifikasi): buat komponen ikon lonceng dengan badge belum dibaca`
+- [x] 147 `feat(notifikasi): buat komponen ikon lonceng dengan badge belum dibaca`
 - [ ] 148 `feat(notifikasi): buat halaman daftar notifikasi /notifikasi`
 - [ ] 149 `feat(notifikasi): pasang Supabase Realtime untuk pembaruan realtime`
 - [ ] 150 `feat(notifikasi): buat fungsi tandai notifikasi telah dibaca`
