@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import { Bell, BellOff, CheckCheck } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { BellOff, CheckCheck, Radio } from "lucide-react";
 import {
   NotificationItem,
   type NotificationData,
 } from "./NotificationItem";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { createClient } from "@/lib/supabase/client";
 
 interface NotificationListProps {
   initialNotifications: NotificationData[];
@@ -15,8 +16,80 @@ interface NotificationListProps {
 export function NotificationList({
   initialNotifications,
 }: NotificationListProps) {
-  const [notifications] = useState<NotificationData[]>(initialNotifications);
+  const [notifications, setNotifications] =
+    useState<NotificationData[]>(initialNotifications);
   const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [isRealtimeConnected, setIsRealtimeConnected] = useState<boolean>(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    const supabase = createClient();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    async function setupRealtime() {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user || !isMounted) return;
+
+        channel = supabase
+          .channel(`notifications-list-${user.id}`)
+          .on(
+            "postgres_changes",
+            {
+              event: "INSERT",
+              schema: "public",
+              table: "notifications",
+              filter: `user_id=eq.${user.id}`,
+            },
+            (payload) => {
+              if (!isMounted) return;
+              const newRow = payload.new as NotificationData;
+              setNotifications((prev) => {
+                if (prev.some((item) => item.id === newRow.id)) return prev;
+                return [newRow, ...prev];
+              });
+            }
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "notifications",
+              filter: `user_id=eq.${user.id}`,
+            },
+            (payload) => {
+              if (!isMounted) return;
+              const updatedRow = payload.new as NotificationData;
+              setNotifications((prev) =>
+                prev.map((item) =>
+                  item.id === updatedRow.id ? updatedRow : item
+                )
+              );
+            }
+          )
+          .subscribe((status) => {
+            if (isMounted && status === "SUBSCRIBED") {
+              setIsRealtimeConnected(true);
+            }
+          });
+      } catch {
+        // Lewati kesalahan koneksi realtime sementara
+      }
+    }
+
+    setupRealtime();
+
+    return () => {
+      isMounted = false;
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, []);
 
   const unreadCount = notifications.filter((item) => !item.read_at).length;
   const filteredNotifications =
@@ -26,12 +99,12 @@ export function NotificationList({
 
   return (
     <div className="space-y-6">
-      {/* Tab Filter Notifikasi */}
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+      {/* Tab Filter Notifikasi & Status Realtime */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
         <div
           role="tablist"
           aria-label="Filter notifikasi"
-          className="inline-flex p-1 bg-slate-100 rounded-lg gap-1"
+          className="inline-flex p-1 bg-slate-100 rounded-lg gap-1 self-start"
         >
           <button
             type="button"
@@ -79,6 +152,17 @@ export function NotificationList({
             )}
           </button>
         </div>
+
+        {/* Indikator Pembaruan Realtime */}
+        {isRealtimeConnected && (
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs text-slate-500 bg-slate-50 rounded-full border border-slate-200 self-start sm:self-center">
+            <span
+              className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
+              aria-hidden="true"
+            />
+            <span>Pembaruan realtime aktif</span>
+          </div>
+        )}
       </div>
 
       {/* Daftar Notifikasi */}

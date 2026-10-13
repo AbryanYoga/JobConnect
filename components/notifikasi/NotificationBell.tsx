@@ -5,6 +5,9 @@ import Link from "next/link";
 import { Bell } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useLanguage } from "@/lib/i18n";
+import type { Database } from "@/lib/supabase/types";
+
+type NotificationRow = Database["public"]["Tables"]["notifications"]["Row"];
 
 interface NotificationBellProps {
   initialCount?: number;
@@ -20,16 +23,18 @@ export function NotificationBell({
 
   useEffect(() => {
     let isMounted = true;
+    const supabase = createClient();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
 
-    async function fetchUnreadCount() {
+    async function init() {
       try {
-        const supabase = createClient();
         const {
           data: { user },
         } = await supabase.auth.getUser();
 
         if (!user || !isMounted) return;
 
+        // Ambil hitungan awal notifikasi belum dibaca
         const { count, error } = await supabase
           .from("notifications")
           .select("id", { count: "exact", head: true })
@@ -39,15 +44,58 @@ export function NotificationBell({
         if (!error && typeof count === "number" && isMounted) {
           setUnreadCount(count);
         }
+
+        // Langganan pembaruan realtime Supabase
+        channel = supabase
+          .channel(`notifications-bell-${user.id}`)
+          .on(
+            "postgres_changes",
+            {
+              event: "INSERT",
+              schema: "public",
+              table: "notifications",
+              filter: `user_id=eq.${user.id}`,
+            },
+            (payload) => {
+              if (!isMounted) return;
+              const newRow = payload.new as NotificationRow;
+              if (!newRow.read_at) {
+                setUnreadCount((prev) => prev + 1);
+              }
+            }
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "notifications",
+              filter: `user_id=eq.${user.id}`,
+            },
+            (payload) => {
+              if (!isMounted) return;
+              const newRow = payload.new as NotificationRow;
+              const oldRow = payload.old as Partial<NotificationRow>;
+              if (!oldRow.read_at && newRow.read_at) {
+                setUnreadCount((prev) => Math.max(0, prev - 1));
+              } else if (oldRow.read_at && !newRow.read_at) {
+                setUnreadCount((prev) => prev + 1);
+              }
+            }
+          )
+          .subscribe();
       } catch {
-        // Lewati kesalahan jaringan sementara
+        // Lewati kesalahan koneksi realtime sementara
       }
     }
 
-    fetchUnreadCount();
+    init();
 
     return () => {
       isMounted = false;
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, []);
 

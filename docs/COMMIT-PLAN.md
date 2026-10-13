@@ -195,7 +195,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 - [x] 147 `feat(notifikasi): buat komponen ikon lonceng dengan badge belum dibaca`
 - [x] 148 `feat(notifikasi): buat halaman daftar notifikasi /notifikasi`
-- [ ] 149 `feat(notifikasi): pasang Supabase Realtime untuk pembaruan realtime`
+- [x] 149 `feat(notifikasi): pasang Supabase Realtime untuk pembaruan realtime`
 - [ ] 150 `feat(notifikasi): buat fungsi tandai notifikasi telah dibaca`
 - [ ] 151 `feat(email): siapkan modul pengiriman email menggunakan Resend`
 - [ ] 152 `feat(email): buat template email notifikasi status lamaran dan ACC`
