@@ -197,7 +197,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 148 `feat(notifikasi): buat halaman daftar notifikasi /notifikasi`
 - [x] 149 `feat(notifikasi): pasang Supabase Realtime untuk pembaruan realtime`
 - [x] 150 `feat(notifikasi): buat fungsi tandai notifikasi telah dibaca`
-- [ ] 151 `feat(email): siapkan modul pengiriman email menggunakan Resend`
+- [x] 151 `feat(email): siapkan modul pengiriman email menggunakan Resend`
 - [ ] 152 `feat(email): buat template email notifikasi status lamaran dan ACC`
 
 ## Fase 15: Fitur Tambahan (Bookmark dan Laporan)
