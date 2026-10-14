@@ -215,7 +215,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 160 `style(wilayah): rapikan jelajah wilayah dan filter di layar mobile`
 - [x] 161 `style(mitra): buat tabel pelamar dapat digeser horizontal di mobile`
 - [x] 162 `style: verifikasi kontras warna WCAG AA dan target sentuh 44px`
-- [ ] 163 `chore: audit menyeluruh Delivery Gate Antislop dan perbaiki temuan`
+- [x] 163 `chore: audit menyeluruh Delivery Gate Antislop dan perbaiki temuan`
 
 ## Fase 17: Build, Deployment Vercel, dan Dokumentasi Akhir
 
