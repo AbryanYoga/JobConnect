@@ -12,6 +12,7 @@ import {
   Briefcase,
   ChevronRight,
   ArrowRight,
+  ArrowRightLeft,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge";
@@ -385,7 +386,7 @@ export default async function LaporanMitraPage({ searchParams }: LaporanPageProp
       </div>
 
       {/* Tabel 1: Rekapitulasi Berdasarkan Lowongan */}
-      <div className="bg-white rounded-3xl border border-black/[0.08] p-6 shadow-card space-y-4">
+      <div className="bg-white rounded-3xl border border-black/[0.08] p-4 sm:p-6 shadow-card space-y-4">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <h2 className="text-lg font-black text-black">
@@ -402,8 +403,13 @@ export default async function LaporanMitraPage({ searchParams }: LaporanPageProp
             Belum ada lowongan pekerjaan yang dibuat.
           </div>
         ) : (
-          <div className="overflow-x-auto -mx-6 px-6">
-            <table className="w-full text-left text-xs min-w-[580px]">
+          <div>
+            <div className="text-[11px] text-slate-500 font-medium sm:hidden flex items-center gap-1.5 pb-2">
+              <ArrowRightLeft className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
+              <span>Geser tabel untuk melihat seluruh data</span>
+            </div>
+            <div className="overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6">
+              <table className="w-full text-left text-xs min-w-[580px]">
               <thead>
                 <tr className="border-b border-black/[0.08] text-slate-500 font-bold">
                   <th className="pb-3 pr-4">Judul Lowongan</th>
@@ -449,7 +455,7 @@ export default async function LaporanMitraPage({ searchParams }: LaporanPageProp
                     <td className="py-3.5 pl-3 text-right">
                       <Link
                         href={`/mitra/lowongan/${item.id}/pelamar`}
-                        className="inline-flex items-center gap-1 text-[11px] font-bold text-navy-800 hover:text-navy-950 hover:underline"
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-navy-800 hover:text-navy-950 hover:underline min-h-[44px]"
                       >
                         <span>Lihat Pelamar</span>
                         <ChevronRight className="w-3 h-3" />
@@ -459,12 +465,13 @@ export default async function LaporanMitraPage({ searchParams }: LaporanPageProp
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>
 
       {/* Tabel 2: Rincian Daftar Pelamar Lengkap */}
-      <div className="bg-white rounded-3xl border border-black/[0.08] p-6 shadow-card space-y-4">
+      <div className="bg-white rounded-3xl border border-black/[0.08] p-4 sm:p-6 shadow-card space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="space-y-0.5">
             <h2 className="text-lg font-black text-black">
@@ -491,8 +498,13 @@ export default async function LaporanMitraPage({ searchParams }: LaporanPageProp
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto -mx-6 px-6">
-            <table className="w-full text-left text-xs min-w-[700px]">
+          <div>
+            <div className="text-[11px] text-slate-500 font-medium sm:hidden flex items-center gap-1.5 pb-2">
+              <ArrowRightLeft className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
+              <span>Geser tabel untuk melihat seluruh data</span>
+            </div>
+            <div className="overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6">
+              <table className="w-full text-left text-xs min-w-[700px]">
               <thead>
                 <tr className="border-b border-black/[0.08] text-slate-500 font-bold">
                   <th className="pb-3 pr-2 w-10">No</th>
@@ -533,7 +545,7 @@ export default async function LaporanMitraPage({ searchParams }: LaporanPageProp
                     <td className="py-3.5 pl-3 text-right whitespace-nowrap">
                       <Link
                         href={`/mitra/pelamar/${app.id}`}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs transition"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs transition min-h-[44px]"
                       >
                         <span>Detail</span>
                         <ArrowRight className="w-3 h-3" />
@@ -543,6 +555,7 @@ export default async function LaporanMitraPage({ searchParams }: LaporanPageProp
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>

@@ -213,7 +213,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 158 `style(navbar): buat menu navigasi responsif untuk perangkat mobile`
 - [x] 159 `style(beranda): uji dan rapikan tampilan pada 360px, 768px, 1280px`
 - [x] 160 `style(wilayah): rapikan jelajah wilayah dan filter di layar mobile`
-- [ ] 161 `style(mitra): buat tabel pelamar dapat digeser horizontal di mobile`
+- [x] 161 `style(mitra): buat tabel pelamar dapat digeser horizontal di mobile`
 - [ ] 162 `style: verifikasi kontras warna WCAG AA dan target sentuh 44px`
 - [ ] 163 `chore: audit menyeluruh Delivery Gate Antislop dan perbaiki temuan`
 
