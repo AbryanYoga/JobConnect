@@ -129,7 +129,7 @@ export function CustomSelect({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full ${containerClassName}`.trim()}
+      className={`relative w-full ${isOpen ? "z-50" : "z-auto"} ${containerClassName}`.trim()}
       onKeyDown={handleKeyDown}
     >
       {label && (
@@ -179,7 +179,7 @@ export function CustomSelect({
         <div
           role="listbox"
           tabIndex={-1}
-          className={`absolute left-0 right-0 z-50 mt-1.5 bg-white border border-black/[0.08] rounded-[22px] shadow-card-md p-2 animate-in fade-in zoom-in-95 duration-150 ${dropdownClassName}`.trim()}
+          className={`absolute left-0 right-0 z-50 mt-1.5 bg-white border border-black/10 rounded-[22px] shadow-2xl p-2 animate-in fade-in zoom-in-95 duration-150 ${dropdownClassName}`.trim()}
           style={{ minWidth: "220px" }}
         >
           {/* Kolom Pencarian Cepat di Dalam Dropdown */}
@@ -215,7 +215,7 @@ export function CustomSelect({
           {/* Daftar Opsi */}
           <ul
             ref={listRef}
-            className="max-h-60 overflow-y-auto space-y-1 p-0.5 custom-dropdown-scroll focus:outline-none"
+            className="max-h-60 overflow-y-auto space-y-1 p-0.5 custom-dropdown-scroll focus:outline-none rounded-xl"
           >
             {filteredOptions.length === 0 ? (
               <li className="px-3.5 py-4 text-xs text-center text-slate-500 font-medium">

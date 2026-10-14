@@ -42,17 +42,7 @@ function checkIsExpired(deadline?: string | null): boolean {
   return deadline < today;
 }
 
-function getCompanyInitials(name: string): string {
-  if (!name) return "CO";
-  const words = name
-    .trim()
-    .split(/\s+/)
-    .filter((w) => !["pt", "cv", "tbk", "ud"].includes(w.toLowerCase()));
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
+import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
 
 export async function generateMetadata({
   params,
@@ -264,14 +254,14 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex items-start gap-4 sm:gap-5 flex-1 min-w-0">
               {/* Logo Perusahaan */}
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-md border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden">
-                {logoUrl ? (
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border border-slate-200/90 bg-white p-1.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                {logoUrl || getCompanyLogo(companyName) ? (
                   <Image
-                    src={logoUrl}
+                    src={logoUrl || getCompanyLogo(companyName)!}
                     alt={`Logo ${companyName}`}
                     width={80}
                     height={80}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <span className="font-extrabold text-xl text-navy-800 select-none">

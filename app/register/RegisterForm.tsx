@@ -91,7 +91,7 @@ export function RegisterForm() {
       if (data.session) {
         router.refresh();
         if (peran === "perusahaan") {
-          router.push("/mitra");
+          router.push("/mitra/profil-perusahaan?onboarding=true");
         } else {
           router.push("/profil");
         }

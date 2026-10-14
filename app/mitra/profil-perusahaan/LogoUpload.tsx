@@ -15,17 +15,7 @@ interface LogoUploadProps {
   onDeleteAction: () => Promise<{ success: boolean; error?: string }>;
 }
 
-function getCompanyInitials(name: string): string {
-  if (!name) return "CO";
-  const words = name
-    .trim()
-    .split(/\s+/)
-    .filter((w) => !["pt", "cv", "tbk", "ud"].includes(w.toLowerCase()));
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
+import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
 
 export function LogoUpload({
   initialLogoUrl,
@@ -35,7 +25,10 @@ export function LogoUpload({
 }: LogoUploadProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [logoUrl, setLogoUrl] = useState<string | null>(initialLogoUrl || null);
+  const fallbackLogo = getCompanyLogo(companyName);
+  const [logoUrl, setLogoUrl] = useState<string | null>(
+    initialLogoUrl || fallbackLogo || null
+  );
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -138,11 +131,16 @@ export function LogoUpload({
   return (
     <div className="bg-white rounded-card border border-slate-200 shadow-sm p-6 sm:p-8 space-y-5">
       <div>
-        <h2 className="text-lg font-bold text-navy-950 tracking-tight">
-          Logo Perusahaan
-        </h2>
+        <div className="flex items-center gap-2 flex-wrap">
+          <h2 className="text-lg font-bold text-navy-950 tracking-tight">
+            Logo Resmi Perusahaan
+          </h2>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200">
+            Wajib Diunggah
+          </span>
+        </div>
         <p className="text-sm text-slate-500 mt-1">
-          Logo akan ditampilkan pada kartu lowongan pekerjaan dan halaman profil publik perusahaan Anda.
+          Logo resmi wajib diunggah untuk membuktikan keaslian profil usaha Anda dan mengaktifkan izin publikasi lowongan pekerjaan.
         </p>
       </div>
 

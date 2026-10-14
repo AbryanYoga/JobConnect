@@ -81,17 +81,7 @@ function formatSalary(min: number | null, max: number | null): string {
   return "Gaji dapat dinegosiasikan";
 }
 
-function getCompanyInitials(name: string): string {
-  if (!name) return "CO";
-  const words = name
-    .trim()
-    .split(/\s+/)
-    .filter((w) => !["pt", "cv", "tbk", "ud"].includes(w.toLowerCase()));
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
+import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
 
 const PAGE_SIZE = 10;
 
@@ -402,10 +392,10 @@ export default async function CityDetailPage({
                       {/* Header Kartu: Logo & Identitas */}
                       <div className="flex items-start gap-3.5">
                         <div className="w-12 h-12 rounded-sm bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center overflow-hidden">
-                          {job.company?.logoUrl ? (
+                          {job.company?.logoUrl || getCompanyLogo(companyName) ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
-                              src={job.company.logoUrl}
+                              src={job.company?.logoUrl || getCompanyLogo(companyName)!}
                               alt={`Logo ${companyName}`}
                               className="w-full h-full object-contain p-1"
                             />

@@ -60,17 +60,7 @@ function formatDateTimeIndo(dateStr: string): string {
   }
 }
 
-function getCompanyInitials(name: string): string {
-  if (!name) return "CO";
-  const words = name
-    .trim()
-    .split(/\s+/)
-    .filter((w) => !["pt", "cv", "tbk", "ud"].includes(w.toLowerCase()));
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
+import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
 
 export default async function LamaranSayaPage() {
   const supabase = await createClient();
@@ -253,13 +243,13 @@ export default async function LamaranSayaPage() {
                     <div className="flex items-start gap-3.5 sm:gap-4 min-w-0 flex-1">
                       {/* Logo Perusahaan */}
                       <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl border border-black/[0.08] bg-[#FAF8F0] flex items-center justify-center shrink-0 overflow-hidden">
-                        {logoUrl ? (
+                        {logoUrl || getCompanyLogo(companyName) ? (
                           <Image
-                            src={logoUrl}
+                            src={logoUrl || getCompanyLogo(companyName)!}
                             alt={`Logo ${companyName}`}
                             width={56}
                             height={56}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain p-1"
                           />
                         ) : (
                           <span className="font-black text-sm text-black select-none">

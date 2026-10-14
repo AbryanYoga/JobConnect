@@ -251,6 +251,8 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T16 `fix(footer): hapus elemen teks glass raksasa di bawah footer`
 - [x] T17 `feat(navbar): ganti search dengan dropdown pemilih bahasa dan integrasi i18n`
 - [x] T18 `docs(readme): perbarui dokumentasi fitur dan kemajuan pengembangan proyek`
+- [x] T19 `feat(mitra): perketat verifikasi profil perusahaan nyata dan integrasi logo resmi`
+- [x] T20 `db: perbarui data akun demo pelamar abryan yoga pratama di seed sql`
 
 ## Catatan Penting Agent
 

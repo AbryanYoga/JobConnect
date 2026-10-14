@@ -15,6 +15,8 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { JOB_TYPE_LABEL, WORK_MODE_LABEL, type JobType, type WorkMode } from "@/lib/labels";
+import { checkCompanyVerification } from "@/lib/validation/profil";
+import { getCompanyLogo } from "@/lib/company-logo";
 
 export const metadata: Metadata = {
   title: "Dashboard Mitra - Ringkasan",
@@ -95,42 +97,56 @@ export default async function MitraDashboardPage() {
     redirect("/403");
   }
 
-  // Ambil profil perusahaan
+  // Ambil data profil perusahaan lengkap
   const { data: company } = await supabase
     .from("companies")
-    .select("id, name, slug, city_id, logo_path, industry")
+    .select("id, name, slug, city_id, logo_path, industry, size, website, address_note, description")
     .eq("owner_id", user.id)
     .maybeSingle();
 
-  // Jika profil perusahaan belum lengkap (nama atau kota belum diisi)
-  if (!company || !company.name || !company.city_id) {
+  let logoUrl: string | null = null;
+  if (company?.logo_path) {
+    const { data: publicUrlData } = supabase.storage
+      .from("company-logos")
+      .getPublicUrl(company.logo_path);
+    logoUrl = publicUrlData.publicUrl;
+  }
+  const fallbackLogo = company?.name ? getCompanyLogo(company.name) : null;
+  const effectiveLogo = logoUrl || fallbackLogo;
+
+  const verification = checkCompanyVerification({
+    ...company,
+    logoUrl: effectiveLogo,
+  });
+
+  // Jika profil perusahaan belum terverifikasi lengkap (wajib data nyata + logo)
+  if (!company || !verification.isComplete) {
     return (
       <div className="space-y-6">
         <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-10 shadow-card space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-950 text-xs font-bold border border-amber-300">
             <AlertCircle className="w-4 h-4 text-amber-800" aria-hidden="true" />
-            <span>Langkah Wajib Mitra Baru</span>
+            <span>Langkah Wajib Verifikasi Perusahaan ({verification.completedCount} / {verification.totalRequired} Terpenuhi)</span>
           </div>
 
           <div className="space-y-2 max-w-2xl">
             <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-              Lengkapi Profil Perusahaan Anda
+              Lengkapi Bukti Perusahaan Nyata & Logo
             </h1>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium">
-              Sebelum dapat memasang lowongan pekerjaan, mohon lengkapi identitas resmi dan domisili kantor perusahaan Anda agar lowongan dapat diverifikasi oleh admin platform JobConnect.
+              Untuk melindungi pencari kerja dari lowongan fiktif dan calo liar, JobConnect mewajibkan setiap mitra perusahaan melengkapi data operasional nyata serta mengunggah logo resmi sebelum dapat mempublikasikan lowongan pekerjaan.
             </p>
           </div>
 
           <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] space-y-3">
             <h2 className="text-sm font-bold text-black flex items-center gap-2">
               <Building2 className="w-4 h-4 text-black" aria-hidden="true" />
-              <span>Informasi yang Diperlukan</span>
+              <span>Persyaratan yang Masih Perlu Dilengkapi:</span>
             </h2>
             <ul className="text-xs sm:text-sm text-slate-700 space-y-2 font-medium list-disc list-inside">
-              <li>Nama resmi perusahaan atau institusi kerja</li>
-              <li>Bidang industri utama dan ukuran tim</li>
-              <li>Provinsi dan kota domisili kantor operasional</li>
-              <li>Deskripsi singkat profil bisnis perusahaan</li>
+              {verification.missingFields.map((field) => (
+                <li key={field}>{field}</li>
+              ))}
             </ul>
           </div>
 
@@ -139,7 +155,7 @@ export default async function MitraDashboardPage() {
               href="/mitra/profil-perusahaan"
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-black font-black text-sm shadow-2xs hover:shadow transition min-h-[44px]"
             >
-              <span>Lengkapi Profil Perusahaan Sekarang</span>
+              <span>Lengkapi Profil & Unggah Logo Sekarang</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
             </Link>
           </div>
@@ -148,7 +164,7 @@ export default async function MitraDashboardPage() {
     );
   }
 
-  // Ambil metrik ringkasan dari database
+  // Ambil metrik ringkasan dari database jika sudah terverifikasi
   const companyId = company.id;
 
   // 1. Ambil seluruh lowongan milik perusahaan ini
@@ -193,17 +209,31 @@ export default async function MitraDashboardPage() {
     <div className="space-y-8">
       {/* Banner Sapaan Ramah Khas BMC */}
       <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" aria-hidden="true" />
-            <span>Mitra Resmi Terdaftar</span>
+        <div className="flex items-center gap-4 sm:gap-5 min-w-0">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-black/[0.08] p-1.5 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
+            {effectiveLogo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={effectiveLogo}
+                alt={`Logo ${company.name}`}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <Building2 className="w-8 h-8 text-slate-400" aria-hidden="true" />
+            )}
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-            Selamat Datang, {company.name}
-          </h1>
-          <p className="text-sm text-slate-600 font-medium max-w-xl leading-relaxed">
-            Kelola lowongan kerja resmi, pantau proses peninjauan admin, dan seleksi kandidat pelamar secara transparan tanpa pungutan liar.
-          </p>
+          <div className="space-y-1 min-w-0">
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" aria-hidden="true" />
+              <span>Mitra Resmi Terverifikasi</span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-black text-black tracking-tight truncate">
+              {company.name}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-xl leading-relaxed">
+              Kelola lowongan kerja resmi, pantau proses peninjauan admin, dan seleksi kandidat pelamar secara transparan tanpa pungutan liar.
+            </p>
+          </div>
         </div>
 
         <Link

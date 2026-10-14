@@ -15,14 +15,29 @@ import {
   type ProvinceOption,
   type CityOption,
 } from "./ProfilPerusahaanForm";
+import { checkCompanyVerification } from "@/lib/validation/profil";
+import { getCompanyLogo } from "@/lib/company-logo";
 
 export const metadata: Metadata = {
-  title: "Profil Perusahaan",
+  title: "Profil Perusahaan & Verifikasi Mitra",
   description:
-    "Kelola identitas, bidang industri, domisili kantor, dan profil perusahaan mitra di JobConnect.",
+    "Lengkapi identitas, bukti eksistensi nyata, domisili operasional, dan logo resmi perusahaan mitra di JobConnect.",
 };
 
-export default async function ProfilPerusahaanPage() {
+interface ProfilPerusahaanPageProps {
+  searchParams?: Promise<{
+    onboarding?: string;
+    required?: string;
+  }>;
+}
+
+export default async function ProfilPerusahaanPage({
+  searchParams,
+}: ProfilPerusahaanPageProps) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const isOnboarding = resolvedParams.onboarding === "true";
+  const isRequiredWarning = resolvedParams.required === "verification";
+
   let user = null;
   let companyData: ProfilPerusahaanData = {
     name: "Perusahaan Mitra",
@@ -117,6 +132,13 @@ export default async function ProfilPerusahaanPage() {
     }
   }
 
+  const fallbackLogo = getCompanyLogo(companyData.name);
+  const effectiveLogo = logoUrl || fallbackLogo;
+  const verification = checkCompanyVerification({
+    ...companyData,
+    logoUrl: effectiveLogo,
+  });
+
   return (
     <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
@@ -130,24 +152,58 @@ export default async function ProfilPerusahaanPage() {
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
           <span className="text-slate-800 font-medium" aria-current="page">
-            Profil Perusahaan
+            Profil Perusahaan & Verifikasi
           </span>
         </nav>
 
-        {/* Header Profil Perusahaan */}
-        <div className="bg-white rounded-card border border-slate-200 shadow-sm p-6 sm:p-8">
+        {/* Banner Onboarding untuk Mitra Baru */}
+        {isOnboarding && (
+          <div className="p-6 rounded-card bg-navy-950 text-white border border-navy-800 shadow-sm space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-navy-950 text-xs font-bold">
+              <span>Langkah Pertama Mitra Perusahaan</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+              Selamat Datang di Portal Mitra JobConnect
+            </h2>
+            <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
+              Untuk melindungi pencari kerja dari lowongan fiktif dan calo liar, JobConnect menerapkan standar verifikasi ketat.
+              Setiap perusahaan mitra <strong>wajib mengisi data operasional nyata</strong> serta <strong>mengunggah logo resmi perusahaan</strong> sebelum dapat memasang lowongan.
+            </p>
+          </div>
+        )}
+
+        {/* Banner Peringatan jika dialihkan karena mencoba pasang lowongan sebelum verifikasi */}
+        {isRequiredWarning && !verification.isComplete && (
+          <div
+            role="alert"
+            className="p-5 rounded-card bg-amber-50 border border-amber-300 text-amber-950 shadow-xs space-y-2"
+          >
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0" aria-hidden="true" />
+              <h2 className="text-sm font-bold">
+                Akses Pasang Lowongan Terkunci Sementara
+              </h2>
+            </div>
+            <p className="text-xs sm:text-sm text-amber-900 leading-relaxed">
+              Anda belum dapat mempublikasikan lowongan pekerjaan baru. Harap lengkapi seluruh profil data perusahaan nyata dan pastikan logo resmi perusahaan telah diunggah di bawah ini.
+            </p>
+          </div>
+        )}
+
+        {/* Header Profil Perusahaan & Status Verifikasi */}
+        <div className="bg-white rounded-card border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div className="flex items-center gap-4 sm:gap-5">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-card bg-navy-700 text-white font-bold text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-xs border-2 border-white ring-2 ring-navy-100 overflow-hidden">
-                {logoUrl ? (
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-card bg-white text-navy-900 font-bold text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-xs border-2 border-slate-200 overflow-hidden">
+                {effectiveLogo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={logoUrl}
+                    src={effectiveLogo}
                     alt={`Logo ${companyData.name}`}
-                    className="w-full h-full object-contain p-1.5 bg-white"
+                    className="w-full h-full object-contain p-2"
                   />
                 ) : (
-                  <Building2 className="w-8 h-8" aria-hidden="true" />
+                  <Building2 className="w-8 h-8 text-slate-400" aria-hidden="true" />
                 )}
               </div>
               <div className="space-y-1">
@@ -155,16 +211,60 @@ export default async function ProfilPerusahaanPage() {
                   <h1 className="text-xl sm:text-2xl font-bold text-navy-950 tracking-tight">
                     {companyData.name}
                   </h1>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-navy-50 text-navy-800 text-xs font-medium border border-navy-100">
-                    <ShieldCheck className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
-                    <span>Mitra Perusahaan</span>
-                  </span>
+                  {verification.isComplete ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+                      <span>Terverifikasi Resmi</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold border border-amber-200">
+                      <span>Wajib Lengkapi Bukti & Logo</span>
+                    </span>
+                  )}
                 </div>
                 <p className="text-sm text-slate-600">
                   {companyData.industry || "Bidang industri belum ditentukan"}
                 </p>
               </div>
             </div>
+
+            {/* Quick Action ke Dashboard jika sudah terverifikasi */}
+            {verification.isComplete && (
+              <Link
+                href="/mitra/lowongan/tambah"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-control bg-navy-900 text-white hover:bg-navy-800 text-xs font-bold transition shadow-xs"
+              >
+                <span>Pasang Lowongan Baru</span>
+                <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
+              </Link>
+            )}
+          </div>
+
+          {/* Indikator Kelayakan Verifikasi Perusahaan Nyata */}
+          <div className="pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-700 mb-2">
+              <span>Kelengkapan Bukti Perusahaan Nyata</span>
+              <span className={verification.isComplete ? "text-emerald-700 font-bold" : "text-amber-700"}>
+                {verification.completedCount} dari {verification.totalRequired} Persyaratan Terpenuhi
+              </span>
+            </div>
+            <div className="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+              <div
+                className={`h-full transition-all duration-300 ${
+                  verification.isComplete ? "bg-emerald-600" : "bg-amber-500"
+                }`}
+                style={{
+                  width: `${(verification.completedCount / verification.totalRequired) * 100}%`,
+                }}
+              />
+            </div>
+
+            {!verification.isComplete && (
+              <div className="mt-3 text-xs text-slate-600">
+                <span className="font-semibold text-slate-800">Perlu dilengkapi: </span>
+                <span>{verification.missingFields.join(", ")}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -176,7 +276,7 @@ export default async function ProfilPerusahaanPage() {
           onSave={updateProfilPerusahaanAction}
           logoUploadComponent={
             <LogoUpload
-              initialLogoUrl={logoUrl}
+              initialLogoUrl={effectiveLogo}
               companyName={companyData.name}
               onUploadAction={uploadCompanyLogoAction}
               onDeleteAction={deleteCompanyLogoAction}

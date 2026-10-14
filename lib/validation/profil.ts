@@ -291,3 +291,105 @@ export function buildLogoPath(
   return `${companyId}/logo-${Date.now()}.${extension}`;
 }
 
+export interface CompanyVerificationStatus {
+  hasName: boolean;
+  hasWebsite: boolean;
+  hasIndustry: boolean;
+  hasSize: boolean;
+  hasLocation: boolean;
+  hasAddressNote: boolean;
+  hasDescription: boolean;
+  hasLogo: boolean;
+  isComplete: boolean;
+  completedCount: number;
+  totalRequired: number;
+  missingFields: string[];
+}
+
+export function checkCompanyVerification(company?: {
+  name?: string | null;
+  website?: string | null;
+  industry?: string | null;
+  size?: string | null;
+  city_id?: number | null;
+  cityId?: number | null;
+  address_note?: string | null;
+  addressNote?: string | null;
+  description?: string | null;
+  logo_path?: string | null;
+  logoPath?: string | null;
+  logoUrl?: string | null;
+} | null): CompanyVerificationStatus {
+  if (!company) {
+    const missing = [
+      "Nama resmi perusahaan",
+      "Website resmi (bukti keberadaan publik)",
+      "Bidang industri",
+      "Ukuran tim perusahaan",
+      "Domisili kota operasional",
+      "Alamat fisik kantor operasional",
+      "Deskripsi profil bisnis",
+      "Logo resmi perusahaan",
+    ];
+    return {
+      hasName: false,
+      hasWebsite: false,
+      hasIndustry: false,
+      hasSize: false,
+      hasLocation: false,
+      hasAddressNote: false,
+      hasDescription: false,
+      hasLogo: false,
+      isComplete: false,
+      completedCount: 0,
+      totalRequired: missing.length,
+      missingFields: missing,
+    };
+  }
+
+  const hasName = Boolean(company.name && company.name.trim().length >= 3);
+  const hasWebsite = Boolean(company.website && company.website.trim().length > 0);
+  const hasIndustry = Boolean(company.industry && company.industry.trim().length > 0);
+  const hasSize = Boolean(company.size && company.size.trim().length > 0);
+  const city = company.city_id ?? company.cityId;
+  const hasLocation = Boolean(city !== null && city !== undefined);
+  const address = company.address_note ?? company.addressNote;
+  const hasAddressNote = Boolean(address && address.trim().length >= 5);
+  const hasDescription = Boolean(company.description && company.description.trim().length >= 40);
+  const hasLogo = Boolean(
+    (company.logo_path && company.logo_path.trim().length > 0) ||
+    (company.logoPath && company.logoPath.trim().length > 0) ||
+    (company.logoUrl && company.logoUrl.trim().length > 0)
+  );
+
+  const checks = [
+    { key: "Nama resmi perusahaan", ok: hasName },
+    { key: "Website resmi (bukti keberadaan publik)", ok: hasWebsite },
+    { key: "Bidang industri", ok: hasIndustry },
+    { key: "Ukuran tim perusahaan", ok: hasSize },
+    { key: "Kota domisili operasional", ok: hasLocation },
+    { key: "Alamat fisik kantor operasional", ok: hasAddressNote },
+    { key: "Deskripsi profil bisnis (minimal 40 karakter)", ok: hasDescription },
+    { key: "Logo resmi perusahaan", ok: hasLogo },
+  ];
+
+  const completedCount = checks.filter((c) => c.ok).length;
+  const missingFields = checks.filter((c) => !c.ok).map((c) => c.key);
+  const isComplete = completedCount === checks.length;
+
+  return {
+    hasName,
+    hasWebsite,
+    hasIndustry,
+    hasSize,
+    hasLocation,
+    hasAddressNote,
+    hasDescription,
+    hasLogo,
+    isComplete,
+    completedCount,
+    totalRequired: checks.length,
+    missingFields,
+  };
+}
+

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="lmNavy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+    <linearGradient id="lmAmber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+  </defs>
+  <!-- Background Badge -->
+  <rect width="120" height="120" rx="28" fill="#F8FAFC" />
+  <rect x="1" y="1" width="118" height="118" rx="27" fill="none" stroke="#E2E8F0" stroke-width="2" />
+
+  <!-- Logistics Forward Hexagon / Fast Arrow Shape -->
+  <!-- Upper Wing -->
+  <path d="M28 42 L64 26 C68 24 72 27 72 31 L72 52 L36 68 C31 70 26 66 26 61 L26 47 C26 44 27 42 28 42 Z" fill="url(#lmNavy)" />
+
+  <!-- Lower Dynamic Forward Arrow in Warm Amber -->
+  <path d="M48 68 L84 52 C89 50 94 54 94 59 L94 73 C94 76 92 79 89 81 L56 94 C52 96 48 93 48 89 L48 68 Z" fill="url(#lmAmber)" />
+
+  <!-- Speed Stripe Lines -->
+  <rect x="76" y="36" width="16" height="4.5" rx="2.25" fill="#F59E0B" />
+  <rect x="80" y="44" width="12" height="4.5" rx="2.25" fill="#0F172A" />
+</svg>

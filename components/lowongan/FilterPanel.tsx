@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Filter, X, ChevronDown, ChevronUp, MapPin, Briefcase, Laptop, Layers } from "lucide-react";
+import { Filter, X, ChevronDown, ChevronUp, MapPin, Briefcase, Laptop, Layers, RotateCcw } from "lucide-react";
 import { JOB_TYPE_LABEL, WORK_MODE_LABEL, type JobType, type WorkMode } from "@/lib/labels";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { useLanguage } from "@/lib/i18n";
@@ -104,9 +104,9 @@ export function FilterPanel({
   };
 
   return (
-    <aside className="w-full bg-white rounded-[28px] border border-black/[0.08] shadow-card overflow-hidden">
+    <aside className="w-full bg-white rounded-[28px] border border-black/[0.08] shadow-card relative z-20">
       {/* Header Panel (di mobile berfungsi sebagai tombol buka/tutup) */}
-      <div className="p-5 border-b border-black/[0.06] flex items-center justify-between">
+      <div className="p-5 border-b border-black/[0.06] flex items-center justify-between rounded-t-[28px]">
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-black" aria-hidden="true" />
           <h2 className="text-sm font-bold text-black uppercase tracking-wider">
@@ -152,7 +152,7 @@ export function FilterPanel({
       {/* Konten Filter (selalu tampil di layar besar, di mobile tergantung toggle) */}
       <div
         id="filter-content-panel"
-        className={`p-5 sm:p-6 space-y-6 ${
+        className={`p-5 sm:p-6 space-y-6 pb-7 sm:pb-8 ${
           isOpenMobile ? "block" : "hidden lg:block"
         }`}
       >
@@ -390,6 +390,33 @@ export function FilterPanel({
             </div>
           </div>
         )}
+
+        {/* Informasi Ringkas Panduan Penempatan & Tombol Reset Cepat */}
+        <div className="pt-4 border-t border-black/[0.06] space-y-3">
+          <div className="bg-[#FAF8F0] p-4 rounded-2xl border border-black/[0.06] space-y-1.5">
+            <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wider block">
+              {t("Panduan Penempatan")}
+            </span>
+            <p className="text-xs text-slate-600 leading-relaxed font-normal">
+              {t(
+                "Pilih provinsi untuk menampilkan lowongan spesifik di wilayah tersebut dan membuka pilihan kota.",
+                "Select a province to filter jobs in that region and enable city selection."
+              )}
+            </p>
+          </div>
+
+          {activeCount > 0 && (
+            <button
+              type="button"
+              onClick={resetAllFilters}
+              disabled={isPending}
+              className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition duration-150 min-h-[44px]"
+            >
+              <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>{t("Reset Semua Filter")} ({activeCount})</span>
+            </button>
+          )}
+        </div>
       </div>
     </aside>
   );

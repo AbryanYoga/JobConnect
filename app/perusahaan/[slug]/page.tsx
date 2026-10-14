@@ -28,17 +28,7 @@ interface CompanyProfilePageProps {
   }>;
 }
 
-function getCompanyInitials(name: string): string {
-  if (!name) return "CO";
-  const words = name
-    .trim()
-    .split(/\s+/)
-    .filter((w) => !["pt", "cv", "tbk", "ud"].includes(w.toLowerCase()));
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
+import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
 
 export async function generateMetadata({
   params,
@@ -208,14 +198,14 @@ export default async function CompanyProfilePage({
         <section className="bg-white rounded-card border border-slate-200 p-6 sm:p-8 shadow-2xs space-y-6">
           <div className="flex flex-col sm:flex-row items-start gap-5 sm:gap-6">
             {/* Logo Perusahaan */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden">
-              {logoUrl ? (
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-slate-200/90 bg-white p-2 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+              {logoUrl || getCompanyLogo(company.name) ? (
                 <Image
-                  src={logoUrl}
+                  src={logoUrl || getCompanyLogo(company.name)!}
                   alt={`Logo ${company.name}`}
                   width={96}
                   height={96}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               ) : (
                 <span className="font-black text-2xl text-navy-800 select-none">

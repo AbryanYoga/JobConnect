@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="knEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="knTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D9488" />
+      <stop offset="100%" stop-color="#14B8A6" />
+    </linearGradient>
+  </defs>
+  <!-- Background Badge -->
+  <rect width="120" height="120" rx="28" fill="#F8FAFC" />
+  <rect x="1" y="1" width="118" height="118" rx="27" fill="none" stroke="#E2E8F0" stroke-width="2" />
+
+  <!-- Industrial Engineering Diamond & Precision Nodes (Karya Nusantara) -->
+  <path d="M60 25 L88 42 L88 78 L60 95 L32 78 L32 42 Z" fill="none" stroke="#E2E8F0" stroke-width="3" />
+  
+  <!-- Left Wing Gear Wing -->
+  <path d="M34 46 L60 31 L60 89 L34 74 Z" fill="url(#knEmerald)" />
+  
+  <!-- Right Wing Architectural Wing -->
+  <path d="M60 31 L86 46 L86 74 L60 89 Z" fill="url(#knTeal)" opacity="0.9" />
+
+  <!-- Center Precision Core Dot -->
+  <circle cx="60" cy="60" r="7" fill="#FFFFFF" />
+  <circle cx="60" cy="60" r="3.5" fill="#047857" />
+</svg>

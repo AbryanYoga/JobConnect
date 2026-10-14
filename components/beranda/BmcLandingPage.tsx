@@ -78,29 +78,7 @@ function formatSalary(min?: number | null, max?: number | null, t?: (id: string,
   return t ? t("Gaji dapat dinegosiasikan", "Salary negotiable") : "Gaji dapat dinegosiasikan";
 }
 
-function getCompanyInitials(name: string): string {
-  if (!name) return "CO";
-  const words = name
-    .trim()
-    .split(/\s+/)
-    .filter((w) => !["pt", "cv", "tbk", "ud"].includes(w.toLowerCase()));
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
-
-function getCompanyLogo(name?: string | null): string | null {
-  if (!name) return null;
-  const lower = name.toLowerCase();
-  if (lower.includes("telkom")) return "/logos/companies/telkom.svg";
-  if (lower.includes("mandiri")) return "/logos/companies/mandiri.svg";
-  if (lower.includes("bca")) return "/logos/companies/bca.svg";
-  if (lower.includes("gojek")) return "/logos/companies/gojek.svg";
-  if (lower.includes("bri")) return "/logos/companies/bri.svg";
-  if (lower.includes("solusi")) return "/logos/companies/solusi-pintar.svg";
-  return null;
-}
+import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
 
 export function BmcLandingPage({
   provinces,
@@ -479,9 +457,9 @@ export function BmcLandingPage({
           ======================================================== */}
       <section
         ref={heroSectionRef}
-        className="relative pt-10 sm:pt-16 pb-24 sm:pb-36 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[820px]"
+        className="relative z-20 pt-10 sm:pt-16 pb-24 sm:pb-36 px-4 sm:px-6 lg:px-8 overflow-x-clip overflow-y-visible min-h-[820px]"
       >
-        <div className="mx-auto max-w-3xl text-center relative z-10 space-y-6 sm:space-y-8">
+        <div className="mx-auto max-w-3xl text-center relative z-20 space-y-6 sm:space-y-8">
           {/* Badge Rating & Kepercayaan Atas Hero */}
           <div className="hero-anim-item inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#222222]/10 shadow-2xs">
             <div className="flex items-center gap-0.5 text-emerald-600">
@@ -526,7 +504,7 @@ export function BmcLandingPage({
           {/* Hero Search Bar: Widget Interaktif BMC Style */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hero-anim-item mx-auto max-w-2xl bg-white p-2.5 sm:p-3 rounded-full border border-[#222222]/15 shadow-card flex flex-col sm:flex-row items-center gap-2"
+            className="hero-anim-item relative z-30 mx-auto max-w-2xl bg-white p-2.5 sm:p-3 rounded-full border border-[#222222]/15 shadow-card flex flex-col sm:flex-row items-center gap-2"
           >
             <div className="flex items-center gap-2 px-4 py-2 flex-1 w-full">
               <Search className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
@@ -539,7 +517,7 @@ export function BmcLandingPage({
               />
             </div>
 
-            <div className="hidden md:flex items-center border-l border-slate-200 pl-2 pr-1 shrink-0 relative">
+            <div className="hidden md:flex items-center border-l border-slate-200 pl-2 pr-1 shrink-0 relative z-40">
               <CustomSelect
                 variant="hero"
                 icon={<MapPin className="w-4 h-4 text-slate-500" aria-hidden="true" />}
@@ -568,7 +546,7 @@ export function BmcLandingPage({
           </form>
 
           {/* Keterangan Tambahan Bawah Search */}
-          <div className="hero-anim-item flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm text-slate-600 font-medium pt-1">
+          <div className="hero-anim-item relative z-10 flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm text-slate-600 font-medium pt-1">
             <span className="flex items-center gap-1.5">
               <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" />
               <span>{t("Gratis untuk pencari kerja", "Free for job seekers")}</span>

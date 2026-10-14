@@ -53,29 +53,7 @@ function formatSalary(min: number | null, max: number | null): string {
   return "Gaji dapat dinegosiasikan";
 }
 
-function getCompanyInitials(name: string): string {
-  if (!name) return "CO";
-  const words = name
-    .trim()
-    .split(/\s+/)
-    .filter((w) => !["pt", "cv", "tbk", "ud"].includes(w.toLowerCase()));
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
-
-function getCompanyLogo(name?: string | null): string | null {
-  if (!name) return null;
-  const lower = name.toLowerCase();
-  if (lower.includes("telkom")) return "/logos/companies/telkom.svg";
-  if (lower.includes("mandiri")) return "/logos/companies/mandiri.svg";
-  if (lower.includes("bca")) return "/logos/companies/bca.svg";
-  if (lower.includes("gojek")) return "/logos/companies/gojek.svg";
-  if (lower.includes("bri")) return "/logos/companies/bri.svg";
-  if (lower.includes("solusi")) return "/logos/companies/solusi-pintar.svg";
-  return null;
-}
+import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
 
 const PAGE_SIZE = 10;
 

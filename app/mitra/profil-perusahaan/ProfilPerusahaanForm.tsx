@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Building2,
@@ -108,7 +109,37 @@ export function ProfilPerusahaanForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage(null);
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim() || name.trim().length < NAME_MIN) {
+      newErrors.name = `Nama perusahaan wajib diisi minimal ${NAME_MIN} karakter`;
+    }
+    if (!website.trim()) {
+      newErrors.website = "Website resmi perusahaan wajib diisi sebagai bukti keberadaan operasional nyata";
+    }
+    if (!industry.trim()) {
+      newErrors.industry = "Bidang industri perusahaan wajib diisi";
+    }
+    if (!size) {
+      newErrors.size = "Ukuran tim perusahaan wajib dipilih";
+    }
+    if (!provinceId) {
+      newErrors.provinceId = "Provinsi domisili operasional wajib dipilih";
+    }
+    if (!cityId) {
+      newErrors.cityId = "Kota atau kabupaten domisili wajib dipilih";
+    }
+    if (!addressNote.trim() || addressNote.trim().length < 5) {
+      newErrors.addressNote = "Alamat fisik kantor operasional wajib diisi minimal 5 karakter";
+    }
+    if (!description.trim() || description.trim().length < 40) {
+      newErrors.description = "Deskripsi profil bisnis perusahaan wajib diisi minimal 40 karakter";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     const validationResult = profilPerusahaanSchema.safeParse({
       name,
@@ -134,7 +165,7 @@ export function ProfilPerusahaanForm({
       setIsSubmitting(false);
 
       if (res.success) {
-        setSuccessMessage("Profil perusahaan berhasil diperbarui.");
+        setSuccessMessage("Profil dan data verifikasi perusahaan berhasil disimpan.");
         router.refresh();
       } else if (res.error) {
         setErrors({ general: res.error });
@@ -164,10 +195,26 @@ export function ProfilPerusahaanForm({
       {successMessage && (
         <div
           role="status"
-          className="p-4 rounded-control bg-green-50 border border-green-200 text-green-800 text-sm flex items-center gap-2.5"
+          className="p-4 rounded-control bg-green-50 border border-green-200 text-green-900 text-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
         >
-          <Check className="w-4 h-4 shrink-0 text-green-600" aria-hidden="true" />
-          <span>{successMessage}</span>
+          <div className="flex items-center gap-2.5">
+            <Check className="w-5 h-5 shrink-0 text-green-600" aria-hidden="true" />
+            <span>{successMessage}</span>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              href="/mitra"
+              className="text-xs font-bold text-green-800 underline underline-offset-2 hover:text-green-950"
+            >
+              Ke Dashboard
+            </Link>
+            <Link
+              href="/mitra/lowongan/tambah"
+              className="text-xs font-bold px-3 py-1.5 rounded-full bg-green-700 text-white hover:bg-green-800 transition shadow-2xs"
+            >
+              Pasang Lowongan
+            </Link>
+          </div>
         </div>
       )}
 
@@ -190,14 +237,14 @@ export function ProfilPerusahaanForm({
             Identitas Perusahaan
           </h2>
           <p className="text-sm text-slate-500 mt-1">
-            Informasi dasar ini akan ditampilkan pada setiap lowongan yang Anda pasang.
+            Informasi dasar ini wajib diisi untuk membuktikan keaslian profil usaha Anda kepada pelamar kerja.
           </p>
         </div>
 
         {/* Nama Perusahaan */}
         <Input
           id="company-name"
-          label="Nama Perusahaan"
+          label="Nama Resmi Perusahaan"
           required
           type="text"
           placeholder="Contoh: PT Teknologi Nusantara"
@@ -215,6 +262,7 @@ export function ProfilPerusahaanForm({
         <Input
           id="company-website"
           label="Website Resmi Perusahaan"
+          required
           type="url"
           placeholder="Contoh: https://perusahaan.co.id"
           leftIcon={<Globe className="w-4 h-4" />}
@@ -223,7 +271,7 @@ export function ProfilPerusahaanForm({
             setWebsite(e.target.value);
             if (errors.website) setErrors((prev) => ({ ...prev, website: "" }));
           }}
-          helperText={`URL website resmi perusahaan (maksimal ${WEBSITE_MAX} karakter).`}
+          helperText={`URL website resmi perusahaan sebagai bukti eksistensi publik (maksimal ${WEBSITE_MAX} karakter).`}
           error={errors.website}
         />
 
@@ -232,6 +280,7 @@ export function ProfilPerusahaanForm({
           <Input
             id="company-industry"
             label="Bidang Industri"
+            required
             type="text"
             placeholder="Contoh: Teknologi Informasi"
             leftIcon={<Briefcase className="w-4 h-4" />}
@@ -249,6 +298,7 @@ export function ProfilPerusahaanForm({
           <Select
             id="company-size"
             label="Ukuran Perusahaan"
+            required
             placeholder="Pilih jumlah karyawan"
             options={sizeOptions}
             value={size}
@@ -277,7 +327,8 @@ export function ProfilPerusahaanForm({
           {/* Pilihan Provinsi */}
           <Select
             id="company-province"
-            label="Provinsi"
+            label="Provinsi Domisili"
+            required
             placeholder="Pilih Provinsi"
             options={provinceOptions}
             value={provinceId}
@@ -289,6 +340,7 @@ export function ProfilPerusahaanForm({
           <Select
             id="company-city"
             label="Kota / Kabupaten"
+            required
             placeholder={
               provinceId ? "Pilih Kota / Kabupaten" : "Pilih provinsi terlebih dahulu"
             }
@@ -306,9 +358,10 @@ export function ProfilPerusahaanForm({
         {/* Catatan Area / Alamat Singkat */}
         <Input
           id="company-address-note"
-          label="Area atau Alamat Singkat"
+          label="Alamat Fisik Kantor Operasional"
+          required
           type="text"
-          placeholder="Contoh: Kawasan Mega Kuningan, Jakarta Selatan"
+          placeholder="Contoh: Gedung Artha Graha Lt. 12, Jl. Jend. Sudirman Kav 52-53"
           leftIcon={<MapPin className="w-4 h-4" />}
           value={addressNote}
           onChange={(e) => {
@@ -316,7 +369,7 @@ export function ProfilPerusahaanForm({
             if (errors.addressNote)
               setErrors((prev) => ({ ...prev, addressNote: "" }));
           }}
-          helperText={`Patokan atau area singkat (maksimal ${ADDRESS_NOTE_MAX} karakter).`}
+          helperText={`Alamat lengkap atau patokan gedung kantor (maksimal ${ADDRESS_NOTE_MAX} karakter).`}
           error={errors.addressNote}
         />
       </div>
@@ -335,7 +388,8 @@ export function ProfilPerusahaanForm({
         <Textarea
           id="company-description"
           label="Deskripsi Profil Perusahaan"
-          placeholder="Tuliskan latar belakang, produk atau layanan, serta nilai budaya kerja di perusahaan Anda..."
+          required
+          placeholder="Tuliskan latar belakang, produk atau layanan, serta nilai budaya kerja di perusahaan Anda (minimal 40 karakter)..."
           rows={5}
           showCount
           maxLength={DESCRIPTION_MAX}
@@ -345,7 +399,7 @@ export function ProfilPerusahaanForm({
             if (errors.description)
               setErrors((prev) => ({ ...prev, description: "" }));
           }}
-          helperText={`Jelaskan secara ringkas dan informatif (maksimal ${DESCRIPTION_MAX} karakter).`}
+          helperText={`Jelaskan secara ringkas dan informatif, minimal 40 karakter (maksimal ${DESCRIPTION_MAX} karakter).`}
           error={errors.description}
         />
       </div>

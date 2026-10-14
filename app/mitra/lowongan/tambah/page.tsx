@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { JobForm } from "@/components/mitra/JobForm";
 import { ShieldCheck } from "lucide-react";
+import { checkCompanyVerification } from "@/lib/validation/profil";
+import { getCompanyLogo } from "@/lib/company-logo";
 
 export const metadata: Metadata = {
   title: "Pasang Lowongan Baru - Dashboard Mitra",
@@ -32,15 +34,23 @@ export default async function TambahLowonganPage() {
     redirect("/403");
   }
 
-  // Cek kelengkapan data perusahaan
+  // Cek kelengkapan bukti perusahaan nyata dan logo
   const { data: company } = await supabase
     .from("companies")
-    .select("id, name, city_id")
+    .select("id, name, city_id, logo_path, industry, size, website, address_note, description")
     .eq("owner_id", user.id)
     .maybeSingle();
 
-  if (!company || !company.city_id) {
-    redirect("/mitra");
+  const fallbackLogo = company?.name ? getCompanyLogo(company.name) : null;
+  const effectiveLogo = company?.logo_path || fallbackLogo;
+
+  const verification = checkCompanyVerification({
+    ...company,
+    logoUrl: effectiveLogo,
+  });
+
+  if (!verification.isComplete) {
+    redirect("/mitra/profil-perusahaan?required=verification");
   }
 
   // Ambil daftar kategori dari database

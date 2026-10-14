@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="stGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    <linearGradient id="stAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+  </defs>
+  <!-- Background Badge -->
+  <rect width="120" height="120" rx="28" fill="#F8FAFC" />
+  <rect x="1" y="1" width="118" height="118" rx="27" fill="none" stroke="#E2E8F0" stroke-width="2" />
+  
+  <!-- Modern Tech S-Symbol / Digital Node Layers -->
+  <!-- Top Shape -->
+  <path d="M34 40 C34 32 40 26 48 26 L76 26 C84 26 90 32 90 40 L90 46 C90 54 84 60 76 60 L54 60 C48 60 44 64 44 70 L44 72 C44 75 46 78 49 79 L49 69 C49 61 55 55 63 55 L74 55 C77 55 80 52 80 49 L80 43 C80 40 77 37 74 37 L48 37 C45 37 42 40 42 43 L42 45 C42 48 34 48 34 40 Z" fill="url(#stGrad)" />
+  
+  <!-- Bottom Accent Shape -->
+  <path d="M86 80 C86 88 80 94 72 94 L44 94 C36 94 30 88 30 80 L30 74 C30 66 36 60 44 60 L66 60 C72 60 76 56 76 50 L76 48 C76 45 74 42 71 41 L71 51 C71 59 65 65 57 65 L46 65 C43 65 40 68 40 71 L40 77 C40 80 43 83 46 83 L72 83 C75 83 78 80 78 77 L78 75 C78 72 86 72 86 80 Z" fill="url(#stAccent)" />
+
+  <!-- Center Core Digital Node -->
+  <circle cx="60" cy="60" r="5" fill="#1E293B" />
+</svg>

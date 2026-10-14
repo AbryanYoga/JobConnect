@@ -7,6 +7,8 @@ import {
   type EducationMin,
 } from "@/lib/labels";
 
+import { getCompanyLogo } from "@/lib/company-logo";
+
 export const metadata: Metadata = {
   title: "JobConnect - Portal Lowongan Kerja Terverifikasi 38 Provinsi",
   description:
@@ -179,7 +181,7 @@ export default async function HomePage() {
                 id: companyData.id,
                 name: companyData.name,
                 slug: companyData.slug,
-                logoUrl,
+                logoUrl: logoUrl || getCompanyLogo(companyData.name),
                 cityName: cityData?.name || null,
                 provinceName: provinceData?.name || null,
               }
