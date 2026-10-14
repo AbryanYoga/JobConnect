@@ -61,7 +61,7 @@ export async function Navbar({ role }: NavbarProps = {}) {
           {/* Logo Mobile (Hanya tampil di ponsel) */}
           <Link
             href="/"
-            className="md:hidden flex items-center rounded-full transition hover:opacity-90"
+            className="md:hidden flex items-center rounded-full transition hover:opacity-90 py-1"
             aria-label="JobConnect Beranda"
           >
             <Image
@@ -69,7 +69,7 @@ export async function Navbar({ role }: NavbarProps = {}) {
               alt="JobConnect"
               width={160}
               height={32}
-              className="h-7 w-auto"
+              className="h-6 sm:h-7 w-auto max-w-[130px] xs:max-w-[160px] object-contain"
               priority
             />
           </Link>

@@ -1,9 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import {
+  Menu,
+  X,
+  Briefcase,
+  FileText,
+  Building2,
+  FolderTree,
+  BarChart3,
+  User,
+  Bell,
+  PlusCircle,
+  LogIn,
+  UserPlus,
+} from "lucide-react";
 import { NavAction, NavItem, Role } from "@/lib/navigation";
-import { ButtonLink } from "@/components/ui/ButtonLink";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { NavLink } from "./NavLink";
 import { useLanguage } from "@/lib/i18n";
@@ -11,16 +24,44 @@ import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 interface MobileMenuProps {
   links: NavItem[];
-  actions: NavAction[];
+  actions?: NavAction[];
   role?: Role;
   userName?: string | null;
 }
 
-const ROLE_LABEL: Record<Role, string> = {
-  tamu: "",
-  pelamar: "Pencari Kerja",
-  perusahaan: "Perusahaan Mitra",
-  admin: "Admin",
+const ROLE_LABEL: Record<Role, { id: string; en: string }> = {
+  tamu: { id: "Tamu", en: "Guest" },
+  pelamar: { id: "Pencari Kerja", en: "Job Seeker" },
+  perusahaan: { id: "Mitra Perusahaan", en: "Partner Company" },
+  admin: { id: "Admin Moderator", en: "Admin Moderator" },
+};
+
+const ROLE_BADGE_CLASS: Record<Role, string> = {
+  tamu: "bg-slate-100 text-slate-700",
+  pelamar: "bg-navy-50 text-navy-900 border border-navy-200",
+  perusahaan: "bg-emerald-50 text-emerald-900 border border-emerald-200",
+  admin: "bg-amber-100 text-amber-950 border border-amber-300 font-bold",
+};
+
+const ROLE_EXTRA_LINKS: Record<
+  Role,
+  { label: string; href: string; icon: React.ComponentType<{ className?: string }> }[]
+> = {
+  tamu: [],
+  pelamar: [
+    { label: "Profil Akun", href: "/profil", icon: User },
+    { label: "Notifikasi", href: "/notifikasi", icon: Bell },
+  ],
+  perusahaan: [
+    { label: "Kelola Lowongan", href: "/mitra/lowongan", icon: Briefcase },
+    { label: "Profil Perusahaan", href: "/mitra/profil-perusahaan", icon: Building2 },
+    { label: "Laporan Rekap", href: "/mitra/laporan", icon: BarChart3 },
+  ],
+  admin: [
+    { label: "Antrean Review", href: "/admin/lowongan", icon: FileText },
+    { label: "Kelola Kategori", href: "/admin/kategori", icon: FolderTree },
+    { label: "Rekapitulasi Platform", href: "/admin/laporan", icon: BarChart3 },
+  ],
 };
 
 function getUserInitials(name: string): string {
@@ -32,10 +73,25 @@ function getUserInitials(name: string): string {
   return name.slice(0, 2).toUpperCase();
 }
 
-export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMenuProps) {
+export function MobileMenu({
+  links,
+  role = "tamu",
+  userName,
+}: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  // Kunci scroll halaman utama ketika menu mobile terbuka
+  useEffect(() => {
+    if (isOpen) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalStyle;
+      };
+    }
+  }, [isOpen]);
 
   // Tutup panel dengan tombol Escape
   useEffect(() => {
@@ -79,140 +135,181 @@ export function MobileMenu({ links, actions, role = "tamu", userName }: MobileMe
 
   const closeMenu = () => setIsOpen(false);
 
+  // Kumpulkan tautan tambahan spesifik peran yang belum ada di tautan utama
+  const existingHrefs = new Set(links.map((l) => l.href));
+  const extraLinks = (ROLE_EXTRA_LINKS[role] || []).filter(
+    (item) => !existingHrefs.has(item.href)
+  );
+
   return (
     <div ref={menuRef} className="md:hidden">
+      {/* Tombol Hamburger dengan ukuran sentuh minimal 44x44px */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
         aria-controls="mobile-nav-panel"
-        aria-label={isOpen ? t("Tutup menu navigasi", "Close navigation menu") : t("Buka menu navigasi", "Open navigation menu")}
-        className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 rounded-control text-slate-700 hover:text-navy-900 hover:bg-slate-100 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
+        aria-label={
+          isOpen
+            ? t("Tutup menu navigasi", "Close navigation menu")
+            : t("Buka menu navigasi", "Open navigation menu")
+        }
+        className="min-w-[44px] min-h-[44px] w-11 h-11 inline-flex items-center justify-center rounded-full text-slate-800 hover:text-navy-950 hover:bg-black/[0.05] active:scale-95 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
       >
         {isOpen ? (
-          <X className="w-6 h-6" aria-hidden="true" />
+          <X className="w-6 h-6 stroke-[2.2]" aria-hidden="true" />
         ) : (
-          <Menu className="w-6 h-6" aria-hidden="true" />
+          <Menu className="w-6 h-6 stroke-[2.2]" aria-hidden="true" />
         )}
       </button>
 
       {isOpen && (
         <>
-          {/* Latar redup untuk klik di luar */}
+          {/* Latar redup (backdrop) untuk menutup menu saat diklik di luar */}
           <div
-            className="fixed inset-0 top-20 bg-slate-900/20 backdrop-blur-xs z-30"
+            className="fixed inset-0 top-20 bg-slate-900/40 backdrop-blur-xs z-30 transition-opacity animate-in fade-in duration-200"
             onClick={closeMenu}
             aria-hidden="true"
           />
 
-          {/* Panel navigasi mobile */}
+          {/* Panel drawer menu navigasi mobile */}
           <nav
             id="mobile-nav-panel"
             aria-label={t("Navigasi Ponsel", "Mobile Navigation")}
-            className="absolute top-20 left-0 right-0 bg-[#FAF8F0] border-b border-[#222222]/15 shadow-modal z-40 px-5 py-5 max-h-[calc(100dvh-5rem)] overflow-y-auto space-y-4"
+            className="fixed top-20 left-0 right-0 bg-[#FAF8F0] border-b border-[#222222]/15 shadow-xl z-40 px-4 sm:px-6 py-5 max-h-[calc(100dvh-5rem)] overflow-y-auto space-y-4 animate-in slide-in-from-top-2 duration-200"
           >
-            {/* Switcher Bahasa di Menu Mobile */}
-            <LanguageSwitcher variant="mobile" />
-
-            <div className="flex flex-col gap-1">
-              {role !== "tamu" && userName && (
-                <div className="flex items-center gap-3 px-3 py-3 mb-2 bg-slate-50 rounded-card border border-slate-200">
-                  <span
-                    className="w-10 h-10 rounded-sm bg-navy-700 text-white text-sm font-bold flex items-center justify-center shrink-0"
-                    aria-hidden="true"
-                  >
-                    {getUserInitials(userName)}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-navy-950 truncate">
-                      {userName}
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      {t(ROLE_LABEL[role])}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {links.map((link) => (
-                <NavLink
-                  key={link.href}
-                  href={link.href}
-                  onClick={closeMenu}
-                  className="w-full text-base font-medium px-3 py-2.5"
+            {/* 1. Profil Pengguna yang Sedang Masuk */}
+            {role !== "tamu" && userName && (
+              <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-black/[0.08] shadow-2xs">
+                <span
+                  className="w-11 h-11 rounded-full bg-navy-900 text-white text-sm font-bold flex items-center justify-center shrink-0 shadow-2xs"
+                  aria-hidden="true"
                 >
-                  {link.label}
-                </NavLink>
-              ))}
+                  {getUserInitials(userName)}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-black text-navy-950 truncate">
+                    {userName}
+                  </p>
+                  <span
+                    className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold mt-0.5 ${ROLE_BADGE_CLASS[role]}`}
+                  >
+                    {language === "en"
+                      ? ROLE_LABEL[role].en
+                      : ROLE_LABEL[role].id}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* 2. Switcher Bahasa & Info Ringkas */}
+            <div className="pb-3 border-b border-black/[0.06]">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-2">
+                <span>{t("Pilihan Bahasa", "Language Selection")}</span>
+              </div>
+              <LanguageSwitcher variant="mobile" />
             </div>
 
-            {actions.length > 0 && (
-              <div className="pt-3 border-t border-slate-200 flex flex-col gap-2">
-                {actions.map((action) => {
-                  if (action.variant === "primary") {
-                    return (
-                      <ButtonLink
-                        key={action.href}
-                        href={action.href}
-                        onClick={closeMenu}
-                        variant="primary"
-                        size="md"
-                        fullWidth
-                      >
-                        {t(action.label)}
-                      </ButtonLink>
-                    );
-                  }
+            {/* 3. Menu Navigasi Utama */}
+            <div className="space-y-1">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-2 block">
+                {t("Menu Utama", "Main Menu")}
+              </span>
+              <div className="flex flex-col gap-1">
+                {links.map((link) => (
+                  <NavLink
+                    key={link.href}
+                    href={link.href}
+                    onClick={closeMenu}
+                    className="w-full text-base font-semibold px-3 py-2.5 rounded-xl justify-start"
+                  >
+                    {link.label}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
 
-                  if (action.variant === "outline") {
+            {/* 4. Menu Cepat Spesifik Peran (Pelamar, Mitra, Admin) */}
+            {extraLinks.length > 0 && (
+              <div className="pt-2 border-t border-black/[0.06] space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-2 block">
+                  {role === "admin"
+                    ? t("Akses Moderator", "Moderator Access")
+                    : role === "perusahaan"
+                    ? t("Akses Perusahaan", "Company Access")
+                    : t("Akses Akun", "Account Access")}
+                </span>
+                <div className="flex flex-col gap-1">
+                  {extraLinks.map((item) => {
+                    const Icon = item.icon;
                     return (
-                      <ButtonLink
-                        key={action.href}
-                        href={action.href}
+                      <Link
+                        key={item.href}
+                        href={item.href}
                         onClick={closeMenu}
-                        variant="outline"
-                        size="md"
-                        fullWidth
+                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-slate-800 hover:text-navy-950 hover:bg-black/[0.04] rounded-xl transition min-h-[44px]"
                       >
-                        {t(action.label)}
-                      </ButtonLink>
+                        <Icon className="w-4 h-4 text-slate-600 shrink-0" />
+                        <span>{t(item.label)}</span>
+                      </Link>
                     );
-                  }
+                  })}
+                </div>
+              </div>
+            )}
 
-                  return (
-                    <ButtonLink
-                      key={action.href}
-                      href={action.href}
+            {/* 5. Bagian Tombol Aksi (Masuk, Daftar, Pasang Lowongan, Keluar) */}
+            <div className="pt-3 border-t border-black/[0.06] space-y-2.5">
+              {role === "tamu" ? (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={closeMenu}
+                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-white hover:bg-slate-100 text-navy-950 font-bold text-sm border border-black/10 transition shadow-2xs min-h-[44px]"
+                  >
+                    <LogIn className="w-4 h-4 text-slate-700" aria-hidden="true" />
+                    <span>{t("Masuk ke Akun", "Sign In")}</span>
+                  </Link>
+
+                  <Link
+                    href="/register"
+                    onClick={closeMenu}
+                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-black font-black text-sm border border-black/10 transition shadow-2xs active:scale-95 min-h-[44px]"
+                  >
+                    <UserPlus className="w-4 h-4 text-black" aria-hidden="true" />
+                    <span>{t("Daftar Akun Baru", "Register New Account")}</span>
+                  </Link>
+
+                  <Link
+                    href="/register?peran=perusahaan"
+                    onClick={closeMenu}
+                    className="w-full inline-flex items-center justify-center gap-1.5 pt-1 text-xs font-bold text-slate-600 hover:text-navy-950 hover:underline min-h-[44px]"
+                  >
+                    <Building2 className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>{t("Pasang Lowongan Sebagai Perusahaan")}</span>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  {role === "perusahaan" && (
+                    <Link
+                      href="/mitra/lowongan/tambah"
                       onClick={closeMenu}
-                      variant="ghost"
-                      size="md"
-                      fullWidth
-                      className="justify-start px-3"
+                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-black font-black text-sm border border-black/10 transition shadow-2xs min-h-[44px]"
                     >
-                      {t(action.label)}
-                    </ButtonLink>
-                  );
-                })}
+                      <PlusCircle className="w-4 h-4" aria-hidden="true" />
+                      <span>{t("Pasang Lowongan Baru", "Post New Job")}</span>
+                    </Link>
+                  )}
 
-                {role !== "tamu" && (
                   <LogoutButton
                     variant="outline"
                     size="md"
-                    className="w-full justify-center mt-1"
+                    className="w-full justify-center rounded-full bg-white hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 min-h-[44px]"
                   />
-                )}
-              </div>
-            )}
-
-            {actions.length === 0 && role !== "tamu" && (
-              <div className="pt-3 border-t border-slate-200">
-                <LogoutButton
-                  variant="outline"
-                  size="md"
-                  className="w-full justify-center"
-                />
-              </div>
-            )}
+                </>
+              )}
+            </div>
           </nav>
         </>
       )}

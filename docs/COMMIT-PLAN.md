@@ -210,7 +210,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 16: Pengujian Responsif dan Audit Antislop
 
-- [ ] 158 `style(navbar): buat menu navigasi responsif untuk perangkat mobile`
+- [x] 158 `style(navbar): buat menu navigasi responsif untuk perangkat mobile`
 - [ ] 159 `style(beranda): uji dan rapikan tampilan pada 360px, 768px, 1280px`
 - [ ] 160 `style(wilayah): rapikan jelajah wilayah dan filter di layar mobile`
 - [ ] 161 `style(mitra): buat tabel pelamar dapat digeser horizontal di mobile`
