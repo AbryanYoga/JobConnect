@@ -76,10 +76,8 @@ export default async function TersimpanPage() {
               error.message ||
               "Terjadi gangguan koneksi saat mengambil daftar lowongan tersimpan Anda."
             }
-            action={{
-              label: "Muat Ulang Halaman",
-              href: "/tersimpan",
-            }}
+            actionLabel="Muat Ulang Halaman"
+            actionHref="/tersimpan"
           />
         </div>
       </div>

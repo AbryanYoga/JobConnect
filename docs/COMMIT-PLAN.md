@@ -206,7 +206,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 154 `feat(bookmark): buat halaman lowongan tersimpan /tersimpan`
 - [x] 155 `feat(mitra): buat halaman laporan rekapitulasi pelamar perusahaan`
 - [x] 156 `feat(mitra): tambah ekspor laporan ke format CSV dan cetak PDF`
-- [ ] 157 `feat(admin): buat halaman rekapitulasi data agregat platform admin`
+- [x] 157 `feat(admin): buat halaman rekapitulasi data agregat platform admin`
 
 ## Fase 16: Pengujian Responsif dan Audit Antislop
 
