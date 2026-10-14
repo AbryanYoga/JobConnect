@@ -413,7 +413,7 @@ export default async function PelamarPage({
               <Link
                 key={opt.value}
                 href={buildFilterUrl({ ai: opt.value })}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition min-h-[36px] ${
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-bold transition min-h-[44px] ${
                   isActive
                     ? "bg-[#0D0C23] text-[#FFDD00] shadow-2xs"
                     : "bg-[#FAF8F0] text-slate-700 border border-black/[0.06] hover:bg-black/[0.05]"
@@ -451,7 +451,7 @@ export default async function PelamarPage({
                 <Link
                   key={sortOpt.value}
                   href={buildFilterUrl({ sort: sortOpt.value })}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition min-h-[36px] inline-flex items-center ${
+                  className={`px-3 py-2 rounded-full text-xs font-bold transition min-h-[44px] inline-flex items-center ${
                     isActive
                       ? "bg-black text-[#FFDD00] shadow-2xs"
                       : "bg-[#FAF8F0] text-slate-700 hover:text-black border border-black/[0.06]"

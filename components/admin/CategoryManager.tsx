@@ -210,7 +210,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
                           setEditingCategory(cat);
                           setEditName(cat.name);
                         }}
-                        className="p-2 rounded-xl hover:bg-black/[0.05] text-slate-700 hover:text-black transition cursor-pointer min-h-[36px]"
+                        className="p-2.5 rounded-xl hover:bg-black/[0.05] text-slate-700 hover:text-black transition cursor-pointer min-h-[44px] min-w-[44px] inline-flex items-center justify-center"
                         aria-label={`Edit kategori ${cat.name}`}
                       >
                         <Edit2 className="w-4 h-4" />
@@ -228,7 +228,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
                             ? "Kategori tidak dapat dihapus karena masih digunakan lowongan aktif."
                             : `Hapus kategori ${cat.name}`
                         }
-                        className="p-2 rounded-xl hover:bg-red-50 text-slate-400 hover:text-red-700 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 disabled:cursor-not-allowed transition cursor-pointer min-h-[36px]"
+                        className="p-2.5 rounded-xl hover:bg-red-50 text-slate-500 hover:text-red-700 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 disabled:cursor-not-allowed transition cursor-pointer min-h-[44px] min-w-[44px] inline-flex items-center justify-center"
                         aria-label={`Hapus kategori ${cat.name}`}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -261,7 +261,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
               <button
                 type="button"
                 onClick={resetModals}
-                className="w-9 h-9 rounded-full hover:bg-black/[0.05] flex items-center justify-center text-slate-500 hover:text-black transition cursor-pointer min-h-[36px]"
+                className="w-11 h-11 rounded-full hover:bg-black/[0.05] flex items-center justify-center text-slate-700 hover:text-black transition cursor-pointer min-h-[44px] min-w-[44px]"
                 aria-label="Tutup modal tambah"
               >
                 <X className="w-5 h-5" />
@@ -345,7 +345,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
               <button
                 type="button"
                 onClick={resetModals}
-                className="w-9 h-9 rounded-full hover:bg-black/[0.05] flex items-center justify-center text-slate-500 hover:text-black transition cursor-pointer min-h-[36px]"
+                className="w-11 h-11 rounded-full hover:bg-black/[0.05] flex items-center justify-center text-slate-700 hover:text-black transition cursor-pointer min-h-[44px] min-w-[44px]"
                 aria-label="Tutup modal edit"
               >
                 <X className="w-5 h-5" />
@@ -428,7 +428,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
               <button
                 type="button"
                 onClick={resetModals}
-                className="w-9 h-9 rounded-full hover:bg-black/[0.05] flex items-center justify-center text-slate-500 hover:text-black transition cursor-pointer min-h-[36px]"
+                className="w-11 h-11 rounded-full hover:bg-black/[0.05] flex items-center justify-center text-slate-700 hover:text-black transition cursor-pointer min-h-[44px] min-w-[44px]"
                 aria-label="Tutup dialog hapus"
               >
                 <X className="w-5 h-5" />

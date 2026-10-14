@@ -202,7 +202,7 @@ export function CandidateNotes({
                         type="button"
                         onClick={() => handleDelete(item.id)}
                         disabled={isDeleting}
-                        className="inline-flex items-center gap-1 text-slate-400 hover:text-red-600 transition text-[11px] font-semibold min-h-[36px] px-2 cursor-pointer disabled:opacity-50"
+                        className="inline-flex items-center gap-1 text-slate-500 hover:text-red-600 transition text-[11px] font-semibold min-h-[44px] px-2.5 cursor-pointer disabled:opacity-50"
                         aria-label="Hapus catatan internal ini"
                       >
                         {isDeleting ? (

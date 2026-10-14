@@ -100,7 +100,7 @@ export function LaporanExportButtons({
             ? "Tidak ada data pada rentang ini. Ekspor dinonaktifkan"
             : "Unduh rekapitulasi data kandidat dalam format CSV"
         }
-        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-2xs min-h-[38px] ${
+        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-2xs min-h-[44px] ${
           disabled
             ? "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
             : "bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 active:scale-95"
@@ -123,7 +123,7 @@ export function LaporanExportButtons({
             ? "Tidak ada data pada rentang ini. Ekspor dinonaktifkan"
             : "Cetak dokumen atau simpan sebagai PDF"
         }
-        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-2xs min-h-[38px] ${
+        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-2xs min-h-[44px] ${
           disabled
             ? "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
             : "bg-[#FFDD00] hover:bg-[#F5D400] text-black border border-black/10 active:scale-95"

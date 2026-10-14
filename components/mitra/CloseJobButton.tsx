@@ -73,7 +73,7 @@ export function CloseJobButton({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="w-9 h-9 rounded-full hover:bg-black/[0.05] flex items-center justify-center text-slate-500 hover:text-black transition cursor-pointer min-h-[36px]"
+                className="w-11 h-11 rounded-full hover:bg-black/[0.05] flex items-center justify-center text-slate-700 hover:text-black transition cursor-pointer min-h-[44px] min-w-[44px]"
                 aria-label="Tutup dialog konfirmasi"
               >
                 <X className="w-5 h-5" />

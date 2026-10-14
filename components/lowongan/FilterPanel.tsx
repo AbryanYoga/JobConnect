@@ -125,7 +125,7 @@ export function FilterPanel({
               type="button"
               onClick={resetAllFilters}
               disabled={isPending}
-              className="text-xs font-bold text-rose-600 hover:text-rose-700 underline underline-offset-2 px-2 py-1 min-h-[36px] flex items-center"
+              className="text-xs font-bold text-rose-600 hover:text-rose-700 underline underline-offset-2 px-2 py-1 min-h-[44px] flex items-center"
             >
               {t("Reset")}
             </button>
@@ -197,7 +197,7 @@ export function FilterPanel({
               type="button"
               onClick={() => updateParam("tipe", "")}
               disabled={isPending}
-              className={`text-xs px-3.5 py-1.5 rounded-full border transition-all font-bold min-h-[38px] flex items-center ${
+              className={`text-xs px-3.5 py-2 rounded-full border transition-all font-bold min-h-[44px] flex items-center ${
                 !selectedJobType
                   ? "bg-black text-white border-black shadow-2xs"
                   : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
@@ -213,7 +213,7 @@ export function FilterPanel({
                   type="button"
                   onClick={() => updateParam("tipe", isActive ? "" : typeKey)}
                   disabled={isPending}
-                  className={`text-xs px-3.5 py-1.5 rounded-full border transition-all font-bold min-h-[38px] flex items-center ${
+                  className={`text-xs px-3.5 py-2 rounded-full border transition-all font-bold min-h-[44px] flex items-center ${
                     isActive
                       ? "bg-black text-white border-black shadow-2xs"
                       : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
@@ -241,7 +241,7 @@ export function FilterPanel({
                   type="button"
                   onClick={() => updateParam("mode", isActive ? "" : modeKey)}
                   disabled={isPending}
-                  className={`text-xs py-2 px-1 rounded-xl font-bold transition text-center min-h-[40px] flex items-center justify-center ${
+                  className={`text-xs py-2 px-1 rounded-xl font-bold transition text-center min-h-[44px] flex items-center justify-center ${
                     isActive
                       ? "bg-white text-black shadow-2xs border border-black/[0.08]"
                       : "text-slate-600 hover:text-black"

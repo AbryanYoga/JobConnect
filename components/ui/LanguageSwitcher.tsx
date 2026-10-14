@@ -208,7 +208,7 @@ export function LanguageSwitcher({
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center gap-2.5 bg-white/90 hover:bg-white text-slate-800 px-3.5 py-1.5 rounded-full text-xs font-bold border border-black/[0.08] shadow-2xs hover:border-black/[0.15] transition-all min-h-[38px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-700"
+        className="flex items-center gap-2.5 bg-white/90 hover:bg-white text-slate-800 px-3.5 py-1.5 rounded-full text-xs font-bold border border-black/[0.08] shadow-2xs hover:border-black/[0.15] transition-all min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-700"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={
