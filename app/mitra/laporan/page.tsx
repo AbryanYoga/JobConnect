@@ -15,6 +15,10 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge";
+import {
+  LaporanExportButtons,
+  type LaporanExportItem,
+} from "@/components/mitra/LaporanExportButtons";
 
 export const metadata: Metadata = {
   title: "Laporan Rekapitulasi Pelamar - Mitra JobConnect",
@@ -182,11 +186,34 @@ export default async function LaporanMitraPage({ searchParams }: LaporanPageProp
     };
   });
 
+  // Siapkan data untuk ekspor CSV dan cetak
+  const exportItems: LaporanExportItem[] = applications.map((app, index) => ({
+    no: index + 1,
+    tanggalMelamar: formatDateIndo(app.created_at),
+    namaPelamar: app.applicant?.name || "Nama Tidak Tersedia",
+    email: app.applicant?.email || "-",
+    telepon: app.applicant?.phone || "-",
+    posisiLowongan: app.jobTitle || "-",
+    statusSeleksi: app.status,
+    tanggalUpdate: formatDateIndo(app.updated_at),
+  }));
+
   return (
     <div className="space-y-8">
+      {/* Header Khusus Hasil Cetak PDF */}
+      <div className="hidden print:block p-4 border-b border-black space-y-1 mb-6">
+        <h1 className="text-xl font-bold text-black">{company.name}</h1>
+        <h2 className="text-sm font-semibold text-slate-700">
+          Laporan Rekapitulasi Pelamar & Alur Seleksi
+        </h2>
+        <p className="text-xs text-slate-500">
+          Periode: {formatDateIndo(startDate)} s.d. {formatDateIndo(endDate)}
+        </p>
+      </div>
+
       {/* Header Halaman Laporan */}
       <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-navy-50 text-navy-800 text-xs font-bold border border-navy-100">
               <BarChart3 className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
@@ -200,11 +227,21 @@ export default async function LaporanMitraPage({ searchParams }: LaporanPageProp
             </p>
           </div>
 
-          <div className="text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 self-start sm:self-center">
-            <span className="block font-semibold text-slate-800">Rentang Aktif</span>
-            <span>
-              {formatDateIndo(startDate)} s.d. {formatDateIndo(endDate)}
-            </span>
+          <div className="flex flex-wrap items-center gap-3 self-start lg:self-center">
+            <div className="text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2">
+              <span className="block font-semibold text-slate-800">Rentang Aktif</span>
+              <span>
+                {formatDateIndo(startDate)} s.d. {formatDateIndo(endDate)}
+              </span>
+            </div>
+
+            <LaporanExportButtons
+              items={exportItems}
+              companyName={company.name}
+              startDate={startDate}
+              endDate={endDate}
+              disabled={applications.length === 0}
+            />
           </div>
         </div>
 

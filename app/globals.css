@@ -140,3 +140,34 @@ textarea:focus-visible {
     pointer-events: none;
   }
 }
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  header,
+  nav,
+  footer,
+  aside,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .shadow-card,
+  .shadow-2xs,
+  .shadow-sm,
+  .shadow-md {
+    box-shadow: none !important;
+    border-color: #e2e8f0 !important;
+  }
+}
+
