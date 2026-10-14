@@ -1,9 +1,9 @@
 -- ==============================================================================
 -- JobConnect: Akun Demo untuk Pengujian & Presentasi
 -- Jalankan skrip ini di Supabase SQL Editor untuk membuat 3 akun siap pakai:
--- 1. Pelamar (role: user)
--- 2. Mitra Perusahaan (role: company, terhubung ke PT Contoh Karya Nusantara)
--- 3. Admin Platform (role: admin)
+-- 1. Pelamar (role: user) -> Abryan Yoga Pratama (abryan.yoga@jobconnect.id)
+-- 2. Mitra Perusahaan (role: company) -> PT Contoh Karya Nusantara (perusahaan.demo@jobconnect.id)
+-- 3. Admin Platform (role: admin) -> Admin JobConnect (admin.demo@jobconnect.id)
 --
 -- Password untuk semua akun demo: Password123!
 -- ==============================================================================
@@ -23,9 +23,12 @@ delete from auth.users where id in (
   'a0000000-0000-0000-0000-000000000001'::uuid,
   'b0000000-0000-0000-0000-000000000002'::uuid
 ) or email in (
+  'abryan.yoga@jobconnect.id',
   'pelamar.demo@jobconnect.id',
+  'perusahaan.demo@jobconnect.id',
   'mitra.demo@jobconnect.id',
-  'admin.demo@jobconnect.id'
+  'admin.demo@jobconnect.id',
+  'admin@jobconnect.id'
 );
 
 -- 3. Masukkan data ke auth.users
@@ -48,17 +51,17 @@ insert into auth.users (
   email_change
 )
 values
-  -- Pelamar
+  -- 1. Pelamar (User): Abryan Yoga Pratama
   (
     'b0000000-0000-0000-0000-000000000001'::uuid,
     '00000000-0000-0000-0000-000000000000'::uuid,
     'authenticated',
     'authenticated',
-    'pelamar.demo@jobconnect.id',
+    'abryan.yoga@jobconnect.id',
     extensions.crypt('Password123!', extensions.gen_salt('bf')),
     now(),
     '{"provider":"email","providers":["email"]}'::jsonb,
-    '{"name":"Budi Santoso","role":"user"}'::jsonb,
+    '{"name":"Abryan Yoga Pratama","role":"user"}'::jsonb,
     false,
     now(),
     now(),
@@ -67,13 +70,13 @@ values
     '',
     ''
   ),
-  -- Mitra Perusahaan
+  -- 2. Mitra Perusahaan (Company): PT Contoh Karya Nusantara
   (
     'a0000000-0000-0000-0000-000000000001'::uuid,
     '00000000-0000-0000-0000-000000000000'::uuid,
     'authenticated',
     'authenticated',
-    'mitra.demo@jobconnect.id',
+    'perusahaan.demo@jobconnect.id',
     extensions.crypt('Password123!', extensions.gen_salt('bf')),
     now(),
     '{"provider":"email","providers":["email"]}'::jsonb,
@@ -86,7 +89,7 @@ values
     '',
     ''
   ),
-  -- Admin Platform
+  -- 3. Admin Platform (Admin): Admin JobConnect
   (
     'b0000000-0000-0000-0000-000000000002'::uuid,
     '00000000-0000-0000-0000-000000000000'::uuid,
@@ -132,9 +135,9 @@ begin
         (
           'b0000000-0000-0000-0000-000000000001',
           'b0000000-0000-0000-0000-000000000001'::uuid,
-          '{"sub":"b0000000-0000-0000-0000-000000000001","email":"pelamar.demo@jobconnect.id"}'::jsonb,
+          '{"sub":"b0000000-0000-0000-0000-000000000001","email":"abryan.yoga@jobconnect.id"}'::jsonb,
           'email',
-          'pelamar.demo@jobconnect.id',
+          'abryan.yoga@jobconnect.id',
           now(),
           now(),
           now()
@@ -142,9 +145,9 @@ begin
         (
           'a0000000-0000-0000-0000-000000000001',
           'a0000000-0000-0000-0000-000000000001'::uuid,
-          '{"sub":"a0000000-0000-0000-0000-000000000001","email":"mitra.demo@jobconnect.id"}'::jsonb,
+          '{"sub":"a0000000-0000-0000-0000-000000000001","email":"perusahaan.demo@jobconnect.id"}'::jsonb,
           'email',
-          'mitra.demo@jobconnect.id',
+          'perusahaan.demo@jobconnect.id',
           now(),
           now(),
           now()
@@ -176,7 +179,7 @@ begin
         (
           'b0000000-0000-0000-0000-000000000001',
           'b0000000-0000-0000-0000-000000000001'::uuid,
-          '{"sub":"b0000000-0000-0000-0000-000000000001","email":"pelamar.demo@jobconnect.id"}'::jsonb,
+          '{"sub":"b0000000-0000-0000-0000-000000000001","email":"abryan.yoga@jobconnect.id"}'::jsonb,
           'email',
           now(),
           now(),
@@ -185,7 +188,7 @@ begin
         (
           'a0000000-0000-0000-0000-000000000001',
           'a0000000-0000-0000-0000-000000000001'::uuid,
-          '{"sub":"a0000000-0000-0000-0000-000000000001","email":"mitra.demo@jobconnect.id"}'::jsonb,
+          '{"sub":"a0000000-0000-0000-0000-000000000001","email":"perusahaan.demo@jobconnect.id"}'::jsonb,
           'email',
           now(),
           now(),
@@ -210,27 +213,27 @@ insert into public.profiles (id, email, name, role, phone, headline)
 values
   (
     'b0000000-0000-0000-0000-000000000001'::uuid,
-    'pelamar.demo@jobconnect.id',
-    'Budi Santoso',
+    'abryan.yoga@jobconnect.id',
+    'Abryan Yoga Pratama',
     'user',
     '081234567890',
-    'Lulusan SMK Teknik Mesin & Pengelasan'
+    'Software Developer | Rekayasa Perangkat Lunak'
   ),
   (
     'a0000000-0000-0000-0000-000000000001'::uuid,
-    'mitra.demo@jobconnect.id',
+    'perusahaan.demo@jobconnect.id',
     'PT Contoh Karya Nusantara',
     'company',
-    null,
-    null
+    '0215550101',
+    'Perusahaan Teknologi & Solusi Digital Terverifikasi'
   ),
   (
     'b0000000-0000-0000-0000-000000000002'::uuid,
     'admin.demo@jobconnect.id',
     'Admin JobConnect',
     'admin',
-    null,
-    null
+    '081100001111',
+    'Moderator & Administrator Platform JobConnect'
   )
 on conflict (id) do update set
   email = excluded.email,
@@ -239,7 +242,7 @@ on conflict (id) do update set
   phone = coalesce(excluded.phone, public.profiles.phone),
   headline = coalesce(excluded.headline, public.profiles.headline);
 
--- 6. Pastikan perusahaan PT Contoh Karya Nusantara dimiliki oleh a0000000-0000-0000-0000-000000000001
+-- 6. Pastikan perusahaan PT Contoh Karya Nusantara dimiliki oleh akun perusahaan ini
 update public.companies
 set owner_id = 'a0000000-0000-0000-0000-000000000001'::uuid
 where slug = 'contoh-karya-nusantara';
