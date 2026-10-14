@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { FormLamaran } from "@/components/lowongan/FormLamaran";
 import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge";
+import { BookmarkButton } from "@/components/lowongan/BookmarkButton";
 
 interface JobDetailPageProps {
   params: Promise<{
@@ -135,6 +136,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
   let userRole: string | null = null;
   let existingApplication: { id: number; status: string; created_at: string } | null = null;
+  let isBookmarked = false;
 
   if (user) {
     const { data: profile } = await supabase
@@ -143,6 +145,18 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
       .eq("id", user.id)
       .single();
     userRole = profile?.role || "user";
+
+    // Cek apakah lowongan disimpan oleh pelamar
+    const { data: savedData } = await supabase
+      .from("saved_jobs")
+      .select("job_id")
+      .eq("job_id", job.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (savedData) {
+      isBookmarked = true;
+    }
 
     // Cek apakah pengguna sudah pernah melamar ke lowongan ini
     const { data: appData } = await supabase
@@ -329,8 +343,14 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               </div>
             </div>
 
-            {/* Tombol CTA Lamar di Header */}
+            {/* Tombol CTA Lamar dan Simpan di Header */}
             <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <BookmarkButton
+                jobId={job.id}
+                initialIsBookmarked={isBookmarked}
+                variant="button"
+              />
+
               {existingApplication ? (
                 <Link
                   href={`/lamaran-saya/${existingApplication.id}`}

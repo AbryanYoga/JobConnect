@@ -39,6 +39,7 @@ export interface JobCardData {
 
 interface JobCardProps {
   job: JobCardData;
+  isBookmarked?: boolean;
 }
 
 function formatRupiah(amount: number): string {
@@ -63,8 +64,9 @@ function formatSalary(min?: number | null, max?: number | null, t?: (id: string,
 }
 
 import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
+import { BookmarkButton } from "./BookmarkButton";
 
-export function JobCard({ job }: JobCardProps) {
+export function JobCard({ job, isBookmarked = false }: JobCardProps) {
   const { t } = useLanguage();
   const companyName = job.company?.name || "Perusahaan Mitra";
   const companyInitials = getCompanyInitials(companyName);
@@ -143,12 +145,20 @@ export function JobCard({ job }: JobCardProps) {
           </div>
         </div>
 
-        {/* Informasi Gaji di Layar Sedang/Besar */}
-        <div className="hidden sm:block text-right shrink-0">
-          <span className="text-xs text-slate-500 block">{t("Kisaran Gaji", "Salary Range")}</span>
-          <span className="text-sm font-bold text-navy-950">
-            {formatSalary(job.salaryMin, job.salaryMax, t)}
-          </span>
+        {/* Informasi Gaji dan Tombol Bookmark */}
+        <div className="flex items-center gap-3 self-start sm:self-center shrink-0">
+          <div className="hidden sm:block text-right">
+            <span className="text-xs text-slate-500 block">{t("Kisaran Gaji", "Salary Range")}</span>
+            <span className="text-sm font-bold text-navy-950">
+              {formatSalary(job.salaryMin, job.salaryMax, t)}
+            </span>
+          </div>
+
+          <BookmarkButton
+            jobId={job.id}
+            initialIsBookmarked={isBookmarked}
+            variant="icon"
+          />
         </div>
       </div>
 

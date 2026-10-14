@@ -202,7 +202,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 15: Fitur Tambahan (Bookmark dan Laporan)
 
-- [ ] 153 `feat(bookmark): buat tombol simpan lowongan pada kartu dan detail`
+- [x] 153 `feat(bookmark): buat tombol simpan lowongan pada kartu dan detail`
 - [ ] 154 `feat(bookmark): buat halaman lowongan tersimpan /tersimpan`
 - [ ] 155 `feat(mitra): buat halaman laporan rekapitulasi pelamar perusahaan`
 - [ ] 156 `feat(mitra): tambah ekspor laporan ke format CSV dan cetak PDF`
