@@ -457,7 +457,7 @@ export function BmcLandingPage({
           ======================================================== */}
       <section
         ref={heroSectionRef}
-        className="relative z-20 pt-10 sm:pt-16 pb-24 sm:pb-36 px-4 sm:px-6 lg:px-8 overflow-x-clip overflow-y-visible min-h-[820px]"
+        className="relative z-20 pt-10 sm:pt-16 pb-16 sm:pb-36 px-4 sm:px-6 lg:px-8 overflow-x-clip overflow-y-visible min-h-0 lg:min-h-[820px]"
       >
         <div className="mx-auto max-w-3xl text-center relative z-20 space-y-6 sm:space-y-8">
           {/* Badge Rating & Kepercayaan Atas Hero */}
@@ -504,7 +504,7 @@ export function BmcLandingPage({
           {/* Hero Search Bar: Widget Interaktif BMC Style */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hero-anim-item relative z-30 mx-auto max-w-2xl bg-white p-2.5 sm:p-3 rounded-full border border-[#222222]/15 shadow-card flex flex-col sm:flex-row items-center gap-2"
+            className="hero-anim-item relative z-30 mx-auto max-w-2xl bg-white p-2.5 sm:p-3 rounded-2xl sm:rounded-full border border-[#222222]/15 shadow-card flex flex-col sm:flex-row items-center gap-2"
           >
             <div className="flex items-center gap-2 px-4 py-2 flex-1 w-full">
               <Search className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
@@ -551,12 +551,12 @@ export function BmcLandingPage({
               <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" />
               <span>{t("Gratis untuk pencari kerja", "Free for job seekers")}</span>
             </span>
-            <span className="text-slate-300">•</span>
+            <span className="hidden sm:inline text-slate-300">•</span>
             <span className="flex items-center gap-1.5">
               <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" />
               <span>{totalJobsCount} {t("lowongan aktif siap dilamar", "active vacancies ready to apply")}</span>
             </span>
-            <span className="text-slate-300">•</span>
+            <span className="hidden sm:inline text-slate-300">•</span>
             <span className="flex items-center gap-1.5">
               <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" />
               <span>{t("Jangkauan 38 provinsi", "Coverage across 38 provinces")}</span>
@@ -851,7 +851,7 @@ export function BmcLandingPage({
               </div>
               <Link
                 href="/lowongan?mode=onsite"
-                className="inline-flex items-center justify-center w-full py-2.5 rounded-full bg-white hover:bg-slate-50 text-navy-950 font-bold text-xs border border-slate-300 transition"
+                className="inline-flex items-center justify-center w-full py-2.5 rounded-full bg-white hover:bg-slate-50 text-navy-950 font-bold text-xs border border-slate-300 transition min-h-[44px]"
               >
                 {t("Lihat Lowongan Onsite", "View Onsite Jobs")}
               </Link>
@@ -894,7 +894,7 @@ export function BmcLandingPage({
               </div>
               <Link
                 href="/lowongan?mode=hybrid"
-                className="inline-flex items-center justify-center w-full py-2.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-navy-950 font-black text-xs transition shadow-2xs hover:shadow active:scale-95"
+                className="inline-flex items-center justify-center w-full py-2.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-navy-950 font-black text-xs transition shadow-2xs hover:shadow active:scale-95 min-h-[44px]"
               >
                 {t("Lihat Lowongan Hybrid", "View Hybrid Jobs")}
               </Link>
@@ -934,7 +934,7 @@ export function BmcLandingPage({
               </div>
               <Link
                 href="/wilayah/remote"
-                className="inline-flex items-center justify-center w-full py-2.5 rounded-full bg-white hover:bg-slate-50 text-navy-950 font-bold text-xs border border-slate-300 transition"
+                className="inline-flex items-center justify-center w-full py-2.5 rounded-full bg-white hover:bg-slate-50 text-navy-950 font-bold text-xs border border-slate-300 transition min-h-[44px]"
               >
                 {t("Lihat Lowongan Remote", "View Remote Jobs")}
               </Link>
@@ -1051,7 +1051,7 @@ export function BmcLandingPage({
             {/* Chip Remote Highlight */}
             <Link
               href="/wilayah/remote"
-              className="anim-wilayah-chip col-span-2 sm:col-span-1 p-3.5 rounded-2xl bg-navy-950 text-white flex items-center justify-between gap-2 shadow-2xs hover:shadow hover:-translate-y-0.5 transition"
+              className="anim-wilayah-chip col-span-2 sm:col-span-1 p-3.5 rounded-2xl bg-navy-950 text-white flex items-center justify-between gap-2 shadow-2xs hover:shadow hover:-translate-y-0.5 transition min-h-[44px]"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <Globe className="w-4 h-4 text-[#FFDD00] shrink-0" />
@@ -1066,7 +1066,7 @@ export function BmcLandingPage({
               <Link
                 key={prov.id}
                 href={`/lowongan?wilayah=${prov.slug}`}
-                className="anim-wilayah-chip p-3.5 rounded-2xl bg-[#FAF8F0] hover:bg-white border border-slate-200/80 hover:border-slate-300 flex items-center justify-between gap-2 shadow-2xs hover:shadow hover:-translate-y-0.5 transition"
+                className="anim-wilayah-chip p-3.5 rounded-2xl bg-[#FAF8F0] hover:bg-white border border-slate-200/80 hover:border-slate-300 flex items-center justify-between gap-2 shadow-2xs hover:shadow hover:-translate-y-0.5 transition min-h-[44px]"
               >
                 <span className="text-xs font-semibold text-slate-800 truncate">
                   {prov.name}
@@ -1186,7 +1186,7 @@ export function BmcLandingPage({
                       </span>
                       <Link
                         href={`/lowongan/${job.slug}`}
-                        className="inline-flex items-center justify-center px-4.5 py-2 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-[#0D0C23] font-bold text-xs shadow-2xs hover:shadow active:scale-95 transition min-h-[38px]"
+                        className="inline-flex items-center justify-center px-4.5 py-2 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-[#0D0C23] font-bold text-xs shadow-2xs hover:shadow active:scale-95 transition min-h-[44px]"
                       >
                         {t("Detail Lowongan", "Job Details")}
                       </Link>
