@@ -280,7 +280,7 @@ export default async function CityDetailPage({
         </div>
 
         {/* Bar Filter Kategori dan Tipe Kerja */}
-        <div className="rounded-[28px] border border-black/[0.08] bg-white p-5 sm:p-6 shadow-card space-y-4">
+        <div className="rounded-[28px] border border-black/[0.08] bg-white p-4 sm:p-6 shadow-card space-y-4">
           <div className="flex items-center gap-2 text-xs font-bold text-black uppercase tracking-wider">
             <Filter className="w-3.5 h-3.5 text-black" aria-hidden="true" />
             <span>Filter Cepat Lowongan</span>
@@ -293,7 +293,7 @@ export default async function CityDetailPage({
               <div className="flex items-center gap-2 flex-wrap text-xs">
                 <Link
                   href={createFilterUrl({ kategori: "" })}
-                  className={`px-3.5 py-1.5 rounded-full border transition-all min-h-[38px] inline-flex items-center font-bold ${
+                  className={`px-3.5 py-2 rounded-full border transition-all min-h-[44px] inline-flex items-center font-bold ${
                     !categorySlug
                       ? "bg-black text-white border-black shadow-2xs"
                       : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
@@ -305,7 +305,7 @@ export default async function CityDetailPage({
                   <Link
                     key={cat.id}
                     href={createFilterUrl({ kategori: cat.slug })}
-                    className={`px-3.5 py-1.5 rounded-full border transition-all min-h-[38px] inline-flex items-center font-bold ${
+                    className={`px-3.5 py-2 rounded-full border transition-all min-h-[44px] inline-flex items-center font-bold ${
                       categorySlug === cat.slug
                         ? "bg-black text-white border-black shadow-2xs"
                         : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
@@ -324,7 +324,7 @@ export default async function CityDetailPage({
             <div className="flex items-center gap-2 flex-wrap text-xs">
               <Link
                 href={createFilterUrl({ tipe: "" })}
-                className={`px-3.5 py-1.5 rounded-full border transition-all min-h-[38px] inline-flex items-center font-bold ${
+                className={`px-3.5 py-2 rounded-full border transition-all min-h-[44px] inline-flex items-center font-bold ${
                   !jobTypeParam
                     ? "bg-black text-white border-black shadow-2xs"
                     : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
@@ -336,7 +336,7 @@ export default async function CityDetailPage({
                 <Link
                   key={type}
                   href={createFilterUrl({ tipe: type })}
-                  className={`px-3.5 py-1.5 rounded-full border transition-all min-h-[38px] inline-flex items-center font-bold ${
+                  className={`px-3.5 py-2 rounded-full border transition-all min-h-[44px] inline-flex items-center font-bold ${
                     jobTypeParam === type
                       ? "bg-black text-white border-black shadow-2xs"
                       : "bg-[#FAF8F0] text-slate-700 border-black/[0.08] hover:bg-black/5"
@@ -349,7 +349,7 @@ export default async function CityDetailPage({
               {(categorySlug || jobTypeParam) && (
                 <Link
                   href={`/wilayah/${province.slug}/${city.slug}`}
-                  className="ml-auto text-xs font-bold text-rose-700 hover:underline min-h-[38px] inline-flex items-center"
+                  className="ml-auto text-xs font-bold text-rose-700 hover:underline min-h-[44px] inline-flex items-center"
                 >
                   Reset Filter
                 </Link>

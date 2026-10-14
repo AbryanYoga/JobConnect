@@ -123,11 +123,11 @@ export function ProvinceIndexView({
         </div>
 
         {/* Filter Tombol Pil */}
-        <div className="flex items-center gap-2 shrink-0" role="group" aria-label={t("Filter status lowongan", "Job status filter")}>
+        <div className="grid grid-cols-2 sm:flex items-center gap-2 shrink-0 w-full sm:w-auto" role="group" aria-label={t("Filter status lowongan", "Job status filter")}>
           <button
             type="button"
             onClick={() => setFilterMode("all")}
-            className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all min-h-[44px] border ${
+            className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all min-h-[44px] border text-center justify-center inline-flex items-center ${
               filterMode === "all"
                 ? "bg-black text-white border-black shadow-2xs"
                 : "bg-white text-slate-700 border-black/[0.08] hover:bg-black/5"
@@ -138,7 +138,7 @@ export function ProvinceIndexView({
           <button
             type="button"
             onClick={() => setFilterMode("active")}
-            className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all min-h-[44px] border ${
+            className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all min-h-[44px] border text-center justify-center inline-flex items-center ${
               filterMode === "active"
                 ? "bg-black text-white border-black shadow-2xs"
                 : "bg-white text-slate-700 border-black/[0.08] hover:bg-black/5"
