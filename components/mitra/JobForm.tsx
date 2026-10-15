@@ -69,6 +69,7 @@ export interface JobFormData {
   provinceId?: number | "";
   cityId?: number | "";
   locationDetail?: string;
+  [key: string]: unknown;
 }
 
 interface JobFormProps {
@@ -195,33 +196,34 @@ export function JobForm({
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
 
+  const getJobPayload = (cleanSkills?: string[], cleanResp?: string[]): JobFormData => ({
+    id: initialData?.id,
+    title,
+    summary,
+    categoryId,
+    provinceId,
+    cityId,
+    locationDetail,
+    workMode,
+    jobType,
+    educationMin,
+    experienceMinYears,
+    skills: cleanSkills ?? skills,
+    responsibilities: cleanResp ?? responsibilities,
+    niceToHave,
+    benefits,
+    salaryMin,
+    salaryMax,
+    deadline,
+    aiScreening,
+  });
+
   const handleSaveDraft = async () => {
     setFormError(null);
     setFormSuccess(null);
     setIsSavingDraft(true);
     try {
-      const res = await saveJobDraftAction({
-        id: initialData?.id,
-        title,
-        summary,
-        categoryId,
-        provinceId,
-        cityId,
-        locationDetail,
-        workMode,
-        jobType,
-        educationMin,
-        experienceMinYears,
-        skills,
-        responsibilities,
-        niceToHave,
-        benefits,
-        salaryMin,
-        salaryMax,
-        deadline,
-        aiScreening,
-      });
-
+      const res = await saveJobDraftAction(getJobPayload());
       if (!res.success) {
         setFormError(res.error || "Gagal menyimpan draft lowongan.");
       } else {
@@ -268,27 +270,7 @@ export function JobForm({
 
     setIsSubmitting(true);
     try {
-      const res = await submitJobAction({
-        id: initialData?.id,
-        title,
-        summary,
-        categoryId,
-        cityId,
-        locationDetail,
-        workMode,
-        jobType,
-        educationMin,
-        experienceMinYears,
-        skills: validSkills,
-        responsibilities: validResp,
-        niceToHave,
-        benefits,
-        salaryMin,
-        salaryMax,
-        deadline,
-        aiScreening,
-      });
-
+      const res = await submitJobAction(getJobPayload(validSkills, validResp));
       if (!res.success) {
         setFormError(res.error || "Gagal mengajukan lowongan.");
       } else {
@@ -302,79 +284,40 @@ export function JobForm({
     }
   };
 
-  // Helper tambah skill
+  const updateItem = (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number, val: string) => {
+    setter((prev) => {
+      const updated = [...prev];
+      updated[idx] = val;
+      return updated;
+    });
+  };
+  const addItem = (setter: React.Dispatch<React.SetStateAction<string[]>>, max: number) => {
+    setter((prev) => (prev.length < max ? [...prev, ""] : prev));
+  };
+  const removeItem = (setter: React.Dispatch<React.SetStateAction<string[]>>, idx: number, min: number = 0) => {
+    setter((prev) => (prev.length > min ? prev.filter((_, i) => i !== idx) : prev));
+  };
+
   const handleAddSkill = () => {
     const trimmed = currentSkillInput.trim();
-    if (!trimmed) return;
-    if (skills.filter(Boolean).length >= JOB_LIMITS.skills.max) return;
-    if (!skills.includes(trimmed)) {
+    if (trimmed && skills.filter(Boolean).length < JOB_LIMITS.skills.max && !skills.includes(trimmed)) {
       setSkills((prev) => [...prev.filter(Boolean), trimmed]);
     }
     setCurrentSkillInput("");
   };
+  const handleRemoveSkill = (index: number) => setSkills((prev) => prev.filter((_, i) => i !== index));
 
-  const handleRemoveSkill = (index: number) => {
-    setSkills((prev) => prev.filter((_, i) => i !== index));
-  };
+  const handleResponsibilityChange = (i: number, v: string) => updateItem(setResponsibilities, i, v);
+  const handleAddResponsibility = () => addItem(setResponsibilities, JOB_LIMITS.responsibilities.max);
+  const handleRemoveResponsibility = (i: number) => removeItem(setResponsibilities, i, JOB_LIMITS.responsibilities.min);
 
-  // Helper tambah/ubah responsibility
-  const handleResponsibilityChange = (index: number, val: string) => {
-    setResponsibilities((prev) => {
-      const updated = [...prev];
-      updated[index] = val;
-      return updated;
-    });
-  };
+  const handleNiceToHaveChange = (i: number, v: string) => updateItem(setNiceToHave, i, v);
+  const handleAddNiceToHave = () => addItem(setNiceToHave, JOB_LIMITS.niceToHave.max);
+  const handleRemoveNiceToHave = (i: number) => removeItem(setNiceToHave, i);
 
-  const handleAddResponsibility = () => {
-    if (responsibilities.length < JOB_LIMITS.responsibilities.max) {
-      setResponsibilities((prev) => [...prev, ""]);
-    }
-  };
-
-  const handleRemoveResponsibility = (index: number) => {
-    if (responsibilities.length > JOB_LIMITS.responsibilities.min) {
-      setResponsibilities((prev) => prev.filter((_, i) => i !== index));
-    }
-  };
-
-  // Helper nilai tambah (nice to have)
-  const handleNiceToHaveChange = (index: number, val: string) => {
-    setNiceToHave((prev) => {
-      const updated = [...prev];
-      updated[index] = val;
-      return updated;
-    });
-  };
-
-  const handleAddNiceToHave = () => {
-    if (niceToHave.length < JOB_LIMITS.niceToHave.max) {
-      setNiceToHave((prev) => [...prev, ""]);
-    }
-  };
-
-  const handleRemoveNiceToHave = (index: number) => {
-    setNiceToHave((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  // Helper benefit
-  const handleBenefitChange = (index: number, val: string) => {
-    setBenefits((prev) => {
-      const updated = [...prev];
-      updated[index] = val;
-      return updated;
-    });
-  };
-
-  const handleAddBenefit = () => {
-    if (benefits.length < JOB_LIMITS.benefits.max) {
-      setBenefits((prev) => [...prev, ""]);
-    }
-  };
-
-  const handleRemoveBenefit = (index: number) => {
-    setBenefits((prev) => prev.filter((_, i) => i !== index));
-  };
+  const handleBenefitChange = (i: number, v: string) => updateItem(setBenefits, i, v);
+  const handleAddBenefit = () => addItem(setBenefits, JOB_LIMITS.benefits.max);
+  const handleRemoveBenefit = (i: number) => removeItem(setBenefits, i);
 
   return (
     <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>

@@ -72,40 +72,21 @@ export async function screenApplicationCv(
     };
   }
 
-  type RawApp = {
+  type JobData = {
     id: number;
-    user_id: string;
-    job_id: number;
-    cv_path: string;
-    ai_consent: boolean;
-    status: string;
-    jobs: {
-      id: number;
-      title: string;
-      summary: string | null;
-      education_min: string;
-      experience_min_years: number;
-      skills: string[];
-      responsibilities: string[];
-      nice_to_have: string[];
-      ai_screening: boolean;
-      company_id: number;
-    } | {
-      id: number;
-      title: string;
-      summary: string | null;
-      education_min: string;
-      experience_min_years: number;
-      skills: string[];
-      responsibilities: string[];
-      nice_to_have: string[];
-      ai_screening: boolean;
-      company_id: number;
-    }[] | null;
+    title: string;
+    summary: string | null;
+    education_min: string;
+    experience_min_years: number;
+    skills: string[];
+    responsibilities: string[];
+    nice_to_have: string[];
+    ai_screening: boolean;
+    company_id: number;
   };
 
-  const application = rawApplication as unknown as RawApp;
-  const job = Array.isArray(application.jobs) ? application.jobs[0] : application.jobs;
+  const rawJobs = (rawApplication as unknown as { jobs: JobData | JobData[] | null }).jobs;
+  const job: JobData | null = Array.isArray(rawJobs) ? rawJobs[0] : rawJobs;
 
   if (!job) {
     return {
@@ -117,9 +98,12 @@ export async function screenApplicationCv(
     };
   }
 
-  // 2. Periksa hak akses pengguna pemanggil (pelamar pemilik lamaran atau perusahaan pemilik lowongan)
-  const isApplicant = application.user_id === callerUserId;
+  const fail = async (error: string, statusCode = 500): Promise<ScreeningResult> => {
+    await adminClient.from("application_ai_reviews").update({ status: "failed", error_message: error }).eq("application_id", applicationId);
+    return { success: false, applicationId, status: "failed", error, statusCode };
+  };
 
+  const isApplicant = rawApplication.user_id === callerUserId;
   const { data: company } = await adminClient
     .from("companies")
     .select("id")
@@ -127,7 +111,6 @@ export async function screenApplicationCv(
     .maybeSingle();
 
   const isCompanyOwner = Boolean(company && company.id === job.company_id);
-
   if (!isApplicant && !isCompanyOwner) {
     return {
       success: false,
@@ -138,8 +121,7 @@ export async function screenApplicationCv(
     };
   }
 
-  // 3. Periksa persetujuan pelamar dan ketersediaan screening AI pada lowongan
-  if (!application.ai_consent) {
+  if (!rawApplication.ai_consent) {
     return {
       success: false,
       applicationId,
@@ -159,7 +141,6 @@ export async function screenApplicationCv(
     };
   }
 
-  // 4. Periksa apakah analisis sudah pernah diselesaikan sebelumnya
   const { data: existingReview } = await adminClient
     .from("application_ai_reviews")
     .select("id, status, attempts, score, level, summary, matched_skills, missing_skills, interview_questions, suspicious")
@@ -187,98 +168,35 @@ export async function screenApplicationCv(
   const currentAttempts = (existingReview?.attempts || 0) + 1;
   const currentModel = getClaudeModel();
 
-  // 4a. Periksa batas maksimal percobaan analisis ulang untuk satu lamaran (PRD 7.5)
   if (currentAttempts > MAX_AI_ATTEMPTS_PER_APPLICATION) {
     const errorMsg = "Batas maksimal percobaan analisis AI (3 kali) untuk lamaran ini telah tercapai.";
-    await adminClient
-      .from("application_ai_reviews")
-      .update({
-        status: "skipped",
-        error_message: errorMsg,
-      })
-      .eq("application_id", applicationId);
-
-    return {
-      success: false,
-      applicationId,
-      status: "skipped",
-      error: errorMsg,
-      statusCode: 429,
-    };
+    await adminClient.from("application_ai_reviews").update({ status: "skipped", error_message: errorMsg }).eq("application_id", applicationId);
+    return { success: false, applicationId, status: "skipped", error: errorMsg, statusCode: 429 };
   }
 
-  // 4b. Periksa batas kuota harian total pemindaian AI (PRD 7.5: AI_MAX_SCANS_PER_DAY)
   const quota = await checkDailyAiQuota(adminClient);
   if (!quota.allowed) {
     const errorMsg = `Batas kuota harian screening AI telah tercapai (${quota.currentCount}/${quota.maxLimit}). Dokumen CV tetap dapat ditinjau secara manual oleh perusahaan.`;
-    await adminClient
-      .from("application_ai_reviews")
-      .upsert(
-        {
-          application_id: applicationId,
-          status: "skipped",
-          attempts: currentAttempts,
-          error_message: errorMsg,
-          model: currentModel,
-        },
-        { onConflict: "application_id" }
-      );
-
-    return {
-      success: false,
-      applicationId,
-      status: "skipped",
-      error: errorMsg,
-      statusCode: 429,
-    };
+    await adminClient.from("application_ai_reviews").upsert(
+      { application_id: applicationId, status: "skipped", attempts: currentAttempts, error_message: errorMsg, model: currentModel },
+      { onConflict: "application_id" }
+    );
+    return { success: false, applicationId, status: "skipped", error: errorMsg, statusCode: 429 };
   }
 
-  // 5. Update status review menjadi processing
   await adminClient.from("application_ai_reviews").upsert(
-    {
-      application_id: applicationId,
-      status: "processing",
-      attempts: currentAttempts,
-      error_message: null,
-      model: currentModel,
-    },
+    { application_id: applicationId, status: "processing", attempts: currentAttempts, error_message: null, model: currentModel },
     { onConflict: "application_id" }
   );
 
-  // 6. Unduh berkas PDF CV dari bucket privat cvs
-  const { data: fileBlob, error: downloadError } = await adminClient.storage
-    .from("cvs")
-    .download(application.cv_path);
-
+  const { data: fileBlob, error: downloadError } = await adminClient.storage.from("cvs").download(rawApplication.cv_path);
   if (downloadError || !fileBlob) {
-    const errorMsg = "Berkas CV pelamar tidak ditemukan di penyimpanan privat.";
-    await adminClient
-      .from("application_ai_reviews")
-      .update({
-        status: "failed",
-        error_message: errorMsg,
-      })
-      .eq("application_id", applicationId);
-
-    return {
-      success: false,
-      applicationId,
-      status: "failed",
-      error: errorMsg,
-      statusCode: 500,
-    };
+    return fail("Berkas CV pelamar tidak ditemukan di penyimpanan privat.", 500);
   }
 
-  // 7. Konversi PDF menjadi base64 string dan deteksi potensi manipulasi prompt injection
-  const arrayBuffer = await fileBlob.arrayBuffer();
-  const pdfBuffer = Buffer.from(arrayBuffer);
-  const pdfBase64 = pdfBuffer.toString("base64");
+  const pdfBuffer = Buffer.from(await fileBlob.arrayBuffer());
+  const preScan = detectPromptInjection(pdfBuffer.toString("latin1"));
 
-  // Pindai teks mentah berkas PDF untuk mendeteksi instruksi prompt injection
-  const rawTextSnippet = pdfBuffer.toString("latin1");
-  const preScan = detectPromptInjection(rawTextSnippet);
-
-  // 8. Susun prompt evaluasi netral
   const userPrompt = buildEvaluationUserPrompt({
     title: job.title,
     summary: job.summary,
@@ -292,65 +210,27 @@ export async function screenApplicationCv(
       : undefined,
   });
 
-  // 9. Panggil Claude API
   let rawAiResponse: string;
   try {
     rawAiResponse = await callClaudeWithPdf({
       systemPrompt: NEUTRAL_EVALUATION_SYSTEM_PROMPT,
       promptText: userPrompt,
-      pdfBase64,
+      pdfBase64: pdfBuffer.toString("base64"),
       maxTokens: 2048,
       timeoutMs: 50000,
     });
   } catch (aiCallError: unknown) {
-    const errorMsg =
-      aiCallError instanceof Error
-        ? aiCallError.message
-        : "Kendala saat menghubungi layanan Claude API.";
-
-    await adminClient
-      .from("application_ai_reviews")
-      .update({
-        status: "failed",
-        error_message: errorMsg,
-      })
-      .eq("application_id", applicationId);
-
-    return {
-      success: false,
-      applicationId,
-      status: "failed",
-      error: errorMsg,
-      statusCode: 502,
-    };
+    return fail(aiCallError instanceof Error ? aiCallError.message : "Kendala saat menghubungi layanan Claude API.", 502);
   }
 
-  // 10. Validasi respons menggunakan skema Zod
   const validation = parseAndValidateAiResponse(rawAiResponse);
   if (!validation.success || !validation.data) {
-    const errorMsg =
-      validation.error || "Format respons AI tidak sesuai skema evaluasi.";
-    await adminClient
-      .from("application_ai_reviews")
-      .update({
-        status: "failed",
-        error_message: errorMsg,
-      })
-      .eq("application_id", applicationId);
-
-    return {
-      success: false,
-      applicationId,
-      status: "failed",
-      error: errorMsg,
-      statusCode: 502,
-    };
+    return fail(validation.error || "Format respons AI tidak sesuai skema evaluasi.", 502);
   }
 
   const result = validation.data;
   const finalSuspicious = Boolean(result.suspicious || preScan.isSuspicious);
 
-  // 11. Simpan hasil evaluasi yang valid ke database
   const { error: saveError } = await adminClient
     .from("application_ai_reviews")
     .update({
@@ -368,13 +248,7 @@ export async function screenApplicationCv(
     .eq("application_id", applicationId);
 
   if (saveError) {
-    return {
-      success: false,
-      applicationId,
-      status: "failed",
-      error: "Gagal menyimpan hasil review AI ke database.",
-      statusCode: 500,
-    };
+    return { success: false, applicationId, status: "failed", error: "Gagal menyimpan hasil review AI ke database.", statusCode: 500 };
   }
 
   return {

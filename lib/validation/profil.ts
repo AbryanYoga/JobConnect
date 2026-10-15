@@ -12,111 +12,59 @@ export { NAME_MAX, NAME_MIN };
 
 export const companySizeEnum = z.enum(
   ["1-10", "11-50", "51-200", "201-500", "501+"] as const,
-  {
-    error: "Ukuran perusahaan tidak valid",
-  }
+  { error: "Ukuran perusahaan tidak valid" }
 );
 
-/**
- * Normalisasi dan validasi nomor telepon Indonesia.
- * Menerima format 08xx, +628xx, atau 628xx dengan panjang 9 sampai 14 digit.
- * Spasi dan tanda hubung dibersihkan, output dinormalisasi ke 08xx.
- */
+const trimmedOptional = (max: number, msg: string) =>
+  z.union([z.string(), z.null(), z.undefined()])
+    .transform((val) => (val ? val.trim() || null : null))
+    .refine((val) => !val || val.length <= max, msg);
+
+const optionalId = () =>
+  z.union([z.number(), z.string(), z.null(), z.undefined()])
+    .transform((val) => (val === null || val === undefined || val === "" || isNaN(Number(val)) ? null : Number(val)));
+
+function parseIndonesianPhone(val: unknown): { raw: string; normalized: string; isValid: boolean } {
+  if (!val || typeof val !== "string") return { raw: "", normalized: "", isValid: true };
+  const clean = val.replace(/[\s-]/g, "").trim();
+  if (!clean) return { raw: "", normalized: "", isValid: true };
+  const norm = clean.startsWith("+628") ? "08" + clean.slice(4) : clean.startsWith("628") ? "08" + clean.slice(3) : clean;
+  return { raw: clean, normalized: norm, isValid: /^08\d{7,12}$/.test(norm) };
+}
+
 export const phoneSchema = z
   .union([z.string(), z.null(), z.undefined()])
-  .transform((val) => {
-    if (!val) return "";
-    return val.replace(/[\s-]/g, "").trim();
+  .refine((val) => parseIndonesianPhone(val).isValid, {
+    message: "Nomor telepon tidak valid. Gunakan format Indonesia, contoh: 08123456789",
   })
-  .refine(
-    (val) => {
-      if (!val) return true;
-      let normalized = val;
-      if (normalized.startsWith("+628")) {
-        normalized = "08" + normalized.slice(4);
-      } else if (normalized.startsWith("628")) {
-        normalized = "08" + normalized.slice(3);
-      }
-      return /^08\d{7,12}$/.test(normalized);
-    },
-    {
-      message:
-        "Nomor telepon tidak valid. Gunakan format Indonesia, contoh: 08123456789",
-    }
-  )
-  .transform((val) => {
-    if (!val) return null;
-    let normalized = val;
-    if (normalized.startsWith("+628")) {
-      normalized = "08" + normalized.slice(4);
-    } else if (normalized.startsWith("628")) {
-      normalized = "08" + normalized.slice(3);
-    }
-    return normalized;
-  });
+  .transform((val) => parseIndonesianPhone(val).normalized || null);
 
-/**
- * Normalisasi dan validasi URL website perusahaan.
- * Menambahkan https:// bila pengguna menulis tanpa protokol.
- */
 export const websiteSchema = z
   .union([z.string(), z.null(), z.undefined()])
   .transform((val) => {
-    if (!val) return "";
-    return val.trim();
+    if (!val || typeof val !== "string") return "";
+    const trimmed = val.trim();
+    if (!trimmed) return "";
+    return !/^https?:\/\//i.test(trimmed) ? `https://${trimmed}` : trimmed;
   })
-  .refine(
-    (val) => {
-      if (!val) return true;
-      let urlStr = val;
-      const lower = urlStr.toLowerCase();
-      if (!lower.startsWith("http://") && !lower.startsWith("https://")) {
-        urlStr = "https://" + urlStr;
-      }
-      if (urlStr.length > WEBSITE_MAX) return false;
-      try {
-        const parsed = new URL(urlStr);
-        return (
-          (parsed.protocol === "http:" || parsed.protocol === "https:") &&
-          parsed.hostname.includes(".")
-        );
-      } catch {
-        return false;
-      }
-    },
-    {
-      message:
-        "Website harus berupa URL yang valid (maksimal 200 karakter). Contoh: https://perusahaan.com",
+  .refine((val) => {
+    if (!val) return true;
+    if (val.length > WEBSITE_MAX) return false;
+    try {
+      const parsed = new URL(val);
+      return (parsed.protocol === "http:" || parsed.protocol === "https:") && parsed.hostname.includes(".");
+    } catch {
+      return false;
     }
-  )
-  .transform((val) => {
-    if (!val) return null;
-    let urlStr = val;
-    const lower = urlStr.toLowerCase();
-    if (!lower.startsWith("http://") && !lower.startsWith("https://")) {
-      urlStr = "https://" + urlStr;
-    }
-    return urlStr;
-  });
+  }, {
+    message: "Website harus berupa URL yang valid (maksimal 200 karakter). Contoh: https://perusahaan.com",
+  })
+  .transform((val) => val || null);
 
 export const profilPelamarSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(NAME_MIN, `Nama minimal ${NAME_MIN} karakter`)
-    .max(NAME_MAX, `Nama maksimal ${NAME_MAX} karakter`),
+  name: z.string().trim().min(NAME_MIN, `Nama minimal ${NAME_MIN} karakter`).max(NAME_MAX, `Nama maksimal ${NAME_MAX} karakter`),
   phone: phoneSchema,
-  headline: z
-    .union([z.string(), z.null(), z.undefined()])
-    .transform((val) => {
-      if (!val) return null;
-      const trimmed = val.trim();
-      return trimmed || null;
-    })
-    .refine(
-      (val) => !val || val.length <= HEADLINE_MAX,
-      `Headline maksimal ${HEADLINE_MAX} karakter`
-    ),
+  headline: trimmedOptional(HEADLINE_MAX, `Headline maksimal ${HEADLINE_MAX} karakter`),
   emailNotifications: z.boolean().default(true),
 });
 
@@ -124,170 +72,53 @@ export type ProfilPelamarInput = z.infer<typeof profilPelamarSchema>;
 
 export const profilPerusahaanSchema = z
   .object({
-    name: z
-      .string()
-      .trim()
-      .min(NAME_MIN, `Nama minimal ${NAME_MIN} karakter`)
-      .max(NAME_MAX, `Nama maksimal ${NAME_MAX} karakter`),
+    name: z.string().trim().min(NAME_MIN, `Nama minimal ${NAME_MIN} karakter`).max(NAME_MAX, `Nama maksimal ${NAME_MAX} karakter`),
     website: websiteSchema,
-    industry: z
-      .union([z.string(), z.null(), z.undefined()])
-      .transform((val) => {
-        if (!val) return null;
-        const trimmed = val.trim();
-        return trimmed || null;
-      })
-      .refine(
-        (val) => !val || val.length <= INDUSTRY_MAX,
-        `Industri maksimal ${INDUSTRY_MAX} karakter`
-      ),
-    size: z
-      .union([companySizeEnum, z.literal(""), z.null(), z.undefined()])
-      .transform((val) => (val ? (val as CompanySize) : null)),
-    provinceId: z
-      .union([z.number(), z.string(), z.null(), z.undefined()])
-      .transform((val) => {
-        if (val === null || val === undefined || val === "") return null;
-        const n = Number(val);
-        return isNaN(n) ? null : n;
-      }),
-    cityId: z
-      .union([z.number(), z.string(), z.null(), z.undefined()])
-      .transform((val) => {
-        if (val === null || val === undefined || val === "") return null;
-        const n = Number(val);
-        return isNaN(n) ? null : n;
-      }),
-    addressNote: z
-      .union([z.string(), z.null(), z.undefined()])
-      .transform((val) => {
-        if (!val) return null;
-        const trimmed = val.trim();
-        return trimmed || null;
-      })
-      .refine(
-        (val) => !val || val.length <= ADDRESS_NOTE_MAX,
-        `Catatan alamat maksimal ${ADDRESS_NOTE_MAX} karakter`
-      ),
-    description: z
-      .union([z.string(), z.null(), z.undefined()])
-      .transform((val) => {
-        if (!val) return null;
-        const trimmed = val.trim();
-        return trimmed || null;
-      })
-      .refine(
-        (val) => !val || val.length <= DESCRIPTION_MAX,
-        `Deskripsi maksimal ${DESCRIPTION_MAX} karakter`
-      ),
+    industry: trimmedOptional(INDUSTRY_MAX, `Industri maksimal ${INDUSTRY_MAX} karakter`),
+    size: z.union([companySizeEnum, z.literal(""), z.null(), z.undefined()]).transform((val) => (val ? (val as CompanySize) : null)),
+    provinceId: optionalId(),
+    cityId: optionalId(),
+    addressNote: trimmedOptional(ADDRESS_NOTE_MAX, `Catatan alamat maksimal ${ADDRESS_NOTE_MAX} karakter`),
+    description: trimmedOptional(DESCRIPTION_MAX, `Deskripsi maksimal ${DESCRIPTION_MAX} karakter`),
   })
   .refine(
-    (data) => {
-      if (data.cityId !== null && data.cityId !== undefined) {
-        return data.provinceId !== null && data.provinceId !== undefined;
-      }
-      return true;
-    },
-    {
-      message: "Provinsi wajib dipilih jika kota/kabupaten dipilih",
-      path: ["provinceId"],
-    }
+    (data) => (data.cityId !== null && data.cityId !== undefined ? data.provinceId !== null && data.provinceId !== undefined : true),
+    { message: "Provinsi wajib dipilih jika kota/kabupaten dipilih", path: ["provinceId"] }
   );
 
 export type ProfilPerusahaanInput = z.infer<typeof profilPerusahaanSchema>;
 
 export const LOGO_MAX_BYTES = 2 * 1024 * 1024;
 export const LOGO_BUCKET = "company-logos";
-export const LOGO_ALLOWED_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-] as const;
-export const LOGO_ERROR_MESSAGE =
-  "Logo harus berformat PNG, JPG, atau WEBP dan maksimal 2 MB";
-
+export const LOGO_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+export const LOGO_ERROR_MESSAGE = "Logo harus berformat PNG, JPG, atau WEBP dan maksimal 2 MB";
 export type LogoExtension = "jpg" | "png" | "webp";
 
-/**
- * Validasi berkas logo perusahaan.
- * Memeriksa tipe MIME, batas ukuran (maksimal 2 MB), dan magic bytes berkas.
- */
 export async function validateLogoFile(
   file: File
-): Promise<
-  { ok: true; extension: LogoExtension } | { ok: false; message: string }
-> {
-  if (!file || typeof file.slice !== "function") {
-    return { ok: false, message: LOGO_ERROR_MESSAGE };
-  }
-
-  if (
-    !LOGO_ALLOWED_TYPES.includes(
-      file.type as (typeof LOGO_ALLOWED_TYPES)[number]
-    )
-  ) {
-    return { ok: false, message: LOGO_ERROR_MESSAGE };
-  }
-
-  if (file.size <= 0 || file.size > LOGO_MAX_BYTES) {
+): Promise<{ ok: true; extension: LogoExtension } | { ok: false; message: string }> {
+  if (!file || typeof file.slice !== "function" || !LOGO_ALLOWED_TYPES.includes(file.type as (typeof LOGO_ALLOWED_TYPES)[number]) || file.size <= 0 || file.size > LOGO_MAX_BYTES) {
     return { ok: false, message: LOGO_ERROR_MESSAGE };
   }
 
   try {
-    const slice = file.slice(0, 12);
-    const buffer = await slice.arrayBuffer();
-    const bytes = new Uint8Array(buffer);
-
-    if (file.type === "image/png") {
-      if (
-        bytes.length >= 8 &&
-        bytes[0] === 0x89 &&
-        bytes[1] === 0x50 &&
-        bytes[2] === 0x4e &&
-        bytes[3] === 0x47
-      ) {
-        return { ok: true, extension: "png" };
-      }
-    } else if (file.type === "image/jpeg") {
-      if (
-        bytes.length >= 3 &&
-        bytes[0] === 0xff &&
-        bytes[1] === 0xd8 &&
-        bytes[2] === 0xff
-      ) {
-        return { ok: true, extension: "jpg" };
-      }
-    } else if (file.type === "image/webp") {
-      if (
-        bytes.length >= 12 &&
-        bytes[0] === 0x52 &&
-        bytes[1] === 0x49 &&
-        bytes[2] === 0x46 &&
-        bytes[3] === 0x46 &&
-        bytes[8] === 0x57 &&
-        bytes[9] === 0x45 &&
-        bytes[10] === 0x42 &&
-        bytes[11] === 0x50
-      ) {
-        return { ok: true, extension: "webp" };
-      }
+    const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    if (file.type === "image/png" && bytes.length >= 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) {
+      return { ok: true, extension: "png" };
+    }
+    if (file.type === "image/jpeg" && bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+      return { ok: true, extension: "jpg" };
+    }
+    if (file.type === "image/webp" && bytes.length >= 12 && bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) {
+      return { ok: true, extension: "webp" };
     }
   } catch {
     return { ok: false, message: LOGO_ERROR_MESSAGE };
   }
-
   return { ok: false, message: LOGO_ERROR_MESSAGE };
 }
 
-/**
- * Menghasilkan jalur penyimpanan logo di bucket 'company-logos'.
- * Format: "${companyId}/logo-${timestamp}.${extension}" selaras dengan
- * fungsi database owns_logo_folder() yang memeriksa folder level pertama.
- */
-export function buildLogoPath(
-  companyId: number | string,
-  extension: LogoExtension
-): string {
+export function buildLogoPath(companyId: number | string, extension: LogoExtension): string {
   return `${companyId}/logo-${Date.now()}.${extension}`;
 }
 
@@ -320,47 +151,17 @@ export function checkCompanyVerification(company?: {
   logoPath?: string | null;
   logoUrl?: string | null;
 } | null): CompanyVerificationStatus {
-  if (!company) {
-    const missing = [
-      "Nama resmi perusahaan",
-      "Website resmi (bukti keberadaan publik)",
-      "Bidang industri",
-      "Ukuran tim perusahaan",
-      "Domisili kota operasional",
-      "Alamat fisik kantor operasional",
-      "Deskripsi profil bisnis",
-      "Logo resmi perusahaan",
-    ];
-    return {
-      hasName: false,
-      hasWebsite: false,
-      hasIndustry: false,
-      hasSize: false,
-      hasLocation: false,
-      hasAddressNote: false,
-      hasDescription: false,
-      hasLogo: false,
-      isComplete: false,
-      completedCount: 0,
-      totalRequired: missing.length,
-      missingFields: missing,
-    };
-  }
-
-  const hasName = Boolean(company.name && company.name.trim().length >= 3);
-  const hasWebsite = Boolean(company.website && company.website.trim().length > 0);
-  const hasIndustry = Boolean(company.industry && company.industry.trim().length > 0);
-  const hasSize = Boolean(company.size && company.size.trim().length > 0);
-  const city = company.city_id ?? company.cityId;
-  const hasLocation = Boolean(city !== null && city !== undefined);
-  const address = company.address_note ?? company.addressNote;
+  const c = company || {};
+  const hasName = Boolean(c.name && c.name.trim().length >= 3);
+  const hasWebsite = Boolean(c.website && c.website.trim().length > 0);
+  const hasIndustry = Boolean(c.industry && c.industry.trim().length > 0);
+  const hasSize = Boolean(c.size && c.size.trim().length > 0);
+  const city = c.city_id ?? c.cityId;
+  const hasLocation = city !== null && city !== undefined;
+  const address = c.address_note ?? c.addressNote;
   const hasAddressNote = Boolean(address && address.trim().length >= 5);
-  const hasDescription = Boolean(company.description && company.description.trim().length >= 40);
-  const hasLogo = Boolean(
-    (company.logo_path && company.logo_path.trim().length > 0) ||
-    (company.logoPath && company.logoPath.trim().length > 0) ||
-    (company.logoUrl && company.logoUrl.trim().length > 0)
-  );
+  const hasDescription = Boolean(c.description && c.description.trim().length >= 40);
+  const hasLogo = Boolean((c.logo_path && c.logo_path.trim()) || (c.logoPath && c.logoPath.trim()) || (c.logoUrl && c.logoUrl.trim()));
 
   const checks = [
     { key: "Nama resmi perusahaan", ok: hasName },
@@ -373,10 +174,7 @@ export function checkCompanyVerification(company?: {
     { key: "Logo resmi perusahaan", ok: hasLogo },
   ];
 
-  const completedCount = checks.filter((c) => c.ok).length;
-  const missingFields = checks.filter((c) => !c.ok).map((c) => c.key);
-  const isComplete = completedCount === checks.length;
-
+  const completedCount = checks.filter((item) => item.ok).length;
   return {
     hasName,
     hasWebsite,
@@ -386,10 +184,10 @@ export function checkCompanyVerification(company?: {
     hasAddressNote,
     hasDescription,
     hasLogo,
-    isComplete,
+    isComplete: completedCount === checks.length,
     completedCount,
     totalRequired: checks.length,
-    missingFields,
+    missingFields: checks.filter((item) => !item.ok).map((item) => item.key),
   };
 }
 

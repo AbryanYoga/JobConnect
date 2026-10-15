@@ -80,6 +80,63 @@ function formatSalary(min?: number | null, max?: number | null, t?: (id: string,
 
 import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
 
+const HERO_CASCADE_CARDS = [
+  {
+    cls: "bmc-scroll-l1 absolute top-8 left-3 xl:left-8 2xl:left-14 w-48 xl:w-56 2xl:w-60 pointer-events-auto",
+    rotate: "-rotate-6",
+    logo: { type: "img" as const, src: "/logos/companies/telkom.svg", alt: "Telkom Indonesia", pad: "p-1.5" },
+    titleId: "PT Telkom Nusantara membuka 12 posisi Frontend & Backend",
+    titleEn: "PT Telkom Nusantara opens 12 Frontend & Backend positions",
+    statId: "9.138 pelamar",
+    statEn: "9,138 applicants",
+  },
+  {
+    cls: "bmc-scroll-l2 absolute top-[270px] xl:top-[290px] left-6 xl:left-14 2xl:left-22 w-48 xl:w-56 2xl:w-60 pointer-events-auto",
+    rotate: "rotate-2",
+    logo: { type: "img" as const, src: "/logos/companies/mandiri.svg", alt: "Bank Mandiri", pad: "p-1" },
+    titleId: "Bank Mandiri merekrut Officer Development Program nasional",
+    titleEn: "Bank Mandiri recruits national Officer Development Program",
+    statId: "8.450 pelamar",
+    statEn: "8,450 applicants",
+  },
+  {
+    cls: "bmc-scroll-l3 absolute top-[520px] xl:top-[550px] left-2 xl:left-6 2xl:left-12 w-48 xl:w-56 2xl:w-60 pointer-events-auto",
+    rotate: "-rotate-3",
+    logo: { type: "text" as const, text: "BS", bg: "bg-blue-600" },
+    titleId: "Budi Santoso diterima sebagai UI/UX Designer di Bank Mitra",
+    titleEn: "Budi Santoso hired as UI/UX Designer at Partner Bank",
+    statId: "Gaji Rp 14 - 20 Jt",
+    statEn: "Salary Rp 14 - 20 M",
+  },
+  {
+    cls: "bmc-scroll-r1 absolute top-8 right-3 xl:right-8 2xl:right-14 w-48 xl:w-56 2xl:w-60 pointer-events-auto",
+    rotate: "rotate-6",
+    logo: { type: "img" as const, src: "/logos/companies/bca.svg", alt: "BCA Finance", pad: "p-1.5" },
+    titleId: "BCA Finance Mitra membuka Staff Operasional wilayah Surabaya",
+    titleEn: "BCA Finance Partner opens Operations Staff in Surabaya",
+    statId: "146 lowongan baru",
+    statEn: "146 new vacancies",
+  },
+  {
+    cls: "bmc-scroll-r2 absolute top-[270px] xl:top-[290px] right-6 xl:right-14 2xl:right-22 w-48 xl:w-56 2xl:w-60 pointer-events-auto",
+    rotate: "-rotate-2",
+    logo: { type: "img" as const, src: "/logos/companies/gojek.svg", alt: "Gojek Mitra", pad: "p-1" },
+    titleId: "Gojek Mitra Logistik membuka 24 posisi Product & Operations Remote",
+    titleEn: "Gojek Logistics Partner opens 24 Remote Product & Operations positions",
+    statId: "2.095 pelamar",
+    statEn: "2,095 applicants",
+  },
+  {
+    cls: "bmc-scroll-r3 absolute top-[520px] xl:top-[550px] right-2 xl:right-6 2xl:right-12 w-48 xl:w-56 2xl:w-60 pointer-events-auto",
+    rotate: "rotate-4",
+    logo: { type: "img" as const, src: "/logos/companies/solusi-pintar.svg", alt: "Solusi Pintar Teknologi", pad: "p-1" },
+    titleId: "Solusi Pintar Teknologi merekrut Fresh Graduate SMK & Diploma",
+    titleEn: "Solusi Pintar Teknologi recruits Vocational & Diploma Fresh Graduates",
+    statId: "1.420 pelamar",
+    statEn: "1,420 applicants",
+  },
+];
+
 export function BmcLandingPage({
   provinces,
   latestJobs,
@@ -109,7 +166,6 @@ export function BmcLandingPage({
     }
 
     const ctx = gsap.context(() => {
-      // 1. Animasi teks Hero di tengah (scroll down & scroll up)
       gsap.fromTo(
         ".hero-anim-item",
         { opacity: 0, y: 30 },
@@ -128,7 +184,6 @@ export function BmcLandingPage({
         }
       );
 
-      // 2. Animasi kartu Hero berjenjang (scroll down & scroll up)
       gsap.fromTo(
         ".bmc-card-inner",
         { opacity: 0, y: 35, scale: 0.9 },
@@ -148,286 +203,61 @@ export function BmcLandingPage({
         }
       );
 
-      // 3. ANIMASI PARALLAX SCROLL (Persis Buy Me a Coffee saat di-scroll)
       if (heroSectionRef.current) {
-        // Kartu Kolom Kiri melayang ke atas dengan kecepatan bertingkat saat scroll down
-        gsap.to(".bmc-scroll-l1", {
-          y: -160,
-          rotate: -12,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSectionRef.current,
-            start: "top 80px",
-            end: "bottom top",
-            scrub: 1,
-          },
-        });
-
-        gsap.to(".bmc-scroll-l2", {
-          y: -230,
-          rotate: 6,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSectionRef.current,
-            start: "top 80px",
-            end: "bottom top",
-            scrub: 1.25,
-          },
-        });
-
-        gsap.to(".bmc-scroll-l3", {
-          y: -300,
-          rotate: -7,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSectionRef.current,
-            start: "top 80px",
-            end: "bottom top",
-            scrub: 1.5,
-          },
-        });
-
-        // Kartu Kolom Kanan melayang ke atas dengan kecepatan bertingkat saat scroll down
-        gsap.to(".bmc-scroll-r1", {
-          y: -170,
-          rotate: 12,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSectionRef.current,
-            start: "top 80px",
-            end: "bottom top",
-            scrub: 1.1,
-          },
-        });
-
-        gsap.to(".bmc-scroll-r2", {
-          y: -240,
-          rotate: -6,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSectionRef.current,
-            start: "top 80px",
-            end: "bottom top",
-            scrub: 1.35,
-          },
-        });
-
-        gsap.to(".bmc-scroll-r3", {
-          y: -310,
-          rotate: 8,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSectionRef.current,
-            start: "top 80px",
-            end: "bottom top",
-            scrub: 1.6,
-          },
+        const parallaxConfigs = [
+          { sel: ".bmc-scroll-l1", y: -160, rotate: -12, scrub: 1 },
+          { sel: ".bmc-scroll-l2", y: -230, rotate: 6, scrub: 1.25 },
+          { sel: ".bmc-scroll-l3", y: -300, rotate: -7, scrub: 1.5 },
+          { sel: ".bmc-scroll-r1", y: -170, rotate: 12, scrub: 1.1 },
+          { sel: ".bmc-scroll-r2", y: -240, rotate: -6, scrub: 1.35 },
+          { sel: ".bmc-scroll-r3", y: -310, rotate: 8, scrub: 1.6 },
+        ];
+        parallaxConfigs.forEach((c) => {
+          gsap.to(c.sel, {
+            y: c.y,
+            rotate: c.rotate,
+            ease: "none",
+            scrollTrigger: {
+              trigger: heroSectionRef.current,
+              start: "top 80px",
+              end: "bottom top",
+              scrub: c.scrub,
+            },
+          });
         });
       }
 
-      // 4. ANIMASI SECTION 1: UNTUK PENCARI KERJA (Dua arah: scroll down & scroll up)
-      gsap.fromTo(
-        ".anim-jobseeker-header",
-        { opacity: 0, y: 35 },
-        {
+      const animFromTo = (target: string, trigger: string, fromVars: gsap.TweenVars, toVars: gsap.TweenVars = {}) => {
+        gsap.fromTo(target, fromVars, {
           opacity: 1,
           y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".anim-jobseeker-header",
-            start: "top 85%",
-            end: "bottom top-=40px",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
-
-      gsap.fromTo(
-        ".anim-jobseeker-mockup",
-        { opacity: 0, y: 45, scale: 0.94 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.85,
-          ease: "back.out(1.3)",
-          scrollTrigger: {
-            trigger: ".anim-jobseeker-mockup",
-            start: "top 85%",
-            end: "bottom top-=40px",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
-
-      // 5. ANIMASI SECTION 2: TRANSPARANSI KRITERIA (Dua arah: scroll down & scroll up)
-      gsap.fromTo(
-        ".anim-transparency-header",
-        { opacity: 0, y: 35 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".anim-transparency-header",
-            start: "top 85%",
-            end: "bottom top-=40px",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
-
-      gsap.fromTo(
-        ".anim-mode-card",
-        { opacity: 0, y: 40, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.12,
-          ease: "back.out(1.2)",
-          scrollTrigger: {
-            trigger: ".anim-mode-grid",
-            start: "top 85%",
-            end: "bottom top-=40px",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
-
-      // 6. ANIMASI SECTION 3: UNTUK PERUSAHAAN MITRA (Dua arah: scroll down & scroll up)
-      gsap.fromTo(
-        ".anim-employer-left",
-        { opacity: 0, x: -35 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".anim-employer-box",
-            start: "top 85%",
-            end: "bottom top-=40px",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
-
-      gsap.fromTo(
-        ".anim-employer-mockup",
-        { opacity: 0, x: 35, scale: 0.95 },
-        {
-          opacity: 1,
           x: 0,
           scale: 1,
-          duration: 0.85,
-          ease: "back.out(1.2)",
-          scrollTrigger: {
-            trigger: ".anim-employer-box",
-            start: "top 85%",
-            end: "bottom top-=40px",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
-
-      // 7. ANIMASI SECTION 4: JELAJAHI BERDASARKAN WILAYAH (Dua arah: scroll down & scroll up)
-      gsap.fromTo(
-        ".anim-wilayah-header",
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
           duration: 0.8,
           ease: "power2.out",
           scrollTrigger: {
-            trigger: ".anim-wilayah-header",
+            trigger,
             start: "top 85%",
             end: "bottom top-=40px",
             toggleActions: "play reverse play reverse",
           },
-        }
-      );
+          ...toVars,
+        });
+      };
 
-      gsap.fromTo(
-        ".anim-wilayah-chip",
-        { opacity: 0, scale: 0.88, y: 18 },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.45,
-          stagger: 0.035,
-          ease: "back.out(1.4)",
-          scrollTrigger: {
-            trigger: ".anim-wilayah-grid",
-            start: "top 85%",
-            end: "bottom top-=40px",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
-
-      // 8. ANIMASI SECTION 5: LOWONGAN TERBARU (Dua arah: scroll down & scroll up)
-      gsap.fromTo(
-        ".anim-jobs-header",
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".anim-jobs-header",
-            start: "top 85%",
-            end: "bottom top-=40px",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
-
-      gsap.fromTo(
-        ".anim-job-card",
-        { opacity: 0, y: 35 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.75,
-          stagger: 0.09,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".anim-jobs-grid",
-            start: "top 85%",
-            end: "bottom top-=40px",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
-
-      // 9. ANIMASI SECTION 6: CTA BANNER (Dua arah: scroll down & scroll up)
-      gsap.fromTo(
-        ".anim-cta-card",
-        { opacity: 0, y: 45, scale: 0.94 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.85,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".anim-cta-card",
-            start: "top 85%",
-            end: "bottom top-=40px",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
+      animFromTo(".anim-jobseeker-header", ".anim-jobseeker-header", { opacity: 0, y: 35 });
+      animFromTo(".anim-jobseeker-mockup", ".anim-jobseeker-mockup", { opacity: 0, y: 45, scale: 0.94 }, { duration: 0.85, ease: "back.out(1.3)" });
+      animFromTo(".anim-transparency-header", ".anim-transparency-header", { opacity: 0, y: 35 });
+      animFromTo(".anim-mode-card", ".anim-mode-grid", { opacity: 0, y: 40, scale: 0.95 }, { stagger: 0.12, ease: "back.out(1.2)" });
+      animFromTo(".anim-employer-left", ".anim-employer-box", { opacity: 0, x: -35 });
+      animFromTo(".anim-employer-mockup", ".anim-employer-box", { opacity: 0, x: 35, scale: 0.95 }, { duration: 0.85, ease: "back.out(1.2)" });
+      animFromTo(".anim-wilayah-header", ".anim-wilayah-header", { opacity: 0, y: 30 });
+      animFromTo(".anim-wilayah-chip", ".anim-wilayah-grid", { opacity: 0, scale: 0.88, y: 18 }, { duration: 0.45, stagger: 0.035, ease: "back.out(1.4)" });
+      animFromTo(".anim-jobs-header", ".anim-jobs-header", { opacity: 0, y: 30 });
+      animFromTo(".anim-job-card", ".anim-jobs-grid", { opacity: 0, y: 35 }, { duration: 0.75, stagger: 0.09 });
+      animFromTo(".anim-cta-card", ".anim-cta-card", { opacity: 0, y: 45, scale: 0.94 }, { duration: 0.85, ease: "power3.out" });
     }, mainContainerRef);
 
-    // Refresh ScrollTrigger setelah elemen selesai ter-render
     const timer = setTimeout(() => {
       ScrollTrigger.refresh();
     }, 150);
@@ -568,151 +398,34 @@ export function BmcLandingPage({
             6 KARTU CASCADE DI KANAN DAN KIRI (100% Konsep Buy Me a Coffee)
             ======================================================== */}
         <div className="hidden lg:block pointer-events-none select-none z-20">
-          {/* SISI KIRI: 3 Kartu Berjenjang Tilted */}
-          {/* Kartu Kiri 1 */}
-          <div className="bmc-scroll-l1 absolute top-8 left-3 xl:left-8 2xl:left-14 w-48 xl:w-56 2xl:w-60 pointer-events-auto">
-            <div className="bmc-card-inner bg-white p-4 xl:p-5 rounded-3xl border border-black/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.06)] hover:shadow-card-md hover:-translate-y-1 transition duration-200 -rotate-6 text-left">
-              <div className="w-11 h-11 rounded-full bg-white border border-slate-200/90 p-1.5 flex items-center justify-center shadow-2xs overflow-hidden shrink-0">
-                <Image
-                  src="/logos/companies/telkom.svg"
-                  alt="Telkom Indonesia"
-                  width={38}
-                  height={38}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <p className="mt-3 text-xs xl:text-[13px] font-bold text-[#0D0C23] leading-snug line-clamp-3">
-                {t(
-                  "PT Telkom Nusantara membuka 12 posisi Frontend & Backend",
-                  "PT Telkom Nusantara opens 12 Frontend & Backend positions"
+          {HERO_CASCADE_CARDS.map((card, i) => (
+            <div key={i} className={card.cls}>
+              <div className={`bmc-card-inner bg-white p-4 xl:p-5 rounded-3xl border border-black/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.06)] hover:shadow-card-md hover:-translate-y-1 transition duration-200 ${card.rotate} text-left`}>
+                {card.logo.type === "img" ? (
+                  <div className={`w-11 h-11 rounded-full bg-white border border-slate-200/90 ${card.logo.pad || "p-1"} flex items-center justify-center shadow-2xs overflow-hidden shrink-0`}>
+                    <Image
+                      src={card.logo.src}
+                      alt={card.logo.alt}
+                      width={38}
+                      height={38}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className={`w-11 h-11 rounded-full ${card.logo.bg} text-white font-black text-sm flex items-center justify-center shadow-2xs shrink-0`}>
+                    {card.logo.text}
+                  </div>
                 )}
-              </p>
-              <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[11px] xl:text-xs text-slate-500 font-medium">
-                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/20" />
-                <span>{t("9.138 pelamar", "9,138 applicants")}</span>
+                <p className="mt-3 text-xs xl:text-[13px] font-bold text-[#0D0C23] leading-snug line-clamp-3">
+                  {t(card.titleId, card.titleEn)}
+                </p>
+                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[11px] xl:text-xs text-slate-500 font-medium">
+                  <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/20" />
+                  <span>{t(card.statId, card.statEn)}</span>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Kartu Kiri 2 */}
-          <div className="bmc-scroll-l2 absolute top-[270px] xl:top-[290px] left-6 xl:left-14 2xl:left-22 w-48 xl:w-56 2xl:w-60 pointer-events-auto">
-            <div className="bmc-card-inner bg-white p-4 xl:p-5 rounded-3xl border border-black/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.06)] hover:shadow-card-md hover:-translate-y-1 transition duration-200 rotate-2 text-left">
-              <div className="w-11 h-11 rounded-full bg-white border border-slate-200/90 p-1 flex items-center justify-center shadow-2xs overflow-hidden shrink-0">
-                <Image
-                  src="/logos/companies/mandiri.svg"
-                  alt="Bank Mandiri"
-                  width={38}
-                  height={38}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <p className="mt-3 text-xs xl:text-[13px] font-bold text-[#0D0C23] leading-snug line-clamp-3">
-                {t(
-                  "Bank Mandiri merekrut Officer Development Program nasional",
-                  "Bank Mandiri recruits national Officer Development Program"
-                )}
-              </p>
-              <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[11px] xl:text-xs text-slate-500 font-medium">
-                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/20" />
-                <span>{t("8.450 pelamar", "8,450 applicants")}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Kartu Kiri 3 */}
-          <div className="bmc-scroll-l3 absolute top-[520px] xl:top-[550px] left-2 xl:left-6 2xl:left-12 w-48 xl:w-56 2xl:w-60 pointer-events-auto">
-            <div className="bmc-card-inner bg-white p-4 xl:p-5 rounded-3xl border border-black/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.06)] hover:shadow-card-md hover:-translate-y-1 transition duration-200 -rotate-3 text-left">
-              <div className="w-11 h-11 rounded-full bg-blue-600 text-white font-black text-sm flex items-center justify-center shadow-2xs shrink-0">
-                BS
-              </div>
-              <p className="mt-3 text-xs xl:text-[13px] font-bold text-[#0D0C23] leading-snug line-clamp-3">
-                {t(
-                  "Budi Santoso diterima sebagai UI/UX Designer di Bank Mitra",
-                  "Budi Santoso hired as UI/UX Designer at Partner Bank"
-                )}
-              </p>
-              <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[11px] xl:text-xs text-slate-500 font-medium">
-                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/20" />
-                <span>{t("Gaji Rp 14 - 20 Jt", "Salary Rp 14 - 20 M")}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* SISI KANAN: 3 Kartu Berjenjang Tilted */}
-          {/* Kartu Kanan 1 */}
-          <div className="bmc-scroll-r1 absolute top-8 right-3 xl:right-8 2xl:right-14 w-48 xl:w-56 2xl:w-60 pointer-events-auto">
-            <div className="bmc-card-inner bg-white p-4 xl:p-5 rounded-3xl border border-black/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.06)] hover:shadow-card-md hover:-translate-y-1 transition duration-200 rotate-6 text-left">
-              <div className="w-11 h-11 rounded-full bg-white border border-slate-200/90 p-1.5 flex items-center justify-center shadow-2xs overflow-hidden shrink-0">
-                <Image
-                  src="/logos/companies/bca.svg"
-                  alt="BCA Finance"
-                  width={38}
-                  height={38}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <p className="mt-3 text-xs xl:text-[13px] font-bold text-[#0D0C23] leading-snug line-clamp-3">
-                {t(
-                  "BCA Finance Mitra membuka Staff Operasional wilayah Surabaya",
-                  "BCA Finance Partner opens Operations Staff in Surabaya"
-                )}
-              </p>
-              <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[11px] xl:text-xs text-slate-500 font-medium">
-                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/20" />
-                <span>{t("146 lowongan baru", "146 new vacancies")}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Kartu Kanan 2 */}
-          <div className="bmc-scroll-r2 absolute top-[270px] xl:top-[290px] right-6 xl:right-14 2xl:right-22 w-48 xl:w-56 2xl:w-60 pointer-events-auto">
-            <div className="bmc-card-inner bg-white p-4 xl:p-5 rounded-3xl border border-black/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.06)] hover:shadow-card-md hover:-translate-y-1 transition duration-200 -rotate-2 text-left">
-              <div className="w-11 h-11 rounded-full bg-white border border-slate-200/90 p-1 flex items-center justify-center shadow-2xs overflow-hidden shrink-0">
-                <Image
-                  src="/logos/companies/gojek.svg"
-                  alt="Gojek Mitra"
-                  width={38}
-                  height={38}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <p className="mt-3 text-xs xl:text-[13px] font-bold text-[#0D0C23] leading-snug line-clamp-3">
-                {t(
-                  "Gojek Mitra Logistik membuka 24 posisi Product & Operations Remote",
-                  "Gojek Logistics Partner opens 24 Remote Product & Operations positions"
-                )}
-              </p>
-              <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[11px] xl:text-xs text-slate-500 font-medium">
-                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/20" />
-                <span>{t("2.095 pelamar", "2,095 applicants")}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Kartu Kanan 3 */}
-          <div className="bmc-scroll-r3 absolute top-[520px] xl:top-[550px] right-2 xl:right-6 2xl:right-12 w-48 xl:w-56 2xl:w-60 pointer-events-auto">
-            <div className="bmc-card-inner bg-white p-4 xl:p-5 rounded-3xl border border-black/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.06)] hover:shadow-card-md hover:-translate-y-1 transition duration-200 rotate-4 text-left">
-              <div className="w-11 h-11 rounded-full bg-white border border-slate-200/90 p-1 flex items-center justify-center shadow-2xs overflow-hidden shrink-0">
-                <Image
-                  src="/logos/companies/solusi-pintar.svg"
-                  alt="Solusi Pintar Teknologi"
-                  width={38}
-                  height={38}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <p className="mt-3 text-xs xl:text-[13px] font-bold text-[#0D0C23] leading-snug line-clamp-3">
-                {t(
-                  "Solusi Pintar Teknologi merekrut Fresh Graduate SMK & Diploma",
-                  "Solusi Pintar Teknologi recruits Vocational & Diploma Fresh Graduates"
-                )}
-              </p>
-              <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[11px] xl:text-xs text-slate-500 font-medium">
-                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/20" />
-                <span>{t("1.420 pelamar", "1,420 applicants")}</span>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
