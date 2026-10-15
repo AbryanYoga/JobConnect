@@ -253,6 +253,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T18 `docs(readme): perbarui dokumentasi fitur dan kemajuan pengembangan proyek`
 - [x] T19 `feat(mitra): perketat verifikasi profil perusahaan nyata dan integrasi logo resmi`
 - [x] T20 `db: perbarui data akun demo pelamar abryan yoga pratama di seed sql`
+- [x] T21 `docs(readme): perbarui readme dengan fitur logo dan struktur folder`
 
 ## Catatan Penting Agent
 
