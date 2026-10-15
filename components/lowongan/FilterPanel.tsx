@@ -80,7 +80,8 @@ export function FilterPanel({
     }
 
     startTransition(() => {
-      router.push(`${pathname}?${params.toString()}`);
+      const qs = params.toString();
+      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     });
   };
 
@@ -99,7 +100,7 @@ export function FilterPanel({
 
     startTransition(() => {
       const qs = params.toString();
-      router.push(qs ? `${pathname}?${qs}` : pathname);
+      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     });
   };
 

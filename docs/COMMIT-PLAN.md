@@ -255,6 +255,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T20 `db: perbarui data akun demo pelamar abryan yoga pratama di seed sql`
 - [x] T21 `docs(readme): perbarui readme dengan fitur logo dan struktur folder`
 - [x] T22 `refactor: ringkas kode berulang pada validasi action dan landing page`
+- [x] T23 `fix(lowongan): pertahankan posisi scroll saat memilih filter wilayah`
 
 ## Catatan Penting Agent
 
