@@ -222,7 +222,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [x] 164 `chore: validasi build produksi Next.js dan perbaiki error type lint`
 - [ ] 165 `chore: siapkan konfigurasi deployment ke platform Vercel`
 - [ ] 166 `docs: catat daftar environment variable Vercel dan URL Supabase`
-- [ ] 167 `docs(readme): lengkapi README dengan fitur, arsitektur, dan cara instalasi`
+- [x] 167 `docs(readme): lengkapi README dengan fitur, arsitektur, dan cara instalasi`
 - [ ] 168 `docs(readme): tambahkan panduan akun demo pelamar, mitra, dan admin`
 - [ ] 169 `docs(readme): pasang tautan screenshot aplikasi dan video demo`
 - [ ] 170 `chore: tandai rilis versi v1.0.0`
