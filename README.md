@@ -65,11 +65,35 @@ Banyak orang kesulitan saat mencari kerja di internet karena sering bertemu masa
 
 Untuk mencoba fitur-fitur JobConnect tanpa perlu mendaftar dari awal, Anda dapat menggunakan akun demo berikut:
 
-| Peran Akun | Alamat Email | Password | Kegunaan |
+| Peran Akun | Alamat Email | Password | Kegunaan Utama |
 | --- | --- | --- | --- |
 | **Pelamar** | `abryan.yoga@jobconnect.id` | `Password123!` | Mencari loker, melamar kerja, simpan loker, dan cek status lamaran |
 | **Perusahaan** | `perusahaan.demo@jobconnect.id` | `Password123!` | Pasang lowongan, cek CV pelamar, ubah status, dan unduh laporan |
 | **Admin** | `admin.demo@jobconnect.id` | `Password123!` | Menyetujui lowongan (ACC), tolak loker, kelola kategori, dan rekap platform |
+
+### Panduan Skenario Pengujian Akun Demo
+
+#### 1. Skenario Akun Pelamar (`abryan.yoga@jobconnect.id`)
+1. **Masuk ke Aplikasi:** Buka halaman `/login`, masukkan email dan password pelamar di atas.
+2. **Eksplorasi Lowongan:** Masuk ke menu **Lowongan** (`/lowongan`) atau **Wilayah** (`/wilayah`). Gunakan kombinasi filter provinsi, kota, jenis pekerjaan, dan sistem kerja. Perhatikan pembaruan daftar lowongan tanpa reload atau pergeseran posisi scroll.
+3. **Simpan Lowongan:** Klik tombol ikon bookmark pada salah satu kartu lowongan. Periksa daftar lowongan yang telah ditandai di menu **Tersimpan** (`/tersimpan`).
+4. **Kirim Lamaran:** Buka detail salah satu lowongan, klik tombol **Lamar Pekerjaan**. Unggah berkas contoh format PDF (maksimal 2 MB), pilih opsi analisis kecocokan AI bila ingin melihat saran kualifikasi, lalu kirim formulir.
+5. **Pantau Status & Jadwal:** Buka menu **Lamaran Saya** (`/lamaran-saya`). Pelamar dapat melihat status pemrosesan berkas secara transparan, melihat detail undangan wawancara jika sudah dijadwalkan, atau membatalkan lamaran dengan tombol **Tarik Lamaran**.
+
+#### 2. Skenario Akun Mitra Perusahaan (`perusahaan.demo@jobconnect.id`)
+1. **Masuk ke Dasbor Mitra:** Buka `/login` dan masuk dengan akun perusahaan. Sistem akan mengarahkan otomatis ke dasbor rekrutmen mitra di `/mitra`.
+2. **Profil Perusahaan:** Buka menu **Profil Perusahaan** (`/mitra/profil`) untuk memverifikasi nama instansi, logo resmi beresolusi tajam, alamat operasional, dan bidang industri.
+3. **Pasang Lowongan Baru:** Akses menu **Tambah Lowongan** (`/mitra/lowongan/baru`). Lengkapi formulir posisi, deskripsi, syarat pengalaman, dan rentang gaji transparan, lalu ajukan draf agar masuk ke antrean kurasi admin.
+4. **Kelola & Evaluasi Pelamar:** Masuk ke menu **Pelamar** (`/mitra/pelamar`). Buka berkas CV PDF pelamar secara aman melalui signed URL privat.
+5. **Pembaruan Tahapan Seleksi & Wawancara:** Ubah status pelamar menjadi `ditinjau`, `shortlist`, atau `wawancara`. Gunakan modal interaktif untuk menentukan jadwal wawancara, lokasi atau tautan video meeting, serta tambahkan catatan internal rekruter.
+6. **Ekspor Rekapitulasi:** Buka menu **Laporan** (`/mitra/laporan`) untuk mengamati ringkasan statistik rekrutmen serta mengunduh daftar kandidat dalam format berkas CSV (Excel) atau cetak langsung ke PDF.
+
+#### 3. Skenario Akun Admin Platform (`admin.demo@jobconnect.id`)
+1. **Masuk ke Dasbor Pengelola:** Masuk dengan akun admin di `/login`, kemudian akses dasbor kendali utama di `/admin`.
+2. **Kurasi Lowongan (Review & ACC):** Buka menu **Kurasi Lowongan** (`/admin/kurasi`). Tinjau lowongan berstatus draf yang diajukan oleh mitra.
+3. **Persetujuan atau Penolakan:** Klik tombol **Setujui (ACC)** untuk menayangkan lowongan ke publik, atau klik **Tolak Lowongan** dengan menyertakan alasan objektif bagi mitra pengaju.
+4. **Kelola Kategori Industri:** Buka menu **Kategori** (`/admin/kategori`) untuk menambah kategori profesi baru atau mengedit kategori yang sudah ada.
+5. **Rekap Platform Agregat:** Buka menu **Laporan Platform** (`/admin/laporan`) untuk meninjau data agregat sebaran pengguna dan lowongan di 38 provinsi, lalu unduh dokumen laporan rekapitulasi platform dalam format CSV maupun PDF.
 
 ---
 
