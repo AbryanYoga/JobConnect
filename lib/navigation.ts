@@ -18,7 +18,7 @@ export const NAV_LINKS_BY_ROLE: Record<Role, NavItem[]> = {
     { label: "Beranda", href: "/" },
     { label: "Lowongan", href: "/lowongan" },
     { label: "Wilayah", href: "/wilayah" },
-    { label: "Tentang Kami", href: "/tentang" },
+    { label: "Panduan & FAQ", href: "/tentang" },
   ],
   pelamar: [
     { label: "Lowongan", href: "/lowongan" },

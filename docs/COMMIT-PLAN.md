@@ -256,6 +256,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T21 `docs(readme): perbarui readme dengan fitur logo dan struktur folder`
 - [x] T22 `refactor: ringkas kode berulang pada validasi action dan landing page`
 - [x] T23 `fix(lowongan): pertahankan posisi scroll saat memilih filter wilayah`
+- [x] T24 `feat: perluas kontainer kartu desktop dan buat panduan faq`
 
 ## Catatan Penting Agent
 

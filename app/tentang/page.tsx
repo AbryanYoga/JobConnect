@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { AboutView } from "@/components/tentang/AboutView";
 
 export const metadata: Metadata = {
-  title: "Tentang Kami - JobConnect",
+  title: "Panduan & Pusat Bantuan - JobConnect",
   description:
-    "Mengenal JobConnect, platform resmi penghubung pencari kerja dan perusahaan terverifikasi di seluruh 38 provinsi di Indonesia.",
+    "Pelajari alur melamar kerja resmi, standar moderasi lowongan, transparansi gaji, dan jawaban pertanyaan umum di JobConnect.",
 };
 
 export default function TentangPage() {

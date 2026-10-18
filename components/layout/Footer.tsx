@@ -45,55 +45,6 @@ function LogoIcon() {
 }
 
 /**
- * Daftar ikon media sosial resmi JobConnect.
- */
-const SOCIAL_ICONS = [
-  {
-    name: "LinkedIn",
-    href: "https://linkedin.com",
-    icon: (
-      <svg
-        className="w-5 h-5 text-slate-800 fill-current"
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
-      </svg>
-    ),
-  },
-  {
-    name: "X (Twitter)",
-    href: "https://x.com",
-    icon: (
-      <svg
-        className="w-5 h-5 text-slate-800 fill-current"
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-      </svg>
-    ),
-  },
-  {
-    name: "Instagram",
-    href: "https://instagram.com",
-    icon: (
-      <svg
-        className="w-5 h-5 text-slate-800 stroke-current fill-none stroke-2"
-        viewBox="0 0 24 24"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-      </svg>
-    ),
-  },
-];
-
-/**
  * Komponen Link Animasi:
  * Memberikan pergeseran halus ke kanan saat pointer diarahkan ke tautan.
  */
@@ -125,13 +76,13 @@ function FooterCard() {
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-      className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"
+      className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
     >
       <div className="bg-white rounded-[36px] sm:rounded-[44px] border border-black/[0.08] shadow-sm overflow-hidden">
         {/* Area Konten Utama Grid */}
         <div className="p-8 md:p-10 lg:p-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
           {/* Kolom Informasi Brand (2 Kolom di Desktop) */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4">
             <Link
               href="/"
               className="inline-flex items-center gap-3 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#31A8FF] rounded-xl"
@@ -143,31 +94,12 @@ function FooterCard() {
               </span>
             </Link>
 
-            <p className="text-[#64748B] leading-relaxed text-[15px] font-normal max-w-[320px]">
+            <p className="text-[#64748B] leading-relaxed text-[15px] font-normal max-w-sm">
               {t(
                 "Portal lowongan kerja terpercaya yang mempertemukan talenta dengan perusahaan mitra di 38 provinsi di Indonesia.",
                 "Trusted job portal connecting talent with partner companies across 38 provinces in Indonesia."
               )}
             </p>
-
-            {/* Kelompok Tombol Media Sosial dengan Animasi Hover Spring */}
-            <div className="flex items-center gap-3 pt-1">
-              {SOCIAL_ICONS.map((social) => (
-                <motion.a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${t("Kunjungi", "Visit")} ${social.name} JobConnect`}
-                  whileHover={{ y: -3, scale: 1.06 }}
-                  whileTap={{ scale: 0.94 }}
-                  transition={{ type: "spring", stiffness: 450, damping: 20 }}
-                  className="w-[44px] h-[44px] flex items-center justify-center rounded-xl border border-black/[0.08] bg-[#FAF8F0]/50 hover:bg-[#FAF8F0] shadow-2xs hover:shadow-xs transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#31A8FF]"
-                >
-                  {social.icon}
-                </motion.a>
-              ))}
-            </div>
           </div>
 
           {/* Kolom Lowongan */}

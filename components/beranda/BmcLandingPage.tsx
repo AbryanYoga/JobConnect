@@ -433,8 +433,8 @@ export function BmcLandingPage({
           FITUR UTAMA 1: PENCARI KERJA (Gaya Box Besar BMC "Support")
           ======================================================== */}
       <section className="anim-jobseeker-box py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl bg-white rounded-[32px] sm:rounded-[44px] p-6 sm:p-12 lg:p-16 border border-[#222222]/10 shadow-card text-center space-y-8">
-          <div className="anim-jobseeker-header space-y-3 max-w-3xl mx-auto">
+        <div className="mx-auto max-w-7xl bg-white rounded-[32px] sm:rounded-[44px] p-6 sm:p-12 lg:p-16 border border-[#222222]/10 shadow-card flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-14 text-left">
+          <div className="anim-jobseeker-header space-y-5 max-w-2xl">
             <span className="text-xs font-bold tracking-widest uppercase text-slate-500 block">
               {t("Untuk Pencari Kerja", "For Job Seekers")}
             </span>
@@ -447,10 +447,18 @@ export function BmcLandingPage({
                 "JobConnect makes job applications transparent and hassle-free. Upload your CV once, select matching vacancies, and track application status directly from your dashboard."
               )}
             </p>
+            <div className="pt-2">
+              <Link
+                href="/lowongan"
+                className="inline-flex items-center justify-center px-7 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-[#0D0C23] font-black text-sm transition shadow-2xs hover:shadow active:scale-95 min-h-[44px]"
+              >
+                {t("Cari Lowongan Sekarang", "Search Vacancies Now")}
+              </Link>
+            </div>
           </div>
 
           {/* Mockup Interaktif Kartu Lamaran (BMC Replica) */}
-          <div className="anim-jobseeker-mockup max-w-md mx-auto bg-[#FAF8F0] p-6 sm:p-8 rounded-[28px] border border-slate-200 shadow-2xs text-left space-y-5 hover:shadow-card transition duration-300">
+          <div className="anim-jobseeker-mockup w-full max-w-md bg-[#FAF8F0] p-6 sm:p-8 rounded-[28px] border border-slate-200 shadow-2xs text-left space-y-5 hover:shadow-card transition duration-300 shrink-0">
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold text-navy-950">
                 {t("Lamar ke PT Inovasi Solusi", "Apply to PT Inovasi Solusi")}
@@ -512,7 +520,7 @@ export function BmcLandingPage({
           FITUR UTAMA 2: TRANSPARANSI KRITERIA (Gaya BMC "Memberships")
           ======================================================== */}
       <section className="anim-transparency-box py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl bg-white rounded-[32px] sm:rounded-[44px] p-6 sm:p-12 lg:p-16 border border-[#222222]/10 shadow-card text-center space-y-10">
+        <div className="mx-auto max-w-7xl bg-white rounded-[32px] sm:rounded-[44px] p-6 sm:p-12 lg:p-16 border border-[#222222]/10 shadow-card text-center space-y-10">
           <div className="anim-transparency-header space-y-3 max-w-3xl mx-auto">
             <span className="text-xs font-bold tracking-widest uppercase text-slate-500 block">
               {t("Transparansi Karier", "Career Transparency")}
@@ -660,7 +668,7 @@ export function BmcLandingPage({
           FITUR UTAMA 3: UNTUK PERUSAHAAN MITRA
           ======================================================== */}
       <section className="anim-employer-box py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl bg-white rounded-[32px] sm:rounded-[44px] p-6 sm:p-12 lg:p-16 border border-[#222222]/10 shadow-card flex flex-col md:flex-row items-center justify-between gap-10">
+        <div className="mx-auto max-w-7xl bg-white rounded-[32px] sm:rounded-[44px] p-6 sm:p-12 lg:p-16 border border-[#222222]/10 shadow-card flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="anim-employer-left space-y-4 max-w-lg text-left">
             <span className="text-xs font-bold tracking-widest uppercase text-slate-500 block">
               {t("Untuk Perusahaan & HRD", "For Companies & HR")}
@@ -733,7 +741,7 @@ export function BmcLandingPage({
           JELAJAHI BERDASARKAN WILAYAH (38 Provinsi & Remote Work)
           ======================================================== */}
       <section className="anim-wilayah-section py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl space-y-8 bg-white rounded-[32px] sm:rounded-[44px] p-6 sm:p-12 border border-[#222222]/10 shadow-card">
+        <div className="mx-auto max-w-7xl space-y-8 bg-white rounded-[32px] sm:rounded-[44px] p-6 sm:p-12 border border-[#222222]/10 shadow-card">
           <div className="anim-wilayah-header flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div className="space-y-1.5">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-navy-50 text-navy-800 border border-navy-100 text-xs font-semibold">
@@ -798,7 +806,7 @@ export function BmcLandingPage({
           ======================================================== */}
       {latestJobs && latestJobs.length > 0 && (
         <section className="anim-jobs-section py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-5xl space-y-8">
+          <div className="mx-auto max-w-7xl space-y-8">
             <div className="anim-jobs-header flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div className="space-y-1.5">
                 <span className="text-xs font-bold tracking-widest uppercase text-slate-500 block">
@@ -916,7 +924,7 @@ export function BmcLandingPage({
           BOTTOM CALL TO ACTION BANNER (Gaya Melengkung BMC)
           ======================================================== */}
       <section className="anim-cta-section py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="anim-cta-card mx-auto max-w-5xl bg-[#0D0C23] text-white rounded-[32px] sm:rounded-[48px] p-8 sm:p-16 text-center space-y-6 shadow-card hover:shadow-card-md transition duration-300">
+        <div className="anim-cta-card mx-auto max-w-7xl bg-[#0D0C23] text-white rounded-[32px] sm:rounded-[48px] p-8 sm:p-16 text-center space-y-6 shadow-card hover:shadow-card-md transition duration-300">
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight max-w-2xl mx-auto">
             {t("Siap melangkah ke karier impianmu berikutnya?", "Ready to take the next step in your dream career?")}
           </h2>

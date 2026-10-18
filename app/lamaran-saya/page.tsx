@@ -153,7 +153,7 @@ export default async function LamaranSayaPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF8F0]/40 py-8 sm:py-12">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Navigasi Breadcrumb */}
         <Breadcrumb
           items={[{ label: "Beranda", href: "/" }, { label: "Lamaran Saya" }]}
