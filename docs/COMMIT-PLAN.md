@@ -224,7 +224,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 - [ ] 166 `docs: catat daftar environment variable Vercel dan URL Supabase`
 - [x] 167 `docs(readme): lengkapi README dengan fitur, arsitektur, dan cara instalasi`
 - [x] 168 `docs(readme): tambahkan panduan akun demo pelamar, mitra, dan admin`
-- [ ] 169 `docs(readme): pasang tautan screenshot aplikasi dan video demo`
+- [x] 169 `docs(readme): pasang tautan screenshot aplikasi dan video demo`
 - [ ] 170 `chore: tandai rilis versi v1.0.0`
 
 ---

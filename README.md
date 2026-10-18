@@ -282,6 +282,36 @@ npm run build
 
 ---
 
+## Tangkapan Layar dan Video Demo
+
+### 1. Diagram Relasi Basis Data (ERD)
+Arsitektur skema basis data PostgreSQL Supabase yang menopang seluruh relasi antarentitas:
+<p align="center">
+  <img src="docs/erd.png" alt="Entity Relationship Diagram JobConnect" width="760" />
+</p>
+
+### 2. Galeri Antarmuka Aplikasi
+
+| Halaman / Fitur | Deskripsi Fungsi | Akses Peran |
+| --- | --- | --- |
+| **Beranda & Pencarian Lowongan** | Filter interaktif 38 provinsi, 514 kota, jenis kontrak, dan pencarian instan | Publik & Pelamar |
+| **Jelajah Wilayah Indonesia** | Navigasi ketersediaan lowongan kerja per provinsi dan kabupaten | Publik & Pelamar |
+| **Portal Panduan & FAQ Resmi** | Panduan tips melamar, pencegahan penipuan, dan panduan fitur | Publik & Semua Pengguna |
+| **Riwayat Lamaran Saya** | Pelacakan 8 tahap seleksi transparan, jadwal interview, dan pembatalan berkas | Khusus Pelamar |
+| **Lowongan Tersimpan (Bookmark)** | Daftar simpanan lowongan favorit untuk dilamar kemudian | Khusus Pelamar |
+| **Dasbor Rekrutmen Mitra** | Manajemen profil perusahaan, publikasi lowongan, dan verifikasi berkas CV | Khusus Mitra Perusahaan |
+| **Kurasi & Evaluasi Pelamar** | Penilaian kandidat, catatan internal rekruter, dan penjadwalan wawancara | Khusus Mitra Perusahaan |
+| **Laporan & Ekspor Data Mitra** | Ringkasan statistik pelamar serta ekspor dokumen format CSV dan PDF | Khusus Mitra Perusahaan |
+| **Kurasi Lowongan Masuk Admin** | Verifikasi kepatutan draf lowongan kerja (ACC atau Tolak dengan alasan) | Khusus Admin Platform |
+| **Manajemen Platform & Kategori** | Pengaturan kategori industri, pengawasan lowongan aktif, dan rekap agregat | Khusus Admin Platform |
+
+### 3. Tautan Demonstrasi Video
+
+Demonstrasi alur kerja platform JobConnect dari perspektif pelamar kerja, perusahaan mitra rekrutmen, hingga admin pengelola dapat disimak pada tautan berikut:
+- **Video Walkthrough Demo JobConnect**: *(Tautan video demonstrasi resmi proyek akan diperbarui oleh pemilik proyek)*
+
+---
+
 ## Pengembang
 
 Aplikasi portal kerja **JobConnect** dibuat dan dikembangkan oleh **Abryan Yoga Pratama** (SMK Negeri 6 Surakarta).
