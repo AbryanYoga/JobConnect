@@ -219,7 +219,7 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 17: Build, Deployment Vercel, dan Dokumentasi Akhir
 
-- [ ] 164 `chore: validasi build produksi Next.js dan perbaiki error type lint`
+- [x] 164 `chore: validasi build produksi Next.js dan perbaiki error type lint`
 - [ ] 165 `chore: siapkan konfigurasi deployment ke platform Vercel`
 - [ ] 166 `docs: catat daftar environment variable Vercel dan URL Supabase`
 - [ ] 167 `docs(readme): lengkapi README dengan fitur, arsitektur, dan cara instalasi`
