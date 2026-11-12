@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { SearchBar } from "@/components/lowongan/SearchBar";
 import { FilterPanel } from "@/components/lowongan/FilterPanel";
 import { JobCard } from "@/components/lowongan/JobCard";
@@ -60,9 +59,10 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
 
   // 2. Ambil data kota jika provinsi dipilih
   let cities: { id: number; name: string; slug: string }[] = [];
+  let foundProv: { id: number; name: string; slug: string } | null = null;
 
   if (provinceSlug && provinces) {
-    const foundProv = provinces.find((p) => p.slug === provinceSlug);
+    foundProv = provinces.find((p) => p.slug === provinceSlug) || null;
     if (foundProv) {
       const { data: citiesData } = await supabase
         .from("cities")
@@ -110,6 +110,10 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
       salary_max,
       is_demo,
       created_at,
+      city:cities(
+        name,
+        province:provinces(name)
+      ),
       company:companies(
         id,
         name,
@@ -147,6 +151,17 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
 
   if (selectedCityId) {
     baseQuery = baseQuery.eq("city_id", selectedCityId);
+  } else if (foundProv) {
+    const provinceCityIds = cities.map((c) => c.id);
+    if (provinceCityIds.length > 0) {
+      baseQuery = baseQuery.in("city_id", provinceCityIds);
+    } else {
+      // Provinsi tidak memiliki data kota di database
+      baseQuery = baseQuery.eq("city_id", -1);
+    }
+  } else if (provinceSlug) {
+    // Slug provinsi tidak ditemukan dalam master data
+    baseQuery = baseQuery.eq("city_id", -1);
   }
 
   const fromIndex = (currentPage - 1) * PAGE_SIZE;
@@ -171,17 +186,32 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
       logoUrl = publicUrlData.publicUrl;
     }
 
-    const cityData = companyData?.city
+    const jobCity = j.city
+      ? Array.isArray(j.city)
+        ? j.city[0]
+        : j.city
+      : null;
+
+    const jobProvince = jobCity?.province
+      ? Array.isArray(jobCity.province)
+        ? jobCity.province[0]
+        : jobCity.province
+      : null;
+
+    const companyCity = companyData?.city
       ? Array.isArray(companyData.city)
         ? companyData.city[0]
         : companyData.city
       : null;
 
-    const provinceData = cityData?.province
-      ? Array.isArray(cityData.province)
-        ? cityData.province[0]
-        : cityData.province
+    const companyProvince = companyCity?.province
+      ? Array.isArray(companyCity.province)
+        ? companyCity.province[0]
+        : companyCity.province
       : null;
+
+    const resolvedCityName = jobCity?.name || companyCity?.name || null;
+    const resolvedProvinceName = jobProvince?.name || companyProvince?.name || null;
 
     return {
       id: j.id,
@@ -203,8 +233,8 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
             name: companyData.name,
             slug: companyData.slug,
             logoUrl,
-            cityName: cityData?.name || null,
-            provinceName: provinceData?.name || null,
+            cityName: resolvedCityName,
+            provinceName: resolvedProvinceName,
           }
         : null,
     };
@@ -213,14 +243,6 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
   return (
     <div className="min-h-screen bg-[#FAF8F0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
-        {/* Breadcrumb Navigasi */}
-        <Breadcrumb
-          items={[
-            { label: "Beranda", href: "/" },
-            { label: "Eksplorasi Lowongan" },
-          ]}
-        />
-
         {/* Header Halaman */}
         <CatalogHeader totalCount={totalCount} />
 
@@ -249,7 +271,10 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
             </div>
 
             {jobs.length === 0 ? (
-              <CatalogEmptyState />
+              <CatalogEmptyState
+                provinceName={foundProv?.name}
+                cityName={selectedCityId ? cities.find((c) => c.id === selectedCityId)?.name : undefined}
+              />
             ) : (
               <div className="space-y-4">
                 {jobs.map((job) => (
