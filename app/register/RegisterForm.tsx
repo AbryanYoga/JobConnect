@@ -2,31 +2,27 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   User,
-  Building2,
   Mail,
   Lock,
   ArrowRight,
   ShieldCheck,
   AlertCircle,
   CheckCircle2,
+  Building2,
 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
-import { registerSchema, peranToRole, type Peran } from "@/lib/validation/auth";
+import { registerSchema, peranToRole } from "@/lib/validation/auth";
 import { fieldErrors } from "@/lib/validation/helpers";
 import { useLanguage } from "@/lib/i18n";
 
 export function RegisterForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { t, language } = useLanguage();
-  const initialPeran: Peran =
-    searchParams.get("peran") === "perusahaan" ? "perusahaan" : "pelamar";
 
-  const [peran, setPeran] = useState<Peran>(initialPeran);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,6 +31,33 @@ export function RegisterForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
+  const handleGoogleRegister = async () => {
+    setServerError(null);
+    setIsGoogleSubmitting(true);
+    try {
+      const supabase = createClient();
+      const callbackUrl = `${window.location.origin}/auth/callback?flow=register&peran=pelamar&next=${encodeURIComponent(
+        "/profil?onboarding=true"
+      )}`;
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: callbackUrl,
+        },
+      });
+
+      if (error) {
+        setServerError(error.message || "Gagal menghubungkan ke akun Google.");
+        setIsGoogleSubmitting(false);
+      }
+    } catch {
+      setServerError("Terjadi kendala saat menghubungi layanan Google.");
+      setIsGoogleSubmitting(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +68,7 @@ export function RegisterForm() {
       email,
       password,
       confirmPassword,
-      peran,
+      peran: "pelamar",
     });
 
     if (!validationResult.success) {
@@ -64,7 +87,8 @@ export function RegisterForm() {
         options: {
           data: {
             name: validationResult.data.name,
-            role: peranToRole(validationResult.data.peran),
+            role: peranToRole("pelamar"),
+            is_registered: true,
           },
         },
       });
@@ -89,12 +113,9 @@ export function RegisterForm() {
 
       // Jika sesi langsung terbentuk (tanpa verifikasi email)
       if (data.session) {
-        router.refresh();
-        if (peran === "perusahaan") {
-          router.push("/mitra/profil-perusahaan?onboarding=true");
-        } else {
-          router.push("/profil");
-        }
+        // Alihkan langsung ke onboarding pengisian biodata
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = "/profil?onboarding=true";
         return;
       }
 
@@ -111,8 +132,6 @@ export function RegisterForm() {
     }
   };
 
-  const isCompany = peran === "perusahaan";
-
   if (isSuccess) {
     return (
       <div className="w-full max-w-md mx-auto">
@@ -127,29 +146,28 @@ export function RegisterForm() {
             {language === "en" ? (
               <>
                 Your account was successfully registered as{" "}
-                <span className="font-bold text-black">
-                  {isCompany ? "Partner Company" : "Job Seeker"}
-                </span>
-                . Please check the email inbox of{" "}
+                <span className="font-bold text-black">Job Seeker</span>. Please
+                check the email inbox of{" "}
                 <span className="font-bold text-black">{email}</span> to confirm
-                your account before signing in.
+                your account. After signing in, you will be guided to complete
+                your biodata (domicile, age, education, and portfolio).
               </>
             ) : (
               <>
                 Akun Anda berhasil didaftarkan sebagai{" "}
-                <span className="font-bold text-black">
-                  {isCompany ? "Perusahaan Mitra" : "Pelamar Kerja"}
-                </span>
-                . Silakan periksa kotak masuk email{" "}
+                <span className="font-bold text-black">Pencari Kerja</span>.
+                Silakan periksa kotak masuk email{" "}
                 <span className="font-bold text-black">{email}</span> untuk
-                mengonfirmasi akun sebelum masuk.
+                mengonfirmasi akun. Setelah masuk, Anda akan langsung diarahkan
+                untuk melengkapi biodata diri (domisili, umur, pendidikan, dan
+                portofolio karya).
               </>
             )}
           </p>
           <div className="mt-8">
             <Link
               href="/login"
-              className="inline-flex items-center justify-center w-full px-6 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] text-black font-black text-sm transition-all shadow-2xs"
+              className="inline-flex items-center justify-center w-full px-6 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] text-black font-black text-sm transition-all shadow-2xs min-h-[44px]"
             >
               {t("Menuju Halaman Masuk")}
             </Link>
@@ -163,18 +181,42 @@ export function RegisterForm() {
     <div className="w-full max-w-md mx-auto">
       {/* Header Kartu Pendaftaran */}
       <div className="bg-white rounded-[32px] sm:rounded-[40px] border border-black/[0.08] shadow-card p-8 sm:p-10">
-        <div className="mb-8 text-center space-y-2">
+        <div className="mb-6 text-center space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black text-xs font-bold border border-black/10 shadow-2xs">
             <ShieldCheck className="w-3.5 h-3.5 text-black" aria-hidden="true" />
-            <span>{t("Pendaftaran Akun Terverifikasi")}</span>
+            <span>{t("Pencari Kerja Terverifikasi", "Job Seeker Account")}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-black tracking-tight pt-1">
-            {t("Buat Akun Baru")}
+            {t("Daftar Akun Baru")}
           </h1>
-          <p className="text-sm text-slate-600 leading-relaxed font-medium">
-            {t("Pilih peran Anda dan mulai temukan lowongan atau pasang lowongan kerja.")}
+          <p className="text-sm text-slate-600 leading-relaxed font-normal">
+            {t(
+              "Mulai langkah karier impian Anda dengan mengakses ribuan lowongan kerja resmi di 38 provinsi.",
+              "Start your dream career by accessing thousands of official verified jobs across 38 provinces."
+            )}
           </p>
         </div>
+
+        {/* Peringatan jika sebelumnya mencoba masuk dengan Google tanpa registrasi */}
+        {searchParams.get("error") === "not_registered" && (
+          <div
+            role="alert"
+            className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950 flex items-start gap-3 text-xs sm:text-sm font-medium mb-5"
+          >
+            <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="space-y-1">
+              <p className="font-bold text-amber-950">
+                {t("Akun Google Anda Belum Terdaftar", "Google Account Not Registered")}
+              </p>
+              <p className="text-amber-900 leading-relaxed text-xs sm:text-sm">
+                {t(
+                  "Email Google Anda belum terdaftar di JobConnect. Silakan klik tombol Google di bawah ini untuk menyelesaikan pendaftaran akun Anda.",
+                  "Your Google email is not yet registered on JobConnect. Please click the Google button below to complete your registration."
+                )}
+              </p>
+            </div>
+          </div>
+        )}
 
         {serverError && (
           <div
@@ -186,112 +228,62 @@ export function RegisterForm() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          {/* Pemilihan Peran (Segmented Radio Cards Gaya BMC) */}
-          <div className="space-y-2">
-            <span className="block text-xs font-bold text-black uppercase tracking-wide">
-              {t("Daftar Sebagai")}
-            </span>
-            <div
-              className="grid grid-cols-2 gap-3"
-              role="radiogroup"
-              aria-label={t("Daftar Sebagai")}
-            >
-              <button
-                type="button"
-                role="radio"
-                aria-checked={peran === "pelamar"}
-                onClick={() => {
-                  setPeran("pelamar");
-                  if (errors.name) {
-                    setErrors((prev) => ({ ...prev, name: "" }));
-                  }
-                }}
-                className={`flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all min-h-[5.5rem] cursor-pointer focus-visible:outline-2 focus-visible:outline-black ${
-                  peran === "pelamar"
-                    ? "border-black bg-black text-white shadow-2xs"
-                    : "border-black/[0.08] bg-[#FAF8F0] text-slate-800 hover:bg-black/5"
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-1.5">
-                  <div
-                    className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${
-                      peran === "pelamar"
-                        ? "bg-[#FFDD00] text-black"
-                        : "bg-white text-slate-700 border border-black/[0.08]"
-                    }`}
-                  >
-                    <User className="w-4 h-4" aria-hidden="true" />
-                  </div>
-                  <span className="font-bold text-sm">{t("Pelamar")}</span>
-                </div>
-                <span
-                  className={`text-[11px] leading-snug ${
-                    peran === "pelamar" ? "text-slate-300" : "text-slate-500"
-                  }`}
-                >
-                  {t("Cari dan lamar lowongan kerja")}
-                </span>
-              </button>
+        {/* Tombol Cepat Daftar dengan Google */}
+        <button
+          type="button"
+          onClick={handleGoogleRegister}
+          disabled={isSubmitting || isGoogleSubmitting}
+          className="w-full py-3 px-6 rounded-full bg-white hover:bg-slate-50 active:scale-98 border border-black/[0.12] text-black font-bold text-sm transition-all shadow-2xs hover:shadow flex items-center justify-center gap-3 min-h-[48px] disabled:opacity-50 cursor-pointer"
+        >
+          <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="#4285F4"
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+            />
+          </svg>
+          <span>
+            {isGoogleSubmitting
+              ? t("Menghubungkan ke Google...")
+              : t("Daftar Cepat dengan Google")}
+          </span>
+        </button>
 
-              <button
-                type="button"
-                role="radio"
-                aria-checked={peran === "perusahaan"}
-                onClick={() => {
-                  setPeran("perusahaan");
-                  if (errors.name) {
-                    setErrors((prev) => ({ ...prev, name: "" }));
-                  }
-                }}
-                className={`flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all min-h-[5.5rem] cursor-pointer focus-visible:outline-2 focus-visible:outline-black ${
-                  peran === "perusahaan"
-                    ? "border-black bg-black text-white shadow-2xs"
-                    : "border-black/[0.08] bg-[#FAF8F0] text-slate-800 hover:bg-black/5"
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-1.5">
-                  <div
-                    className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${
-                      peran === "perusahaan"
-                        ? "bg-[#FFDD00] text-black"
-                        : "bg-white text-slate-700 border border-black/[0.08]"
-                    }`}
-                  >
-                    <Building2 className="w-4 h-4" aria-hidden="true" />
-                  </div>
-                  <span className="font-bold text-sm">{t("Perusahaan")}</span>
-                </div>
-                <span
-                  className={`text-[11px] leading-snug ${
-                    peran === "perusahaan" ? "text-slate-300" : "text-slate-500"
-                  }`}
-                >
-                  {t("Pasang lowongan dan rekrut tim")}
-                </span>
-              </button>
-            </div>
+        {/* Pemisah atau Daftar dengan Email */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-black/[0.08]" />
           </div>
+          <div className="relative flex justify-center text-xs">
+            <span className="bg-white px-3 text-slate-500 font-medium">
+              {t("atau daftar dengan email", "or sign up with email")}
+            </span>
+          </div>
+        </div>
 
-          {/* Input Nama Lengkap / Nama Perusahaan */}
+        <form onSubmit={handleSubmit} noValidate className="space-y-4">
+          {/* Input Nama Lengkap */}
           <Input
             id="register-name"
-            label={isCompany ? t("Nama Perusahaan") : t("Nama Lengkap")}
+            label={t("Nama Lengkap")}
             required
             type="text"
-            autoComplete={isCompany ? "organization" : "name"}
+            autoComplete="name"
             placeholder={
-              isCompany
-                ? (language === "en" ? "e.g. Acme Corporation" : "Contoh: PT Teknologi Bangsa")
-                : (language === "en" ? "e.g. John Doe" : "Contoh: Budi Santoso")
+              language === "en" ? "e.g. John Doe" : "Contoh: Budi Santoso"
             }
-            leftIcon={
-              isCompany ? (
-                <Building2 className="w-4 h-4 text-slate-400" />
-              ) : (
-                <User className="w-4 h-4 text-slate-400" />
-              )
-            }
+            leftIcon={<User className="w-4 h-4 text-slate-400" />}
             value={name}
             onChange={(e) => {
               setName(e.target.value);
@@ -308,7 +300,9 @@ export function RegisterForm() {
             required
             type="email"
             autoComplete="email"
-            placeholder="nama@email.com"
+            placeholder={
+              language === "en" ? "e.g. name@example.com" : "Contoh: nama@email.com"
+            }
             leftIcon={<Mail className="w-4 h-4 text-slate-400" />}
             value={email}
             onChange={(e) => {
@@ -326,8 +320,8 @@ export function RegisterForm() {
             required
             type="password"
             autoComplete="new-password"
-            placeholder={t("Minimal 8 karakter")}
-            helperText={t("Gunakan minimal 8 karakter gabungan huruf dan angka.")}
+            placeholder="••••••••"
+            helperText={t("Minimal 8 karakter")}
             leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
             value={password}
             onChange={(e) => {
@@ -346,7 +340,8 @@ export function RegisterForm() {
             required
             type="password"
             autoComplete="new-password"
-            placeholder={t("Ulangi kata sandi")}
+            placeholder="••••••••"
+            helperText={t("Ulangi kata sandi yang sama")}
             leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
             value={confirmPassword}
             onChange={(e) => {
@@ -358,31 +353,25 @@ export function RegisterForm() {
             className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
           />
 
-          {/* Tombol Submit Pendaftaran (Gaya BMC Pill Kuning) */}
-          <div className="pt-3">
+          {/* Tombol Submit Pendaftaran */}
+          <div className="pt-2">
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3.5 px-6 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] active:scale-98 text-black font-black text-base transition-all shadow-2xs hover:shadow flex items-center justify-center gap-2 min-h-[48px] disabled:opacity-50 cursor-pointer"
+              disabled={isSubmitting || isGoogleSubmitting}
+              className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] active:scale-98 text-black font-black text-sm transition-all shadow-2xs hover:shadow disabled:opacity-50 min-h-[48px] cursor-pointer"
             >
-              {isSubmitting ? (
-                <span>{t("Memproses pendaftaran...")}</span>
-              ) : (
-                <>
-                  <span>
-                    {isCompany
-                      ? t("Daftar sebagai Perusahaan")
-                      : t("Daftar sebagai Pelamar")}
-                  </span>
-                  <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
-                </>
-              )}
+              <span>
+                {isSubmitting
+                  ? t("Memproses Pendaftaran...")
+                  : t("Daftar sebagai Pencari Kerja")}
+              </span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
             </button>
           </div>
         </form>
 
-        {/* Tautan Masuk */}
-        <div className="mt-8 pt-6 border-t border-black/[0.06] text-center">
+        {/* Tautan Alternatif Khusus Perusahaan & Sudah Punya Akun */}
+        <div className="mt-8 pt-6 border-t border-black/[0.06] space-y-3 text-center">
           <p className="text-sm text-slate-600 font-medium">
             {t("Sudah memiliki akun JobConnect?")}{" "}
             <Link
@@ -392,6 +381,16 @@ export function RegisterForm() {
               {t("Masuk di sini")}
             </Link>
           </p>
+
+          <div className="pt-2">
+            <Link
+              href="/perusahaan/register"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-black hover:underline py-1"
+            >
+              <Building2 className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+              <span>Ingin pasang lowongan? Daftar Akun Perusahaan Mitra &rarr;</span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

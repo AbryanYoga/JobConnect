@@ -61,11 +61,84 @@ export const websiteSchema = z
   })
   .transform((val) => val || null);
 
+export interface PortfolioItem {
+  id: string;
+  title: string;
+  description: string;
+  url?: string | null;
+  skills?: string[] | null;
+  year?: string | null;
+}
+
+export const portfolioItemSchema = z.object({
+  id: z.string().default(() => Math.random().toString(36).substring(2, 9)),
+  title: z
+    .string()
+    .trim()
+    .min(2, "Judul portofolio minimal 2 karakter")
+    .max(120, "Judul portofolio maksimal 120 karakter"),
+  description: z
+    .string()
+    .trim()
+    .max(500, "Deskripsi portofolio maksimal 500 karakter")
+    .default(""),
+  url: websiteSchema,
+  skills: z.array(z.string().trim()).default([]),
+  year: z.union([z.string(), z.null(), z.undefined()]).transform((val) => (val ? val.trim() : null)),
+});
+
+export const EDUCATION_LEVEL_OPTIONS = [
+  { value: "sma_smk", label: "SMA / SMK Sederajat" },
+  { value: "d3", label: "Diploma (D3 / D4)" },
+  { value: "s1", label: "Sarjana (S1)" },
+  { value: "s2", label: "Magister (S2)" },
+  { value: "s3", label: "Doktor (S3)" },
+  { value: "lainnya", label: "Pendidikan Non-formal / Lainnya" },
+] as const;
+
+export function calculateAge(birthDateString: string | null | undefined): number | null {
+  if (!birthDateString) return null;
+  const birth = new Date(birthDateString);
+  if (isNaN(birth.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age >= 0 && age <= 120 ? age : null;
+}
+
 export const profilPelamarSchema = z.object({
-  name: z.string().trim().min(NAME_MIN, `Nama minimal ${NAME_MIN} karakter`).max(NAME_MAX, `Nama maksimal ${NAME_MAX} karakter`),
+  name: z
+    .string()
+    .trim()
+    .min(NAME_MIN, `Nama minimal ${NAME_MIN} karakter`)
+    .max(NAME_MAX, `Nama maksimal ${NAME_MAX} karakter`),
   phone: phoneSchema,
   headline: trimmedOptional(HEADLINE_MAX, `Headline maksimal ${HEADLINE_MAX} karakter`),
+  provinceId: optionalId(),
+  cityId: optionalId(),
+  birthDate: z
+    .union([z.string(), z.null(), z.undefined()])
+    .transform((val) => (val && val.trim() ? val.trim() : null))
+    .refine((val) => {
+      if (!val) return true;
+      const d = new Date(val);
+      if (isNaN(d.getTime())) return false;
+      const age = calculateAge(val);
+      return age !== null && age >= 15 && age <= 90;
+    }, "Tanggal lahir tidak valid (usia minimal 15 tahun dan maksimal 90 tahun)"),
+  educationLevel: z
+    .union([z.string(), z.null(), z.undefined()])
+    .transform((val) => (val && val.trim() ? val.trim() : null)),
+  educationInstitution: trimmedOptional(150, "Institusi pendidikan maksimal 150 karakter"),
+  bio: trimmedOptional(1500, "Bio profil maksimal 1500 karakter"),
+  linkedinUrl: websiteSchema,
+  portfolioUrl: websiteSchema,
+  portfolios: z.array(portfolioItemSchema).default([]),
   emailNotifications: z.boolean().default(true),
+  avatarUrl: z.union([z.string(), z.null(), z.undefined()]).optional(),
 });
 
 export type ProfilPelamarInput = z.infer<typeof profilPelamarSchema>;
@@ -93,6 +166,36 @@ export const LOGO_BUCKET = "company-logos";
 export const LOGO_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 export const LOGO_ERROR_MESSAGE = "Logo harus berformat PNG, JPG, atau WEBP dan maksimal 2 MB";
 export type LogoExtension = "jpg" | "png" | "webp";
+
+export const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
+export const AVATAR_BUCKET = "avatars";
+export const AVATAR_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+export const AVATAR_ERROR_MESSAGE = "Foto profil harus berformat PNG, JPG, atau WEBP dan maksimal 2 MB";
+export type AvatarExtension = "jpg" | "png" | "webp";
+
+export async function validateAvatarFile(
+  file: File
+): Promise<{ ok: true; extension: AvatarExtension } | { ok: false; message: string }> {
+  if (!file || typeof file.slice !== "function" || !AVATAR_ALLOWED_TYPES.includes(file.type as (typeof AVATAR_ALLOWED_TYPES)[number]) || file.size <= 0 || file.size > AVATAR_MAX_BYTES) {
+    return { ok: false, message: AVATAR_ERROR_MESSAGE };
+  }
+
+  try {
+    const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    if (file.type === "image/png" && bytes.length >= 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) {
+      return { ok: true, extension: "png" };
+    }
+    if (file.type === "image/jpeg" && bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+      return { ok: true, extension: "jpg" };
+    }
+    if (file.type === "image/webp" && bytes.length >= 12 && bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) {
+      return { ok: true, extension: "webp" };
+    }
+  } catch {
+    return { ok: false, message: AVATAR_ERROR_MESSAGE };
+  }
+  return { ok: false, message: AVATAR_ERROR_MESSAGE };
+}
 
 export async function validateLogoFile(
   file: File
