@@ -23,6 +23,23 @@ export type Database = {
           role: string;
           phone: string | null;
           headline: string | null;
+          avatar_url: string | null;
+          province_id: number | null;
+          city_id: number | null;
+          birth_date: string | null;
+          education_level: string | null;
+          education_institution: string | null;
+          bio: string | null;
+          linkedin_url: string | null;
+          portfolio_url: string | null;
+          portfolios: {
+            id: string;
+            title: string;
+            description: string;
+            url?: string | null;
+            skills?: string[] | null;
+            year?: string | null;
+          }[] | null;
           email_notifications: boolean;
           created_at: string;
         };
@@ -33,6 +50,23 @@ export type Database = {
           role?: string;
           phone?: string | null;
           headline?: string | null;
+          avatar_url?: string | null;
+          province_id?: number | null;
+          city_id?: number | null;
+          birth_date?: string | null;
+          education_level?: string | null;
+          education_institution?: string | null;
+          bio?: string | null;
+          linkedin_url?: string | null;
+          portfolio_url?: string | null;
+          portfolios?: {
+            id: string;
+            title: string;
+            description: string;
+            url?: string | null;
+            skills?: string[] | null;
+            year?: string | null;
+          }[] | null;
           email_notifications?: boolean;
           created_at?: string;
         };
@@ -43,6 +77,23 @@ export type Database = {
           role?: string;
           phone?: string | null;
           headline?: string | null;
+          avatar_url?: string | null;
+          province_id?: number | null;
+          city_id?: number | null;
+          birth_date?: string | null;
+          education_level?: string | null;
+          education_institution?: string | null;
+          bio?: string | null;
+          linkedin_url?: string | null;
+          portfolio_url?: string | null;
+          portfolios?: {
+            id: string;
+            title: string;
+            description: string;
+            url?: string | null;
+            skills?: string[] | null;
+            year?: string | null;
+          }[] | null;
           email_notifications?: boolean;
           created_at?: string;
         };
@@ -618,6 +669,10 @@ export type Database = {
           p_interview_at?: string | null;
           p_interview_place?: string | null;
         };
+        Returns: undefined;
+      };
+      register_as_company: {
+        Args: Record<PropertyKey, never>;
         Returns: undefined;
       };
       jobs_count_by_province: {

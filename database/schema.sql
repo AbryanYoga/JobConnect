@@ -12,6 +12,16 @@ create table if not exists public.profiles (
   role text not null default 'user' check (role in ('user', 'company', 'admin')),
   phone text,
   headline text check (headline is null or char_length(headline) <= 120),
+  avatar_url text,
+  province_id smallint references public.provinces(id) on delete set null,
+  city_id int references public.cities(id) on delete set null,
+  birth_date date,
+  education_level text check (education_level is null or education_level in ('smp', 'sma_smk', 'd3', 'd4', 's1', 's2', 's3', 'lainnya')),
+  education_institution text check (education_institution is null or char_length(education_institution) <= 150),
+  bio text check (bio is null or char_length(bio) <= 1500),
+  linkedin_url text,
+  portfolio_url text,
+  portfolios jsonb default '[]'::jsonb,
   email_notifications boolean not null default true,
   created_at timestamptz not null default now()
 );

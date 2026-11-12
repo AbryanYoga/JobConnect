@@ -36,7 +36,22 @@ with check (id = auth.uid());
 -- Mencegah pengguna mengubah kolom role menjadi admin atau memalsukan email dari klien
 revoke all on public.profiles from anon;
 revoke insert, update, delete on public.profiles from authenticated;
-grant update (name, phone, headline, email_notifications) on public.profiles to authenticated;
+grant update (
+  name,
+  phone,
+  headline,
+  avatar_url,
+  province_id,
+  city_id,
+  birth_date,
+  education_level,
+  education_institution,
+  bio,
+  linkedin_url,
+  portfolio_url,
+  portfolios,
+  email_notifications
+) on public.profiles to authenticated;
 
 -- Policy tabel companies
 drop policy if exists "companies_select_policy" on public.companies;

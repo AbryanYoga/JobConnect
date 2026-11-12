@@ -34,6 +34,26 @@ after insert on auth.users
 for each row
 execute function public.handle_new_user();
 
+-- Fungsi RPC untuk mengubah role akun menjadi 'company' (dipanggil saat daftar perusahaan via Google OAuth)
+create or replace function public.register_as_company()
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_user_id uuid := auth.uid();
+begin
+  if v_user_id is not null then
+    update public.profiles
+    set role = 'company'
+    where id = v_user_id and role != 'admin';
+  end if;
+end;
+$$;
+
+grant execute on function public.register_as_company() to authenticated;
+
 -- Fungsi helper keamanan dan pencegah rekursi RLS
 create or replace function public.is_admin()
 returns boolean
