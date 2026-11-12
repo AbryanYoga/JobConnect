@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { useLanguage } from "@/lib/i18n";
+import { performClientLogout } from "@/lib/auth/logout";
 
 interface LogoutButtonProps {
   variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
@@ -21,7 +20,6 @@ export function LogoutButton({
   showIcon = true,
   children,
 }: LogoutButtonProps) {
-  const router = useRouter();
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,12 +29,12 @@ export function LogoutButton({
   const handleLogout = async () => {
     try {
       setIsLoading(true);
-      const supabase = createClient();
-      await supabase.auth.signOut();
-      router.refresh();
-      router.push("/login");
+      await performClientLogout();
     } catch {
-      router.push("/login");
+      if (typeof window !== "undefined") {
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = "/login";
+      }
     } finally {
       setIsLoading(false);
     }
