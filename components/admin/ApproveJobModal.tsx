@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, X, AlertCircle } from "lucide-react";
 import { approveJobAction } from "@/app/actions/admin";
+import { useLanguage } from "@/lib/i18n";
 
 interface ApproveJobModalProps {
   jobId: number;
@@ -17,6 +18,7 @@ export function ApproveJobModal({
   companyName,
 }: ApproveJobModalProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [note, setNote] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -28,13 +30,13 @@ export function ApproveJobModal({
     try {
       const res = await approveJobAction(jobId, note);
       if (!res.success) {
-        setError(res.error || "Gagal menyetujui lowongan.");
+        setError(res.error || t("Gagal menyetujui lowongan.", "Failed to approve vacancy."));
       } else {
         setIsOpen(false);
         router.refresh();
       }
     } catch {
-      setError("Terjadi kesalahan teknis saat memproses persetujuan lowongan.");
+      setError(t("Terjadi kesalahan teknis saat memproses persetujuan lowongan.", "Technical error while processing vacancy approval."));
     } finally {
       setIsLoading(false);
     }
@@ -46,10 +48,10 @@ export function ApproveJobModal({
         type="button"
         onClick={() => setIsOpen(true)}
         className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-2xs transition min-h-[44px] cursor-pointer"
-        aria-label={`Setujui lowongan ${jobTitle}`}
+        aria-label={`${t("Setujui lowongan", "Approve vacancy")} ${jobTitle}`}
       >
         <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
-        <span>Setujui Lowongan</span>
+        <span>{t("Setujui Lowongan", "Approve Vacancy")}</span>
       </button>
 
       {isOpen && (
@@ -71,7 +73,7 @@ export function ApproveJobModal({
                 type="button"
                 onClick={() => setIsOpen(false)}
                 className="w-11 h-11 rounded-full hover:bg-black/[0.05] flex items-center justify-center text-slate-700 hover:text-black transition cursor-pointer min-h-[44px] min-w-[44px]"
-                aria-label="Tutup modal persetujuan"
+                aria-label={t("Tutup", "Close")}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -82,13 +84,19 @@ export function ApproveJobModal({
                 id="modal-approve-title"
                 className="text-lg font-black text-black tracking-tight"
               >
-                Persetujuan Publikasi Lowongan (ACC)
+                {t("Persetujuan Publikasi Lowongan (ACC)", "Vacancy Publication Approval (ACC)")}
               </h3>
               <p className="text-sm text-slate-600 font-medium leading-relaxed">
-                Anda akan menyetujui lowongan <strong className="text-black">{jobTitle}</strong> dari perusahaan <strong className="text-black">{companyName}</strong>.
+                {t("Anda akan menyetujui lowongan", "You are approving vacancy")}{" "}
+                <strong className="text-black">{jobTitle}</strong>{" "}
+                {t("dari perusahaan", "from company")}{" "}
+                <strong className="text-black">{companyName}</strong>.
               </p>
               <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                Status lowongan akan otomatis beralih menjadi <strong>Aktif (Open)</strong> dan dapat ditemukan serta dilamar oleh seluruh pencari kerja di portal publik.
+                {t(
+                  "Status lowongan akan otomatis beralih menjadi Aktif (Open) dan dapat ditemukan serta dilamar oleh seluruh pencari kerja di portal publik.",
+                  "Vacancy status will automatically switch to Active (Open) and can be discovered and applied for by all job seekers on the public portal."
+                )}
               </p>
             </div>
 
@@ -97,45 +105,49 @@ export function ApproveJobModal({
                 htmlFor="approve-note"
                 className="block text-xs font-bold text-slate-700"
               >
-                Catatan Moderator (Opsional)
+                {t("Catatan Moderator (Opsional)", "Moderator Note (Optional)")}
               </label>
               <textarea
                 id="approve-note"
                 rows={3}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Contoh: Kriteria dan transparansi gaji telah sesuai standar platform."
-                className="w-full p-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] text-xs font-medium text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 resize-none"
+                placeholder={t(
+                  "Tambahkan catatan opsional jika ada arahan tambahan bagi mitra...",
+                  "Add optional notes if any additional guidance for partner..."
+                )}
+                className="w-full rounded-2xl border border-black/[0.12] p-3 text-xs sm:text-sm font-medium text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 transition"
               />
             </div>
 
             {error && (
               <div
                 role="alert"
-                className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center gap-2"
+                className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2"
               >
-                <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
                 <span>{error}</span>
               </div>
             )}
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-2">
+            <div className="pt-2 flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5">
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 disabled={isLoading}
-                className="px-5 py-3 rounded-full hover:bg-black/[0.05] text-black text-xs font-bold transition min-h-[44px] cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-full hover:bg-black/[0.05] text-slate-700 hover:text-black text-xs font-bold transition min-h-[44px] cursor-pointer"
               >
-                Batal
+                {t("Batal", "Cancel")}
               </button>
               <button
                 type="button"
                 onClick={handleApprove}
                 disabled={isLoading}
-                className="px-6 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-2xs transition min-h-[44px] disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-2xs hover:shadow active:scale-95 disabled:opacity-50 min-h-[44px] cursor-pointer"
               >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>{isLoading ? "Memproses..." : "Ya, Setujui & Publikasikan"}</span>
+                {isLoading
+                  ? t("Memproses...", "Processing...")
+                  : t("Setujui & Publikasikan", "Approve & Publish")}
               </button>
             </div>
           </div>

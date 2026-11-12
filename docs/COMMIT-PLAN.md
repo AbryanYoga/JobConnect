@@ -258,7 +258,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T23 `fix(lowongan): pertahankan posisi scroll saat memilih filter wilayah`
 - [x] T24 `feat: perluas kontainer kartu desktop dan buat panduan faq`
 - [x] T25 `feat(auth): buat proteksi rute mutlak berdasarkan peran pengguna dan halaman 403`
-- [ ] T26 `feat(admin): buat fitur kelola perusahaan mitra dan modal pembekuan instansi`
+- [x] T26 `feat(admin): buat fitur kelola perusahaan mitra dan modal pembekuan instansi`
 - [ ] T27 `fix(auth): perbaiki mekanisme logout menyeluruh pada pelamar mitra dan admin`
 - [ ] T28 `db: tambah kolom biodata wilayah umur dan portofolio pelamar`
 - [ ] T29 `feat(profil): buat alur onboarding biodata lengkap umur domisili dan portofolio`

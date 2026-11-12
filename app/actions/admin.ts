@@ -157,5 +157,76 @@ export async function deleteCategoryAction(id: number) {
   }
 }
 
+export async function takedownCompanyJobsAction(companyId: number, reason: string) {
+  try {
+    const cleanReason = reason?.trim() || "";
+    if (cleanReason.length < 5) {
+      return {
+        success: false,
+        error: "Alasan penonaktifan atau takedown lowongan wajib diisi minimal 5 karakter.",
+      };
+    }
+
+    const { supabase } = await requireAdmin();
+
+    // Ambil seluruh lowongan aktif (open) atau menunggu review (pending) milik perusahaan ini
+    const { data: jobs, error: jobsErr } = await supabase
+      .from("jobs")
+      .select("id, status")
+      .eq("company_id", companyId)
+      .in("status", ["open", "pending"]);
+
+    if (jobsErr) {
+      return {
+        success: false,
+        error: jobsErr.message || "Gagal mengambil data lowongan perusahaan.",
+      };
+    }
+
+    if (!jobs || jobs.length === 0) {
+      return {
+        success: true,
+        count: 0,
+      };
+    }
+
+    // Takedown setiap lowongan melalui RPC review_job agar riwayat dan notifikasi tercatat
+    for (const j of jobs) {
+      if (j.status === "open") {
+        await supabase.rpc("review_job", {
+          p_job_id: j.id,
+          p_decision: "takedown",
+          p_note: cleanReason,
+        });
+      } else if (j.status === "pending") {
+        await supabase.rpc("review_job", {
+          p_job_id: j.id,
+          p_decision: "reject",
+          p_note: cleanReason,
+        });
+      }
+    }
+
+    [
+      "/admin/perusahaan",
+      "/admin/lowongan",
+      "/admin",
+      "/lowongan",
+      "/mitra/lowongan",
+    ].forEach((p) => revalidatePath(p));
+
+    return {
+      success: true,
+      count: jobs.length,
+    };
+  } catch (err) {
+    return actionError(
+      err,
+      "Terjadi kendala saat memproses penonaktifan lowongan perusahaan."
+    );
+  }
+}
+
+
 
 

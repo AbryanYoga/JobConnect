@@ -11,6 +11,7 @@ import {
   ExternalLink,
   Shield,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 interface AdminSidebarProps {
   adminName: string;
@@ -20,32 +21,37 @@ interface AdminSidebarProps {
 
 const MENU_ITEMS = [
   {
-    label: "Ringkasan",
+    labelId: "Ringkasan",
+    labelEn: "Overview",
     href: "/admin",
     icon: LayoutDashboard,
     exact: true,
   },
   {
-    label: "Antrean Review",
+    labelId: "Antrean Review",
+    labelEn: "Review Queue",
     href: "/admin/lowongan",
     icon: FileCheck2,
     exact: false,
     hasBadge: true,
   },
   {
-    label: "Kelola Kategori",
+    labelId: "Kelola Kategori",
+    labelEn: "Manage Categories",
     href: "/admin/kategori",
     icon: FolderTree,
     exact: true,
   },
   {
-    label: "Perusahaan Mitra",
+    labelId: "Perusahaan Mitra",
+    labelEn: "Partner Companies",
     href: "/admin/perusahaan",
     icon: Building2,
     exact: true,
   },
   {
-    label: "Rekapitulasi Platform",
+    labelId: "Rekapitulasi Platform",
+    labelEn: "Platform Summary",
     href: "/admin/laporan",
     icon: BarChart3,
     exact: true,
@@ -58,6 +64,7 @@ export function AdminSidebar({
   pendingJobsCount = 0,
 }: AdminSidebarProps) {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   const isItemActive = (item: (typeof MENU_ITEMS)[number]) => {
     if (item.exact) {
@@ -102,7 +109,7 @@ export function AdminSidebar({
                 }`}
               >
                 <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
-                <span>{item.label}</span>
+                <span>{t(item.labelId, item.labelEn)}</span>
                 {item.hasBadge && pendingJobsCount > 0 && (
                   <span className="px-1.5 py-0.5 text-[10px] font-black rounded-full bg-[#FFDD00] text-black">
                     {pendingJobsCount}
@@ -125,7 +132,7 @@ export function AdminSidebar({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <span className="px-2 py-0.5 rounded-full bg-slate-900 text-[#FFDD00] text-[10px] font-black uppercase tracking-wider">
-                  Moderator
+                  {t("Moderator", "Moderator")}
                 </span>
               </div>
               <h2 className="font-black text-base text-black tracking-tight truncate mt-1">
@@ -163,7 +170,7 @@ export function AdminSidebar({
                       }`}
                       aria-hidden="true"
                     />
-                    <span className="truncate">{item.label}</span>
+                    <span className="truncate">{t(item.labelId, item.labelEn)}</span>
                   </div>
 
                   {item.hasBadge && pendingJobsCount > 0 && (
@@ -189,7 +196,7 @@ export function AdminSidebar({
             href="/"
             className="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-medium text-slate-500 hover:text-black hover:bg-[#FAF8F0] transition min-h-[44px]"
           >
-            <span>Kunjungi Situs Publik</span>
+            <span>{t("Kunjungi Situs Publik", "Visit Public Site")}</span>
             <ExternalLink className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
           </Link>
         </div>
