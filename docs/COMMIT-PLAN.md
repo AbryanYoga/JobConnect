@@ -262,7 +262,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T27 `fix(auth): perbaiki mekanisme logout menyeluruh pada pelamar mitra dan admin`
 - [x] T28 `db: tambah kolom biodata wilayah umur dan portofolio pelamar`
 - [x] T29 `feat(profil): buat alur onboarding biodata lengkap umur domisili dan portofolio`
-- [ ] T30 `feat(mitra): tampilkan akun lengkap umur kontak dan showcase portofolio pelamar`
+- [x] T30 `feat(mitra): tampilkan akun lengkap umur kontak dan showcase portofolio pelamar`
 - [ ] T31 `style(faq): hilangkan outline search bar dan stabilkan tombol filter panduan`
 - [ ] T32 `fix(lowongan): perbaiki filter wilayah provinsi dan tampilkan pesan jika kosong`
 - [ ] T33 `style: hapus komponen breadcrumb di seluruh halaman aplikasi`
