@@ -263,7 +263,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T28 `db: tambah kolom biodata wilayah umur dan portofolio pelamar`
 - [x] T29 `feat(profil): buat alur onboarding biodata lengkap umur domisili dan portofolio`
 - [x] T30 `feat(mitra): tampilkan akun lengkap umur kontak dan showcase portofolio pelamar`
-- [ ] T31 `style(faq): hilangkan outline search bar dan stabilkan tombol filter panduan`
+- [x] T31 `style(faq): hilangkan outline search bar dan stabilkan tombol filter panduan`
 - [ ] T32 `fix(lowongan): perbaiki filter wilayah provinsi dan tampilkan pesan jika kosong`
 - [ ] T33 `style: hapus komponen breadcrumb di seluruh halaman aplikasi`
 

@@ -334,7 +334,7 @@ export function BmcLandingPage({
           {/* Hero Search Bar: Widget Interaktif BMC Style */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hero-anim-item relative z-30 mx-auto max-w-2xl bg-white p-2.5 sm:p-3 rounded-2xl sm:rounded-full border border-[#222222]/15 shadow-card flex flex-col sm:flex-row items-center gap-2"
+            className="hero-anim-item relative z-30 mx-auto max-w-2xl bg-white p-2.5 sm:p-3 rounded-2xl sm:rounded-full border border-[#222222]/15 shadow-card flex flex-col sm:flex-row items-center gap-2 focus-within:border-[#0D0C23] focus-within:ring-2 focus-within:ring-[#0D0C23]/10 transition-all duration-200"
           >
             <div className="flex items-center gap-2 px-4 py-2 flex-1 w-full">
               <Search className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
@@ -343,7 +343,9 @@ export function BmcLandingPage({
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder={t("Posisi, keahlian, atau profesi...", "Position, skills, or profession...")}
-                className="w-full text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 bg-transparent focus:outline-none"
+                aria-label={t("Cari posisi atau keahlian", "Search position or skills")}
+                className="w-full text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 bg-transparent border-0 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none focus-visible:ring-0"
+                style={{ outline: "none", border: "none", boxShadow: "none" }}
               />
             </div>
 

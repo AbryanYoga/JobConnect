@@ -139,6 +139,21 @@ textarea:focus-visible {
     mask-composite: exclude;
     pointer-events: none;
   }
+
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 30s linear infinite;
+  }
+
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
 }
 
 @media print {
@@ -170,4 +185,13 @@ textarea:focus-visible {
     border-color: #e2e8f0 !important;
   }
 }
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 
