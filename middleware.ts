@@ -3,8 +3,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/lib/supabase/types";
 
 /**
- * Middleware Supabase untuk menyegarkan sesi autentikasi dan cookie pengguna.
- * Selalu menggunakan supabase.auth.getUser() untuk validasi sesi ke server.
+ * Middleware Supabase untuk menyegarkan sesi autentikasi dan memvalidasi
+ * hak akses peran (Role-Based Access Control) secara mutlak antara
+ * Pencari Kerja (pelamar), Mitra Perusahaan, dan Administrator.
  */
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -50,78 +51,146 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  // Proteksi rute mitra (/mitra dan sub-rutenya): khusus akun dengan peran 'company'
+  // Helper untuk membuat redirect response yang mempertahankan cookie sesi Supabase
+  const createRedirect = (url: URL | string) => {
+    const redirectResponse = NextResponse.redirect(
+      typeof url === "string" ? new URL(url, request.url) : url
+    );
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+    });
+    return redirectResponse;
+  };
+
+  // Ambil peran profil pengguna jika sedang dalam sesi aktif
+  let profileRole: string | null = null;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    profileRole = profile?.role || "user";
+  }
+
+  // ========================================================
+  // 1. PROTEKSI MUTLAK RUTE MITRA PERUSAHAAN
+  // ========================================================
+  // A. Dashboard privat mitra (/mitra dan seluruh sub-rutenya)
   if (pathname.startsWith("/mitra")) {
     if (!user) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirectTo", pathname);
-      const redirectResponse = NextResponse.redirect(loginUrl);
-      supabaseResponse.cookies.getAll().forEach((cookie) => {
-        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
-      });
-      return redirectResponse;
+      return createRedirect(loginUrl);
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.role !== "company") {
+    if (profileRole !== "company") {
       const forbiddenUrl = new URL("/403", request.url);
-      const redirectResponse = NextResponse.redirect(forbiddenUrl);
-      supabaseResponse.cookies.getAll().forEach((cookie) => {
-        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
-      });
-      return redirectResponse;
+      forbiddenUrl.searchParams.set("reason", "pelamar_cannot_access_mitra");
+      return createRedirect(forbiddenUrl);
     }
   }
 
-  // Proteksi rute admin (/admin dan sub-rutenya): khusus akun dengan peran 'admin'
+  // B. Formulir pendaftaran perusahaan (/perusahaan/register)
+  if (
+    pathname === "/perusahaan/register" ||
+    pathname.startsWith("/perusahaan/register/")
+  ) {
+    if (user) {
+      if (profileRole === "company") {
+        // Akun perusahaan sudah terdaftar, langsung arahkan ke dashboard mitra
+        return createRedirect("/mitra");
+      }
+      if (profileRole === "user") {
+        // Akun pencari kerja mutlak dilarang mendaftar perusahaan saat sesi pelamar aktif
+        const forbiddenUrl = new URL("/403", request.url);
+        forbiddenUrl.searchParams.set("reason", "pelamar_cannot_access_mitra");
+        return createRedirect(forbiddenUrl);
+      }
+      if (profileRole === "admin") {
+        return createRedirect("/admin");
+      }
+    }
+  }
+
+  // ========================================================
+  // 2. PROTEKSI MUTLAK RUTE ADMINISTRATOR (/admin)
+  // ========================================================
   if (pathname.startsWith("/admin")) {
     if (!user) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirectTo", pathname);
-      const redirectResponse = NextResponse.redirect(loginUrl);
-      supabaseResponse.cookies.getAll().forEach((cookie) => {
-        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
-      });
-      return redirectResponse;
+      return createRedirect(loginUrl);
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.role !== "admin") {
-      const forbiddenUrl = new URL("/403", request.url);
-      const redirectResponse = NextResponse.redirect(forbiddenUrl);
-      supabaseResponse.cookies.getAll().forEach((cookie) => {
-        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
-      });
-      return redirectResponse;
+    if (profileRole !== "admin") {
+      return createRedirect(new URL("/403", request.url));
     }
   }
 
-  // Proteksi rute pelamar (/profil, /lamaran-saya, /tersimpan, /notifikasi): wajib login
-  const isPelamarRoute =
-    pathname.startsWith("/profil") ||
+  // ========================================================
+  // 3. PROTEKSI MUTLAK RUTE PENCARI KERJA (PELAMAR)
+  // ========================================================
+  // A. Riwayat lamaran dan lowongan tersimpan (/lamaran-saya & /tersimpan)
+  if (
     pathname.startsWith("/lamaran-saya") ||
-    pathname.startsWith("/tersimpan") ||
-    pathname.startsWith("/notifikasi");
-
-  if (isPelamarRoute) {
+    pathname.startsWith("/tersimpan")
+  ) {
     if (!user) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirectTo", pathname);
-      const redirectResponse = NextResponse.redirect(loginUrl);
-      supabaseResponse.cookies.getAll().forEach((cookie) => {
-        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
-      });
-      return redirectResponse;
+      return createRedirect(loginUrl);
+    }
+
+    if (profileRole === "company") {
+      // Akun perusahaan mutlak dilarang mengakses riwayat lamaran pencari kerja
+      return createRedirect("/mitra");
+    }
+
+    if (profileRole === "admin") {
+      return createRedirect("/admin");
+    }
+  }
+
+  // B. Formulir profil pelamar (/profil)
+  if (pathname.startsWith("/profil")) {
+    if (!user) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirectTo", pathname);
+      return createRedirect(loginUrl);
+    }
+
+    if (profileRole === "company") {
+      // Akun perusahaan diarahkan ke kelola profil perusahaannya
+      return createRedirect("/mitra/profil-perusahaan");
+    }
+
+    if (profileRole === "admin") {
+      return createRedirect("/admin");
+    }
+  }
+
+  // C. Halaman notifikasi (/notifikasi)
+  if (pathname.startsWith("/notifikasi")) {
+    if (!user) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirectTo", pathname);
+      return createRedirect(loginUrl);
+    }
+  }
+
+  // ========================================================
+  // 4. PENGALIHAN CERDAS HALAMAN REGISTRASI UMUM (/register)
+  // ========================================================
+  if (pathname === "/register") {
+    if (user) {
+      if (profileRole === "company") {
+        return createRedirect("/mitra");
+      }
+      if (profileRole === "admin") {
+        return createRedirect("/admin");
+      }
+      return createRedirect("/profil");
     }
   }
 

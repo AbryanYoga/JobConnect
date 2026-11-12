@@ -219,12 +219,12 @@ Daftar commit berurutan (170 commit + tambahan) yang diselaraskan dengan PRD Ver
 
 ## Fase 17: Build, Deployment Vercel, dan Dokumentasi Akhir
 
-- [x] 164 `chore: validasi build produksi Next.js dan perbaiki error type lint`
+- [ ] 164 `chore: validasi build produksi Next.js dan perbaiki error type lint`
 - [ ] 165 `chore: siapkan konfigurasi deployment ke platform Vercel`
 - [ ] 166 `docs: catat daftar environment variable Vercel dan URL Supabase`
-- [x] 167 `docs(readme): lengkapi README dengan fitur, arsitektur, dan cara instalasi`
-- [x] 168 `docs(readme): tambahkan panduan akun demo pelamar, mitra, dan admin`
-- [x] 169 `docs(readme): pasang tautan screenshot aplikasi dan video demo`
+- [ ] 167 `docs(readme): lengkapi README dengan fitur, arsitektur, dan cara instalasi`
+- [ ] 168 `docs(readme): tambahkan panduan akun demo pelamar, mitra, dan admin`
+- [ ] 169 `docs(readme): pasang tautan screenshot aplikasi dan video demo`
 - [ ] 170 `chore: tandai rilis versi v1.0.0`
 
 ---
@@ -257,6 +257,15 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T22 `refactor: ringkas kode berulang pada validasi action dan landing page`
 - [x] T23 `fix(lowongan): pertahankan posisi scroll saat memilih filter wilayah`
 - [x] T24 `feat: perluas kontainer kartu desktop dan buat panduan faq`
+- [x] T25 `feat(auth): buat proteksi rute mutlak berdasarkan peran pengguna dan halaman 403`
+- [ ] T26 `feat(admin): buat fitur kelola perusahaan mitra dan modal pembekuan instansi`
+- [ ] T27 `fix(auth): perbaiki mekanisme logout menyeluruh pada pelamar mitra dan admin`
+- [ ] T28 `db: tambah kolom biodata wilayah umur dan portofolio pelamar`
+- [ ] T29 `feat(profil): buat alur onboarding biodata lengkap umur domisili dan portofolio`
+- [ ] T30 `feat(mitra): tampilkan akun lengkap umur kontak dan showcase portofolio pelamar`
+- [ ] T31 `style(faq): hilangkan outline search bar dan stabilkan tombol filter panduan`
+- [ ] T32 `fix(lowongan): perbaiki filter wilayah provinsi dan tampilkan pesan jika kosong`
+- [ ] T33 `style: hapus komponen breadcrumb di seluruh halaman aplikasi`
 
 ## Catatan Penting Agent
 

@@ -7,14 +7,36 @@ export const metadata: Metadata = {
   description: "Anda tidak memiliki hak akses untuk membuka halaman ini.",
 };
 
-export default function ForbiddenPage() {
+interface ForbiddenPageProps {
+  searchParams?: Promise<{
+    reason?: string;
+  }>;
+}
+
+export default async function ForbiddenPage({
+  searchParams,
+}: ForbiddenPageProps) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const reason = resolvedParams.reason;
+
+  let message =
+    "Akun Anda tidak memiliki izin atau peran yang sesuai untuk membuka area halaman ini. Pastikan Anda telah masuk dengan kredensial yang tepat.";
+
+  if (reason === "pelamar_cannot_access_mitra") {
+    message =
+      "Anda sedang masuk sebagai akun Pencari Kerja. Area portal perusahaan hanya dapat diakses oleh akun Mitra Perusahaan. Silakan keluar akun (logout) terlebih dahulu jika ingin mendaftar atau mengelola akun perusahaan.";
+  } else if (reason === "company_cannot_access_pelamar") {
+    message =
+      "Anda sedang masuk sebagai akun Mitra Perusahaan. Area ini khusus untuk akun Pencari Kerja. Silakan gunakan dashboard mitra untuk mengelola lowongan dan pelamar.";
+  }
+
   return (
     <main
       id="main-content"
-      className="min-h-[calc(100vh-4rem)] bg-slate-50 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8"
+      className="min-h-[calc(100vh-4rem)] bg-[#FAF8F0] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8"
     >
       <div className="w-full max-w-md mx-auto text-center">
-        <div className="bg-white rounded-card border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+        <div className="bg-white rounded-[32px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
           {/* Ikon Peringatan Otorisasi */}
           <div className="mx-auto w-16 h-16 rounded-full bg-red-50 border border-red-100 flex items-center justify-center text-red-600 shadow-xs">
             <ShieldAlert className="w-8 h-8" aria-hidden="true" />
@@ -28,7 +50,7 @@ export default function ForbiddenPage() {
               Akses Ditolak
             </h1>
             <p className="text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">
-              Akun Anda tidak memiliki izin atau peran yang sesuai untuk membuka area halaman ini. Pastikan Anda telah masuk dengan kredensial yang tepat.
+              {message}
             </p>
           </div>
 
@@ -45,7 +67,7 @@ export default function ForbiddenPage() {
             </ButtonLink>
 
             <ButtonLink
-              href="/login"
+              href="/auth/logout"
               variant="outline"
               size="md"
               fullWidth
