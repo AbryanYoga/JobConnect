@@ -3,7 +3,6 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, MapPin, Globe, ChevronRight } from "lucide-react";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { useLanguage } from "@/lib/i18n";
 
 export interface ProvinceWithCount {
@@ -49,14 +48,6 @@ export function ProvinceIndexView({
 
   return (
     <div className="space-y-8 pb-16">
-      {/* Breadcrumb Navigasi */}
-      <Breadcrumb
-        items={[
-          { label: "Beranda", href: "/" },
-          { label: "Wilayah" },
-        ]}
-      />
-
       {/* Header Halaman */}
       <div className="space-y-3 pb-2">
         <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black border border-black/10 text-xs font-bold shadow-2xs">

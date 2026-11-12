@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { NotificationList } from "@/components/notifikasi/NotificationList";
 
@@ -28,16 +27,9 @@ export default async function NotifikasiPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 sm:py-10">
+    <div className="min-h-screen bg-[#FAF8F0] py-8 sm:py-10">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <Breadcrumb
-          items={[
-            { label: "Beranda", href: "/" },
-            { label: "Notifikasi" },
-          ]}
-        />
-
-        <div className="bg-white rounded-card border border-slate-200 p-6 sm:p-8 shadow-2xs">
+        <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] p-6 sm:p-8 shadow-card">
           <div className="mb-6">
             <h1 className="text-2xl sm:text-3xl font-black text-navy-950 tracking-tight">
               Notifikasi

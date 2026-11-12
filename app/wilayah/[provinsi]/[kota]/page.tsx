@@ -12,7 +12,6 @@ import {
   ChevronRight,
   Filter,
 } from "lucide-react";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
@@ -252,16 +251,6 @@ export default async function CityDetailPage({
   return (
     <div className="min-h-screen bg-[#FAF8F0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
-        {/* Breadcrumb Navigasi */}
-        <Breadcrumb
-          items={[
-            { label: "Beranda", href: "/" },
-            { label: "Wilayah", href: "/wilayah" },
-            { label: province.name, href: `/wilayah/${province.slug}` },
-            { label: city.name },
-          ]}
-        />
-
         {/* Header Kota/Kabupaten */}
         <div className="space-y-3 pb-2">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black border border-black/10 text-xs font-bold shadow-2xs">

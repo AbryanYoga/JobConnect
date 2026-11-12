@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { MainCriteriaCard } from "@/components/lowongan/MainCriteriaCard";
 import {
   MapPin,
@@ -172,7 +171,6 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   }
 
   const companyData = Array.isArray(job.company) ? job.company[0] : job.company;
-  const categoryData = Array.isArray(job.category) ? job.category[0] : job.category;
 
   let logoUrl: string | null = null;
   if (companyData?.logo_path) {
@@ -204,20 +202,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   const isApplyAllowed = isOpen && !isExpired;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#FAF8F0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
-        {/* Navigasi Breadcrumb */}
-        <Breadcrumb
-          items={[
-            { label: "Beranda", href: "/" },
-            { label: "Lowongan", href: "/lowongan" },
-            ...(categoryData?.name
-              ? [{ label: categoryData.name, href: `/lowongan?kategori=${categoryData.slug}` }]
-              : []),
-            { label: job.title },
-          ]}
-        />
-
         {/* Tombol Kembali ke Daftar Lowongan */}
         <div>
           <Link
@@ -264,7 +250,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
         )}
 
         {/* Kartu Header Utama Lowongan */}
-        <section className="bg-white rounded-card border border-slate-200 p-6 sm:p-8 shadow-2xs space-y-6">
+        <section className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex items-start gap-4 sm:gap-5 flex-1 min-w-0">
               {/* Logo Perusahaan */}
@@ -359,6 +345,15 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                   <CheckCircle2 className="w-4 h-4 text-white" aria-hidden="true" />
                   <span>Sudah Melamar (Lihat Status)</span>
                 </Link>
+              ) : userRole === "company" ? (
+                <div className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 font-bold text-xs min-h-[44px]">
+                  <Building2 className="w-4 h-4 text-amber-700" aria-hidden="true" />
+                  <span>Mode Mitra Perusahaan</span>
+                </div>
+              ) : userRole === "admin" ? (
+                <div className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200 font-bold text-xs min-h-[44px]">
+                  <span>Mode Administrator</span>
+                </div>
               ) : isApplyAllowed ? (
                 <a
                   href="#formulir-lamaran"
@@ -385,7 +380,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
           <div className="lg:col-span-2 space-y-8">
             {/* 1. Ringkasan Posisi */}
             {job.summary && (
-              <section className="bg-white rounded-card border border-slate-200 p-6 sm:p-7 shadow-2xs space-y-3">
+              <section className="bg-white rounded-[28px] border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-3">
                 <h2 className="text-lg font-bold text-navy-950 tracking-tight border-b border-slate-100 pb-2">
                   Ringkasan Posisi
                 </h2>
@@ -397,7 +392,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
             {/* 2. Tanggung Jawab Utama */}
             {job.responsibilities && job.responsibilities.length > 0 && (
-              <section className="bg-white rounded-card border border-slate-200 p-6 sm:p-7 shadow-2xs space-y-4">
+              <section className="bg-white rounded-[28px] border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4">
                 <h2 className="text-lg font-bold text-navy-950 tracking-tight border-b border-slate-100 pb-2">
                   Tanggung Jawab Pekerjaan
                 </h2>
@@ -414,7 +409,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
             {/* 3. Kualifikasi Tambahan / Nilai Plus */}
             {job.nice_to_have && job.nice_to_have.length > 0 && (
-              <section className="bg-white rounded-card border border-slate-200 p-6 sm:p-7 shadow-2xs space-y-4">
+              <section className="bg-white rounded-[28px] border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4">
                 <h2 className="text-lg font-bold text-navy-950 tracking-tight border-b border-slate-100 pb-2">
                   Kualifikasi Tambahan (Nilai Plus)
                 </h2>
@@ -431,7 +426,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
             {/* 4. Fasilitas dan Keuntungan */}
             {job.benefits && job.benefits.length > 0 && (
-              <section className="bg-white rounded-card border border-slate-200 p-6 sm:p-7 shadow-2xs space-y-4">
+              <section className="bg-white rounded-[28px] border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4">
                 <h2 className="text-lg font-bold text-navy-950 tracking-tight border-b border-slate-100 pb-2">
                   Fasilitas & Keuntungan
                 </h2>
@@ -439,7 +434,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                   {job.benefits.map((benefit: string, index: number) => (
                     <div
                       key={index}
-                      className="flex items-center gap-2.5 p-3 rounded-md bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-800"
+                      className="flex items-center gap-2.5 p-3 rounded-xl bg-[#FAF8F0] border border-black/[0.06] text-xs sm:text-sm font-semibold text-slate-800"
                     >
                       <Gift className="w-4 h-4 text-navy-700 shrink-0" aria-hidden="true" />
                       <span>{benefit}</span>
@@ -451,7 +446,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
             {/* 5. Tentang Perusahaan */}
             {companyData?.description && (
-              <section className="bg-white rounded-card border border-slate-200 p-6 sm:p-7 shadow-2xs space-y-3">
+              <section className="bg-white rounded-[28px] border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <h2 className="text-lg font-bold text-navy-950 tracking-tight">
                     Tentang {companyName}

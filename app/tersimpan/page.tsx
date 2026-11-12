@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Bookmark } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { JobCard, type JobCardData } from "@/components/lowongan/JobCard";
@@ -62,14 +61,8 @@ export default async function TersimpanPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
+      <div className="min-h-screen bg-[#FAF8F0] py-8 sm:py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
-          <Breadcrumb
-            items={[
-              { label: "Beranda", href: "/" },
-              { label: "Lowongan Tersimpan" },
-            ]}
-          />
           <ErrorState
             title="Gagal Memuat Lowongan Tersimpan"
             message={
@@ -143,18 +136,12 @@ export default async function TersimpanPage() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
+    <div className="min-h-screen bg-[#FAF8F0] py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
-        {/* Navigasi Breadcrumb */}
-        <Breadcrumb
-          items={[
-            { label: "Beranda", href: "/" },
-            { label: "Lowongan Tersimpan" },
-          ]}
-        />
+        {/* Header Halaman */}
 
         {/* Header Halaman */}
-        <div className="bg-white rounded-card border border-slate-200 p-6 sm:p-8 shadow-2xs space-y-2">
+        <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200 text-xs font-bold">

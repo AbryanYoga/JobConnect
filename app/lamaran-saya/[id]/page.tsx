@@ -16,7 +16,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import {
   StatusBadge,
   type ApplicationStatus,
@@ -188,17 +187,8 @@ export default async function DetailLamaranPage({ params }: DetailLamaranPagePro
   const historyList = statusHistory || [];
 
   return (
-    <div className="min-h-screen bg-[#FAF8F0]/40 py-8 sm:py-12">
+    <div className="min-h-screen bg-[#FAF8F0] py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
-        {/* Navigasi Breadcrumb */}
-        <Breadcrumb
-          items={[
-            { label: "Beranda", href: "/" },
-            { label: "Lamaran Saya", href: "/lamaran-saya" },
-            { label: `Lamaran #${application.id}` },
-          ]}
-        />
-
         {/* Tombol Kembali */}
         <div>
           <Link

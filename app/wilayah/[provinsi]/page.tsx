@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MapPin, Building2, ChevronRight, Briefcase } from "lucide-react";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 
 interface ProvincePageProps {
   params: Promise<{ provinsi: string }>;
@@ -109,15 +108,6 @@ export default async function ProvinceDetailPage({ params }: ProvincePageProps) 
   return (
     <div className="min-h-screen bg-[#FAF8F0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
-        {/* Breadcrumb Navigasi */}
-        <Breadcrumb
-          items={[
-            { label: "Beranda", href: "/" },
-            { label: "Wilayah", href: "/wilayah" },
-            { label: province.name },
-          ]}
-        />
-
         {/* Header Provinsi */}
         <div className="space-y-3 pb-2">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black border border-black/10 text-xs font-bold shadow-2xs">

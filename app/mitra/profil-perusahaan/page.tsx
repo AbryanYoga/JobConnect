@@ -140,44 +140,29 @@ export default async function ProfilPerusahaanPage({
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
-        {/* Navigasi Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500">
-          <Link
-            href="/mitra"
-            className="hover:text-navy-900 transition-colors focus-visible:outline-2 focus-visible:outline-navy-600 rounded-xs"
-          >
-            Dashboard Mitra
-          </Link>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
-          <span className="text-slate-800 font-medium" aria-current="page">
-            Profil Perusahaan & Verifikasi
-          </span>
-        </nav>
-
-        {/* Banner Onboarding untuk Mitra Baru */}
-        {isOnboarding && (
-          <div className="p-6 rounded-card bg-navy-950 text-white border border-navy-800 shadow-sm space-y-3">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-navy-950 text-xs font-bold">
-              <span>Langkah Pertama Mitra Perusahaan</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-              Selamat Datang di Portal Mitra JobConnect
-            </h2>
-            <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
-              Untuk melindungi pencari kerja dari lowongan fiktif dan calo liar, JobConnect menerapkan standar verifikasi ketat.
-              Setiap perusahaan mitra <strong>wajib mengisi data operasional nyata</strong> serta <strong>mengunggah logo resmi perusahaan</strong> sebelum dapat memasang lowongan.
-            </p>
+    <div className="space-y-6 sm:space-y-8 max-w-4xl">
+      {/* Banner Onboarding untuk Mitra Baru */}
+      {isOnboarding && (
+        <div className="p-6 rounded-3xl bg-navy-950 text-white border border-navy-800 shadow-sm space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-navy-950 text-xs font-bold">
+            <span>Langkah Pertama Mitra Perusahaan</span>
           </div>
-        )}
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+            Selamat Datang di Portal Mitra JobConnect
+          </h2>
+          <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
+            Untuk melindungi pencari kerja dari lowongan fiktif dan calo liar, JobConnect menerapkan standar verifikasi ketat.
+            Setiap perusahaan mitra <strong>wajib mengisi data operasional nyata</strong> serta <strong>mengunggah logo resmi perusahaan</strong> sebelum dapat memasang lowongan.
+          </p>
+        </div>
+      )}
 
-        {/* Banner Peringatan jika dialihkan karena mencoba pasang lowongan sebelum verifikasi */}
-        {isRequiredWarning && !verification.isComplete && (
-          <div
-            role="alert"
-            className="p-5 rounded-card bg-amber-50 border border-amber-300 text-amber-950 shadow-xs space-y-2"
-          >
+      {/* Banner Peringatan jika dialihkan karena mencoba pasang lowongan sebelum verifikasi */}
+      {isRequiredWarning && !verification.isComplete && (
+        <div
+          role="alert"
+          className="p-5 rounded-3xl bg-amber-50 border border-amber-300 text-amber-950 shadow-xs space-y-2"
+        >
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0" aria-hidden="true" />
               <h2 className="text-sm font-bold">
@@ -191,7 +176,7 @@ export default async function ProfilPerusahaanPage({
         )}
 
         {/* Header Profil Perusahaan & Status Verifikasi */}
-        <div className="bg-white rounded-card border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+        <div className="bg-white rounded-3xl border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div className="flex items-center gap-4 sm:gap-5">
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-card bg-white text-navy-900 font-bold text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-xs border-2 border-slate-200 overflow-hidden">
@@ -284,7 +269,6 @@ export default async function ProfilPerusahaanPage({
           }
         />
       </div>
-    </div>
   );
 }
 

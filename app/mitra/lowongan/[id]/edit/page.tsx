@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { JobForm, type JobFormData } from "@/components/mitra/JobForm";
 import { CloseJobButton } from "@/components/mitra/CloseJobButton";
 import {
@@ -155,16 +154,6 @@ export default async function EditLowonganPage({
 
   return (
     <div className="space-y-8">
-      {/* Breadcrumb Navigasi */}
-      <Breadcrumb
-        items={[
-          { label: "Beranda", href: "/" },
-          { label: "Mitra", href: "/mitra" },
-          { label: "Kelola Lowongan", href: "/mitra/lowongan" },
-          { label: `Edit: ${job.title}` },
-        ]}
-      />
-
       {/* Header Halaman Edit */}
       <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">

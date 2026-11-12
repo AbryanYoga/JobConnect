@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { JobForm } from "@/components/mitra/JobForm";
 import { ShieldCheck } from "lucide-react";
 import { checkCompanyVerification } from "@/lib/validation/profil";
@@ -77,16 +76,6 @@ export default async function TambahLowonganPage() {
 
   return (
     <div className="space-y-8">
-      {/* Breadcrumb Navigasi */}
-      <Breadcrumb
-        items={[
-          { label: "Beranda", href: "/" },
-          { label: "Mitra", href: "/mitra" },
-          { label: "Kelola Lowongan", href: "/mitra/lowongan" },
-          { label: "Pasang Lowongan" },
-        ]}
-      />
-
       {/* Header Formulir Pengajuan */}
       <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-2">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">

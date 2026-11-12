@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { JobCard, type JobCardData } from "@/components/lowongan/JobCard";
 import {
   Building2,
@@ -172,17 +171,8 @@ export default async function CompanyProfilePage({
   const companyInitials = getCompanyInitials(company.name);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#FAF8F0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
-        {/* Navigasi Breadcrumb */}
-        <Breadcrumb
-          items={[
-            { label: "Beranda", href: "/" },
-            { label: "Lowongan", href: "/lowongan" },
-            { label: company.name },
-          ]}
-        />
-
         {/* Tombol Navigasi Kembali */}
         <div>
           <Link
@@ -195,7 +185,7 @@ export default async function CompanyProfilePage({
         </div>
 
         {/* Header Profil Perusahaan */}
-        <section className="bg-white rounded-card border border-slate-200 p-6 sm:p-8 shadow-2xs space-y-6">
+        <section className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-6">
           <div className="flex flex-col sm:flex-row items-start gap-5 sm:gap-6">
             {/* Logo Perusahaan */}
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-slate-200/90 bg-white p-2 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
@@ -270,7 +260,7 @@ export default async function CompanyProfilePage({
           {/* Kolom Kiri: Tentang Perusahaan & Alamat */}
           <aside className="lg:col-span-1 space-y-6">
             {/* Kartu Ringkasan Tentang Perusahaan */}
-            <div className="bg-white rounded-card border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-4">
+            <div className="bg-white rounded-[28px] border border-black/[0.08] p-5 sm:p-6 shadow-card space-y-4">
               <h2 className="text-xs font-bold text-navy-950 uppercase tracking-wider border-b border-slate-100 pb-2">
                 Profil Perusahaan
               </h2>
@@ -294,7 +284,7 @@ export default async function CompanyProfilePage({
 
           {/* Kolom Kanan: Daftar Lowongan Kerja Aktif */}
           <section className="lg:col-span-2 space-y-6">
-            <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-3">
+            <div className="flex items-center justify-between gap-4 border-b border-black/[0.08] pb-3">
               <div className="flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-navy-800" aria-hidden="true" />
                 <h2 className="text-lg font-bold text-navy-950 tracking-tight">
@@ -304,7 +294,7 @@ export default async function CompanyProfilePage({
             </div>
 
             {formattedJobs.length === 0 ? (
-              <div className="rounded-card border border-dashed border-slate-300 p-8 sm:p-12 text-center bg-white space-y-3">
+              <div className="rounded-[28px] border border-dashed border-black/15 p-8 sm:p-12 text-center bg-white shadow-card space-y-3">
                 <Briefcase className="w-10 h-10 text-slate-400 mx-auto" aria-hidden="true" />
                 <h3 className="text-base font-bold text-navy-950">
                   Belum Ada Lowongan Aktif

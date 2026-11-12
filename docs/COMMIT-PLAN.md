@@ -265,7 +265,7 @@ Catat di sini bug atau perbaikan tak terduga yang muncul di tengah jalan. Format
 - [x] T30 `feat(mitra): tampilkan akun lengkap umur kontak dan showcase portofolio pelamar`
 - [x] T31 `style(faq): hilangkan outline search bar dan stabilkan tombol filter panduan`
 - [x] T32 `fix(lowongan): perbaiki filter wilayah provinsi dan tampilkan pesan jika kosong`
-- [ ] T33 `style: hapus komponen breadcrumb di seluruh halaman aplikasi`
+- [x] T33 `style: hapus komponen breadcrumb di seluruh halaman aplikasi`
 
 ## Catatan Penting Agent
 
