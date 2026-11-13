@@ -101,15 +101,11 @@ export async function middleware(request: NextRequest) {
         // Akun perusahaan sudah terdaftar, langsung arahkan ke dashboard mitra
         return createRedirect("/mitra");
       }
-      if (profileRole === "user") {
-        // Akun pencari kerja mutlak dilarang mendaftar perusahaan saat sesi pelamar aktif
-        const forbiddenUrl = new URL("/403", request.url);
-        forbiddenUrl.searchParams.set("reason", "pelamar_cannot_access_mitra");
-        return createRedirect(forbiddenUrl);
-      }
       if (profileRole === "admin") {
         return createRedirect("/admin");
       }
+      // Jika profileRole === "user", biarkan halaman /perusahaan/register memuat
+      // dan menampilkan opsi ganti akun atau alih peran secara manusiawi (tanpa 403)
     }
   }
 

@@ -174,53 +174,10 @@ using (
   and status = 'draft'
 );
 
--- Pembatasan hak kolom jobs dari klien
-revoke insert, update, delete on public.jobs from anon, authenticated;
-grant insert (
-  company_id,
-  category_id,
-  city_id,
-  location_detail,
-  title,
-  slug,
-  work_mode,
-  job_type,
-  education_min,
-  experience_min_years,
-  skills,
-  summary,
-  responsibilities,
-  nice_to_have,
-  benefits,
-  salary_min,
-  salary_max,
-  deadline,
-  status,
-  ai_screening
-) on public.jobs to authenticated;
-
-grant update (
-  category_id,
-  city_id,
-  location_detail,
-  title,
-  work_mode,
-  job_type,
-  education_min,
-  experience_min_years,
-  skills,
-  summary,
-  responsibilities,
-  nice_to_have,
-  benefits,
-  salary_min,
-  salary_max,
-  deadline,
-  status,
-  ai_screening
-) on public.jobs to authenticated;
-
-grant delete on public.jobs to authenticated;
+-- Hak akses tabel jobs (keamanan dikendalikan penuh oleh RLS)
+grant select on public.jobs to anon, authenticated;
+grant insert, update, delete on public.jobs to authenticated;
+grant usage, select on all sequences in schema public to authenticated;
 
 -- Policy tabel applications
 drop policy if exists "applications_select_policy" on public.applications;

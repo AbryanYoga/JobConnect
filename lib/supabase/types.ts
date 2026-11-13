@@ -675,6 +675,24 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
       };
+      update_my_profile: {
+        Args: {
+          p_name: string;
+          p_phone?: string | null;
+          p_headline?: string | null;
+          p_province_id?: number | null;
+          p_city_id?: number | null;
+          p_birth_date?: string | null;
+          p_education_level?: string | null;
+          p_education_institution?: string | null;
+          p_bio?: string | null;
+          p_linkedin_url?: string | null;
+          p_portfolio_url?: string | null;
+          p_portfolios?: Json;
+          p_email_notifications?: boolean;
+        };
+        Returns: undefined;
+      };
       jobs_count_by_province: {
         Args: Record<PropertyKey, never>;
         Returns: {

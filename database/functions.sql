@@ -43,16 +43,75 @@ set search_path = ''
 as $$
 declare
   v_user_id uuid := auth.uid();
+  v_name text;
 begin
   if v_user_id is not null then
     update public.profiles
     set role = 'company'
     where id = v_user_id and role != 'admin';
+
+    select name into v_name from public.profiles where id = v_user_id;
+
+    insert into public.companies (owner_id, name, slug)
+    values (
+      v_user_id,
+      coalesce(nullif(v_name, ''), 'Perusahaan Mitra'),
+      'mitra-' || substr(v_user_id::text, 1, 8)
+    )
+    on conflict (owner_id) do nothing;
   end if;
 end;
 $$;
 
 grant execute on function public.register_as_company() to authenticated;
+
+-- Fungsi RPC untuk memperbarui biodata pelamar secara aman dengan hak SECURITY DEFINER
+create or replace function public.update_my_profile(
+  p_name text,
+  p_phone text default null,
+  p_headline text default null,
+  p_province_id smallint default null,
+  p_city_id int default null,
+  p_birth_date date default null,
+  p_education_level text default null,
+  p_education_institution text default null,
+  p_bio text default null,
+  p_linkedin_url text default null,
+  p_portfolio_url text default null,
+  p_portfolios jsonb default '[]'::jsonb,
+  p_email_notifications boolean default true
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_user_id uuid := auth.uid();
+begin
+  if v_user_id is not null then
+    update public.profiles
+    set
+      name = coalesce(nullif(trim(p_name), ''), name),
+      phone = p_phone,
+      headline = p_headline,
+      province_id = p_province_id,
+      city_id = p_city_id,
+      birth_date = p_birth_date,
+      education_level = p_education_level,
+      education_institution = p_education_institution,
+      bio = p_bio,
+      linkedin_url = p_linkedin_url,
+      portfolio_url = p_portfolio_url,
+      portfolios = coalesce(p_portfolios, '[]'::jsonb),
+      email_notifications = coalesce(p_email_notifications, true),
+      updated_at = now()
+    where id = v_user_id;
+  end if;
+end;
+$$;
+
+grant execute on function public.update_my_profile to authenticated;
 
 -- Fungsi helper keamanan dan pencegah rekursi RLS
 create or replace function public.is_admin()
@@ -84,6 +143,8 @@ as $$
       and owner_id = auth.uid()
   );
 $$;
+
+grant execute on function public.is_company_owner(bigint) to authenticated;
 
 create or replace function public.is_job_owner(p_job_id bigint)
 returns boolean
@@ -317,6 +378,8 @@ begin
   where id = p_job_id;
 end;
 $$;
+
+grant execute on function public.submit_job(bigint) to authenticated;
 
 -- Peninjauan lowongan oleh admin moderator platform (approve, reject, takedown)
 create or replace function public.review_job(
