@@ -33,31 +33,38 @@ Banyak orang kesulitan saat mencari kerja di internet karena sering bertemu masa
 ## Fitur Utama Berdasarkan Peran Pengguna
 
 ### 1. Untuk Pencari Kerja (Pelamar)
-- **Cari Lowongan Cepat dan Akurat:** Filter lowongan berdasarkan kata kunci, 38 provinsi, 514 kota/kabupaten, jenis pekerjaan (penuh waktu, paruh waktu, magang, kontrak, lepas), serta sistem kerja (di kantor, hybrid, remote) tanpa reload halaman.
-- **Simpan Lowongan (Bookmark):** Tandai lowongan favorit untuk disimpan ke halaman `/tersimpan` dan dilamar sewaktu-waktu.
-- **Lamar Pekerjaan Transparan:** Cukup unggah berkas CV PDF (maksimal 2 MB) dan pesan perkenalan singkat.
-- **Analisis Kecocokan AI (Opsional):** Opsi analisis kesesuaian keahlian CV terhadap syarat lowongan menggunakan model AI untuk rekomendasi pengembangan diri, tanpa membatasi hak melamar.
-- **Pantau Status Lamaran Real-Time:** 8 tahapan seleksi yang transparan (`dikirim`, `ditinjau`, `shortlist`, `wawancara`, `penawaran`, `diterima`, `ditolak`, `ditarik`).
-- **Jadwal Wawancara Terpadu:** Informasi tanggal, jam, catatan pewawancara, serta lokasi kantor atau tautan video conference langsung di halaman lamaran.
-- **Tarik Lamaran Kapan Saja:** Pelamar dapat membatalkan berkas lamaran sebelum perusahaan mengambil keputusan final.
-- **Dukungan Multi-Bahasa:** Antarmuka dapat diubah antara Bahasa Indonesia dan Bahasa Inggris secara instan.
-- **Pusat Panduan & FAQ Resmi:** Panduan tata cara melamar kerja, tips keamanan dari penipuan, dan tanya jawab resmi di `/tentang`.
+- **Biodata & Akun Lengkap:** Data pelamar terstruktur mencakup tanggal lahir, kalkulasi umur otomatis, domisili 38 provinsi di Indonesia, jenjang pendidikan, institusi/sekolah, dan ringkasan bio profesional.
+- **Tautan Akun Profesional:** Terintegrasi dengan tautan akun LinkedIn dan alamat website portofolio pribadi.
+- **Etalase Portofolio Proyek (Showcase):** Pelamar dapat memajang proyek karya terbaik lengkap dengan judul, deskripsi, tautan hasil karya, dan foto proyek, sehingga perusahaan dapat melihat kemampuan nyata kandidat di luar berkas CV.
+- **Onboarding Terpandu:** Pengalihan otomatis pasca-registrasi dengan indikator kelengkapan akun (0-100%) untuk memastikan profil siap sebelum melamar.
+- **Cari Lowongan Mudah:** Filter pencarian presisi berdasarkan provinsi, kota/kabupaten, jenis pekerjaan (penuh waktu, paruh waktu, magang, kontrak, lepas), serta mode kerja (onsite, hybrid, remote).
+- **Simpan Lowongan (Bookmark):** Simpan lowongan yang menarik untuk dicek dan dilamar nanti lewat menu Lowongan Tersimpan.
+- **Lamar Pekerjaan Transparan:** Cukup unggah berkas CV format PDF (maksimal 2 MB) dan tulis pesan perkenalan singkat.
+- **Pantau Linimasa Status:** Pantau perkembangan berkas secara terbuka dari waktu ke waktu (8 tahapan seleksi transparan).
+- **Jadwal Wawancara Jelas:** Informasi tanggal, jam, dan lokasi kantor atau tautan pertemuan virtual tercantum rapi di dashboard pelamar.
+- **Tarik Lamaran:** Pelamar berhak membatalkan atau menarik kembali berkas lamaran secara mandiri jika telah diterima di tempat lain.
+- **Pilihan Bahasa:** Dukungan antarmuka bilingual (Bahasa Indonesia dan Bahasa Inggris).
 
 ### 2. Untuk Perusahaan (Mitra)
-- **Manajemen Profil Bisnis:** Kelola identitas perusahaan, legalitas alamat kantor, bidang industri, logo resmi, dan tautan website perusahaan.
-- **Pasang dan Kelola Lowongan:** Buat draf lowongan baru dengan spesifikasi kriteria, rentang gaji transparan, dan kirim ke kurasi admin.
-- **Penyaringan dan Review Pelamar:** Tinjau berkas pelamar, baca CV PDF melalui tautan bertanda tangan aman (signed URL), dan urutkan pelamar berdasarkan waktu lamaran.
-- **Alur Seleksi Terstruktur:** Perbarui status kandidat dari ditinjau hingga diterima atau ditolak disertai umpan balik profesional.
-- **Jadwalkan Wawancara Terintegrasi:** Kirim undangan wawancara lengkap dengan waktu dan instruksi teknis kepada pelamar.
-- **Catatan Internal Rekruter:** Fitur anotasi dan evaluasi internal untuk kolaborasi tim HR perusahaan.
-- **Rekapitulasi dan Ekspor Data:** Pantau statistik pelamar per lowongan dan unduh data kandidat dalam format CSV (Excel) atau cetak laporan PDF resmi.
+- **Profil Perusahaan Terverifikasi:** Kelola profil instansi dengan nama usaha, logo, alamat operasional, industri, dan website resmi perusahaan.
+- **Tinjauan Akun Kandidat Lengkap:** Rekruter dapat meninjau usia kandidat, domisili, profil LinkedIn, website, serta galeri showcase proyek pelamar.
+- **Hubungi Kandidat via WhatsApp:** Tombol obrolan langsung WhatsApp yang membuka ruang obrolan dengan pesan pembuka otomatis ke kandidat.
+- **Pasang dan Atur Lowongan:** Buat draf lowongan baru dengan kriteria pendidikan, keahlian, dan gaji yang jelas, lalu ajukan ke admin untuk disetujui.
+- **Kelola Pelamar:** Lihat daftar pelamar pada setiap lowongan, urutkan berdasarkan kriteria kualifikasi atau tanggal masuk, dan baca berkas CV secara aman.
+- **Atur Tahapan Seleksi:** Perbarui status pelamar dari ditinjau, shortlist, wawancara, hingga diterima atau ditolak dengan menyertakan pesan resmi.
+- **Jadwalkan Wawancara:** Kirim undangan wawancara lengkap dengan tanggal, jam, dan lokasi kantor atau tautan video conference.
+- **Catatan Tim Rekruter:** Tulis catatan internal antar-anggota tim HR untuk mendiskusikan kandidat pelamar secara privat.
+- **Laporan Data Pelamar:** Ringkasan jumlah pelamar pada tiap posisi dengan fitur ekspor data ke Excel (CSV) atau cetak langsung ke format PDF.
 
-### 3. Untuk Pengelola Platform (Admin)
-- **Kurasi Lowongan Masuk:** Tinjau setiap pengajuan lowongan baru dari mitra sebelum disetujui tayang ke publik.
-- **Persetujuan dan Penolakan Terarah:** Setujui (ACC) lowongan yang layak atau tolak lowongan yang tidak memenuhi standar dengan alasan jelas.
-- **Takedown Lowongan:** Turunkan seketika lowongan yang terindikasi melanggar aturan atau menerima aduan dari pencari kerja.
-- **Manajemen Kategori Pekerjaan:** Tambah, ubah, dan kelola kategori bidang industri pekerjaan.
-- **Rekapitulasi Platform Menyeluruh:** Pantau data agregat lowongan dan pengguna di 38 provinsi serta ekspor laporan ke format CSV dan cetak PDF.
+### 3. Untuk Pengelola (Admin Platform)
+- **Moderasi & Manajemen Perusahaan:** Tinjau keabsahan instansi yang mendaftar di menu `/admin/perusahaan` dan bekukan (`is_frozen`) akun perusahaan yang terindikasi bodong atau melanggar hukum.
+- **Pemeriksaan Lowongan Masuk:** Verifikasi draf lowongan yang baru diajukan oleh mitra perusahaan.
+- **Setujui atau Tolak Lowongan:** Berikan persetujuan (ACC) agar lowongan tayang ke publik, atau tolak lowongan yang tidak jelas dengan wajib menuliskan alasan resmi.
+- **Pencabutan Lowongan (Takedown):** Turunkan seketika lowongan yang terbukti bermasalah atau melanggar aturan platform.
+- **Proteksi Akses Mutlak (Role Guarding):** Pemisahan tegas ruang kerja pelamar, mitra, dan admin dengan pengalihan otomatis oleh middleware dan halaman penolakan `/403`.
+- **Pusat Bantuan & Direktori FAQ:** Halaman panduan resmi dengan pencarian instan dan penyaringan topik.
+- **Kelola Kategori Pekerjaan:** Tambah, ubah, atau hapus kategori bidang kerja pada katalog platform.
+- **Laporan Agregat Platform:** Pantau data lowongan dan pelamar di seluruh wilayah Indonesia, serta ekspor laporannya ke format PDF atau Excel (CSV).
 
 ---
 
@@ -65,73 +72,11 @@ Banyak orang kesulitan saat mencari kerja di internet karena sering bertemu masa
 
 Untuk mencoba fitur-fitur JobConnect tanpa perlu mendaftar dari awal, Anda dapat menggunakan akun demo berikut:
 
-| Peran Akun | Alamat Email | Password | Kegunaan Utama |
+| Peran Akun | Alamat Email | Password | Kegunaan |
 | --- | --- | --- | --- |
 | **Pelamar** | `abryan.yoga@jobconnect.id` | `Password123!` | Mencari loker, melamar kerja, simpan loker, dan cek status lamaran |
 | **Perusahaan** | `perusahaan.demo@jobconnect.id` | `Password123!` | Pasang lowongan, cek CV pelamar, ubah status, dan unduh laporan |
 | **Admin** | `admin.demo@jobconnect.id` | `Password123!` | Menyetujui lowongan (ACC), tolak loker, kelola kategori, dan rekap platform |
-
-### Panduan Skenario Pengujian Akun Demo
-
-#### 1. Skenario Akun Pelamar (`abryan.yoga@jobconnect.id`)
-1. **Masuk ke Aplikasi:** Buka halaman `/login`, masukkan email dan password pelamar di atas.
-2. **Eksplorasi Lowongan:** Masuk ke menu **Lowongan** (`/lowongan`) atau **Wilayah** (`/wilayah`). Gunakan kombinasi filter provinsi, kota, jenis pekerjaan, dan sistem kerja. Perhatikan pembaruan daftar lowongan tanpa reload atau pergeseran posisi scroll.
-3. **Simpan Lowongan:** Klik tombol ikon bookmark pada salah satu kartu lowongan. Periksa daftar lowongan yang telah ditandai di menu **Tersimpan** (`/tersimpan`).
-4. **Kirim Lamaran:** Buka detail salah satu lowongan, klik tombol **Lamar Pekerjaan**. Unggah berkas contoh format PDF (maksimal 2 MB), pilih opsi analisis kecocokan AI bila ingin melihat saran kualifikasi, lalu kirim formulir.
-5. **Pantau Status & Jadwal:** Buka menu **Lamaran Saya** (`/lamaran-saya`). Pelamar dapat melihat status pemrosesan berkas secara transparan, melihat detail undangan wawancara jika sudah dijadwalkan, atau membatalkan lamaran dengan tombol **Tarik Lamaran**.
-
-#### 2. Skenario Akun Mitra Perusahaan (`perusahaan.demo@jobconnect.id`)
-1. **Masuk ke Dasbor Mitra:** Buka `/login` dan masuk dengan akun perusahaan. Sistem akan mengarahkan otomatis ke dasbor rekrutmen mitra di `/mitra`.
-2. **Profil Perusahaan:** Buka menu **Profil Perusahaan** (`/mitra/profil`) untuk memverifikasi nama instansi, logo resmi beresolusi tajam, alamat operasional, dan bidang industri.
-3. **Pasang Lowongan Baru:** Akses menu **Tambah Lowongan** (`/mitra/lowongan/baru`). Lengkapi formulir posisi, deskripsi, syarat pengalaman, dan rentang gaji transparan, lalu ajukan draf agar masuk ke antrean kurasi admin.
-4. **Kelola & Evaluasi Pelamar:** Masuk ke menu **Pelamar** (`/mitra/pelamar`). Buka berkas CV PDF pelamar secara aman melalui signed URL privat.
-5. **Pembaruan Tahapan Seleksi & Wawancara:** Ubah status pelamar menjadi `ditinjau`, `shortlist`, atau `wawancara`. Gunakan modal interaktif untuk menentukan jadwal wawancara, lokasi atau tautan video meeting, serta tambahkan catatan internal rekruter.
-6. **Ekspor Rekapitulasi:** Buka menu **Laporan** (`/mitra/laporan`) untuk mengamati ringkasan statistik rekrutmen serta mengunduh daftar kandidat dalam format berkas CSV (Excel) atau cetak langsung ke PDF.
-
-#### 3. Skenario Akun Admin Platform (`admin.demo@jobconnect.id`)
-1. **Masuk ke Dasbor Pengelola:** Masuk dengan akun admin di `/login`, kemudian akses dasbor kendali utama di `/admin`.
-2. **Kurasi Lowongan (Review & ACC):** Buka menu **Kurasi Lowongan** (`/admin/kurasi`). Tinjau lowongan berstatus draf yang diajukan oleh mitra.
-3. **Persetujuan atau Penolakan:** Klik tombol **Setujui (ACC)** untuk menayangkan lowongan ke publik, atau klik **Tolak Lowongan** dengan menyertakan alasan objektif bagi mitra pengaju.
-4. **Kelola Kategori Industri:** Buka menu **Kategori** (`/admin/kategori`) untuk menambah kategori profesi baru atau mengedit kategori yang sudah ada.
-5. **Rekap Platform Agregat:** Buka menu **Laporan Platform** (`/admin/laporan`) untuk meninjau data agregat sebaran pengguna dan lowongan di 38 provinsi, lalu unduh dokumen laporan rekapitulasi platform dalam format CSV maupun PDF.
-
----
-
-## Arsitektur Sistem dan Keamanan
-
-JobConnect dirancang dengan memprioritaskan performa, modularitas kode, serta keamanan data pengguna secara ketat:
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                       Pengguna                              │
-│       (Pencari Kerja, Mitra Perusahaan, Admin Platform)     │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                 Next.js (App Router v15)                    │
-│  - Antarmuka Responsif (Tailwind CSS, Inter Font)           │
-│  - Server Components (Performa render cepat, SEO ramah)     │
-│  - Server Actions & Validasi Skema Ganda (Zod)              │
-│  - Multi-Bahasa i18n (Indonesia & Inggris)                  │
-└──────────────┬──────────────────────────────┬───────────────┘
-               │                              │
-               ▼                              ▼
-┌──────────────────────────────┐ ┌────────────────────────────┐
-│      Layanan Eksternal       │ │       Supabase BaaS        │
-│  - Resend (Email Notifikasi) │ │  - Autentikasi Pengguna    │
-│  - OpenRouter / DeepSeek     │ │  - PostgreSQL Database     │
-│    (AI CV Screening Opsional)│ │  - Row Level Security (RLS)│
-│                              │ │  - Supabase Storage Bucket │
-└──────────────────────────────┘ └────────────────────────────┘
-```
-
-### Prinsip Keamanan Data
-
-1. **Row Level Security (RLS) Menyeluruh:** Setiap tabel (`jobs`, `applications`, `profiles`, `companies`, `job_bookmarks`, `categories`) dilindungi kebijakan RLS setingkat database PostgreSQL. Pengguna hanya dapat mengakses atau memanipulasi data sesuai peran dan hak miliknya.
-2. **Perlindungan Hak Akses Peran:** Hak pengubahan kolom `role` pada tabel `profiles` dicabut dari peran publik (`REVOKE UPDATE (role) ON profiles`), mencegah manipulasi eskalasi hak akses menjadi admin atau mitra.
-3. **Penyimpanan Berkas CV Terisolasi:** Berkas CV disimpan di bucket privat Supabase Storage (`resumes`). Berkas hanya dapat diakses melalui URL bertanda tangan aman dengan batas waktu kedaluwarsa oleh pelamar pemilik berkas dan perusahaan yang dilamar.
-4. **Validasi Formulir Ganda:** Seluruh masukan pengguna divalidasi di sisi peramban untuk kenyamanan interaksi dan divalidasi ulang di sisi server menggunakan pustaka Zod sebelum menyentuh lapisan basis data.
 
 ---
 
@@ -147,18 +92,16 @@ Aplikasi JobConnect dibangun menggunakan teknologi modern yang cepat, aman, dan 
   <img src="https://img.shields.io/badge/Supabase-181818?style=for-the-badge&logo=supabase&logoColor=3ECF8E" alt="Supabase" />
   <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white" alt="Zod" />
-  <img src="https://img.shields.io/badge/Resend-000000?style=for-the-badge&logo=resend&logoColor=white" alt="Resend" />
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
 </p>
 
 | Bagian | Alat dan Teknologi | Penjelasan Singkat |
 | --- | --- | --- |
-| **Kerangka Kerja** | Next.js (App Router), React 19, TypeScript | Arsitektur Server Components, Server Actions, dan pengetikan tipe aman |
-| **Desain & Gaya** | Tailwind CSS, Lucide Icons | Desain bersih berprinsip Antislop, responsif pada layar 360px hingga desktop |
-| **Basis Data & Auth** | Supabase, PostgreSQL | Autentikasi akun, basis data relasional dengan Row Level Security (RLS) |
-| **Penyimpanan Berkas** | Supabase Storage | Penyimpanan CV PDF privat dan logo mitra resmi secara terisolasi |
-| **Validasi Data** | Zod | Skema validasi masukan data di sisi klien dan server |
-| **Layanan Email** | Resend API | Pengiriman notifikasi email otomatis saat status lamaran diperbarui |
-| **Integrasi AI** | OpenRouter (DeepSeek) | Penilaian kecocokan CV pelamar secara opsional dengan pendekatan etis |
+| **Kerangka Utama** | Next.js (App Router), React, TypeScript | Mengatur alur halaman web, kecepatan akses, dan penulisan kode yang rapi |
+| **Desain dan Tampilan** | Tailwind CSS, Lucide Icons | Membuat tampilan yang bersih, enak dilihat, dan pas di layar HP maupun laptop |
+| **Basis Data dan Akun** | Supabase, PostgreSQL | Menyimpan data lowongan, data pelamar, akun login, dan berkas CV secara aman |
+| **Pemeriksaan Formulir** | Zod | Memastikan data yang diisi pengguna sudah sesuai format sebelum disimpan |
+| **Penyimpanan Berkas** | Supabase Storage | Menjaga keamanan berkas CV PDF pelamar agar tidak bocor ke publik |
 
 ---
 
@@ -170,145 +113,89 @@ Berikut susunan folder utama di dalam proyek JobConnect beserta kegunaannya:
 JobConnect/
 ├── app/                          # Halaman dan rute aplikasi (Next.js App Router)
 │   ├── (auth)/                   # Halaman masuk, daftar, dan verifikasi akun
-│   ├── admin/                    # Halaman pengelola (cek lowongan, kategori, laporan)
+│   ├── 403/                      # Halaman penolakan akses (Forbidden)
+│   ├── admin/                    # Halaman pengelola (ACC lowongan, kelola perusahaan mitra, kategori)
 │   ├── api/                      # Jalur komunikasi data dan unduh berkas
 │   ├── lamar/                    # Formulir pengajuan berkas lamaran kerja
-│   ├── lamaran-saya/             # Halaman riwayat dan status lamaran pelamar
-│   ├── lowongan/                 # Halaman daftar lowongan dan rincian pekerjaan
+│   ├── lamaran-saya/             # Halaman riwayat dan linimasa status lamaran pelamar
+│   ├── lowongan/                 # Halaman eksplorasi lowongan dan rincian pekerjaan
 │   ├── mitra/                    # Halaman perusahaan (kelola lowongan, pelamar, jadwal wawancara)
-│   ├── tentang/                  # Halaman pusat panduan resmi dan FAQ
+│   ├── notifikasi/               # Pusat notifikasi pengguna
+│   ├── perusahaan/               # Portal informasi mitra dan pendaftaran instansi
+│   ├── profil/                   # Formulir biodata, akun LinkedIn, dan portofolio pelamar
 │   ├── tersimpan/                # Halaman lowongan favorit yang disimpan pelamar
-│   ├── wilayah/                  # Halaman jelajah lowongan per provinsi dan kota
+│   ├── wilayah/                  # Halaman jelajah lowongan 38 provinsi dan kota
 │   └── page.tsx                  # Halaman beranda utama JobConnect
-├── components/                   # Komponen tampilan modular
-│   ├── admin/                    # Komponen kurasi, kategori, dan rekapitulasi admin
-│   ├── beranda/                  # Komponen beranda (hero, kategori, daftar lowongan)
-│   ├── lamaran/                  # Formulir lamaran, kartu status, dan tombol batal
-│   ├── layout/                   # Navbar, footer, pemilih bahasa, dan link navigasi
-│   ├── lowongan/                 # Kartu lowongan, pencarian kata kunci, dan filter wilayah
-│   ├── mitra/                    # Tabel pelamar, catatan rekruter, dan modal wawancara
-│   ├── tentang/                  # Komponen panduan pelamar, mitra, dan tanya jawab
-│   └── ui/                       # Komponen atomik: Button, Badge, Modal, EmptyState, Skeleton
-├── database/                     # Berkas skrip SQL migrasi dan data awal Supabase
-│   ├── functions.sql             # Fungsi basis data dan trigger otomatis
-│   ├── policies.sql              # Kebijakan Row Level Security (RLS)
-│   ├── schema.sql                # Definisi tabel, relasi, tipe enum, dan indeks
-│   ├── seed_wilayah.sql          # Data 38 provinsi dan 514 kota se-Indonesia
-│   └── seed_demo_accounts.sql    # Data akun demo siap pakai (pelamar, mitra, admin)
-├── docs/                         # Dokumentasi perancangan dan catatan commit
-│   ├── COMMIT-PLAN.md            # Rencana commit berurutan dan pelacakan progres
-│   └── PRD.md                    # Dokumen spesifikasi kebutuhan produk (PRD)
-├── lib/                          # Modul logika, validasi, dan helper
-│   ├── ai/                       # Integrasi analisis kesesuaian CV berbasis AI
-│   ├── email/                    # Integrasi pengiriman email notifikasi via Resend
-│   ├── labels.ts                 # Definisi label status, badge, dan konversi teks
-│   ├── supabase/                 # Inisialisasi klien Supabase (browser, server, admin)
-│   └── validation/               # Skema validasi formulir berbasis Zod
-└── public/                       # Aset publik, logo SVG resmi, dan favicon
+├── components/                   # Komponen tampilan yang bisa dipakai berulang
+│   ├── admin/                    # Panel statistik, tabel perusahaan, dan modal moderasi admin
+│   ├── beranda/                  # Hero section, kartu kategori, dan bar pencarian
+│   ├── layout/                   # Menu atas (navbar), menu bawah (footer), dan pemilih bahasa
+│   ├── lowongan/                 # Kartu lowongan, kotak pencarian, filter, dan status kosong
+│   ├── mitra/                    # Manajemen pelamar, catatan internal, dan jadwal wawancara
+│   ├── profil/                   # Manajemen unggah foto profil dan etalase portofolio
+│   └── ui/                       # Tombol, lencana status, kartu pesan kosong, dan kerangka loading
+├── database/                     # Berkas database SQL untuk Supabase
+│   ├── functions.sql             # Aturan dan fungsi kerja otomatis di database
+│   ├── policies.sql              # Aturan keamanan data (Row Level Security)
+│   ├── schema.sql                # Tabel-tabel tempat data disimpan
+│   ├── seed_wilayah.sql          # Data 38 provinsi dan 514 kota/kabupaten se-Indonesia
+│   └── seed_demo_accounts.sql    # Akun contoh untuk pelamar, perusahaan, dan admin
+├── docs/                         # Panduan dan dokumentasi teknis sistem
+│   ├── ERD.md                    # Diagram relasi entitas dan kamus data lengkap
+│   ├── PRD.md                    # Buku spesifikasi kebutuhan perangkat lunak (PRD)
+│   └── erd.png                   # Diagram visual relasi basis data
+├── lib/                          # Kode pembantu dan setelan pendukung
+│   ├── labels.ts                 # Label status lamaran dan jenis pekerjaan
+│   ├── supabase/                 # Klien penghubung aplikasi ke database Supabase
+│   └── validation/               # Aturan validasi formulir dan skema data (Zod)
+└── public/                       # Gambar, ikon, dan logo resmi JobConnect
 ```
 
 ---
 
 ## Cara Menjalankan Proyek di Komputer Sendiri
 
-Ikuti langkah-langkah berikut untuk menjalankan JobConnect pada lingkungan lokal komputer Anda:
+### Kebutuhan Awal
+- Komputer sudah terpasang Node.js (versi 18.18 atau yang lebih baru).
+- Akun Supabase aktif untuk database dan penyimpanan berkas.
 
-### 1. Kebutuhan Awal Sistem
-- **Node.js**: Versi 18.18.0 atau yang lebih baru (disarankan versi LTS terbaru).
-- **Pengelola Paket**: `npm` versi 9 atau yang lebih baru.
-- **Git**: Terpasang di komputer Anda.
-- **Akun Supabase**: Proyek Supabase aktif untuk basis data PostgreSQL, autentikasi, dan media storage.
-- **Kunci API Opsional**: Akun Resend (untuk notifikasi email) dan OpenRouter (untuk screening AI).
+### Langkah Pemasangan
 
-### 2. Kloning Repositori
-```bash
-git clone https://github.com/AbryanYoga/JobConnect.git
-cd JobConnect
-```
+1. **Salin atau unduh repositori ini:**
+   ```bash
+   git clone https://github.com/AbryanYoga/JobConnect.git
+   cd JobConnect
+   ```
 
-### 3. Pemasangan Dependensi
-Pasang seluruh paket pustaka yang dibutuhkan:
-```bash
-npm install
-```
+2. **Pasang paket kebutuhan aplikasi:**
+   ```bash
+   npm install
+   ```
 
-### 4. Konfigurasi Environment Variables
-Salin berkas contoh konfigurasi lingkungan:
-```bash
-cp .env.example .env.local
-```
+3. **Atur berkas setelan rahasia (.env.local):**
+   Salin berkas `.env.example` menjadi `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Buka berkas `.env.local` lalu isi dengan alamat Supabase Anda:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=https://proyek-anda.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=kunci-anon-proyek-anda
+   ```
 
-Buka berkas `.env.local` pada text editor Anda dan sesuaikan nilainya:
-```env
-# Konfigurasi Wajib Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://id-proyek-anda.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=kunci-anon-publik-anda
+4. **Siapkan Database di Supabase:**
+   Buka menu SQL Editor di akun Supabase Anda, lalu jalankan berkas-berkas SQL dari folder `database/` secara berurutan:
+   - `schema.sql` (tabel database)
+   - `policies.sql` (aturan keamanan akses data)
+   - `functions.sql` (fungsi dan pemicu otomatis)
+   - `seed_wilayah.sql` (data 38 provinsi dan 514 kota se-Indonesia)
+   - `seed_demo_accounts.sql` (opsional, untuk membuat akun demo siap pakai)
 
-# Kunci Service Role (Hanya untuk skrip server tertutup dan screening AI)
-SUPABASE_SERVICE_ROLE_KEY=kunci-service-role-rahasia-anda
-
-# Konfigurasi Opsional Notifikasi Email
-RESEND_API_KEY=re_kunci_resend_anda
-
-# Konfigurasi Opsional Screening AI
-OPENROUTER_API_KEY=sk-or-v1-kunci-openrouter-anda
-```
-
-### 5. Menyiapkan Basis Data Supabase
-1. Masuk ke dashboard proyek Supabase Anda, lalu buka menu **SQL Editor**.
-2. Jalankan skrip SQL yang ada di direktori `database/` secara berurutan:
-   - `schema.sql`: Membuat tipe enum, tabel, relasi, dan indeks pencarian.
-   - `policies.sql`: Mengaktifkan dan mengatur kebijakan Row Level Security (RLS).
-   - `functions.sql`: Memasang trigger otomatisasi timestamp dan verifikasi data.
-   - `seed_wilayah.sql`: Mengisi data referensi 38 provinsi dan 514 kota/kabupaten.
-   - `seed_demo_accounts.sql`: Menyiapkan akun contoh siap pakai untuk uji coba.
-3. Buat bucket penyimpanan di menu **Storage** Supabase:
-   - `resumes`: Pengaturan Private (hanya dapat diakses melalui signed URL).
-   - `logos`: Pengaturan Public (dapat diakses langsung untuk logo perusahaan).
-
-### 6. Menjalankan Server Pengembangan
-Jalankan server lokal Next.js:
-```bash
-npm run dev
-```
-Buka peramban web dan arahkan ke tautan `http://localhost:3000`.
-
-### 7. Memverifikasi Build Produksi
-Untuk memastikan tidak ada kesalahan tipe atau linting:
-```bash
-npm run lint
-npm run build
-```
-
----
-
-## Tangkapan Layar dan Video Demo
-
-### 1. Diagram Relasi Basis Data (ERD)
-Arsitektur skema basis data PostgreSQL Supabase yang menopang seluruh relasi antarentitas:
-<p align="center">
-  <img src="docs/erd.png" alt="Entity Relationship Diagram JobConnect" width="760" />
-</p>
-
-### 2. Galeri Antarmuka Aplikasi
-
-| Halaman / Fitur | Deskripsi Fungsi | Akses Peran |
-| --- | --- | --- |
-| **Beranda & Pencarian Lowongan** | Filter interaktif 38 provinsi, 514 kota, jenis kontrak, dan pencarian instan | Publik & Pelamar |
-| **Jelajah Wilayah Indonesia** | Navigasi ketersediaan lowongan kerja per provinsi dan kabupaten | Publik & Pelamar |
-| **Portal Panduan & FAQ Resmi** | Panduan tips melamar, pencegahan penipuan, dan panduan fitur | Publik & Semua Pengguna |
-| **Riwayat Lamaran Saya** | Pelacakan 8 tahap seleksi transparan, jadwal interview, dan pembatalan berkas | Khusus Pelamar |
-| **Lowongan Tersimpan (Bookmark)** | Daftar simpanan lowongan favorit untuk dilamar kemudian | Khusus Pelamar |
-| **Dasbor Rekrutmen Mitra** | Manajemen profil perusahaan, publikasi lowongan, dan verifikasi berkas CV | Khusus Mitra Perusahaan |
-| **Kurasi & Evaluasi Pelamar** | Penilaian kandidat, catatan internal rekruter, dan penjadwalan wawancara | Khusus Mitra Perusahaan |
-| **Laporan & Ekspor Data Mitra** | Ringkasan statistik pelamar serta ekspor dokumen format CSV dan PDF | Khusus Mitra Perusahaan |
-| **Kurasi Lowongan Masuk Admin** | Verifikasi kepatutan draf lowongan kerja (ACC atau Tolak dengan alasan) | Khusus Admin Platform |
-| **Manajemen Platform & Kategori** | Pengaturan kategori industri, pengawasan lowongan aktif, dan rekap agregat | Khusus Admin Platform |
-
-### 3. Tautan Demonstrasi Video
-
-Demonstrasi alur kerja platform JobConnect dari perspektif pelamar kerja, perusahaan mitra rekrutmen, hingga admin pengelola dapat disimak pada tautan berikut:
-- **Video Walkthrough Demo JobConnect**: *(Tautan video demonstrasi resmi proyek akan diperbarui oleh pemilik proyek)*
+5. **Jalankan server aplikasi:**
+   ```bash
+   npm run dev
+   ```
+   Buka browser di alamat `http://localhost:3000` untuk mulai menjelajahi JobConnect.
 
 ---
 

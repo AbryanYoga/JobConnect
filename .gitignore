@@ -29,3 +29,20 @@
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Dokumen internal perencanaan & instruksi agen
+AGENTS.md
+docs/COMMIT-PLAN.md
+
+# Berkas modul AI & screening (dinonaktifkan)
+lib/ai/
+app/api/ai/
+components/mitra/AiReviewPanel.tsx
+lib/validation/ai.ts
+
+# Data testing dan skrip internal
+data-testing/
+scripts/
+database/seed_test_company.sql
+docs/screenshots/
+

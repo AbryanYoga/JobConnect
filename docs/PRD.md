@@ -1,12 +1,12 @@
 # PRD JobConnect
 
-**Product Requirements Document: Platform Lowongan Kerja Tiga Peran dengan Screening CV Berbantuan AI**
+**Product Requirements Document: Platform Lowongan Kerja Tiga Peran dengan Screening Kualifikasi Cerdas**
 
 Stack: Next.js (App Router) + Tailwind CSS + Supabase (PostgreSQL, Auth, Storage, Realtime) + Vercel + Zod + TypeScript
 Penyusun: Abryan Yoga Pratama, SMK Negeri 6 Surakarta (Tugas Proyek RPL)
-Versi: **2.0** (menggantikan versi 1 yang hanya punya peran Admin dan User).
+Versi: **2.1** (Pembaruan arsitektur proteksi peran, profil & portofolio interaktif, dan moderasi instansi).
 
-Dokumen ini dibaca oleh pengembang dan oleh AI coding agent. Bagian yang berlabel **[KEPUTUSAN]** sudah final. Bagian berlabel **[TERBUKA]** masih butuh keputusan pemilik proyek.
+Dokumen ini memuat spesifikasi kebutuhan perangkat lunak dan arsitektur teknis resmi JobConnect. Bagian yang berlabel **[KEPUTUSAN]** sudah final.
 
 ---
 
@@ -25,7 +25,7 @@ Dokumen ini dibaca oleh pengembang dan oleh AI coding agent. Bagian yang berlabe
 | Kriteria lowongan | Teks panjang | **Kriteria utama terstruktur dan ringkas** |
 | Aturan `service_role` | Tidak pernah dipakai | **Dipakai hanya di satu modul server** untuk menyimpan hasil AI (bagian 9.2) |
 
-Yang tetap: stack, bahasa Indonesia, RLS di semua tabel, CV di bucket privat, standar desain Antislop, dan aturan commit di `AGENTS.md`.
+Yang tetap: stack, bahasa Indonesia, RLS di semua tabel, CV di bucket privat, standar desain berorientasi pengguna, dan arsitektur sistem berbasis peran.
 
 ## 1. Ringkasan produk
 
@@ -41,11 +41,13 @@ JobConnect mempertemukan **perusahaan** yang membuka lowongan dengan **pelamar**
 
 ### 1.1 Prinsip yang tidak boleh dilanggar
 
-1. **AI hanya memberi saran.** AI tidak pernah mengubah status lamaran, menolak, atau menyaring pelamar secara otomatis. Skor hanya mengurutkan dan menjelaskan.
-2. **Keputusan akhir ada di perusahaan pemilik lowongan.** Admin dan AI tidak bisa mengubah status lamaran.
-3. **Analisis AI bersifat opsional.** Pelamar memilih sendiri saat melamar dan diberi penjelasan. CV hanya dikirim ke penyedia AI jika pelamar memilih analisis.
-4. **Tidak ada data palsu di produksi** (lihat bagian 6).
-5. **Privasi:** admin tidak bisa membuka CV pelamar. CV hanya bisa dibuka pemiliknya dan perusahaan yang dilamar.
+1. **Sistem Skrining hanya memberi saran.** Algoritma tidak pernah mengubah status lamaran, menolak, atau menyaring pelamar secara otomatis. Skor hanya membantu mengurutkan dan merangkum kesesuaian berkas.
+2. **Keputusan akhir ada di perusahaan pemilik lowongan.** Admin dan sistem otomatis tidak bisa mengubah status lamaran.
+3. **Analisis kualifikasi bersifat opsional.** Pelamar memilih sendiri saat melamar dan diberi penjelasan.
+4. **Pemisahan Hak Akses Mutlak (Role Guarding).** Pengguna peran Pelamar (`user`) mutlak dilarang mengakses area kerja Mitra Perusahaan, dan sebaliknya. Pelanggaran akses dicegat oleh middleware dan diarahkan ke rute `/403`.
+5. **Pencegahan Perusahaan Bodong.** Admin memiliki wewenang meninjau keabsahan instansi dan membekukan (`is_frozen = true`) akun perusahaan yang melanggar aturan.
+6. **Tidak ada data palsu di produksi** (lihat bagian 6).
+7. **Privasi berkas:** admin tidak bisa membuka berkas CV pelamar. CV hanya bisa dibuka oleh pemiliknya dan perusahaan yang dilamar.
 
 ### 1.2 Keputusan stack [KEPUTUSAN]
 
@@ -117,7 +119,9 @@ Prioritas: **P0** wajib, **P1** penting, **P2** tambahan setelah semua P0 dan P1
 | ID | Fitur | Prioritas | Rilis |
 | --- | --- | --- | --- |
 | F-01 | Register dan login (email, password) dengan pilihan peran Pelamar atau Perusahaan | P0 | R1 |
-| F-02 | Profil pelamar: nama, telepon, headline singkat | P0 | R1 |
+| F-02 | Profil dan biodata lengkap pelamar: nama, telepon, headline, tanggal lahir, umur dinamis, domisili 38 provinsi, pendidikan, institusi, bio, LinkedIn, URL website, dan showcase portofolio proyek | P0 | R1 |
+| F-02B | Onboarding otomatis pasca-registrasi (`/profil?onboarding=true`) dilengkapi meter kelengkapan akun (0-100%) | P0 | R1 |
+| F-02C | Akun lengkap pelamar pada tinjauan mitra: umur, domisili, tombol WhatsApp langsung, LinkedIn, website, dan showcase proyek | P0 | R1 |
 | F-03 | Profil perusahaan: nama, logo, situs, industri, ukuran, provinsi dan kota, deskripsi | P0 | R1 |
 | F-04 | Pengajuan lowongan oleh perusahaan dan ACC admin (setuju, atau tolak dengan alasan) | P0 | R1 |
 | F-05 | Pengaturan notifikasi email (aktif atau nonaktif) | P1 | R2 |
@@ -173,6 +177,9 @@ Prioritas: **P0** wajib, **P1** penting, **P2** tambahan setelah semua P0 dan P1
 | F-29 | Dashboard perusahaan: jumlah lowongan, pelamar baru, pelamar per status | P1 | R1 |
 | F-30 | Laporan perusahaan: rekap lowongan dan pelamar per rentang tanggal, ekspor CSV dan cetak PDF | P1 | R4 |
 | F-31 | Dashboard admin: jumlah pengguna, lowongan menunggu ACC, lowongan tayang | P1 | R1 |
+| F-31B | Kelola perusahaan mitra oleh admin di `/admin/perusahaan`: verifikasi keabsahan instansi dan pembekuan (`is_frozen`) instansi bodong | P0 | R1 |
+| F-31C | Proteksi rute mutlak (Role Guarding) berbasis middleware dan halaman penolakan akses `/403` | P0 | R1 |
+| F-31D | Pusat Bantuan & Direktori FAQ interaktif dengan pencarian instan dan filter kategori tanpa breadcrumb | P1 | R1 |
 | F-32 | Laporan admin: rekap platform per rentang tanggal (tanpa isi CV) | P2 | R4 |
 
 ### 3.7 Jelajah wilayah dan kriteria lowongan
@@ -421,13 +428,13 @@ Membantu perusahaan membaca banyak CV dengan lebih cepat. Bukan alat seleksi oto
 
 ## 9. Skema database
 
-Catatan: SQL lengkap dan policy ditulis pada fase database di rencana commit. Bagian ini adalah kontrak skemanya.
+Catatan: SQL lengkap dan policy ditulis pada fase database di folder `database/`. Diagram Relasi Entitas visual lengkap (Mermaid ERD) dan kamus data tersedia pada berkas [docs/ERD.md](file:///c:/Users/abrya/OneDrive/Desktop/Project/JobConnect/docs/ERD.md).
 
 ### 9.1 Tabel
 
-**profiles**: `id uuid PK FK auth.users`, `name`, `email`, `role` (`user`, `company`, `admin`, default `user`), `phone`, `headline`, `email_notifications boolean default true`, `created_at`. Kolom `email` disalin oleh trigger dari `auth.users`.
+**profiles**: `id uuid PK FK auth.users`, `name`, `email`, `role` (`user`, `company`, `admin`, default `user`), `phone`, `headline`, `province_id smallint FK provinces`, `city_id int FK cities`, `birth_date date`, `education_level text`, `education_institution text`, `bio text`, `linkedin_url text`, `portfolio_url text`, `portfolios jsonb default '[]'::jsonb`, `email_notifications boolean default true`, `created_at`, `updated_at`. Kolom `email` disalin oleh trigger dari `auth.users`.
 
-**companies**: `id bigint PK`, `owner_id uuid UNIQUE FK profiles`, `name`, `slug UNIQUE`, `logo_path`, `website`, `industry`, `size`, `city_id FK cities`, `address_note`, `description`, `created_at`. Email kontak diambil dari `profiles.email` pemilik, sehingga tidak ada kolom email yang terbuka publik.
+**companies**: `id bigint PK`, `owner_id uuid UNIQUE FK profiles`, `name`, `slug UNIQUE`, `logo_path`, `website`, `industry`, `size`, `city_id FK cities`, `address_note`, `description`, `is_frozen boolean default false`, `created_at`, `updated_at`. Email kontak diambil dari `profiles.email` pemilik, sehingga tidak ada kolom email yang terbuka publik.
 
 **categories**: `id`, `name UNIQUE`, `slug UNIQUE`.
 
@@ -457,7 +464,7 @@ Index utama: `jobs(status, deadline)`, `jobs(company_id)`, `jobs(category_id)`, 
 
 | Tabel | Tamu | Pelamar | Perusahaan | Admin |
 | --- | --- | --- | --- | --- |
-| profiles | - | Baca dan ubah `name`, `phone`, `headline`, `email_notifications` milik sendiri | Baca profil pelamar ke lowongannya | Baca semua, tanpa ubah `role` lewat klien |
+| profiles | - | Baca dan ubah `name`, `phone`, `headline`, `email_notifications`, `province_id`, `city_id`, `birth_date`, `education_level`, `education_institution`, `bio`, `linkedin_url`, `portfolio_url`, `portfolios` milik sendiri | Baca profil pelamar ke lowongannya | Baca semua, tanpa ubah `role` lewat klien |
 | companies | Baca | Baca | Baca dan ubah miliknya | Baca semua |
 | categories | Baca | Baca | Baca | Tulis |
 | provinces, cities | Baca | Baca | Baca | Tulis |
