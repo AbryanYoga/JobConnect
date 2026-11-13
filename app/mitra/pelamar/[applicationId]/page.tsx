@@ -351,6 +351,34 @@ export default async function DetailPelamarPage({
     whatsappUrl = `https://wa.me/${clean}?text=${msgText}`;
   }
 
+  // Format tautan Gmail langsung dengan pesan template otomatis sesuai status lamaran
+  let gmailUrl: string | null = null;
+  if (applicant?.email) {
+    let emailSubject = `Konfirmasi Lamaran Kerja: ${job.title} - ${company.name}`;
+    let emailBody = `Halo ${applicantName},\n\nTerima kasih telah melamar posisi ${job.title} di ${company.name} melalui platform JobConnect.\n\nSaat ini berkas lamaran Anda sedang dalam tahap peninjauan oleh tim rekrutmen kami. Kami akan segera mengabari Anda kembali mengenai proses seleksi selanjutnya.\n\nSalam hangat,\nTim Rekrutmen ${company.name}`;
+
+    if (application.status === "diterima") {
+      emailSubject = `Selamat! Anda Dinyatakan Diterima Bekerja di ${company.name} (${job.title})`;
+      emailBody = `Halo ${applicantName},\n\nSelamat! Berdasarkan hasil evaluasi kualifikasi dan seluruh tahapan seleksi yang telah dilalui, kami dari ${company.name} dengan senang hati menyampaikan bahwa Anda dinyatakan RESMI DITERIMA untuk bergabung bersama kami pada posisi ${job.title}.\n\nTim HR kami akan segera menghubungi Anda kembali terkait dokumen penawaran kerja (offering letter), kelengkapan berkas administrasi, dan jadwal orientasi hari pertama kerja (onboarding).\n\nJika ada hal yang ingin Anda tanyakan atau konfirmasi terlebih dahulu, silakan langsung membalas email ini.\n\nSalam sukses dan selamat bergabung,\nTim Rekrutmen ${company.name}`;
+    } else if (application.status === "wawancara") {
+      emailSubject = `Undangan Wawancara Kerja: ${job.title} - ${company.name}`;
+      const scheduleInfo = application.interview_at
+        ? `Waktu: ${formatDateIndo(application.interview_at)}\nLokasi / Media: ${application.interview_place || "Daring / Online"}\n\n`
+        : "";
+      emailBody = `Halo ${applicantName},\n\nKami dari ${company.name} mengundang Anda untuk mengikuti tahapan wawancara kerja untuk posisi ${job.title}.\n\n${scheduleInfo}Mohon konfirmasikan kesediaan jadwal Anda dengan membalas pesan email ini.\n\nSalam hangat,\nTim Rekrutmen ${company.name}`;
+    } else if (application.status === "ditawari") {
+      emailSubject = `Penawaran Pekerjaan Resmi (Offering): ${job.title} - ${company.name}`;
+      emailBody = `Halo ${applicantName},\n\nKami dari ${company.name} ingin menyampaikan penawaran pekerjaan untuk posisi ${job.title}. Kami sangat terkesan dengan rekam jejak dan kualifikasi yang Anda miliki.\n\nMohon periksa penawaran ini dan kabari kami kembali untuk langkah berikutnya.\n\nSalam hangat,\nTim Rekrutmen ${company.name}`;
+    } else if (application.status === "ditolak") {
+      emailSubject = `Pemberitahuan Status Lamaran: ${job.title} - ${company.name}`;
+      emailBody = `Halo ${applicantName},\n\nTerima kasih atas antusiasme dan waktu yang Anda luangkan untuk melamar posisi ${job.title} di ${company.name}.\n\nSetelah melakukan pertimbangan menyeluruh terhadap seluruh berkas kandidat, saat ini kami memutuskan untuk belum dapat melanjutkan proses seleksi Anda ke tahap berikutnya.\n\nKami mendoakan kesuksesan untuk langkah dan karier profesional Anda ke depan.\n\nSalam hangat,\nTim Rekrutmen ${company.name}`;
+    }
+
+    gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+      applicant.email
+    )}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+  }
+
   // Daftar karya portofolio
   const portfolioItems = (applicant?.portfolios as PortfolioItem[]) || [];
 
@@ -456,13 +484,15 @@ export default async function DetailPelamarPage({
             </a>
           )}
 
-          {applicant?.email && (
+          {gmailUrl && (
             <a
-              href={`mailto:${applicant.email}`}
+              href={gmailUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-black/[0.08] text-slate-800 font-bold text-xs shadow-2xs transition min-h-[40px]"
             >
-              <Mail className="w-4 h-4 text-slate-500" aria-hidden="true" />
-              <span>Kirim Email</span>
+              <Mail className="w-4 h-4 text-rose-500" aria-hidden="true" />
+              <span>Kirim Email (Gmail)</span>
             </a>
           )}
 
