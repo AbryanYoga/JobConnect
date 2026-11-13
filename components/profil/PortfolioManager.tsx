@@ -13,6 +13,7 @@ import {
   Calendar,
 } from "lucide-react";
 import type { PortfolioItem } from "@/lib/validation/profil";
+import { useLanguage } from "@/lib/i18n";
 
 interface PortfolioManagerProps {
   items: PortfolioItem[];
@@ -20,6 +21,7 @@ interface PortfolioManagerProps {
 }
 
 export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
+  const { t, language } = useLanguage();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -129,11 +131,16 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
             <FolderGit2 className="w-5 h-5 text-amber-800" aria-hidden="true" />
           </div>
           <p className="text-xs sm:text-sm font-bold text-slate-800">
-            Belum ada karya atau proyek portofolio yang ditambahkan
+            {t(
+              "Belum ada karya atau proyek portofolio yang ditambahkan",
+              "No portfolio projects added yet"
+            )}
           </p>
           <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-            Menambahkan karya nyata (seperti aplikasi, desain, artikel, atau studi kasus)
-            membuat profil akun Anda jauh lebih menarik bagi perusahaan mitra.
+            {t(
+              "Menambahkan karya nyata (seperti aplikasi, desain, artikel, atau studi kasus) membuat profil akun Anda jauh lebih menarik bagi perusahaan mitra.",
+              "Adding real work (such as apps, designs, articles, or case studies) makes your profile much more attractive to employers."
+            )}
           </p>
         </div>
       )}
@@ -187,12 +194,12 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline"
                   >
-                    <span>Lihat Proyek</span>
+                    <span>{t("Lihat Proyek", "View Project")}</span>
                     <ExternalLink className="w-3 h-3" aria-hidden="true" />
                   </a>
                 ) : (
                   <span className="text-[11px] text-slate-400 italic">
-                    Tanpa tautan demo
+                    {t("Tanpa tautan demo", "No demo link")}
                   </span>
                 )}
 
@@ -227,7 +234,9 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
             <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
               <FolderGit2 className="w-4 h-4 text-black" aria-hidden="true" />
               <span>
-                {editingId ? "Ubah Karya Portofolio" : "Tambah Karya / Proyek Portofolio"}
+                {editingId
+                  ? t("Ubah Karya Portofolio", "Edit Portfolio Project")
+                  : t("Tambah Karya / Proyek Portofolio", "Add Portfolio Project")}
               </span>
             </h4>
             <button
@@ -248,12 +257,16 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
           <div className="space-y-3">
             <div>
               <label htmlFor="portfolio-title" className="block text-xs font-bold text-slate-800 mb-1">
-                Judul Proyek / Karya <span className="text-red-500">*</span>
+                {t("Judul Proyek / Karya", "Project / Work Title")} <span className="text-red-500">*</span>
               </label>
               <input
                 id="portfolio-title"
                 type="text"
-                placeholder="Contoh: Redesign Aplikasi Kasir Toko, Web Toko Online"
+                placeholder={
+                  language === "en"
+                    ? "e.g. POS App Redesign, Online Store Web"
+                    : "Contoh: Redesign Aplikasi Kasir Toko, Web Toko Online"
+                }
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 maxLength={120}
@@ -264,7 +277,7 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label htmlFor="portfolio-url" className="block text-xs font-bold text-slate-800 mb-1">
-                  Tautan Live Demo / Repositori (Opsional)
+                  {t("Tautan Live Demo / Repositori (Opsional)", "Live Demo / Repo URL (Optional)")}
                 </label>
                 <input
                   id="portfolio-url"
@@ -278,12 +291,12 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
 
               <div>
                 <label htmlFor="portfolio-year" className="block text-xs font-bold text-slate-800 mb-1">
-                  Tahun Pembuatan (Opsional)
+                  {t("Tahun Pembuatan (Opsional)", "Year Completed (Optional)")}
                 </label>
                 <input
                   id="portfolio-year"
                   type="text"
-                  placeholder="Contoh: 2024"
+                  placeholder={language === "en" ? "e.g. 2024" : "Contoh: 2024"}
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
                   maxLength={10}
@@ -294,12 +307,19 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
 
             <div>
               <label htmlFor="portfolio-skills" className="block text-xs font-bold text-slate-800 mb-1">
-                Keahlian / Teknologi yang Dipakai (Pisahkan dengan koma)
+                {t(
+                  "Keahlian / Teknologi yang Dipakai (Pisahkan dengan koma)",
+                  "Skills / Tech Used (Comma separated)"
+                )}
               </label>
               <input
                 id="portfolio-skills"
                 type="text"
-                placeholder="Contoh: React, Next.js, Figma, Tailwind CSS"
+                placeholder={
+                  language === "en"
+                    ? "e.g. React, Next.js, Figma, Tailwind CSS"
+                    : "Contoh: React, Next.js, Figma, Tailwind CSS"
+                }
                 value={skillsText}
                 onChange={(e) => setSkillsText(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-black/[0.1] text-xs font-medium text-slate-900 focus:border-black focus:outline-none transition"
@@ -308,12 +328,16 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
 
             <div>
               <label htmlFor="portfolio-desc" className="block text-xs font-bold text-slate-800 mb-1">
-                Deskripsi Singkat Proyek
+                {t("Deskripsi Singkat Proyek", "Short Project Description")}
               </label>
               <textarea
                 id="portfolio-desc"
                 rows={2}
-                placeholder="Ceritakan peran Anda dan tantangan yang diselesaikan dalam proyek ini..."
+                placeholder={
+                  language === "en"
+                    ? "Explain your role and challenges solved in this project..."
+                    : "Ceritakan peran Anda dan tantangan yang diselesaikan dalam proyek ini..."
+                }
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 maxLength={500}
@@ -328,7 +352,7 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
               onClick={resetForm}
               className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-black hover:bg-black/[0.05] transition"
             >
-              Batal
+              {t("Batal", "Cancel")}
             </button>
             <button
               type="button"
@@ -336,7 +360,11 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
               className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#0D0C23] text-white hover:bg-slate-800 font-bold text-xs shadow-2xs transition"
             >
               <Check className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>{editingId ? "Perbarui Proyek" : "Tambahkan ke Portofolio"}</span>
+              <span>
+                {editingId
+                  ? t("Perbarui Proyek", "Update Project")
+                  : t("Tambahkan ke Portofolio", "Add to Portfolio")}
+              </span>
             </button>
           </div>
         </div>
@@ -350,7 +378,7 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-dashed border-black/20 hover:border-black text-xs font-bold text-slate-800 transition shadow-2xs min-h-[44px]"
         >
           <Plus className="w-4 h-4 text-slate-600" aria-hidden="true" />
-          <span>Tambah Karya / Proyek Portofolio</span>
+          <span>{t("Tambah Karya / Proyek Portofolio", "Add Portfolio Project")}</span>
         </button>
       )}
     </div>

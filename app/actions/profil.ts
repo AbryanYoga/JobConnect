@@ -53,6 +53,30 @@ export async function updateProfilPelamarAction(rawData: unknown) {
       };
     }
 
+    // 1. Coba perbarui via RPC update_my_profile (SECURITY DEFINER)
+    const { error: rpcError } = await supabase.rpc("update_my_profile", {
+      p_name: name,
+      p_phone: phone || null,
+      p_headline: headline || null,
+      p_province_id: provinceId || null,
+      p_city_id: cityId || null,
+      p_birth_date: birthDate || null,
+      p_education_level: educationLevel || null,
+      p_education_institution: educationInstitution || null,
+      p_bio: bio || null,
+      p_linkedin_url: linkedinUrl || null,
+      p_portfolio_url: portfolioUrl || null,
+      p_portfolios: portfolios || [],
+      p_email_notifications: emailNotifications ?? true,
+    });
+
+    if (!rpcError) {
+      revalidatePath("/profil");
+      revalidatePath("/", "layout");
+      return { success: true };
+    }
+
+    // 2. Fallback jika fungsi RPC belum dipasang di Supabase
     const updatePayload = {
       name,
       phone,
@@ -77,7 +101,12 @@ export async function updateProfilPelamarAction(rawData: unknown) {
     if (updateError) {
       // Fallback update untuk kolom dasar jika kolom tambahan belum di-migrasi di Supabase
       const lowerErr = (updateError.message || "").toLowerCase();
-      if (lowerErr.includes("column") || lowerErr.includes("does not exist") || lowerErr.includes("schema")) {
+      if (
+        lowerErr.includes("column") ||
+        lowerErr.includes("does not exist") ||
+        lowerErr.includes("schema") ||
+        lowerErr.includes("permission")
+      ) {
         const { error: fallbackError } = await supabase
           .from("profiles")
           .update({
@@ -90,10 +119,11 @@ export async function updateProfilPelamarAction(rawData: unknown) {
 
         if (!fallbackError) {
           revalidatePath("/profil");
+          revalidatePath("/", "layout");
           return {
             success: true,
             warning:
-              "Data dasar profil berhasil disimpan. Untuk menyimpan domisili, umur, bio, dan portofolio, silakan jalankan migration di database/migration_applicant_profile.sql.",
+              "Data dasar profil berhasil disimpan. Agar domisili, tanggal lahir, bio, dan portofolio tersimpan permanen di Supabase, silakan jalankan query migrasi kolom profiles di SQL Editor Supabase.",
           };
         }
       }
@@ -105,6 +135,7 @@ export async function updateProfilPelamarAction(rawData: unknown) {
     }
 
     revalidatePath("/profil");
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (err: unknown) {
     const message =
@@ -184,6 +215,7 @@ export async function uploadAvatarAction(formData: FormData): Promise<{
     }
 
     revalidatePath("/profil");
+    revalidatePath("/", "layout");
     return { success: true, publicUrl };
   } catch (err: unknown) {
     const message =
@@ -226,6 +258,7 @@ export async function deleteAvatarAction(): Promise<{
     }
 
     revalidatePath("/profil");
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (err: unknown) {
     const message =

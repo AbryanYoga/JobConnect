@@ -12,6 +12,7 @@ import {
   ExternalLink,
   ShieldCheck,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 interface MitraSidebarProps {
   companyName: string;
@@ -71,6 +72,7 @@ export function MitraSidebar({
   isVerified = true,
 }: MitraSidebarProps) {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   const isItemActive = (item: (typeof MENU_ITEMS)[number]) => {
     if (item.exact) {
@@ -95,6 +97,7 @@ export function MitraSidebar({
                 width={36}
                 height={36}
                 className="w-full h-full object-contain p-1"
+                unoptimized
               />
             ) : (
               <span className="font-black text-sm text-black">
@@ -114,7 +117,7 @@ export function MitraSidebar({
                 />
               )}
             </div>
-            <p className="text-xs text-slate-500 font-medium">Dashboard Mitra</p>
+            <p className="text-xs text-slate-500 font-medium">{t("Dashboard Mitra", "Partner Dashboard")}</p>
           </div>
         </div>
 
@@ -138,7 +141,7 @@ export function MitraSidebar({
                 aria-current={active ? "page" : undefined}
               >
                 <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
-                <span>{item.label}</span>
+                <span>{t(item.label)}</span>
               </Link>
             );
           })}
@@ -158,6 +161,7 @@ export function MitraSidebar({
                   width={44}
                   height={44}
                   className="w-full h-full object-contain p-1.5"
+                  unoptimized
                 />
               ) : (
                 <span className="font-black text-base text-black">
@@ -178,7 +182,7 @@ export function MitraSidebar({
                 )}
               </div>
               <span className="inline-flex items-center gap-1 mt-0.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
-                Mitra Resmi
+                {t("Mitra Resmi", "Official Partner")}
               </span>
             </div>
           </div>
@@ -205,7 +209,7 @@ export function MitraSidebar({
                     }`}
                     aria-hidden="true"
                   />
-                  <span>{item.label}</span>
+                  <span>{t(item.label)}</span>
                 </Link>
               );
             })}
@@ -215,13 +219,16 @@ export function MitraSidebar({
         {/* Pintasan Eksternal: Lihat Portal Publik */}
         <div className="bg-white rounded-3xl border border-black/[0.08] shadow-card p-5 space-y-3">
           <p className="text-xs font-semibold text-slate-500 leading-relaxed">
-            Ingin melihat tampilan lowongan dari sudut pandang pencari kerja?
+            {t(
+              "Ingin melihat tampilan lowongan dari sudut pandang pencari kerja?",
+              "Want to see how jobs look from a job seeker's perspective?"
+            )}
           </p>
           <Link
             href="/lowongan"
             className="flex items-center justify-between w-full px-4 py-2.5 rounded-full bg-[#FAF8F0] hover:bg-[#F3EEDD] text-black text-xs font-bold border border-black/[0.08] transition min-h-[44px]"
           >
-            <span>Katalog Publik Lowongan</span>
+            <span>{t("Katalog Publik Lowongan", "Public Job Catalog")}</span>
             <ExternalLink className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
           </Link>
         </div>

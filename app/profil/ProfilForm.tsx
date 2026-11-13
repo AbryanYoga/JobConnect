@@ -32,6 +32,7 @@ import {
 } from "@/lib/validation/profil";
 import { fieldErrors } from "@/lib/validation/helpers";
 import { PortfolioManager } from "@/components/profil/PortfolioManager";
+import { useLanguage } from "@/lib/i18n";
 
 interface ProfilFormProps {
   initialData: {
@@ -68,6 +69,7 @@ export function ProfilForm({
   onSave,
 }: ProfilFormProps) {
   const router = useRouter();
+  const { t, language } = useLanguage();
 
   // State identitas dasar & kontak
   const [name, setName] = useState(initialData.name || "");
@@ -188,7 +190,12 @@ export function ProfilForm({
       setIsSubmitting(false);
 
       if (res.success) {
-        setSuccessMessage("Biodata dan profil akun Anda berhasil disimpan.");
+        setSuccessMessage(
+          t(
+            "Biodata dan profil akun Anda berhasil disimpan.",
+            "Your account biodata and profile were saved successfully."
+          )
+        );
         if (res.warning) {
           setWarningMessage(res.warning);
         }
@@ -211,12 +218,14 @@ export function ProfilForm({
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black font-black text-xs shadow-2xs border border-black/10">
                 <Sparkles className="w-3.5 h-3.5 text-black" aria-hidden="true" />
                 <span>
-                  {isOnboarding ? "Langkah Awal Pelamar" : "Tingkatkan Peluang Karir"}
+                  {isOnboarding
+                    ? t("Langkah Awal Pelamar", "First Step for Applicants")
+                    : t("Tingkatkan Peluang Karir", "Boost Your Career Opportunities")}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-600">
-                  Kelengkapan Profil:
+                  {t("Kelengkapan Profil:", "Profile Completeness:")}
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-slate-900 text-[#FFDD00] text-xs font-black">
                   {completeness}%
@@ -227,13 +236,20 @@ export function ProfilForm({
             <div className="space-y-1.5">
               <h2 className="text-xl sm:text-2xl font-black text-black tracking-tight">
                 {isOnboarding
-                  ? "Selamat Datang! Lengkapi Biodata & Portofolio Anda"
-                  : "Lengkapi Biodata Akun untuk Dapatkan Perhatian HRD"}
+                  ? t(
+                      "Selamat Datang! Lengkapi Biodata & Portofolio Anda",
+                      "Welcome! Complete Your Biodata & Portfolio"
+                    )
+                  : t(
+                      "Lengkapi Biodata Akun untuk Dapatkan Perhatian HRD",
+                      "Complete Your Profile to Attract HR Recruiters"
+                    )}
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl font-medium">
-                Perusahaan mitra di JobConnect kini tidak hanya membaca CV, tetapi
-                juga meninjau profil akun Anda secara langsung: domisili, umur,
-                pendidikan, tautan LinkedIn, serta karya nyata di portofolio Anda.
+                {t(
+                  "Perusahaan mitra di JobConnect kini tidak hanya membaca CV, tetapi juga meninjau profil akun Anda secara langsung: domisili, umur, pendidikan, tautan LinkedIn, serta karya nyata di portofolio Anda.",
+                  "Partner companies on JobConnect now not only read CVs, but also review your profile directly: location, age, education, LinkedIn, and real portfolio projects."
+                )}
               </p>
             </div>
 
@@ -255,7 +271,7 @@ export function ProfilForm({
                       : "bg-slate-100 text-slate-500"
                   }`}
                 >
-                  <CheckCircle2 className="w-3 h-3" /> Kontak
+                  <CheckCircle2 className="w-3 h-3" /> {t("Kontak", "Contact")}
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full ${
@@ -264,7 +280,7 @@ export function ProfilForm({
                       : "bg-slate-100 text-slate-500"
                   }`}
                 >
-                  <CheckCircle2 className="w-3 h-3" /> Usia & Umur
+                  <CheckCircle2 className="w-3 h-3" /> {t("Usia & Umur", "Age")}
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full ${
@@ -273,7 +289,7 @@ export function ProfilForm({
                       : "bg-slate-100 text-slate-500"
                   }`}
                 >
-                  <CheckCircle2 className="w-3 h-3" /> Domisili
+                  <CheckCircle2 className="w-3 h-3" /> {t("Domisili", "Location")}
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full ${
@@ -282,7 +298,7 @@ export function ProfilForm({
                       : "bg-slate-100 text-slate-500"
                   }`}
                 >
-                  <CheckCircle2 className="w-3 h-3" /> Pendidikan
+                  <CheckCircle2 className="w-3 h-3" /> {t("Pendidikan", "Education")}
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full ${
@@ -291,7 +307,7 @@ export function ProfilForm({
                       : "bg-slate-100 text-slate-500"
                   }`}
                 >
-                  <CheckCircle2 className="w-3 h-3" /> Bio & LinkedIn
+                  <CheckCircle2 className="w-3 h-3" /> {t("Bio & LinkedIn", "Bio & LinkedIn")}
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full ${
@@ -300,7 +316,7 @@ export function ProfilForm({
                       : "bg-slate-100 text-slate-500"
                   }`}
                 >
-                  <CheckCircle2 className="w-3 h-3" /> Portofolio Karya
+                  <CheckCircle2 className="w-3 h-3" /> {t("Portofolio Karya", "Project Portfolio")}
                 </span>
               </div>
             </div>
@@ -346,13 +362,16 @@ export function ProfilForm({
         <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8">
           <div className="mb-4">
             <h3 className="text-lg font-black text-black tracking-tight">
-              Foto Profil Pelamar
+              {t("Foto Profil Pelamar", "Applicant Profile Photo")}
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Gunakan foto formal atau semi-formal yang jelas untuk kartu identitas pelamar Anda.
+              {t(
+                "Gunakan foto formal atau semi-formal yang jelas untuk kartu identitas pelamar Anda.",
+                "Use a clear formal or semi-formal photo for your applicant identity card."
+              )}
             </p>
           </div>
-          {avatarUploadComponent}
+          <div>{avatarUploadComponent}</div>
         </div>
       )}
 
@@ -361,10 +380,13 @@ export function ProfilForm({
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <User className="w-5 h-5 text-black" aria-hidden="true" />
-            <span>Identitas Diri & Kontak Pelamar</span>
+            <span>{t("Identitas Diri & Kontak Pelamar", "Applicant Identity & Contact")}</span>
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
-            Informasi dasar ini ditampilkan ke perusahaan mitra yang menerima berkas lamaran Anda.
+            {t(
+              "Informasi dasar ini ditampilkan ke perusahaan mitra yang menerima berkas lamaran Anda.",
+              "This basic information is displayed to partner companies reviewing your applications."
+            )}
           </p>
         </div>
 
@@ -372,17 +394,21 @@ export function ProfilForm({
           {/* Nama Lengkap */}
           <Input
             id="profil-name"
-            label="Nama Lengkap"
+            label={t("Nama Lengkap", "Full Name")}
             required
             type="text"
-            placeholder="Contoh: Budi Santoso"
+            placeholder={language === "en" ? "e.g. John Doe" : "Contoh: Budi Santoso"}
             leftIcon={<User className="w-4 h-4 text-slate-400" />}
             value={name}
             onChange={(e) => {
               setName(e.target.value);
               if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
             }}
-            helperText={`Panjang nama antara ${NAME_MIN} sampai ${NAME_MAX} karakter.`}
+            helperText={
+              language === "en"
+                ? `Name length must be between ${NAME_MIN} and ${NAME_MAX} characters.`
+                : `Panjang nama antara ${NAME_MIN} sampai ${NAME_MAX} karakter.`
+            }
             error={errors.name}
             className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
           />
@@ -391,12 +417,12 @@ export function ProfilForm({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label htmlFor="profil-birthdate" className="block text-sm font-bold text-black">
-                Tanggal Lahir (Umur) <span className="text-red-500">*</span>
+                {t("Tanggal Lahir (Umur)", "Birth Date (Age)")} <span className="text-red-500">*</span>
               </label>
               {calculatedAge !== null && (
                 <span className="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                   <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                  <span>Usia: {calculatedAge} tahun</span>
+                  <span>{t("Usia:", "Age:")} {calculatedAge} {t("tahun", "years old")}</span>
                 </span>
               )}
             </div>
@@ -416,7 +442,10 @@ export function ProfilForm({
               <p className="text-xs text-red-600 font-medium">{errors.birthDate}</p>
             ) : (
               <p className="text-xs text-slate-500">
-                Usia dihitung otomatis untuk memenuhi kriteria persyaratan lowongan.
+                {t(
+                  "Usia dihitung otomatis untuk memenuhi kriteria persyaratan lowongan.",
+                  "Age is automatically calculated to meet vacancy criteria."
+                )}
               </p>
             )}
           </div>
@@ -426,17 +455,20 @@ export function ProfilForm({
           {/* Nomor Telepon / WhatsApp */}
           <Input
             id="profil-phone"
-            label="Nomor WhatsApp / Telepon"
+            label={t("Nomor WhatsApp / Telepon", "WhatsApp / Phone Number")}
             required
             type="tel"
-            placeholder="Contoh: 081234567890"
+            placeholder={language === "en" ? "e.g. 081234567890" : "Contoh: 081234567890"}
             leftIcon={<Phone className="w-4 h-4 text-slate-400" />}
             value={phone}
             onChange={(e) => {
               setPhone(e.target.value);
               if (errors.phone) setErrors((prev) => ({ ...prev, phone: "" }));
             }}
-            helperText="Gunakan nomor aktif untuk kemudahan panggilan wawancara oleh HRD."
+            helperText={t(
+              "Gunakan nomor aktif untuk kemudahan panggilan wawancara oleh HRD.",
+              "Use an active phone number for HR recruiters to call for interviews."
+            )}
             error={errors.phone}
             className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
           />
@@ -444,12 +476,12 @@ export function ProfilForm({
           {/* Alamat Email (Read-Only) */}
           <Input
             id="profil-email"
-            label="Alamat Email Akun"
+            label={t("Alamat Email Akun", "Account Email Address")}
             type="email"
             value={initialData.email}
             disabled
             leftIcon={<Mail className="w-4 h-4 text-slate-400" />}
-            helperText="Email terhubung dengan autentikasi akun Anda."
+            helperText={t("Email terhubung dengan autentikasi akun Anda.", "Email is linked to your account authentication.")}
             className="rounded-2xl bg-slate-100 border-black/[0.08] text-sm py-3 font-medium opacity-75"
           />
         </div>
@@ -460,10 +492,13 @@ export function ProfilForm({
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <MapPin className="w-5 h-5 text-black" aria-hidden="true" />
-            <span>Domisili & Wilayah Tempat Tinggal</span>
+            <span>{t("Domisili & Wilayah Tempat Tinggal", "Domicile & Residence Region")}</span>
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
-            Perusahaan mitra memprioritaskan pelamar dengan domisili terdekat untuk penempatan kerja onsite maupun hybrid.
+            {t(
+              "Perusahaan mitra memprioritaskan pelamar dengan domisili terdekat untuk penempatan kerja onsite maupun hybrid.",
+              "Partner companies prioritize candidates residing nearby for onsite and hybrid job placements."
+            )}
           </p>
         </div>
 
@@ -471,7 +506,7 @@ export function ProfilForm({
           {/* Dropdown Provinsi */}
           <div className="space-y-2">
             <label htmlFor="profil-province" className="block text-sm font-bold text-black">
-              Provinsi Domisili <span className="text-red-500">*</span>
+              {t("Provinsi Domisili", "Home Province")} <span className="text-red-500">*</span>
             </label>
             <select
               id="profil-province"
@@ -481,7 +516,7 @@ export function ProfilForm({
               }
               className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
             >
-              <option value="">-- Pilih Provinsi --</option>
+              <option value="">{t("-- Pilih Provinsi --", "-- Select Province --")}</option>
               {provinces.map((prov) => (
                 <option key={prov.id} value={prov.id}>
                   {prov.name}
@@ -496,7 +531,7 @@ export function ProfilForm({
           {/* Dropdown Kota / Kabupaten Berjenjang */}
           <div className="space-y-2">
             <label htmlFor="profil-city" className="block text-sm font-bold text-black">
-              Kota / Kabupaten Domisili <span className="text-red-500">*</span>
+              {t("Kota / Kabupaten Domisili", "Home City / Regency")} <span className="text-red-500">*</span>
             </label>
             <select
               id="profil-city"
@@ -510,8 +545,8 @@ export function ProfilForm({
             >
               <option value="">
                 {!provinceId
-                  ? "-- Pilih Provinsi Terlebih Dahulu --"
-                  : "-- Pilih Kota / Kabupaten --"}
+                  ? t("-- Pilih Provinsi Terlebih Dahulu --", "-- Select Province First --")
+                  : t("-- Pilih Kota / Kabupaten --", "-- Select City / Regency --")}
               </option>
               {availableCities.map((city) => (
                 <option key={city.id} value={city.id}>
@@ -532,10 +567,13 @@ export function ProfilForm({
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <GraduationCap className="w-5 h-5 text-black" aria-hidden="true" />
-            <span>Pendidikan Terakhir & Headline Karir</span>
+            <span>{t("Pendidikan Terakhir & Headline Karir", "Latest Education & Career Headline")}</span>
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
-            Tentukan jenjang pendidikan dan ringkasan keahlian utama Anda.
+            {t(
+              "Tentukan jenjang pendidikan dan ringkasan keahlian utama Anda.",
+              "Specify your education level and summary of your core skills."
+            )}
           </p>
         </div>
 
@@ -543,16 +581,24 @@ export function ProfilForm({
         <div>
           <Input
             id="profil-headline"
-            label="Headline Profesional"
+            label={t("Headline Profesional", "Professional Headline")}
             type="text"
-            placeholder="Contoh: Fresh Graduate SMK RPL | Web Developer React & Next.js"
+            placeholder={
+              language === "en"
+                ? "e.g. Fresh Graduate | Web Developer React & Next.js"
+                : "Contoh: Fresh Graduate SMK RPL | Web Developer React & Next.js"
+            }
             leftIcon={<Sparkles className="w-4 h-4 text-slate-400" />}
             value={headline}
             onChange={(e) => {
               setHeadline(e.target.value);
               if (errors.headline) setErrors((prev) => ({ ...prev, headline: "" }));
             }}
-            helperText={`Ringkasan singkat profesi atau minat kerja Anda (maksimal ${HEADLINE_MAX} karakter).`}
+            helperText={
+              language === "en"
+                ? `Brief summary of your profession or career interest (maximum ${HEADLINE_MAX} characters).`
+                : `Ringkasan singkat profesi atau minat kerja Anda (maksimal ${HEADLINE_MAX} karakter).`
+            }
             error={errors.headline}
             className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
           />
@@ -562,7 +608,7 @@ export function ProfilForm({
           {/* Jenjang Pendidikan */}
           <div className="space-y-2">
             <label htmlFor="profil-edu-level" className="block text-sm font-bold text-black">
-              Jenjang Pendidikan Terakhir
+              {t("Jenjang Pendidikan Terakhir", "Latest Education Level")}
             </label>
             <select
               id="profil-edu-level"
@@ -570,7 +616,7 @@ export function ProfilForm({
               onChange={(e) => setEducationLevel(e.target.value)}
               className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
             >
-              <option value="">-- Pilih Jenjang Pendidikan --</option>
+              <option value="">{t("-- Pilih Jenjang Pendidikan --", "-- Select Education Level --")}</option>
               {EDUCATION_LEVEL_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
@@ -582,12 +628,16 @@ export function ProfilForm({
           {/* Nama Institusi / Sekolah */}
           <div className="space-y-2">
             <label htmlFor="profil-edu-inst" className="block text-sm font-bold text-black">
-              Nama Sekolah / Kampus & Jurusan
+              {t("Nama Sekolah / Kampus & Jurusan", "School / University & Major")}
             </label>
             <input
               id="profil-edu-inst"
               type="text"
-              placeholder="Contoh: SMKN 1 Jakarta (RPL), Univ. Indonesia (TI)"
+              placeholder={
+                language === "en"
+                  ? "e.g. Vocational High School (Software Eng), Univ. of Indonesia (CS)"
+                  : "Contoh: SMKN 1 Jakarta (RPL), Univ. Indonesia (TI)"
+              }
               value={educationInstitution}
               onChange={(e) => setEducationInstitution(e.target.value)}
               maxLength={150}
@@ -602,10 +652,13 @@ export function ProfilForm({
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <FileText className="w-5 h-5 text-black" aria-hidden="true" />
-            <span>Bio Profil & Tautan Profesional</span>
+            <span>{t("Bio Profil & Tautan Profesional", "Profile Bio & Professional Links")}</span>
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
-            Ceritakan profil diri Anda dan tautkan profil LinkedIn atau website untuk validasi kredensial.
+            {t(
+              "Ceritakan profil diri Anda dan tautkan profil LinkedIn atau website untuk validasi kredensial.",
+              "Describe yourself and link your LinkedIn or website to validate your credentials."
+            )}
           </p>
         </div>
 
@@ -613,16 +666,20 @@ export function ProfilForm({
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <label htmlFor="profil-bio" className="block text-sm font-bold text-black">
-              Bio / Ringkasan Tentang Saya
+              {t("Bio / Ringkasan Tentang Saya", "Bio / Summary About Me")}
             </label>
             <span className="text-[11px] font-semibold text-slate-400">
-              {bio.length}/1500 karakter
+              {bio.length}/1500 {t("karakter", "characters")}
             </span>
           </div>
           <textarea
             id="profil-bio"
             rows={4}
-            placeholder="Ceritakan latar belakang Anda, keterampilan unggulan, proyek yang pernah Anda kerjakan, serta tujuan karier yang ingin Anda capai..."
+            placeholder={
+              language === "en"
+                ? "Tell about your background, key skills, past projects, and career goals you want to achieve..."
+                : "Ceritakan latar belakang Anda, keterampilan unggulan, proyek yang pernah Anda kerjakan, serta tujuan karier yang ingin Anda capai..."
+            }
             value={bio}
             onChange={(e) => {
               setBio(e.target.value);
@@ -640,7 +697,7 @@ export function ProfilForm({
           {/* Tautan LinkedIn */}
           <div className="space-y-1.5">
             <label htmlFor="profil-linkedin" className="block text-sm font-bold text-black">
-              Tautan Profil LinkedIn
+              {t("Tautan Profil LinkedIn", "LinkedIn Profile URL")}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-blue-600">
@@ -663,7 +720,10 @@ export function ProfilForm({
               <p className="text-xs text-red-600 font-medium">{errors.linkedinUrl}</p>
             ) : (
               <p className="text-[11px] text-slate-500">
-                Memudahkan tim rekruter meninjau rekam jejak profesional Anda.
+                {t(
+                  "Memudahkan tim rekruter meninjau rekam jejak profesional Anda.",
+                  "Makes it easy for recruiters to review your professional background."
+                )}
               </p>
             )}
           </div>
@@ -671,7 +731,7 @@ export function ProfilForm({
           {/* Tautan Website Portofolio / GitHub */}
           <div className="space-y-1.5">
             <label htmlFor="profil-web-portfolio" className="block text-sm font-bold text-black">
-              Tautan Website / GitHub / Portofolio Utama
+              {t("Tautan Website / GitHub / Portofolio Utama", "Website / GitHub / Main Portfolio URL")}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
@@ -694,7 +754,10 @@ export function ProfilForm({
               <p className="text-xs text-red-600 font-medium">{errors.portfolioUrl}</p>
             ) : (
               <p className="text-[11px] text-slate-500">
-                Tautkan laman portofolio online, repository kode, atau Behance/Dribbble.
+                {t(
+                  "Tautkan laman portofolio online, repository kode, atau Behance/Dribbble.",
+                  "Link your online portfolio page, code repository, or Behance/Dribbble."
+                )}
               </p>
             )}
           </div>
@@ -706,11 +769,13 @@ export function ProfilForm({
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <Briefcase className="w-5 h-5 text-black" aria-hidden="true" />
-            <span>Showcase Karya & Proyek Nyata (Portofolio)</span>
+            <span>{t("Showcase Karya & Proyek Nyata (Portofolio)", "Work Showcase & Real Projects (Portfolio)")}</span>
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
-            Perusahaan mitra dapat langsung melihat hasil karya dan proyek nyata yang pernah Anda
-            bangun, sehingga tidak hanya mengandalkan berkas CV formal.
+            {t(
+              "Perusahaan mitra dapat langsung melihat hasil karya dan proyek nyata yang pernah Anda bangun, sehingga tidak hanya mengandalkan berkas CV formal.",
+              "Partner companies can directly view the actual projects you have built, beyond what is written in your formal CV."
+            )}
           </p>
         </div>
 
@@ -722,10 +787,13 @@ export function ProfilForm({
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <Bell className="w-5 h-5 text-black" aria-hidden="true" />
-            <span>Preferensi Notifikasi</span>
+            <span>{t("Preferensi Notifikasi", "Notification Preferences")}</span>
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
-            Atur bagaimana platform mengirimkan informasi pembaruan penting kepada Anda.
+            {t(
+              "Atur bagaimana platform mengirimkan informasi pembaruan penting kepada Anda.",
+              "Configure how the platform sends important updates to you."
+            )}
           </p>
         </div>
 
@@ -743,12 +811,14 @@ export function ProfilForm({
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-black">
-                Notifikasi Email Status Lamaran
+                {t("Notifikasi Email Status Lamaran", "Email Notifications for Application Status")}
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 leading-relaxed font-medium">
-              Dapatkan pemberitahuan otomatis ke email saat perusahaan memperbarui
-              status lamaran Anda (misalnya saat dijadwalkan wawancara atau lolos seleksi).
+              {t(
+                "Dapatkan pemberitahuan otomatis ke email saat perusahaan memperbarui status lamaran Anda (misalnya saat dijadwalkan wawancara atau lolos seleksi).",
+                "Receive automatic email notifications when a company updates your application status (e.g. interview scheduled or accepted)."
+              )}
             </p>
           </div>
         </label>
@@ -764,10 +834,10 @@ export function ProfilForm({
           {isSubmitting ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-              <span>Menyimpan Biodata & Portofolio...</span>
+              <span>{t("Menyimpan Biodata & Portofolio...", "Saving Biodata & Portfolio...")}</span>
             </>
           ) : (
-            <span>Simpan Biodata & Portofolio</span>
+            <span>{t("Simpan Biodata & Portofolio", "Save Biodata & Portfolio")}</span>
           )}
         </button>
       </div>

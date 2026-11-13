@@ -13,6 +13,7 @@ interface LogoUploadProps {
     formData: FormData
   ) => Promise<{ success: boolean; error?: string; publicUrl?: string }>;
   onDeleteAction: () => Promise<{ success: boolean; error?: string }>;
+  onSuccess?: (url: string | null) => void;
 }
 
 import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
@@ -22,6 +23,7 @@ export function LogoUpload({
   companyName,
   onUploadAction,
   onDeleteAction,
+  onSuccess,
 }: LogoUploadProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -67,6 +69,7 @@ export function LogoUpload({
       if (res.success && res.publicUrl) {
         setLogoUrl(res.publicUrl);
         setSuccessMessage("Logo perusahaan berhasil diperbarui.");
+        onSuccess?.(res.publicUrl);
         router.refresh();
       } else {
         setErrorMessage(res.error || "Gagal mengunggah logo perusahaan.");
@@ -99,6 +102,7 @@ export function LogoUpload({
       if (res.success) {
         setLogoUrl(null);
         setSuccessMessage("Logo perusahaan berhasil dihapus.");
+        onSuccess?.(null);
         router.refresh();
       } else {
         setErrorMessage(res.error || "Gagal menghapus logo perusahaan.");

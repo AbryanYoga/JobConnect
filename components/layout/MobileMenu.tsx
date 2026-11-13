@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   Menu,
   X,
-  Briefcase,
   FileText,
   Building2,
   FolderTree,
@@ -53,12 +52,12 @@ const ROLE_EXTRA_LINKS: Record<
     { label: "Notifikasi", href: "/notifikasi", icon: Bell },
   ],
   perusahaan: [
-    { label: "Kelola Lowongan", href: "/mitra/lowongan", icon: Briefcase },
     { label: "Profil Perusahaan", href: "/mitra/profil-perusahaan", icon: Building2 },
     { label: "Laporan Rekap", href: "/mitra/laporan", icon: BarChart3 },
   ],
   admin: [
     { label: "Antrean Review", href: "/admin/lowongan", icon: FileText },
+    { label: "Perusahaan Mitra", href: "/admin/perusahaan", icon: Building2 },
     { label: "Kelola Kategori", href: "/admin/kategori", icon: FolderTree },
     { label: "Rekapitulasi Platform", href: "/admin/laporan", icon: BarChart3 },
   ],

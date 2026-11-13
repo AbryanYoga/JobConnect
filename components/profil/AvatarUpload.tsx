@@ -10,6 +10,7 @@ import {
   AVATAR_ERROR_MESSAGE,
 } from "@/lib/validation/profil";
 import { ImageCropperModal } from "./ImageCropperModal";
+import { useLanguage } from "@/lib/i18n";
 
 interface AvatarUploadProps {
   initialAvatarUrl?: string | null;
@@ -34,6 +35,7 @@ export function AvatarUpload({
   onDeleteAction,
 }: AvatarUploadProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initialAvatarUrl || null);
   const [isUploading, setIsUploading] = useState(false);
@@ -195,7 +197,7 @@ export function AvatarUpload({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading || isDeleting}
-            aria-label="Pilih foto profil baru"
+            aria-label={t("Pilih foto profil baru", "Choose new profile photo")}
             className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#FFDD00] hover:bg-[#F2D200] active:scale-95 text-black border border-black/15 shadow-2xs flex items-center justify-center transition-all cursor-pointer disabled:opacity-50"
           >
             <Camera className="w-4 h-4" aria-hidden="true" />
@@ -215,9 +217,14 @@ export function AvatarUpload({
         {/* Keterangan & Tombol Aksi */}
         <div className="space-y-2 text-center sm:text-left flex-1">
           <div>
-            <h3 className="text-sm font-bold text-slate-900">Foto Profil Akun</h3>
+            <h3 className="text-sm font-bold text-slate-900">
+              {t("Foto Profil Akun", "Account Profile Photo")}
+            </h3>
             <p className="text-xs text-slate-500 mt-0.5 font-medium leading-relaxed">
-              Pilih foto lalu atur posisi crop. Format didukung: PNG, JPG, atau WEBP (maksimal 2 MB).
+              {t(
+                "Pilih foto lalu atur posisi crop. Format didukung: PNG, JPG, atau WEBP (maksimal 2 MB).",
+                "Choose a photo then crop. Supported formats: PNG, JPG, or WEBP (up to 2 MB)."
+              )}
             </p>
           </div>
 
@@ -229,7 +236,11 @@ export function AvatarUpload({
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-slate-50 active:scale-98 border border-black/[0.12] text-xs font-bold text-black shadow-2xs hover:shadow transition-all min-h-[40px] cursor-pointer disabled:opacity-50"
             >
               <Crop className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
-              <span>{avatarUrl ? "Ganti & Posisikan Foto" : "Unggah & Posisikan Foto"}</span>
+              <span>
+                {avatarUrl
+                  ? t("Ganti & Posisikan Foto", "Change & Reposition Photo")
+                  : t("Unggah & Posisikan Foto", "Upload & Reposition Photo")}
+              </span>
             </button>
 
             {avatarUrl && (
@@ -240,7 +251,7 @@ export function AvatarUpload({
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full hover:bg-red-50 text-xs font-bold text-red-600 border border-transparent hover:border-red-200 transition-all min-h-[40px] cursor-pointer disabled:opacity-50"
               >
                 <Trash2 className="w-3.5 h-3.5 text-red-500" aria-hidden="true" />
-                <span>Hapus</span>
+                <span>{t("Hapus", "Delete")}</span>
               </button>
             )}
           </div>

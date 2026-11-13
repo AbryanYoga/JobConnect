@@ -20,6 +20,7 @@ interface NavbarProps {
 export async function Navbar({ role }: NavbarProps = {}) {
   let userRole: Role = role || "tamu";
   let userName: string | null = null;
+  let userAvatar: string | null = null;
 
   if (!role) {
     try {
@@ -31,16 +32,35 @@ export async function Navbar({ role }: NavbarProps = {}) {
       if (user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("role, name")
+          .select("role, name, avatar_url")
           .eq("id", user.id)
           .single();
 
         userName = profile?.name || null;
+        userAvatar = profile?.avatar_url || null;
 
         if (profile?.role === "admin") {
           userRole = "admin";
         } else if (profile?.role === "company") {
           userRole = "perusahaan";
+
+          const { data: company } = await supabase
+            .from("companies")
+            .select("name, logo_path")
+            .eq("owner_id", user.id)
+            .maybeSingle();
+
+          if (company) {
+            if (company.name) {
+              userName = company.name;
+            }
+            if (company.logo_path) {
+              const { data: publicLogo } = supabase.storage
+                .from("company-logos")
+                .getPublicUrl(company.logo_path);
+              userAvatar = publicLogo.publicUrl;
+            }
+          }
         } else {
           userRole = "pelamar";
         }
@@ -52,6 +72,12 @@ export async function Navbar({ role }: NavbarProps = {}) {
 
   const links = NAV_LINKS_BY_ROLE[userRole] || NAV_LINKS_BY_ROLE.tamu;
   const actions = NAV_ACTIONS_BY_ROLE[userRole] || [];
+  const homeHref =
+    userRole === "perusahaan"
+      ? "/mitra"
+      : userRole === "admin"
+      ? "/admin"
+      : "/";
 
   return (
     <NavbarHeader>
@@ -60,7 +86,7 @@ export async function Navbar({ role }: NavbarProps = {}) {
         <div className="flex items-center gap-2">
           {/* Logo Mobile (Hanya tampil di ponsel) */}
           <Link
-            href="/"
+            href={homeHref}
             className="md:hidden flex items-center rounded-full transition hover:opacity-90 py-1"
             aria-label="JobConnect Beranda"
           >
@@ -90,7 +116,7 @@ export async function Navbar({ role }: NavbarProps = {}) {
         {/* Tengah: Logo Brand JobConnect (Persis Buy Me a Coffee di tengah) */}
         <div className="hidden md:flex items-center justify-center">
           <Link
-            href="/"
+            href={homeHref}
             className="flex items-center rounded-full transition hover:opacity-90 px-3 py-1"
             aria-label="JobConnect Beranda"
           >
@@ -114,6 +140,7 @@ export async function Navbar({ role }: NavbarProps = {}) {
           <NavbarAuthButtons
             userRole={userRole}
             userName={userName}
+            userAvatar={userAvatar}
             actions={actions}
           />
         </div>

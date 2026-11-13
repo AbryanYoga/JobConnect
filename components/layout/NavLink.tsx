@@ -15,8 +15,10 @@ interface NavLinkProps {
 export function NavLink({ href, children, className = "", onClick }: NavLinkProps) {
   const pathname = usePathname();
   const { t } = useLanguage();
-  const isActive =
-    pathname === href || (href !== "/" && pathname.startsWith(href + "/"));
+  const isExactOnly = href === "/" || href === "/mitra" || href === "/admin";
+  const isActive = isExactOnly
+    ? pathname === href
+    : pathname === href || pathname.startsWith(href + "/");
 
   const baseStyles =
     "inline-flex items-center text-sm transition-colors rounded-full min-h-[44px] px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600";

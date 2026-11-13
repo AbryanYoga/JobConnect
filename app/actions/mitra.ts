@@ -102,6 +102,7 @@ export async function updateProfilPerusahaanAction(rawData: unknown) {
     }
     await supabase.from("profiles").update({ name }).eq("id", user.id);
     revalidatePath("/mitra/profil-perusahaan");
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (err) {
     return actionError(err, "Terjadi kesalahan saat menyimpan profil perusahaan.");
@@ -144,7 +145,9 @@ export async function uploadCompanyLogoAction(formData: FormData) {
     if (updateError) return { success: false, error: "Gagal memperbarui referensi logo perusahaan di database." };
 
     const { data: publicUrlData } = supabase.storage.from(LOGO_BUCKET).getPublicUrl(storagePath);
+    await supabase.from("profiles").update({ avatar_url: publicUrlData.publicUrl }).eq("id", user.id);
     revalidatePath("/mitra/profil-perusahaan");
+    revalidatePath("/", "layout");
     return { success: true, logoPath: storagePath, publicUrl: publicUrlData.publicUrl };
   } catch (err) {
     return actionError(err, "Terjadi kesalahan saat memproses unggah logo.");
@@ -153,14 +156,16 @@ export async function uploadCompanyLogoAction(formData: FormData) {
 
 export async function deleteCompanyLogoAction() {
   try {
-    const { supabase, company } = await requireCompanyUser();
+    const { supabase, user, company } = await requireCompanyUser();
     if (!company?.logo_path) return { success: false, error: "Tidak ada logo perusahaan yang dapat dihapus." };
 
     await supabase.storage.from(LOGO_BUCKET).remove([company.logo_path]);
     const { error } = await supabase.from("companies").update({ logo_path: null }).eq("id", company.id);
     if (error) return { success: false, error: "Gagal menghapus referensi logo dari profil perusahaan." };
 
+    await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
     revalidatePath("/mitra/profil-perusahaan");
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (err) {
     return actionError(err, "Terjadi kesalahan saat menghapus logo.");
@@ -341,6 +346,30 @@ export async function updateApplicationStatusAction({
     return { success: true };
   } catch (err) {
     return actionError(err, "Terjadi kesalahan saat memproses status lamaran.");
+  }
+}
+
+export async function switchToCompanyAction() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login tidak valid. Silakan masuk terlebih dahulu." };
+    }
+
+    const { error: rpcError } = await supabase.rpc("register_as_company");
+    if (rpcError) {
+      return { success: false, error: rpcError.message || "Gagal mengalihkan peran menjadi mitra perusahaan. Pastikan fungsi database telah terpasang." };
+    }
+
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch (err) {
+    return actionError(err, "Gagal mengalihkan akun ke mitra perusahaan.");
   }
 }
 
