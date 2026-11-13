@@ -80,27 +80,6 @@ export default async function LamaranSayaPage() {
 
   const applicationList = applications || [];
 
-  // Ambil status proses analisis AI pelamar via RPC tanpa membocorkan skor
-  const aiStatusMap: Record<number, string> = {};
-  if (applicationList.length > 0) {
-    const aiConsentApps = applicationList.filter((a) => a.ai_consent);
-    if (aiConsentApps.length > 0) {
-      const results = await Promise.all(
-        aiConsentApps.map(async (a) => {
-          const { data } = await supabase.rpc("get_my_ai_review_status", {
-            p_application_id: a.id,
-          });
-          return { id: a.id, status: data as string | null };
-        })
-      );
-      results.forEach((r) => {
-        if (r.status) {
-          aiStatusMap[r.id] = r.status;
-        }
-      });
-    }
-  }
-
   // Format data aplikasi dengan url logo
   const processedApplications: ApplicationItem[] = applicationList.map((app) => {
     const jobData = Array.isArray(app.job) ? app.job[0] : app.job;
@@ -139,7 +118,6 @@ export default async function LamaranSayaPage() {
       created_at: app.created_at,
       updated_at: app.updated_at,
       logoUrl,
-      aiStatus: aiStatusMap[app.id] || null,
       job: {
         id: jobData?.id || 0,
         title: jobData?.title || "Lowongan Pekerjaan",

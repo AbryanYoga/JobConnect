@@ -14,6 +14,7 @@ import {
   XCircle,
   ChevronRight,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 import type { Database } from "@/lib/supabase/types";
 
 export type NotificationData = Database["public"]["Tables"]["notifications"]["Row"];
@@ -70,7 +71,11 @@ function getNotificationIcon(type: string) {
   }
 }
 
-function formatNotificationTime(isoString: string): string {
+function formatNotificationTime(
+  isoString: string,
+  t: (id: string, en?: string) => string,
+  locale: string
+): string {
   try {
     const date = new Date(isoString);
     const now = new Date();
@@ -79,13 +84,13 @@ function formatNotificationTime(isoString: string): string {
     const diffHours = Math.floor(diffMinutes / 60);
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffMinutes < 1) return "Baru saja";
-    if (diffMinutes < 60) return `${diffMinutes} menit yang lalu`;
-    if (diffHours < 24) return `${diffHours} jam yang lalu`;
-    if (diffDays === 1) return "Kemarin";
-    if (diffDays < 7) return `${diffDays} hari yang lalu`;
+    if (diffMinutes < 1) return t("Baru saja", "Just now");
+    if (diffMinutes < 60) return `${diffMinutes} ${t("menit yang lalu", "minutes ago")}`;
+    if (diffHours < 24) return `${diffHours} ${t("jam yang lalu", "hours ago")}`;
+    if (diffDays === 1) return t("Kemarin", "Yesterday");
+    if (diffDays < 7) return `${diffDays} ${t("hari yang lalu", "days ago")}`;
 
-    return new Intl.DateTimeFormat("id-ID", {
+    return new Intl.DateTimeFormat(locale, {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -102,9 +107,11 @@ export function NotificationItem({
   onMarkAsRead,
   onClick,
 }: NotificationItemProps) {
+  const { language, t } = useLanguage();
+  const locale = language === "en" ? "en-US" : "id-ID";
   const isUnread = !notification.read_at;
   const { icon, bg } = getNotificationIcon(notification.type);
-  const timeFormatted = formatNotificationTime(notification.created_at);
+  const timeFormatted = formatNotificationTime(notification.created_at, t, locale);
 
   const handleItemClick = () => {
     if (isUnread && onMarkAsRead) {
@@ -146,7 +153,7 @@ export function NotificationItem({
             </h3>
             {isUnread && (
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
-                Baru
+                {t("Baru", "New")}
               </span>
             )}
           </div>
@@ -155,8 +162,8 @@ export function NotificationItem({
             <button
               type="button"
               onClick={handleMarkAsReadClick}
-              title="Tandai telah dibaca"
-              aria-label="Tandai notifikasi ini telah dibaca"
+              title={t("Tandai telah dibaca", "Mark as read")}
+              aria-label={t("Tandai notifikasi ini telah dibaca", "Mark this notification as read")}
               className="inline-flex items-center justify-center p-2 min-w-[44px] min-h-[44px] -my-2 -mr-2 rounded-full text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600"
             >
               <Check className="w-4 h-4" aria-hidden="true" />
@@ -174,7 +181,7 @@ export function NotificationItem({
           <time dateTime={notification.created_at}>{timeFormatted}</time>
           {notification.link && (
             <span className="inline-flex items-center gap-1 text-navy-800 font-medium group-hover:underline">
-              Lihat detail
+              {t("Lihat detail", "View details")}
               <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
             </span>
           )}

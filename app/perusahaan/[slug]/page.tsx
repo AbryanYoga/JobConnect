@@ -196,6 +196,7 @@ export default async function CompanyProfilePage({
                   width={96}
                   height={96}
                   className="w-full h-full object-contain"
+                  unoptimized
                 />
               ) : (
                 <span className="font-black text-2xl text-navy-800 select-none">

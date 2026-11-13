@@ -1,7 +1,10 @@
+"use client";
+
 import React from "react";
 import { FolderOpen } from "lucide-react";
 import { Button } from "./Button";
 import { ButtonLink } from "./ButtonLink";
+import { useLanguage } from "@/lib/i18n";
 
 export type EmptyStateLinkAction = {
   label: string;
@@ -27,7 +30,8 @@ export interface EmptyStateProps {
 
 function renderAction(
   actionItem: EmptyStateAction,
-  variant: "primary" | "outline"
+  variant: "primary" | "outline",
+  t: (id: string, en?: string) => string
 ) {
   if ("href" in actionItem) {
     return (
@@ -37,7 +41,7 @@ function renderAction(
         size="md"
         className="w-full sm:w-auto"
       >
-        {actionItem.label}
+        {t(actionItem.label)}
       </ButtonLink>
     );
   }
@@ -49,7 +53,7 @@ function renderAction(
       size="md"
       className="w-full sm:w-auto"
     >
-      {actionItem.label}
+      {t(actionItem.label)}
     </Button>
   );
 }
@@ -63,6 +67,7 @@ export function EmptyState({
   headingLevel = "h3",
   className = "",
 }: EmptyStateProps) {
+  const { t } = useLanguage();
   const Heading = headingLevel;
 
   return (
@@ -77,18 +82,18 @@ export function EmptyState({
       </div>
 
       <Heading className="text-base font-semibold text-slate-900 mb-1 tracking-tight">
-        {title}
+        {t(title)}
       </Heading>
 
       {description && (
         <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-          {description}
+          {t(description)}
         </p>
       )}
 
       <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-        {renderAction(action, "primary")}
-        {secondaryAction && renderAction(secondaryAction, "outline")}
+        {renderAction(action, "primary", t)}
+        {secondaryAction && renderAction(secondaryAction, "outline", t)}
       </div>
     </div>
   );

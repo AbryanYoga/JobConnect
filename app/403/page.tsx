@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ShieldAlert, Home, LogIn } from "lucide-react";
+import { ShieldAlert, Home, LogIn, Building2 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 
 export const metadata: Metadata = {
@@ -55,26 +55,40 @@ export default async function ForbiddenPage({
           </div>
 
           {/* Opsi Aksi Pengguna */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <ButtonLink
-              href="/"
-              variant="primary"
-              size="md"
-              fullWidth
-              leftIcon={<Home className="w-4 h-4" aria-hidden="true" />}
-            >
-              Kembali ke Beranda
-            </ButtonLink>
+          <div className="pt-2 flex flex-col gap-3">
+            {reason === "pelamar_cannot_access_mitra" && (
+              <ButtonLink
+                href="/perusahaan/register"
+                variant="primary"
+                size="md"
+                fullWidth
+                leftIcon={<Building2 className="w-4 h-4" aria-hidden="true" />}
+              >
+                Daftar / Beralih ke Akun Mitra
+              </ButtonLink>
+            )}
 
-            <ButtonLink
-              href="/auth/logout"
-              variant="outline"
-              size="md"
-              fullWidth
-              leftIcon={<LogIn className="w-4 h-4" aria-hidden="true" />}
-            >
-              Ganti Akun
-            </ButtonLink>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
+              <ButtonLink
+                href="/"
+                variant={reason === "pelamar_cannot_access_mitra" ? "outline" : "primary"}
+                size="md"
+                fullWidth
+                leftIcon={<Home className="w-4 h-4" aria-hidden="true" />}
+              >
+                Kembali ke Beranda
+              </ButtonLink>
+
+              <ButtonLink
+                href="/auth/logout"
+                variant="outline"
+                size="md"
+                fullWidth
+                leftIcon={<LogIn className="w-4 h-4" aria-hidden="true" />}
+              >
+                Ganti Akun
+              </ButtonLink>
+            </div>
           </div>
         </div>
       </div>

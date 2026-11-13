@@ -8,6 +8,7 @@ import {
 } from "./NotificationItem";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { createClient } from "@/lib/supabase/client";
+import { useLanguage } from "@/lib/i18n";
 import {
   markNotificationAsReadAction,
   markAllNotificationsAsReadAction,
@@ -20,6 +21,7 @@ interface NotificationListProps {
 export function NotificationList({
   initialNotifications,
 }: NotificationListProps) {
+  const { t } = useLanguage();
   const [notifications, setNotifications] =
     useState<NotificationData[]>(initialNotifications);
   const [filter, setFilter] = useState<"all" | "unread">("all");
@@ -149,7 +151,7 @@ export function NotificationList({
                 : "text-slate-600 hover:text-navy-900"
             }`}
           >
-            <span>Semua</span>
+            <span>{t("Semua", "All")}</span>
             <span
               className={`px-2 py-0.5 text-xs rounded-full ${
                 filter === "all"
@@ -172,7 +174,7 @@ export function NotificationList({
                 : "text-slate-600 hover:text-navy-900"
             }`}
           >
-            <span>Belum Dibaca</span>
+            <span>{t("Belum Dibaca", "Unread")}</span>
             {unreadCount > 0 ? (
               <span className="px-2 py-0.5 text-xs rounded-full bg-amber-200 text-amber-950 font-bold">
                 {unreadCount}
@@ -199,7 +201,7 @@ export function NotificationList({
               ) : (
                 <CheckCheck className="w-4 h-4 text-emerald-600" aria-hidden="true" />
               )}
-              <span>Tandai Semua Dibaca</span>
+              <span>{t("Tandai Semua Dibaca", "Mark All as Read")}</span>
             </button>
           )}
 
@@ -210,7 +212,7 @@ export function NotificationList({
                 className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
                 aria-hidden="true"
               />
-              <span>Pembaruan realtime aktif</span>
+              <span>{t("Pembaruan realtime aktif", "Realtime updates active")}</span>
             </div>
           )}
         </div>

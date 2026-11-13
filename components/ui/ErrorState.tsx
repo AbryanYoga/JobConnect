@@ -1,7 +1,10 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { AlertCircle, RotateCcw } from "lucide-react";
 import { Button } from "./Button";
+import { useLanguage } from "@/lib/i18n";
 
 export interface ErrorStateProps {
   title?: string;
@@ -22,6 +25,8 @@ export function ErrorState({
   actionLabel,
   className = "",
 }: ErrorStateProps) {
+  const { t } = useLanguage();
+
   return (
     <div
       role="alert"
@@ -35,11 +40,11 @@ export function ErrorState({
       </div>
 
       <h3 className="text-base font-semibold text-slate-900 mb-1 tracking-tight">
-        {title}
+        {t(title)}
       </h3>
 
       <p className="text-sm text-slate-600 mb-6 leading-relaxed max-w-sm">
-        {message}
+        {t(message)}
       </p>
 
       <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
@@ -51,7 +56,7 @@ export function ErrorState({
             leftIcon={<RotateCcw className="w-4 h-4" />}
             className="w-full sm:w-auto"
           >
-            {retryLabel}
+            {t(retryLabel)}
           </Button>
         )}
 
@@ -60,7 +65,7 @@ export function ErrorState({
             href={actionHref}
             className="min-h-[44px] px-4 py-2.5 rounded-control text-sm font-medium border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:text-navy-700 hover:border-slate-400 active:bg-slate-100 transition-colors inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600 w-full sm:w-auto"
           >
-            {actionLabel}
+            {t(actionLabel)}
           </Link>
         )}
       </div>

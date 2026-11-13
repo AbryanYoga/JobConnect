@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function LamaranSayaLoading() {
   return (
-    <div className="min-h-screen bg-[#FAF8F0]/40 py-8 sm:py-12">
+    <div className="min-h-screen bg-[#FAF8F0] py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="flex items-center gap-2">
           <Skeleton className="h-4 w-20 rounded-md" />

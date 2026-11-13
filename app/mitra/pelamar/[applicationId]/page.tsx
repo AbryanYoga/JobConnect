@@ -28,10 +28,6 @@ import {
   type CandidateNoteItem,
 } from "@/components/mitra/CandidateNotes";
 import {
-  AiReviewPanel,
-  type AiReviewData,
-} from "@/components/mitra/AiReviewPanel";
-import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
   type JobType,
@@ -280,15 +276,6 @@ export default async function DetailPelamarPage({
   if (application.jobs.company_id !== company.id) {
     redirect("/mitra/lowongan");
   }
-
-  // Ambil review AI jika ada
-  const { data: rawReview } = await supabase
-    .from("application_ai_reviews")
-    .select("*")
-    .eq("application_id", appId)
-    .maybeSingle();
-
-  const aiReview = (rawReview as unknown as AiReviewData) || null;
 
   // Ambil riwayat status lamaran
   const { data: rawHistory } = await supabase
@@ -724,14 +711,6 @@ export default async function DetailPelamarPage({
               </div>
             )}
           </div>
-
-          {/* Panel Hasil Review AI */}
-          <AiReviewPanel
-            applicationId={application.id}
-            aiConsent={application.ai_consent}
-            jobAiScreening={Boolean(job.ai_screening)}
-            review={aiReview}
-          />
 
           {/* Berkas Curriculum Vitae (CV) */}
           <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4">

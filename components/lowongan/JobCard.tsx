@@ -40,6 +40,7 @@ export interface JobCardData {
 interface JobCardProps {
   job: JobCardData;
   isBookmarked?: boolean;
+  hideBookmark?: boolean;
 }
 
 function formatRupiah(amount: number): string {
@@ -66,7 +67,11 @@ function formatSalary(min?: number | null, max?: number | null, t?: (id: string,
 import { getCompanyLogo, getCompanyInitials } from "@/lib/company-logo";
 import { BookmarkButton } from "./BookmarkButton";
 
-export function JobCard({ job, isBookmarked = false }: JobCardProps) {
+export function JobCard({
+  job,
+  isBookmarked = false,
+  hideBookmark = false,
+}: JobCardProps) {
   const { t } = useLanguage();
   const companyName = job.company?.name || "Perusahaan Mitra";
   const companyInitials = getCompanyInitials(companyName);
@@ -89,6 +94,7 @@ export function JobCard({ job, isBookmarked = false }: JobCardProps) {
                 width={48}
                 height={48}
                 className="w-full h-full object-cover rounded-xl"
+                unoptimized
               />
             ) : companyLogo ? (
               <Image
@@ -97,6 +103,7 @@ export function JobCard({ job, isBookmarked = false }: JobCardProps) {
                 width={48}
                 height={48}
                 className="w-full h-full object-contain p-0.5"
+                unoptimized
               />
             ) : (
               <span className="font-bold text-sm text-navy-800 select-none">
@@ -154,11 +161,13 @@ export function JobCard({ job, isBookmarked = false }: JobCardProps) {
             </span>
           </div>
 
-          <BookmarkButton
-            jobId={job.id}
-            initialIsBookmarked={isBookmarked}
-            variant="icon"
-          />
+          {!hideBookmark && (
+            <BookmarkButton
+              jobId={job.id}
+              initialIsBookmarked={isBookmarked}
+              variant="icon"
+            />
+          )}
         </div>
       </div>
 

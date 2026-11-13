@@ -46,6 +46,25 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
   const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
   const supabase = await createClient();
 
+  // Cek apakah pengguna yang sedang masuk adalah mitra perusahaan atau admin
+  let isCompanyOrAdmin = false;
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      isCompanyOrAdmin =
+        profile?.role === "company" || profile?.role === "admin";
+    }
+  } catch {
+    // tamu
+  }
+
   // 1. Ambil seluruh kategori dan provinsi untuk filter
   const { data: categories } = await supabase
     .from("categories")
@@ -278,7 +297,11 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
             ) : (
               <div className="space-y-4">
                 {jobs.map((job) => (
-                  <JobCard key={job.id} job={job} />
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    hideBookmark={isCompanyOrAdmin}
+                  />
                 ))}
 
                 <Pagination

@@ -10,7 +10,6 @@ import {
   Plus,
   Trash2,
   ArrowLeft,
-  Bot,
   MapPin,
   Send,
   Save,
@@ -65,7 +64,7 @@ export interface JobFormData {
   salaryMin: number | "";
   salaryMax: number | "";
   deadline: string;
-  aiScreening: boolean;
+  aiScreening?: boolean;
   provinceId?: number | "";
   cityId?: number | "";
   locationDetail?: string;
@@ -110,6 +109,20 @@ function CharCounter({
       )}
     </span>
   );
+}
+
+function formatNumberWithDots(val: number | string | ""): string {
+  if (val === "" || val === null || val === undefined) return "";
+  const numeric = typeof val === "number" ? val : parseInt(String(val).replace(/\D/g, ""), 10);
+  if (isNaN(numeric)) return "";
+  return new Intl.NumberFormat("id-ID").format(numeric);
+}
+
+function parseNumberFromDots(val: string): number | "" {
+  const digitsOnly = val.replace(/\D/g, "");
+  if (!digitsOnly) return "";
+  const parsed = parseInt(digitsOnly, 10);
+  return isNaN(parsed) ? "" : parsed;
 }
 
 export function JobForm({
@@ -186,9 +199,6 @@ export function JobForm({
     initialData?.salaryMax ?? ""
   );
   const [deadline, setDeadline] = useState(initialData?.deadline || "");
-  const [aiScreening, setAiScreening] = useState(
-    initialData?.aiScreening ?? true
-  );
 
   const router = useRouter();
   const [isSavingDraft, setIsSavingDraft] = useState(false);
@@ -215,7 +225,7 @@ export function JobForm({
     salaryMin,
     salaryMax,
     deadline,
-    aiScreening,
+    aiScreening: false,
   });
 
   const handleSaveDraft = async () => {
@@ -887,12 +897,13 @@ export function JobForm({
             <input
               id="salaryMin"
               name="salaryMin"
-              type="number"
-              min={0}
-              placeholder="Contoh: 5000000"
-              value={salaryMin}
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="Contoh: 5.000.000"
+              value={formatNumberWithDots(salaryMin)}
               onChange={(e) =>
-                setSalaryMin(e.target.value ? Number(e.target.value) : "")
+                setSalaryMin(parseNumberFromDots(e.target.value))
               }
               className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
             />
@@ -905,12 +916,13 @@ export function JobForm({
             <input
               id="salaryMax"
               name="salaryMax"
-              type="number"
-              min={0}
-              placeholder="Contoh: 8000000"
-              value={salaryMax}
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="Contoh: 8.000.000"
+              value={formatNumberWithDots(salaryMax)}
               onChange={(e) =>
-                setSalaryMax(e.target.value ? Number(e.target.value) : "")
+                setSalaryMax(parseNumberFromDots(e.target.value))
               }
               className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
             />
@@ -929,27 +941,6 @@ export function JobForm({
             onChange={(e) => setDeadline(e.target.value)}
             className="w-full sm:w-72 px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
           />
-        </div>
-
-        {/* Analisis AI Screening */}
-        <div className="pt-3 border-t border-black/[0.06]">
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={aiScreening}
-              onChange={(e) => setAiScreening(e.target.checked)}
-              className="w-5 h-5 rounded-md border-black/20 text-black focus:ring-black mt-0.5"
-            />
-            <div className="space-y-1">
-              <span className="text-sm font-bold text-black flex items-center gap-1.5">
-                <Bot className="w-4 h-4 text-black" aria-hidden="true" />
-                <span>Aktifkan Rekomendasi Screening CV Berbantuan AI</span>
-              </span>
-              <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                Sistem akan memberikan skor kecocokan dan ringkasan kualifikasi CV pelamar secara otomatis sebagai bahan pertimbangan tim rekrutmen. Keputusan akhir tetap sepenuhnya di tangan Anda.
-              </p>
-            </div>
-          </label>
         </div>
       </section>
 

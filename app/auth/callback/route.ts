@@ -63,21 +63,35 @@ export async function GET(request: Request) {
         }
       }
 
-      // Jika ada parameter pengalihan khusus (misal /mitra/profil-perusahaan?onboarding=true)
-      if (next && next.startsWith("/") && !next.startsWith("//")) {
-        return NextResponse.redirect(`${origin}${next}`);
-      }
-
-      // Ambil data profil pengguna untuk menentukan dashboard yang tepat
+      // Ambil data profil pengguna untuk menentukan dashboard yang tepat dan memvalidasi peran
       const { data: profile } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single();
 
-      if (profile?.role === "admin") {
+      const userRole = profile?.role || "user";
+
+      // Jika alur pendaftaran perusahaan namun peran di database belum menjadi 'company'
+      // (misal akun Google sudah terlanjur terdaftar sebagai pelamar atau fungsi RPC belum terpasang):
+      if (isCompanyRegister && userRole !== "company") {
+        return NextResponse.redirect(
+          `${origin}/perusahaan/register?error=google_role_conflict`
+        );
+      }
+
+      // Jika ada parameter pengalihan khusus yang sah sesuai peran pengguna
+      if (next && next.startsWith("/") && !next.startsWith("//")) {
+        // Cegah pengguna selain mitra diarahkan ke rute /mitra yang akan memicu 403
+        if (next.startsWith("/mitra") && userRole !== "company") {
+          return NextResponse.redirect(`${origin}/profil`);
+        }
+        return NextResponse.redirect(`${origin}${next}`);
+      }
+
+      if (userRole === "admin") {
         return NextResponse.redirect(`${origin}/admin`);
-      } else if (profile?.role === "company" || isCompanyRegister) {
+      } else if (userRole === "company") {
         return NextResponse.redirect(`${origin}/mitra/profil-perusahaan?onboarding=true`);
       } else {
         return NextResponse.redirect(`${origin}/profil`);

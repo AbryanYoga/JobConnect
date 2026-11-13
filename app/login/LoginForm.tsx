@@ -220,7 +220,7 @@ export function LoginForm() {
           </div>
           <div className="relative flex justify-center text-xs">
             <span className="bg-white px-3 text-slate-500 font-medium">
-              {t("atau")}
+              {t("atau", "or")}
             </span>
           </div>
         </div>
@@ -252,20 +252,20 @@ export function LoginForm() {
           </svg>
           <span>
             {isGoogleSubmitting
-              ? t("Menghubungkan ke Google...")
-              : t("Masuk dengan Google")}
+              ? t("Menghubungkan ke Google...", "Connecting to Google...")
+              : t("Masuk dengan Google", "Sign In with Google")}
           </span>
         </button>
 
         {/* Tautan ke Pendaftaran */}
         <div className="mt-8 pt-6 border-t border-black/[0.06] text-center space-y-2.5">
           <p className="text-sm text-slate-600 font-medium">
-            {t("Belum memiliki akun JobConnect?")}{" "}
+            {t("Belum memiliki akun JobConnect?", "Don't have a JobConnect account?")}{" "}
             <Link
               href="/register"
               className="font-bold text-black hover:underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-black rounded-xs"
             >
-              {t("Daftar sekarang")}
+              {t("Daftar sekarang", "Register now")}
             </Link>
           </p>
 
@@ -274,7 +274,7 @@ export function LoginForm() {
               href="/perusahaan"
               className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-black hover:underline py-1"
             >
-              <span>Ingin pasang lowongan? Buka Portal Perusahaan &rarr;</span>
+              <span>{t("Ingin pasang lowongan? Buka Portal Perusahaan →", "Looking to post jobs? Open Employer Portal →")}</span>
             </Link>
           </div>
         </div>

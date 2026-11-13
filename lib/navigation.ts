@@ -27,14 +27,12 @@ export const NAV_LINKS_BY_ROLE: Record<Role, NavItem[]> = {
     { label: "Tersimpan", href: "/tersimpan" },
   ],
   perusahaan: [
-    { label: "Lowongan", href: "/lowongan" },
-    { label: "Wilayah", href: "/wilayah" },
-    { label: "Dashboard Mitra", href: "/mitra" },
+    { label: "Dashboard", href: "/mitra" },
+    { label: "Kelola Lowongan", href: "/mitra/lowongan" },
   ],
   admin: [
-    { label: "Lowongan", href: "/lowongan" },
-    { label: "Wilayah", href: "/wilayah" },
-    { label: "Dashboard Admin", href: "/admin" },
+    { label: "Dashboard", href: "/admin" },
+    { label: "Antrean Review", href: "/admin/lowongan" },
   ],
 };
 
@@ -56,13 +54,7 @@ export const NAV_ACTIONS_BY_ROLE: Record<Role, NavAction[]> = {
       variant: "primary",
     },
   ],
-  pelamar: [
-    {
-      label: "Profil",
-      href: "/profil",
-      variant: "text",
-    },
-  ],
+  pelamar: [],
   perusahaan: [
     {
       label: "Pasang Lowongan",

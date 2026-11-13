@@ -19,6 +19,20 @@ export async function toggleBookmarkAction(jobId: number): Promise<ToggleBookmar
       return { success: false, error: "AUTH_REQUIRED", message: "Silakan masuk ke akun Anda terlebih dahulu untuk menyimpan lowongan." };
     }
 
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role === "company" || profile?.role === "admin") {
+      return {
+        success: false,
+        error: "ROLE_NOT_ALLOWED",
+        message: "Fitur simpan lowongan hanya tersedia untuk akun pencari kerja.",
+      };
+    }
+
     const { data: existing, error: checkError } = await supabase
       .from("saved_jobs")
       .select("job_id")

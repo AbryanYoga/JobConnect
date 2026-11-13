@@ -122,7 +122,7 @@ function FooterCard() {
             </h4>
             <ul className="space-y-3.5 list-none p-0 m-0">
               <FooterLink href="/tentang">{t("Alur Melamar", "Application Process")}</FooterLink>
-              <FooterLink href="/tentang">{t("Screening CV", "CV Screening")}</FooterLink>
+              <FooterLink href="/tentang">{t("Panduan CV", "CV Guide")}</FooterLink>
               <FooterLink href="/tentang">{t("Verifikasi Mitra", "Partner Verification")}</FooterLink>
               <FooterLink href="/tentang">{t("Keamanan Akun", "Account Security")}</FooterLink>
             </ul>

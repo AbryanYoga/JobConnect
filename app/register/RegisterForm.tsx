@@ -255,8 +255,8 @@ export function RegisterForm() {
           </svg>
           <span>
             {isGoogleSubmitting
-              ? t("Menghubungkan ke Google...")
-              : t("Daftar Cepat dengan Google")}
+              ? t("Menghubungkan ke Google...", "Connecting to Google...")
+              : t("Daftar Cepat dengan Google", "Quick Sign Up with Google")}
           </span>
         </button>
 
@@ -336,12 +336,12 @@ export function RegisterForm() {
           {/* Input Konfirmasi Kata Sandi */}
           <Input
             id="register-confirm-password"
-            label={t("Konfirmasi Kata Sandi")}
+            label={t("Konfirmasi Kata Sandi", "Confirm Password")}
             required
             type="password"
             autoComplete="new-password"
             placeholder="••••••••"
-            helperText={t("Ulangi kata sandi yang sama")}
+            helperText={t("Ulangi kata sandi yang sama", "Repeat the same password")}
             leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
             value={confirmPassword}
             onChange={(e) => {
@@ -362,8 +362,8 @@ export function RegisterForm() {
             >
               <span>
                 {isSubmitting
-                  ? t("Memproses Pendaftaran...")
-                  : t("Daftar sebagai Pencari Kerja")}
+                  ? t("Memproses Pendaftaran...", "Processing Registration...")
+                  : t("Daftar sebagai Pencari Kerja", "Sign Up as Job Seeker")}
               </span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
             </button>
@@ -373,12 +373,12 @@ export function RegisterForm() {
         {/* Tautan Alternatif Khusus Perusahaan & Sudah Punya Akun */}
         <div className="mt-8 pt-6 border-t border-black/[0.06] space-y-3 text-center">
           <p className="text-sm text-slate-600 font-medium">
-            {t("Sudah memiliki akun JobConnect?")}{" "}
+            {t("Sudah memiliki akun JobConnect?", "Already have a JobConnect account?")}{" "}
             <Link
               href="/login"
               className="font-bold text-black hover:underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-black rounded-xs"
             >
-              {t("Masuk di sini")}
+              {t("Masuk di sini", "Sign in here")}
             </Link>
           </p>
 
@@ -388,7 +388,7 @@ export function RegisterForm() {
               className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-black hover:underline py-1"
             >
               <Building2 className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
-              <span>Ingin pasang lowongan? Daftar Akun Perusahaan Mitra &rarr;</span>
+              <span>{t("Ingin pasang lowongan? Daftar Akun Perusahaan Mitra →", "Looking to hire? Register Company Account →")}</span>
             </Link>
           </div>
         </div>

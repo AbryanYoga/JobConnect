@@ -74,7 +74,7 @@ const commonJobFields = {
   benefits: z.array(benefitItemSchema).nullish().transform((v) => v ?? []).refine((items) => items.length <= JOB_LIMITS.benefits.max, `Benefit maksimal ${JOB_LIMITS.benefits.max} item`),
   salaryMin: nullishSalary("Gaji minimal"),
   salaryMax: nullishSalary("Gaji maksimal"),
-  aiScreening: z.boolean().default(true),
+  aiScreening: z.boolean().default(false),
 };
 
 const salaryRefine = <T extends { salaryMin: number | null; salaryMax: number | null }>(schema: z.ZodType<T>) =>

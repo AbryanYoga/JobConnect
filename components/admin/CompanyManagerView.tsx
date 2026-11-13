@@ -338,6 +338,7 @@ export function CompanyManagerView({ companies }: CompanyManagerViewProps) {
                           width={48}
                           height={48}
                           className="w-full h-full object-contain p-1"
+                          unoptimized
                         />
                       ) : (
                         <span className="font-black text-sm text-[#0D0C23]">

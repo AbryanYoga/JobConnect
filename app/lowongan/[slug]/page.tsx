@@ -262,6 +262,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                     width={80}
                     height={80}
                     className="w-full h-full object-contain"
+                    unoptimized
                   />
                 ) : (
                   <span className="font-extrabold text-xl text-navy-800 select-none">
@@ -331,11 +332,13 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
             {/* Tombol CTA Lamar dan Simpan di Header */}
             <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-              <BookmarkButton
-                jobId={job.id}
-                initialIsBookmarked={isBookmarked}
-                variant="button"
-              />
+              {userRole !== "company" && userRole !== "admin" && (
+                <BookmarkButton
+                  jobId={job.id}
+                  initialIsBookmarked={isBookmarked}
+                  variant="button"
+                />
+              )}
 
               {existingApplication ? (
                 <Link
