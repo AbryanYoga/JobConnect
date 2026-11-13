@@ -267,130 +267,133 @@ export function ProfilPerusahaanViewWrapper({
             </div>
           </div>
 
-          {/* Kartu 1: Informasi Dasar & Identitas */}
-          <div className="bg-white rounded-3xl border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-                  <Building2 className="w-4 h-4" aria-hidden="true" />
+          {/* Baris 1: Identitas Usaha & Alamat Operasional */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            {/* Kartu 1: Informasi Dasar & Identitas */}
+            <div className="bg-white rounded-3xl border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
+                    <Building2 className="w-4 h-4" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-navy-950">
+                    {t("Identitas & Informasi Usaha", "Identity & Business Information")}
+                  </h3>
                 </div>
-                <h3 className="text-base sm:text-lg font-bold text-navy-950">
-                  {t("Identitas & Informasi Usaha", "Identity & Business Information")}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={handleStartEdit}
-                className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
-              >
-                <span>{t("Ubah", "Edit")}</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Nama Resmi Perusahaan", "Official Company Name")}
-                </p>
-                <p className="text-sm font-bold text-navy-950">
-                  {companyData.name}
-                </p>
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
+                >
+                  <span>{t("Ubah", "Edit")}</span>
+                </button>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Bidang Industri", "Industry")}
-                </p>
-                <p className="text-sm font-bold text-navy-950">
-                  {companyData.industry || (
-                    <span className="text-slate-400 font-normal italic">
-                      {t("Belum ditentukan", "Not specified")}
-                    </span>
-                  )}
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Ukuran Tim / Karyawan", "Company Size")}
-                </p>
-                <p className="text-sm font-bold text-navy-950">
-                  {sizeLabel || (
-                    <span className="text-slate-400 font-normal italic">
-                      {t("Belum ditentukan", "Not specified")}
-                    </span>
-                  )}
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Website Resmi", "Official Website")}
-                </p>
-                {companyData.website ? (
-                  <a
-                    href={companyData.website}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline inline-flex items-center gap-1.5 break-all"
-                  >
-                    <span>{companyData.website}</span>
-                    <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" aria-hidden="true" />
-                  </a>
-                ) : (
-                  <p className="text-sm text-slate-400 italic">
-                    {t("Belum ditambahkan", "Not added yet")}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Nama Resmi Perusahaan", "Official Company Name")}
                   </p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Kartu 2: Domisili & Alamat Kantor Operasional */}
-          <div className="bg-white rounded-3xl border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center">
-                  <MapPin className="w-4 h-4" aria-hidden="true" />
+                  <p className="text-sm font-bold text-navy-950">
+                    {companyData.name}
+                  </p>
                 </div>
-                <h3 className="text-base sm:text-lg font-bold text-navy-950">
-                  {t("Domisili & Alamat Kantor Operasional", "Domicile & Office Address")}
-                </h3>
+
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Bidang Industri", "Industry")}
+                  </p>
+                  <p className="text-sm font-bold text-navy-950">
+                    {companyData.industry || (
+                      <span className="text-slate-400 font-normal italic">
+                        {t("Belum ditentukan", "Not specified")}
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Ukuran Tim / Karyawan", "Company Size")}
+                  </p>
+                  <p className="text-sm font-bold text-navy-950">
+                    {sizeLabel || (
+                      <span className="text-slate-400 font-normal italic">
+                        {t("Belum ditentukan", "Not specified")}
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Website Resmi", "Official Website")}
+                  </p>
+                  {companyData.website ? (
+                    <a
+                      href={companyData.website}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline inline-flex items-center gap-1.5 break-all"
+                    >
+                      <span>{companyData.website}</span>
+                      <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <p className="text-sm text-slate-400 italic">
+                      {t("Belum ditambahkan", "Not added yet")}
+                    </p>
+                  )}
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={handleStartEdit}
-                className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
-              >
-                <span>{t("Ubah", "Edit")}</span>
-              </button>
             </div>
 
-            <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Kota / Kabupaten Domisili", "City / Regency")}
-                </p>
-                <p className="text-sm font-bold text-navy-950">
-                  {domicileString || (
-                    <span className="text-slate-400 font-normal italic">
-                      {t("Belum ditentukan", "Not specified")}
-                    </span>
-                  )}
-                </p>
+            {/* Kartu 2: Domisili & Alamat Kantor Operasional */}
+            <div className="bg-white rounded-3xl border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center">
+                    <MapPin className="w-4 h-4" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-navy-950">
+                    {t("Domisili & Alamat Kantor Operasional", "Domicile & Office Address")}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
+                >
+                  <span>{t("Ubah", "Edit")}</span>
+                </button>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Catatan Alamat Fisik Kantor", "Full Office Address")}
-                </p>
-                <p className="text-sm text-slate-800 font-medium leading-relaxed">
-                  {companyData.addressNote || (
-                    <span className="text-slate-400 font-normal italic">
-                      {t("Belum ditambahkan", "Not added yet")}
-                    </span>
-                  )}
-                </p>
+              <div className="space-y-4">
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Kota / Kabupaten Domisili", "City / Regency")}
+                  </p>
+                  <p className="text-sm font-bold text-navy-950">
+                    {domicileString || (
+                      <span className="text-slate-400 font-normal italic">
+                        {t("Belum ditentukan", "Not specified")}
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Catatan Alamat Fisik Kantor", "Full Office Address")}
+                  </p>
+                  <p className="text-sm text-slate-800 font-medium leading-relaxed">
+                    {companyData.addressNote || (
+                      <span className="text-slate-400 font-normal italic">
+                        {t("Belum ditambahkan", "Not added yet")}
+                      </span>
+                    )}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

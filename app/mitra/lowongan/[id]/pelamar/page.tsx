@@ -7,16 +7,12 @@ import {
   Users,
   ArrowLeft,
   Calendar,
-  Sparkles,
   ChevronRight,
   ExternalLink,
   Mail,
   Phone,
   Briefcase,
-  SlidersHorizontal,
   ArrowUpDown,
-  Clock,
-  AlertTriangle,
   FolderGit2,
 } from "lucide-react";
 import { LinkedinIcon } from "@/components/ui/LinkedinIcon";
@@ -79,28 +75,11 @@ const FILTER_TABS: { label: string; value: string }[] = [
   { label: "Ditolak", value: "ditolak" },
 ];
 
-const AI_FILTER_OPTIONS: { label: string; value: string }[] = [
-  { label: "Semua Hasil AI", value: "semua" },
-  { label: "Kesesuaian Tinggi", value: "tinggi" },
-  { label: "Kesesuaian Sedang", value: "sedang" },
-  { label: "Kesesuaian Rendah", value: "rendah" },
-  { label: "Tanpa Analisis AI", value: "tanpa_analisis" },
-];
-
 const SORT_OPTIONS: { label: string; value: string }[] = [
   { label: "Terbaru", value: "terbaru" },
-  { label: "Skor AI Tertinggi", value: "skor_desc" },
-  { label: "Skor AI Terendah", value: "skor_asc" },
   { label: "Nama (A-Z)", value: "nama_asc" },
+  { label: "Nama (Z-A)", value: "nama_desc" },
 ];
-
-type AiReviewSummary = {
-  id: number;
-  status: "pending" | "processing" | "done" | "failed" | "skipped";
-  score: number | null;
-  level: "tinggi" | "sedang" | "rendah" | null;
-  suspicious: boolean;
-};
 
 type AppItem = {
   id: number;
@@ -124,7 +103,6 @@ type AppItem = {
     portfolio_url?: string | null;
     portfolios?: PortfolioItem[] | null;
   } | null;
-  application_ai_reviews: AiReviewSummary | AiReviewSummary[] | null;
 };
 
 export default async function PelamarPage({
@@ -140,12 +118,10 @@ export default async function PelamarPage({
 
   const {
     status: statusFilter,
-    ai: aiFilter,
     sort: sortOption,
   } = await searchParams;
 
   const activeTab = statusFilter || "semua";
-  const activeAiFilter = aiFilter || "semua";
   const activeSort = sortOption || "terbaru";
 
   const supabase = await createClient();
@@ -181,7 +157,7 @@ export default async function PelamarPage({
     notFound();
   }
 
-  // Ambil seluruh pelamar pada lowongan ini beserta hasil evaluasi AI dan data profil akun
+  // Ambil seluruh pelamar pada lowongan ini
   let rawApplications: unknown = null;
   const { data: fullApps, error: fullAppsError } = await supabase
     .from("applications")
@@ -207,13 +183,6 @@ export default async function PelamarPage({
         linkedin_url,
         portfolio_url,
         portfolios
-      ),
-      application_ai_reviews (
-        id,
-        status,
-        score,
-        level,
-        suspicious
       )
     `)
     .eq("job_id", jobId)
@@ -236,13 +205,6 @@ export default async function PelamarPage({
           email,
           phone,
           headline
-        ),
-        application_ai_reviews (
-          id,
-          status,
-          score,
-          level,
-          suspicious
         )
       `)
       .eq("job_id", jobId)
@@ -253,14 +215,6 @@ export default async function PelamarPage({
   }
 
   const applications: AppItem[] = (rawApplications as unknown as AppItem[]) || [];
-
-  const getAiReview = (app: AppItem): AiReviewSummary | null => {
-    if (!app.application_ai_reviews) return null;
-    if (Array.isArray(app.application_ai_reviews)) {
-      return app.application_ai_reviews[0] || null;
-    }
-    return app.application_ai_reviews;
-  };
 
   // Hitung jumlah pelamar per status
   const statusCounts: Record<string, number> = {
@@ -280,31 +234,7 @@ export default async function PelamarPage({
     }
   });
 
-  // Hitung jumlah pelamar per filter AI
-  const aiCounts: Record<string, number> = {
-    semua: applications.length,
-    tinggi: 0,
-    sedang: 0,
-    rendah: 0,
-    tanpa_analisis: 0,
-  };
-
-  applications.forEach((app) => {
-    if (!app.ai_consent) {
-      aiCounts.tanpa_analisis += 1;
-    } else {
-      const rev = getAiReview(app);
-      if (
-        rev?.status === "done" &&
-        rev.level &&
-        aiCounts[rev.level] !== undefined
-      ) {
-        aiCounts[rev.level] += 1;
-      }
-    }
-  });
-
-  // Filter daftar pelamar sesuai status tab dan kriteria AI
+  // Filter daftar pelamar sesuai status tab
   let filteredApplications = [...applications];
 
   if (activeTab !== "semua") {
@@ -313,43 +243,17 @@ export default async function PelamarPage({
     );
   }
 
-  if (activeAiFilter === "tanpa_analisis") {
-    filteredApplications = filteredApplications.filter((app) => !app.ai_consent);
-  } else if (activeAiFilter === "tinggi") {
-    filteredApplications = filteredApplications.filter((app) => {
-      const rev = getAiReview(app);
-      return app.ai_consent && rev?.status === "done" && rev.level === "tinggi";
-    });
-  } else if (activeAiFilter === "sedang") {
-    filteredApplications = filteredApplications.filter((app) => {
-      const rev = getAiReview(app);
-      return app.ai_consent && rev?.status === "done" && rev.level === "sedang";
-    });
-  } else if (activeAiFilter === "rendah") {
-    filteredApplications = filteredApplications.filter((app) => {
-      const rev = getAiReview(app);
-      return app.ai_consent && rev?.status === "done" && rev.level === "rendah";
-    });
-  }
-
   // Pengurutan daftar pelamar
   filteredApplications.sort((a, b) => {
-    if (activeSort === "skor_desc") {
-      const scoreA = getAiReview(a)?.score ?? -1;
-      const scoreB = getAiReview(b)?.score ?? -1;
-      if (scoreB !== scoreA) return scoreB - scoreA;
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    }
-    if (activeSort === "skor_asc") {
-      const scoreA = getAiReview(a)?.score ?? 999;
-      const scoreB = getAiReview(b)?.score ?? 999;
-      if (scoreA !== scoreB) return scoreA - scoreB;
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    }
     if (activeSort === "nama_asc") {
       const nameA = a.profiles?.name?.toLowerCase() || "";
       const nameB = b.profiles?.name?.toLowerCase() || "";
       return nameA.localeCompare(nameB);
+    }
+    if (activeSort === "nama_desc") {
+      const nameA = a.profiles?.name?.toLowerCase() || "";
+      const nameB = b.profiles?.name?.toLowerCase() || "";
+      return nameB.localeCompare(nameA);
     }
     // Default terbaru berdasarkan created_at
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -358,19 +262,16 @@ export default async function PelamarPage({
   // Helper pembuat URL filter dan sorting
   const buildFilterUrl = (newParams: {
     status?: string;
-    ai?: string;
     sort?: string;
   }) => {
     const paramsMap = new URLSearchParams();
     const finalStatus =
       newParams.status !== undefined ? newParams.status : activeTab;
-    const finalAi = newParams.ai !== undefined ? newParams.ai : activeAiFilter;
     const finalSort =
       newParams.sort !== undefined ? newParams.sort : activeSort;
 
     if (finalStatus && finalStatus !== "semua")
       paramsMap.set("status", finalStatus);
-    if (finalAi && finalAi !== "semua") paramsMap.set("ai", finalAi);
     if (finalSort && finalSort !== "terbaru")
       paramsMap.set("sort", finalSort);
 
@@ -454,48 +355,14 @@ export default async function PelamarPage({
         })}
       </div>
 
-      {/* Bilah Filter AI dan Pengurutan */}
-      <div className="bg-white rounded-3xl border border-black/[0.08] p-4 sm:p-5 shadow-card flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* Chip Filter Kategori AI */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1.5 text-xs font-black text-slate-800 shrink-0 mr-1">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
-            <span>Kategori AI:</span>
-          </div>
-
-          {AI_FILTER_OPTIONS.map((opt) => {
-            const isActive = activeAiFilter === opt.value;
-            const count = aiCounts[opt.value];
-
-            return (
-              <Link
-                key={opt.value}
-                href={buildFilterUrl({ ai: opt.value })}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-bold transition min-h-[44px] ${
-                  isActive
-                    ? "bg-[#0D0C23] text-[#FFDD00] shadow-2xs"
-                    : "bg-[#FAF8F0] text-slate-700 border border-black/[0.06] hover:bg-black/[0.05]"
-                }`}
-              >
-                <span>{opt.label}</span>
-                {count !== undefined && (
-                  <span
-                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${
-                      isActive
-                        ? "bg-white/20 text-white"
-                        : "bg-black/[0.08] text-black"
-                    }`}
-                  >
-                    {count}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
+      {/* Bilah Ringkasan dan Pengurutan Pelamar */}
+      <div className="bg-white rounded-3xl border border-black/[0.08] p-4 sm:p-5 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-xs sm:text-sm font-bold text-slate-700">
+          Menampilkan <span className="text-black font-black">{filteredApplications.length}</span> pelamar
         </div>
 
         {/* Kontrol Pengurutan Pelamar */}
-        <div className="flex items-center gap-2 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-black/[0.06]">
+        <div className="flex items-center gap-2 shrink-0">
           <div className="flex items-center gap-1.5 text-xs font-black text-slate-800 shrink-0">
             <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
             <span>Urutkan:</span>
@@ -548,7 +415,7 @@ export default async function PelamarPage({
               Tidak ada kandidat sesuai kriteria
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 font-medium">
-              Tidak ditemukan pelamar yang memenuhi kombinasi status dan filter AI yang Anda pilih.
+              Tidak ditemukan pelamar dengan status yang Anda pilih.
             </p>
           </div>
           <div className="pt-2">
@@ -567,7 +434,6 @@ export default async function PelamarPage({
             const applicantName = profile?.name || "Kandidat Pelamar";
             const headline = profile?.headline || "Pencari Kerja JobConnect";
             const initials = getInitials(applicantName);
-            const aiReview = getAiReview(app);
             const age = calculateAge(profile?.birth_date);
             const eduLabel =
               EDUCATION_LEVEL_OPTIONS.find((e) => e.value === profile?.education_level)?.label ||
@@ -632,52 +498,9 @@ export default async function PelamarPage({
                     </div>
                   </div>
 
-                  {/* Lencana Evaluasi AI & Tanggal Melamar */}
-                  <div className="flex flex-wrap items-center gap-2 text-xs">
-                    {!app.ai_consent ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
-                        <span>Tanpa Analisis AI</span>
-                      </span>
-                    ) : aiReview?.status === "done" ? (
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        {aiReview.level === "tinggi" && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-300 font-extrabold text-[11px]">
-                            Kesesuaian Tinggi
-                          </span>
-                        )}
-                        {aiReview.level === "sedang" && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-950 border border-amber-300 font-extrabold text-[11px]">
-                            Kesesuaian Sedang
-                          </span>
-                        )}
-                        {aiReview.level === "rendah" && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-100 text-rose-950 border border-rose-300 font-extrabold text-[11px]">
-                            Kesesuaian Rendah
-                          </span>
-                        )}
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FFDD00] text-[#0D0C23] border border-black/[0.1] font-black text-[11px] shadow-2xs">
-                          <Sparkles className="w-3 h-3 text-black" aria-hidden="true" />
-                          <span>Skor {aiReview.score ?? 0}</span>
-                        </span>
-                      </div>
-                    ) : aiReview?.status === "processing" ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200 font-medium">
-                        <Clock className="w-3.5 h-3.5 text-amber-700" aria-hidden="true" />
-                        <span>Memproses AI</span>
-                      </span>
-                    ) : aiReview?.status === "failed" ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-900 border border-rose-200 font-medium">
-                        <AlertTriangle className="w-3.5 h-3.5 text-rose-700" aria-hidden="true" />
-                        <span>AI Gagal</span>
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-900 border border-blue-200 font-bold">
-                        <Sparkles className="w-3.5 h-3.5 text-blue-700" aria-hidden="true" />
-                        <span>Menunggu AI</span>
-                      </span>
-                    )}
-
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FAF8F0] border border-black/[0.06] text-slate-600 font-medium">
+                  {/* Tanggal Melamar */}
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#FAF8F0] border border-black/[0.06] text-slate-600 font-medium">
                       <Calendar className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
                       <span>{formatDateIndo(app.created_at)}</span>
                     </span>

@@ -315,7 +315,7 @@ export function AboutView() {
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-20 space-y-12 sm:space-y-16">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-20 space-y-12 sm:space-y-16">
         {/* Hero Section (Centred) */}
         <div className="text-center max-w-3xl mx-auto space-y-5">
           {/* Tag Pill Khas JobConnect */}

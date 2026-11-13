@@ -76,7 +76,7 @@ function FooterCard() {
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-      className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10"
     >
       <div className="bg-white rounded-[36px] sm:rounded-[44px] border border-black/[0.08] shadow-sm overflow-hidden">
         {/* Area Konten Utama Grid */}

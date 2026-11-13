@@ -48,8 +48,8 @@ export default async function MitraLayout({ children }: MitraLayoutProps) {
 
   return (
     <div className="min-h-screen bg-[#FAF8F0] text-black">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
+      <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-10 py-6 sm:py-8">
+        <div className="flex flex-col lg:flex-row gap-6 xl:gap-8 items-start">
           {/* Navigasi Samping Mitra */}
           <MitraSidebar
             companyName={companyName}

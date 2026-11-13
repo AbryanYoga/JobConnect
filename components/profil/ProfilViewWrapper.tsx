@@ -215,181 +215,254 @@ export function ProfilViewWrapper({
             </button>
           </div>
 
-          {/* Kartu 1: Identitas & Kontak */}
-          <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-                  <User className="w-4 h-4" aria-hidden="true" />
+          {/* Baris 1: Identitas & Pendidikan */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            {/* Kartu 1: Identitas & Kontak */}
+            <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
+                    <User className="w-4 h-4" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-navy-950">
+                    {t("Identitas Diri & Kontak", "Personal Identity & Contact")}
+                  </h3>
                 </div>
-                <h3 className="text-base sm:text-lg font-bold text-navy-950">
-                  {t("Identitas Diri & Kontak", "Personal Identity & Contact")}
-                </h3>
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
+                >
+                  <span>{t("Ubah", "Edit")}</span>
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={handleStartEdit}
-                className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
-              >
-                <span>{t("Ubah", "Edit")}</span>
-              </button>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Nama Lengkap", "Full Name")}
+                  </p>
+                  <p className="text-sm font-bold text-navy-950">
+                    {profileData.name}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Alamat Email Akun", "Account Email")}
+                  </p>
+                  <p className="text-sm font-bold text-navy-950 truncate">
+                    {profileData.email}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Nomor WhatsApp / Telepon", "WhatsApp / Phone Number")}
+                  </p>
+                  <p className="text-sm font-bold text-navy-950">
+                    {profileData.phone || (
+                      <span className="text-slate-400 font-normal italic">
+                        {t("Belum ditambahkan", "Not added yet")}
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Tanggal Lahir (Umur)", "Date of Birth (Age)")}
+                  </p>
+                  <p className="text-sm font-bold text-navy-950">
+                    {formattedBirthDate ? (
+                      <>
+                        {formattedBirthDate}
+                        {age !== null && (
+                          <span className="ml-2 font-semibold text-xs px-2 py-0.5 rounded-full bg-slate-200 text-slate-800">
+                            {age} {t("tahun", "years old")}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-slate-400 font-normal italic">
+                        {t("Belum ditambahkan", "Not added yet")}
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="sm:col-span-2 p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Domisili Penempatan Kerja", "Placement Domicile")}
+                  </p>
+                  <p className="text-sm font-bold text-navy-950">
+                    {domicileString || (
+                      <span className="text-slate-400 font-normal italic">
+                        {t("Belum memilih provinsi / kota", "Province or city not selected")}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Nama Lengkap", "Full Name")}
-                </p>
-                <p className="text-sm font-bold text-navy-950">
-                  {profileData.name}
-                </p>
+            {/* Kartu 2: Riwayat Pendidikan Terakhir */}
+            <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center">
+                    <GraduationCap className="w-4 h-4" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-navy-950">
+                    {t("Pendidikan Terakhir", "Latest Education")}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
+                >
+                  <span>{t("Ubah", "Edit")}</span>
+                </button>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Alamat Email Akun", "Account Email")}
-                </p>
-                <p className="text-sm font-bold text-navy-950 truncate">
-                  {profileData.email}
-                </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Jenjang Pendidikan", "Education Level")}
+                  </p>
+                  <p className="text-sm font-bold text-navy-950">
+                    {eduLevelLabel || (
+                      <span className="text-slate-400 font-normal italic">
+                        {t("Belum ditentukan", "Not specified")}
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500">
+                    {t("Nama Sekolah / Kampus / Institusi", "School / University / Institution")}
+                  </p>
+                  <p className="text-sm font-bold text-navy-950">
+                    {profileData.educationInstitution || (
+                      <span className="text-slate-400 font-normal italic">
+                        {t("Belum ditambahkan", "Not added yet")}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Baris 2: Tentang Diri & Tautan Profil */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            {/* Kartu 3: Tentang Saya (Bio) */}
+            <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
+                    <FileText className="w-4 h-4" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-navy-950">
+                    {t("Tentang Saya", "About Me")}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
+                >
+                  <span>{t("Ubah", "Edit")}</span>
+                </button>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Nomor WhatsApp / Telepon", "WhatsApp / Phone Number")}
-                </p>
-                <p className="text-sm font-bold text-navy-950">
-                  {profileData.phone || (
-                    <span className="text-slate-400 font-normal italic">
-                      {t("Belum ditambahkan", "Not added yet")}
-                    </span>
-                  )}
-                </p>
+              <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.04]">
+                {profileData.bio ? (
+                  <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-line font-medium">
+                    {profileData.bio}
+                  </p>
+                ) : (
+                  <p className="text-sm text-slate-500 italic">
+                    {t(
+                      "Belum menambahkan bio ringkasan diri. Ceritakan keahlian, pengalaman, atau minat karier Anda agar perusahaan mitra lebih mengenal Anda.",
+                      "No bio added yet. Describe your skills, experience, or career aspirations to help employer partners know you better."
+                    )}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Kartu 4: Tautan Profil Profesional */}
+            <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center">
+                    <Globe className="w-4 h-4" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-navy-950">
+                    {t("Tautan Profil Profesional", "Professional Links")}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
+                >
+                  <span>{t("Ubah", "Edit")}</span>
+                </button>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Tanggal Lahir (Umur)", "Date of Birth (Age)")}
-                </p>
-                <p className="text-sm font-bold text-navy-950">
-                  {formattedBirthDate ? (
-                    <>
-                      {formattedBirthDate}
-                      {age !== null && (
-                        <span className="ml-2 font-semibold text-xs px-2 py-0.5 rounded-full bg-slate-200 text-slate-800">
-                          {age} {t("tahun", "years old")}
-                        </span>
-                      )}
-                    </>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                    <LinkedinIcon className="w-3.5 h-3.5 text-[#0077b5]" />
+                    <span>LinkedIn</span>
+                  </p>
+                  {profileData.linkedinUrl ? (
+                    <a
+                      href={profileData.linkedinUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline inline-flex items-center gap-1.5 break-all"
+                    >
+                      <span>{profileData.linkedinUrl}</span>
+                      <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" aria-hidden="true" />
+                    </a>
                   ) : (
-                    <span className="text-slate-400 font-normal italic">
+                    <p className="text-sm text-slate-400 italic">
                       {t("Belum ditambahkan", "Not added yet")}
-                    </span>
+                    </p>
                   )}
-                </p>
-              </div>
-
-              <div className="sm:col-span-2 p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Domisili Penempatan Kerja", "Placement Domicile")}
-                </p>
-                <p className="text-sm font-bold text-navy-950">
-                  {domicileString || (
-                    <span className="text-slate-400 font-normal italic">
-                      {t("Belum memilih provinsi / kota", "Province or city not selected")}
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Kartu 2: Riwayat Pendidikan Terakhir */}
-          <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center">
-                  <GraduationCap className="w-4 h-4" aria-hidden="true" />
                 </div>
-                <h3 className="text-base sm:text-lg font-bold text-navy-950">
-                  {t("Pendidikan Terakhir", "Latest Education")}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={handleStartEdit}
-                className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
-              >
-                <span>{t("Ubah", "Edit")}</span>
-              </button>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Jenjang Pendidikan", "Education Level")}
-                </p>
-                <p className="text-sm font-bold text-navy-950">
-                  {eduLevelLabel || (
-                    <span className="text-slate-400 font-normal italic">
-                      {t("Belum ditentukan", "Not specified")}
-                    </span>
-                  )}
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500">
-                  {t("Nama Sekolah / Kampus / Institusi", "School / University / Institution")}
-                </p>
-                <p className="text-sm font-bold text-navy-950">
-                  {profileData.educationInstitution || (
-                    <span className="text-slate-400 font-normal italic">
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <p className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
+                    <span>{t("Website / Portofolio Utama", "Website / Main Portfolio")}</span>
+                  </p>
+                  {profileData.portfolioUrl ? (
+                    <a
+                      href={profileData.portfolioUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline inline-flex items-center gap-1.5 break-all"
+                    >
+                      <span>{profileData.portfolioUrl}</span>
+                      <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <p className="text-sm text-slate-400 italic">
                       {t("Belum ditambahkan", "Not added yet")}
-                    </span>
+                    </p>
                   )}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Kartu 3: Tentang Saya (Bio) */}
-          <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
-                  <FileText className="w-4 h-4" aria-hidden="true" />
                 </div>
-                <h3 className="text-base sm:text-lg font-bold text-navy-950">
-                  {t("Tentang Saya", "About Me")}
-                </h3>
               </div>
-              <button
-                type="button"
-                onClick={handleStartEdit}
-                className="text-xs font-bold text-navy-700 hover:text-navy-950 hover:underline inline-flex items-center gap-1"
-              >
-                <span>{t("Ubah", "Edit")}</span>
-              </button>
-            </div>
-
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.04]">
-              {profileData.bio ? (
-                <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-line font-medium">
-                  {profileData.bio}
-                </p>
-              ) : (
-                <p className="text-sm text-slate-500 italic">
-                  {t(
-                    "Belum menambahkan bio ringkasan diri. Ceritakan keahlian, pengalaman, atau minat karier Anda agar perusahaan mitra lebih mengenal Anda.",
-                    "No bio added yet. Describe your skills, experience, or career aspirations to help employer partners know you better."
-                  )}
-                </p>
-              )}
             </div>
           </div>
 
-          {/* Kartu 4: Tautan & Portofolio Karya */}
+          {/* Kartu 5: Karya Nyata & Portofolio Proyek (Full Width) */}
           <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-2.5">
@@ -397,7 +470,7 @@ export function ProfilViewWrapper({
                   <FolderGit2 className="w-4 h-4" aria-hidden="true" />
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-navy-950">
-                  {t("Portofolio & Tautan Profesional", "Portfolio & Professional Links")}
+                  {t("Karya Nyata & Portofolio Proyek", "Real Works & Project Portfolio")}
                 </h3>
               </div>
               <button
@@ -409,61 +482,13 @@ export function ProfilViewWrapper({
               </button>
             </div>
 
-            {/* Tautan Profil */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                  <LinkedinIcon className="w-3.5 h-3.5 text-[#0077b5]" />
-                  <span>LinkedIn</span>
-                </p>
-                {profileData.linkedinUrl ? (
-                  <a
-                    href={profileData.linkedinUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline inline-flex items-center gap-1.5 break-all"
-                  >
-                    <span>{profileData.linkedinUrl}</span>
-                    <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" aria-hidden="true" />
-                  </a>
-                ) : (
-                  <p className="text-sm text-slate-400 italic">
-                    {t("Belum ditambahkan", "Not added yet")}
-                  </p>
-                )}
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
-                <p className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
-                  <span>{t("Website / Portofolio Utama", "Website / Main Portfolio")}</span>
-                </p>
-                {profileData.portfolioUrl ? (
-                  <a
-                    href={profileData.portfolioUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline inline-flex items-center gap-1.5 break-all"
-                  >
-                    <span>{profileData.portfolioUrl}</span>
-                    <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" aria-hidden="true" />
-                  </a>
-                ) : (
-                  <p className="text-sm text-slate-400 italic">
-                    {t("Belum ditambahkan", "Not added yet")}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Daftar Proyek Portofolio */}
             <div className="space-y-3 pt-2">
               <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                {t("Karya Nyata & Proyek Mandiri", "Real Works & Projects")}
+                {t("Daftar Karya & Proyek Mandiri", "List of Projects")}
               </p>
 
               {profileData.portfolios && profileData.portfolios.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {profileData.portfolios.map((item) => (
                     <div
                       key={item.id}

@@ -81,7 +81,7 @@ export async function Navbar({ role }: NavbarProps = {}) {
 
   return (
     <NavbarHeader>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+      <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-10 h-full flex items-center justify-between">
         {/* Sisi Kiri: Navigasi Menu Desktop (Sesuai BMC: Links di sisi kiri) */}
         <div className="flex items-center gap-2">
           {/* Logo Mobile (Hanya tampil di ponsel) */}

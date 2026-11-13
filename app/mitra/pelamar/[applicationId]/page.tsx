@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   Mail,
   Calendar,
-  Sparkles,
   Briefcase,
   FileText,
   ExternalLink,
@@ -441,20 +440,6 @@ export default async function DetailPelamarPage({
               </div>
             </div>
           </div>
-
-          {/* Lencana Evaluasi AI */}
-          <div className="flex items-center gap-2 shrink-0">
-            {application.ai_consent ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-900 border border-blue-200 text-xs font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-blue-700" aria-hidden="true" />
-                <span>Analisis AI Disetujui</span>
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-xs font-medium">
-                <span>Tanpa Analisis AI</span>
-              </span>
-            )}
-          </div>
         </div>
 
         {/* Bilah Aksi Kontak Cepat & Tautan Akun Pelamar */}
@@ -515,9 +500,136 @@ export default async function DetailPelamarPage({
       </div>
 
       {/* Grid Dua Kolom: Informasi Akun, Portofolio & Seleksi */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Kolom Kiri: Bio, Portofolio, Lowongan & CV */}
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-8 items-start">
+        {/* Kolom Kiri: Dokumen Pelamar, Lowongan, CV & Portofolio */}
+        <div className="xl:col-span-8 space-y-6">
+          {/* Subgrid: Posisi Lowongan & Berkas CV Berdampingan untuk Memaksimalkan Ruang */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Posisi Lowongan yang Dilamar */}
+            <div className="bg-white rounded-3xl border border-black/[0.08] p-6 shadow-card flex flex-col justify-between space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-black" aria-hidden="true" />
+                  <h2 className="text-base sm:text-lg font-black text-black">
+                    Posisi Dilamar
+                  </h2>
+                </div>
+                {job.status === "open" && (
+                  <Link
+                    href={`/lowongan/${job.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-black transition"
+                  >
+                    <span>Buka Lowongan</span>
+                    <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                  </Link>
+                )}
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-2 flex-1 flex flex-col justify-center">
+                <h3 className="text-base font-black text-black leading-snug">
+                  {job.title}
+                </h3>
+                <div className="flex flex-wrap items-center gap-2 text-xs pt-1">
+                  <span className="px-2.5 py-1 rounded-full bg-white border border-black/[0.06] font-bold text-black">
+                    {jobTypeLabel}
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full bg-white border border-black/[0.06] font-bold text-black">
+                    {workModeLabel}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Berkas Curriculum Vitae (CV) */}
+            <div className="bg-white rounded-3xl border border-black/[0.08] p-6 shadow-card flex flex-col justify-between space-y-4">
+              <div className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-black" aria-hidden="true" />
+                <h2 className="text-base sm:text-lg font-black text-black">
+                  Berkas CV Resmi (PDF)
+                </h2>
+              </div>
+
+              <div className="space-y-3 flex-1 flex flex-col justify-between">
+                <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                  Berkas tersimpan aman di cloud storage terenkripsi dengan signed URL privat (berlaku 5 menit).
+                </p>
+
+                <div className="pt-1">
+                  <ViewCvButton
+                    applicationId={application.id}
+                    initialSignedUrl={initialSignedCvUrl}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Jadwal Wawancara (Jika Sudah Ditentukan) */}
+          {application.interview_at && (
+            <div className="bg-white rounded-3xl border border-blue-200 p-6 sm:p-7 shadow-card space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-blue-600" aria-hidden="true" />
+                  <h2 className="text-base sm:text-lg font-black text-black">
+                    Jadwal Wawancara Terjadwal
+                  </h2>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-900 text-xs font-bold border border-blue-200">
+                  Tahap Wawancara Aktif
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm font-medium">
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-1">
+                  <span className="text-slate-500 text-xs block">Waktu Wawancara:</span>
+                  <strong className="text-black font-black text-sm block">
+                    {formatDateIndo(application.interview_at)}
+                  </strong>
+                </div>
+                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-1">
+                  <span className="text-slate-500 text-xs block">Lokasi atau Tautan Pertemuan:</span>
+                  {application.interview_place?.startsWith("http") ? (
+                    <a
+                      href={application.interview_place}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 font-bold text-xs sm:text-sm inline-flex items-center gap-1 underline break-all"
+                    >
+                      <span>Buka Tautan Pertemuan</span>
+                      <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <strong className="text-black font-bold text-xs sm:text-sm block">
+                      {application.interview_place || "Lokasi belum ditentukan"}
+                    </strong>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Surat Lamaran (Cover Letter) */}
+          <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-3">
+            <div className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-black" aria-hidden="true" />
+              <h2 className="text-base sm:text-lg font-black text-black">
+                Surat Lamaran (Cover Letter)
+              </h2>
+            </div>
+
+            {application.cover_letter ? (
+              <div className="p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] text-xs sm:text-sm text-slate-800 font-medium leading-relaxed whitespace-pre-line">
+                {application.cover_letter}
+              </div>
+            ) : (
+              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] text-xs sm:text-sm text-slate-500 font-medium italic">
+                Kandidat tidak menyertakan surat lamaran tertulis khusus saat mengirimkan lamaran ini.
+              </div>
+            )}
+          </div>
+
           {/* Bio / Ringkasan Tentang Pelamar */}
           {applicant?.bio && (
             <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-3">
@@ -550,7 +662,7 @@ export default async function DetailPelamarPage({
             </div>
 
             {portfolioItems.length === 0 ? (
-              <div className="p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] text-xs text-slate-500 font-medium italic">
+              <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] text-xs text-slate-500 font-medium italic">
                 Pelamar belum mencantumkan proyek portofolio tambahan pada akun ini.
               </div>
             ) : (
@@ -610,132 +722,10 @@ export default async function DetailPelamarPage({
               </div>
             )}
           </div>
-
-          {/* Posisi Lowongan yang Dilamar */}
-          <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-black" aria-hidden="true" />
-                <h2 className="text-base sm:text-lg font-black text-black">
-                  Posisi Pekerjaan yang Dilamar
-                </h2>
-              </div>
-              {job.status === "open" && (
-                <Link
-                  href={`/lowongan/${job.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-black transition"
-                >
-                  <span>Lihat Lowongan</span>
-                  <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-                </Link>
-              )}
-            </div>
-
-            <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-2">
-              <h3 className="text-base font-black text-black">
-                {job.title}
-              </h3>
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="px-2.5 py-1 rounded-full bg-white border border-black/[0.06] font-bold text-black">
-                  {jobTypeLabel}
-                </span>
-                <span className="px-2.5 py-1 rounded-full bg-white border border-black/[0.06] font-bold text-black">
-                  {workModeLabel}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Jadwal Wawancara (Jika Sudah Ditentukan) */}
-          {application.interview_at && (
-            <div className="bg-white rounded-3xl border border-blue-200 p-6 sm:p-7 shadow-card space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-blue-600" aria-hidden="true" />
-                  <h2 className="text-base sm:text-lg font-black text-black">
-                    Jadwal Wawancara Terjadwal
-                  </h2>
-                </div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-900 text-xs font-bold border border-blue-200">
-                  Tahap Wawancara Aktif
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm font-medium">
-                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-1">
-                  <span className="text-slate-500 text-xs block">Waktu Wawancara:</span>
-                  <strong className="text-black font-black text-sm block">
-                    {formatDateIndo(application.interview_at)}
-                  </strong>
-                </div>
-                <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-1">
-                  <span className="text-slate-500 text-xs block">Lokasi atau Tautan Pertemuan:</span>
-                  {application.interview_place?.startsWith("http") ? (
-                    <a
-                      href={application.interview_place}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 font-bold text-xs sm:text-sm inline-flex items-center gap-1 underline break-all"
-                    >
-                      <span>Buka Tautan Pertemuan</span>
-                      <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-                    </a>
-                  ) : (
-                    <strong className="text-black font-bold text-xs sm:text-sm block">
-                      {application.interview_place || "Lokasi belum ditentukan"}
-                    </strong>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Surat Lamaran (Cover Letter) */}
-          <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4">
-            <div className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-black" aria-hidden="true" />
-              <h2 className="text-base sm:text-lg font-black text-black">
-                Surat Lamaran (Cover Letter)
-              </h2>
-            </div>
-
-            {application.cover_letter ? (
-              <div className="p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] text-xs sm:text-sm text-slate-800 font-medium leading-relaxed whitespace-pre-line">
-                {application.cover_letter}
-              </div>
-            ) : (
-              <div className="p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] text-xs sm:text-sm text-slate-500 font-medium italic">
-                Kandidat tidak menyertakan surat lamaran tertulis khusus saat mengirimkan lamaran ini.
-              </div>
-            )}
-          </div>
-
-          {/* Berkas Curriculum Vitae (CV) */}
-          <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4">
-            <div className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-black" aria-hidden="true" />
-              <h2 className="text-base sm:text-lg font-black text-black">
-                Berkas Curriculum Vitae (CV)
-              </h2>
-            </div>
-
-            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-              Berkas CV pelamar disimpan dalam ruang penyimpanan privat terenkripsi. Tautan akses dibuat menggunakan signed URL aman yang berlaku selama 5 menit untuk menjaga kerahasiaan data pelamar.
-            </p>
-
-            <div className="pt-2">
-              <ViewCvButton
-                applicationId={application.id}
-                initialSignedUrl={initialSignedCvUrl}
-              />
-            </div>
-          </div>
         </div>
 
         {/* Kolom Kanan: Aksi Status, Catatan Internal Tim & Timeline Riwayat Status */}
-        <div className="space-y-6">
+        <div className="xl:col-span-4 space-y-6">
           <ApplicationStatusActions
             applicationId={application.id}
             currentStatus={application.status}

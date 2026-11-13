@@ -45,8 +45,8 @@ export default async function AdminLayout({
     .eq("status", "pending");
 
   return (
-    <div className="min-h-screen bg-[#FAF8F0] text-slate-800 antialiased py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start gap-8">
+    <div className="min-h-screen bg-[#FAF8F0] text-slate-800 antialiased">
+      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-6 sm:py-8 flex flex-col lg:flex-row items-start gap-6 xl:gap-8">
         <AdminSidebar
           adminName={profile?.name || "Admin"}
           adminEmail={profile?.email || user.email || ""}
