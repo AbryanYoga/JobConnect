@@ -29,6 +29,7 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [skillsText, setSkillsText] = useState("");
   const [year, setYear] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
@@ -37,6 +38,7 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
     setTitle("");
     setDescription("");
     setUrl("");
+    setImageUrl("");
     setSkillsText("");
     setYear("");
     setFormError(null);
@@ -53,6 +55,7 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
     setTitle(item.title);
     setDescription(item.description || "");
     setUrl(item.url || "");
+    setImageUrl(item.imageUrl || "");
     setSkillsText(item.skills ? item.skills.join(", ") : "");
     setYear(item.year || "");
     setFormError(null);
@@ -85,6 +88,20 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
       }
     }
 
+    const trimmedImageUrl = imageUrl.trim();
+    let validatedImageUrl: string | null = null;
+    if (trimmedImageUrl) {
+      try {
+        const parsedImg = new URL(
+          !/^https?:\/\//i.test(trimmedImageUrl) ? `https://${trimmedImageUrl}` : trimmedImageUrl
+        );
+        validatedImageUrl = parsedImg.toString();
+      } catch {
+        setFormError("Format URL gambar tidak valid. Contoh: https://example.com/preview.jpg");
+        return;
+      }
+    }
+
     const parsedSkills = skillsText
       .split(/[,;]+/)
       .map((s) => s.trim())
@@ -99,6 +116,7 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
             title: trimmedTitle,
             description: description.trim(),
             url: validatedUrl,
+            imageUrl: validatedImageUrl,
             skills: parsedSkills,
             year: year.trim() || null,
           };
@@ -113,6 +131,7 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
         title: trimmedTitle,
         description: description.trim(),
         url: validatedUrl,
+        imageUrl: validatedImageUrl,
         skills: parsedSkills,
         year: year.trim() || null,
       };
@@ -152,7 +171,18 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
               key={item.id}
               className="p-4 rounded-2xl bg-white border border-black/[0.08] shadow-2xs hover:border-black/20 transition-all flex flex-col justify-between space-y-3"
             >
-              <div className="space-y-1.5">
+              <div className="space-y-2">
+                {item.imageUrl && (
+                  <div className="w-full h-32 rounded-xl overflow-hidden bg-slate-100 border border-black/[0.06] mb-1">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.imageUrl}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
                 <div className="flex items-start justify-between gap-2">
                   <h4 className="font-bold text-sm text-slate-900 line-clamp-1">
                     {item.title}
@@ -303,6 +333,20 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
                   className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-black/[0.1] text-xs font-medium text-slate-900 focus:border-black focus:outline-none transition"
                 />
               </div>
+            </div>
+
+            <div>
+              <label htmlFor="portfolio-image" className="block text-xs font-bold text-slate-800 mb-1">
+                {t("Tautan Gambar Pratinjau / Screenshot (Opsional)", "Thumbnail / Screenshot Image URL (Optional)")}
+              </label>
+              <input
+                id="portfolio-image"
+                type="url"
+                placeholder="https://images.unsplash.com/... atau tautan gambar demo"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-black/[0.1] text-xs font-medium text-slate-900 focus:border-black focus:outline-none transition"
+              />
             </div>
 
             <div>

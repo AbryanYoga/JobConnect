@@ -702,7 +702,18 @@ export default async function DetailPelamarPage({
                     key={item.id}
                     className="p-4 rounded-2xl bg-[#FAF8F0]/70 border border-black/[0.08] hover:border-black/20 transition-all flex flex-col justify-between space-y-3"
                   >
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
+                      {item.imageUrl && (
+                        <div className="w-full h-36 rounded-xl overflow-hidden bg-slate-100 border border-black/[0.06] mb-2">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.imageUrl}
+                            alt={item.title}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="font-black text-sm text-black">
                           {item.title}

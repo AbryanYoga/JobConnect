@@ -494,7 +494,18 @@ export function ProfilViewWrapper({
                       key={item.id}
                       className="p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-2.5 flex flex-col justify-between"
                     >
-                      <div className="space-y-1.5">
+                      <div className="space-y-2">
+                        {item.imageUrl && (
+                          <div className="w-full h-36 rounded-xl overflow-hidden bg-slate-100 border border-black/[0.06] mb-1">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={item.imageUrl}
+                              alt={item.title}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                          </div>
+                        )}
                         <div className="flex items-start justify-between gap-2">
                           <h4 className="text-sm font-bold text-navy-950 leading-snug">
                             {item.title}

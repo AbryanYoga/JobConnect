@@ -66,6 +66,7 @@ export interface PortfolioItem {
   title: string;
   description: string;
   url?: string | null;
+  imageUrl?: string | null;
   skills?: string[] | null;
   year?: string | null;
 }
@@ -83,6 +84,7 @@ export const portfolioItemSchema = z.object({
     .max(500, "Deskripsi portofolio maksimal 500 karakter")
     .default(""),
   url: websiteSchema,
+  imageUrl: websiteSchema,
   skills: z.array(z.string().trim()).default([]),
   year: z.union([z.string(), z.null(), z.undefined()]).transform((val) => (val ? val.trim() : null)),
 });
