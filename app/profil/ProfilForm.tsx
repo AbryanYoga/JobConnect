@@ -31,6 +31,7 @@ import {
   type ProfilPelamarInput,
 } from "@/lib/validation/profil";
 import { fieldErrors } from "@/lib/validation/helpers";
+import { hasProfanity } from "@/lib/validation/profanity";
 import { PortfolioManager } from "@/components/profil/PortfolioManager";
 import { useLanguage } from "@/lib/i18n";
 
@@ -401,8 +402,19 @@ export function ProfilForm({
             leftIcon={<User className="w-4 h-4 text-slate-400" />}
             value={name}
             onChange={(e) => {
-              setName(e.target.value);
-              if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
+              const val = e.target.value;
+              setName(val);
+              if (hasProfanity(val)) {
+                setErrors((prev) => ({
+                  ...prev,
+                  name: t(
+                    "Nama terdeteksi mengandung kata yang tidak pantas. Harap gunakan nama asli yang sopan.",
+                    "Name contains inappropriate words. Please use a respectful, real name."
+                  ),
+                }));
+              } else if (errors.name) {
+                setErrors((prev) => ({ ...prev, name: "" }));
+              }
             }}
             helperText={
               language === "en"

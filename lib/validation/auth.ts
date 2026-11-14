@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { hasProfanity } from "./profanity";
 
 export const PASSWORD_MIN = 8;
 export const PASSWORD_MAX = 72;
@@ -18,7 +19,10 @@ export const registerSchema = z
       .string()
       .trim()
       .min(NAME_MIN, `Nama minimal ${NAME_MIN} karakter`)
-      .max(NAME_MAX, `Nama maksimal ${NAME_MAX} karakter`),
+      .max(NAME_MAX, `Nama maksimal ${NAME_MAX} karakter`)
+      .refine((val) => !hasProfanity(val), {
+        message: "Nama mengandung kata yang tidak pantas. Harap gunakan nama asli yang sopan.",
+      }),
     email: z
       .string()
       .trim()

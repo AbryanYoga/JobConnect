@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
 import { registerSchema, peranToRole } from "@/lib/validation/auth";
 import { fieldErrors } from "@/lib/validation/helpers";
+import { hasProfanity } from "@/lib/validation/profanity";
 import { useLanguage } from "@/lib/i18n";
 import { switchToCompanyAction } from "@/app/actions/mitra";
 
@@ -497,8 +498,19 @@ export function CompanyRegisterForm() {
             leftIcon={<Building2 className="w-4 h-4 text-slate-400" />}
             value={companyName}
             onChange={(e) => {
-              setCompanyName(e.target.value);
-              if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
+              const val = e.target.value;
+              setCompanyName(val);
+              if (hasProfanity(val)) {
+                setErrors((prev) => ({
+                  ...prev,
+                  name: t(
+                    "Nama mengandung kata yang tidak pantas. Harap gunakan nama resmi perusahaan yang sopan.",
+                    "Name contains inappropriate words. Please use a respectful, official name."
+                  ),
+                }));
+              } else if (errors.name) {
+                setErrors((prev) => ({ ...prev, name: "" }));
+              }
             }}
             error={errors.name}
             className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"

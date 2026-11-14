@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { CompanySize } from "../labels";
 import { NAME_MAX, NAME_MIN } from "./auth";
+import { hasProfanity } from "./profanity";
 
 export const HEADLINE_MAX = 120;
 export const WEBSITE_MAX = 200;
@@ -116,7 +117,10 @@ export const profilPelamarSchema = z.object({
     .string()
     .trim()
     .min(NAME_MIN, `Nama minimal ${NAME_MIN} karakter`)
-    .max(NAME_MAX, `Nama maksimal ${NAME_MAX} karakter`),
+    .max(NAME_MAX, `Nama maksimal ${NAME_MAX} karakter`)
+    .refine((val) => !hasProfanity(val), {
+      message: "Nama mengandung kata yang tidak pantas. Harap gunakan nama asli yang sopan.",
+    }),
   phone: phoneSchema,
   headline: trimmedOptional(HEADLINE_MAX, `Headline maksimal ${HEADLINE_MAX} karakter`),
   provinceId: optionalId(),
