@@ -44,19 +44,25 @@ as $$
 declare
   v_user_id uuid := auth.uid();
   v_name text;
+  v_slug text;
 begin
   if v_user_id is not null then
     update public.profiles
     set role = 'company'
     where id = v_user_id and role != 'admin';
 
-    select name into v_name from public.profiles where id = v_user_id;
+    select substring(coalesce(nullif(trim(name), ''), 'Perusahaan Mitra'), 1, 100)
+    into v_name
+    from public.profiles
+    where id = v_user_id;
+
+    v_slug := 'mitra-' || replace(v_user_id::text, '-', '');
 
     insert into public.companies (owner_id, name, slug)
     values (
       v_user_id,
-      coalesce(nullif(v_name, ''), 'Perusahaan Mitra'),
-      'mitra-' || substr(v_user_id::text, 1, 8)
+      coalesce(v_name, 'Perusahaan Mitra'),
+      v_slug
     )
     on conflict (owner_id) do nothing;
   end if;
