@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DetailLamaranView } from "@/components/lamaran/DetailLamaranView";
+import { calculateSlaStatus } from "@/lib/sla";
 import { getCompanyInitials } from "@/lib/company-logo";
 
 interface DetailLamaranPageProps {
@@ -128,6 +129,9 @@ export default async function DetailLamaranPage({ params }: DetailLamaranPagePro
 
   const historyList = statusHistory || [];
 
+  const { daysPassed: slaDaysPassed, remainingDays: slaRemainingDays } =
+    calculateSlaStatus(application.created_at);
+
   return (
     <div className="min-h-screen bg-[#FAF8F0] py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -156,6 +160,8 @@ export default async function DetailLamaranPage({ params }: DetailLamaranPagePro
           logoUrl={logoUrl}
           historyList={historyList}
           companySlug={companyData?.slug || null}
+          slaDaysPassed={slaDaysPassed}
+          slaRemainingDays={slaRemainingDays}
         />
       </div>
     </div>

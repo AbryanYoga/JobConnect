@@ -52,6 +52,8 @@ export interface DetailLamaranViewProps {
   logoUrl: string | null;
   historyList: StatusHistoryItem[];
   companySlug?: string | null;
+  slaDaysPassed?: number;
+  slaRemainingDays?: number;
 }
 
 function formatDate(dateStr: string, locale: string): string {
@@ -89,14 +91,14 @@ export function DetailLamaranView({
   logoUrl,
   historyList,
   companySlug,
+  slaDaysPassed = 1,
+  slaRemainingDays = 13,
 }: DetailLamaranViewProps) {
   const { language, t } = useLanguage();
   const locale = language === "en" ? "en-US" : "id-ID";
 
-  const createdTime = new Date(application.created_at).getTime();
-  const nowTime = Date.now();
-  const daysPassed = Math.max(1, Math.floor((nowTime - createdTime) / (1000 * 60 * 60 * 24)));
-  const remainingDays = 14 - daysPassed;
+  const daysPassed = slaDaysPassed;
+  const remainingDays = slaRemainingDays;
 
   return (
     <div className="space-y-8">

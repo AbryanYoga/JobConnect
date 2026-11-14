@@ -8,6 +8,7 @@ import {
   LamaranListWithTabs,
   type ApplicationItem,
 } from "@/components/lamaran/LamaranListWithTabs";
+import { calculateSlaStatus } from "@/lib/sla";
 
 export const metadata: Metadata = {
   title: "Lamaran Saya",
@@ -107,6 +108,8 @@ export default async function LamaranSayaPage() {
       logoUrl = publicUrlData.publicUrl;
     }
 
+    const { remainingDays: slaRemainingDays } = calculateSlaStatus(app.created_at);
+
     return {
       id: app.id,
       job_id: app.job_id,
@@ -118,6 +121,7 @@ export default async function LamaranSayaPage() {
       created_at: app.created_at,
       updated_at: app.updated_at,
       logoUrl,
+      slaRemainingDays,
       job: {
         id: jobData?.id || 0,
         title: jobData?.title || "Lowongan Pekerjaan",

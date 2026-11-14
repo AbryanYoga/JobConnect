@@ -19,9 +19,9 @@ const REPORT_REASONS = [
 ];
 
 export function ReportJobModal({
-  jobId: _jobId,
+  jobId,
   jobTitle,
-  jobSlug: _jobSlug,
+  jobSlug,
 }: ReportJobModalProps) {
   const { t, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -118,6 +118,8 @@ export function ReportJobModal({
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                <input type="hidden" name="jobId" value={jobId} />
+                <input type="hidden" name="jobSlug" value={jobSlug} />
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-800 block">
                     {t("Kategori Pelanggaran", "Violation Category")}
