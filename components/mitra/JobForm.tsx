@@ -52,7 +52,8 @@ export interface JobFormData {
   id?: number;
   title: string;
   summary: string;
-  categoryId: number | "";
+  categoryId: number | "" | "custom";
+  customCategoryName?: string;
   workMode: WorkMode;
   jobType: JobType;
   educationMin: EducationMin;
@@ -135,8 +136,11 @@ export function JobForm({
   // Field-field utama kriteria terstruktur
   const [title, setTitle] = useState(initialData?.title || "");
   const [summary, setSummary] = useState(initialData?.summary || "");
-  const [categoryId, setCategoryId] = useState<number | "">(
+  const [categoryId, setCategoryId] = useState<number | "" | "custom">(
     initialData?.categoryId ?? (categories[0]?.id || "")
+  );
+  const [customCategoryName, setCustomCategoryName] = useState(
+    initialData?.customCategoryName || ""
   );
   const [workMode, setWorkMode] = useState<WorkMode>(
     initialData?.workMode || "onsite"
@@ -211,6 +215,7 @@ export function JobForm({
     title,
     summary,
     categoryId,
+    customCategoryName: categoryId === "custom" ? customCategoryName.trim() : undefined,
     provinceId,
     cityId,
     locationDetail,
@@ -275,6 +280,10 @@ export function JobForm({
     }
     if (!deadline.trim()) {
       setFormError("Batas waktu lamaran (deadline) wajib diisi untuk pengajuan lowongan.");
+      return;
+    }
+    if (categoryId === "custom" && (!customCategoryName.trim() || customCategoryName.trim().length < 2)) {
+      setFormError("Nama kategori kustom baru wajib diisi minimal 2 karakter.");
       return;
     }
 
@@ -401,15 +410,23 @@ export function JobForm({
 
         {/* Pilihan Kategori */}
         <div className="space-y-2">
-          <label htmlFor="category" className="block text-sm font-bold text-black">
-            Kategori Pekerjaan <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center justify-between">
+            <label htmlFor="category" className="block text-sm font-bold text-black">
+              Kategori Pekerjaan <span className="text-red-500">*</span>
+            </label>
+            <span className="text-xs text-slate-500 font-medium">
+              Tidak menemukan kategori yang sesuai? Pilih kustom di bawah
+            </span>
+          </div>
           <select
             id="category"
             name="category"
             required
             value={categoryId}
-            onChange={(e) => setCategoryId(Number(e.target.value))}
+            onChange={(e) => {
+              const val = e.target.value;
+              setCategoryId(val === "custom" ? "custom" : Number(val));
+            }}
             className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
           >
             {categories.map((cat) => (
@@ -417,7 +434,32 @@ export function JobForm({
                 {cat.name}
               </option>
             ))}
+            <option value="custom">
+              + Kategori Lainnya (Tentukan Kategori Baru)
+            </option>
           </select>
+
+          {/* Kolom Input Kategori Kustom Baru Jika Belum Tersedia */}
+          {categoryId === "custom" && (
+            <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-2 animate-in fade-in duration-200">
+              <label htmlFor="custom-category" className="block text-xs font-bold text-amber-950">
+                Nama Kategori Baru Perusahaan Anda <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="custom-category"
+                type="text"
+                placeholder="Contoh: Kecerdasan Buatan / AI, Logistik & Pergudangan, Perhotelan"
+                value={customCategoryName}
+                onChange={(e) => setCustomCategoryName(e.target.value)}
+                maxLength={60}
+                required
+                className="w-full px-4 py-2.5 rounded-xl bg-white border border-amber-300 focus:border-black text-sm font-medium text-black focus:outline-none transition shadow-2xs"
+              />
+              <p className="text-[11px] text-amber-800 font-medium">
+                Kategori ini akan otomatis didaftarkan dan dapat ditinjau oleh admin saat moderasi lowongan.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Ringkasan Satu Paragraf */}

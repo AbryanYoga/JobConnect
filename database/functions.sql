@@ -65,6 +65,46 @@ $$;
 
 grant execute on function public.register_as_company() to authenticated;
 
+-- Fungsi untuk memastikan kategori tersedia atau menambahkan kategori kustom baru oleh mitra
+create or replace function public.get_or_create_category(p_name text)
+returns bigint
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_clean_name text := trim(p_name);
+  v_slug text;
+  v_id bigint;
+begin
+  if v_clean_name is null or char_length(v_clean_name) < 2 then
+    raise exception 'Nama kategori minimal 2 karakter';
+  end if;
+
+  select id into v_id
+  from public.categories
+  where lower(name) = lower(v_clean_name)
+  limit 1;
+
+  if v_id is not null then
+    return v_id;
+  end if;
+
+  v_slug := lower(regexp_replace(regexp_replace(v_clean_name, '[^a-zA-Z0-9\s-]', '', 'g'), '\s+', '-', 'g'));
+  if exists (select 1 from public.categories where slug = v_slug) then
+    v_slug := v_slug || '-' || floor(random() * 1000)::text;
+  end if;
+
+  insert into public.categories (name, slug)
+  values (v_clean_name, v_slug)
+  returning id into v_id;
+
+  return v_id;
+end;
+$$;
+
+grant execute on function public.get_or_create_category(text) to authenticated;
+
 -- Fungsi RPC untuk memperbarui biodata pelamar secara aman dengan hak SECURITY DEFINER
 create or replace function public.update_my_profile(
   p_name text,

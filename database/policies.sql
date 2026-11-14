@@ -103,6 +103,15 @@ to authenticated
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "categories_partner_insert_policy" on public.categories;
+create policy "categories_partner_insert_policy"
+on public.categories
+for insert
+to authenticated
+with check (
+  exists (select 1 from public.companies where owner_id = auth.uid()) or public.is_admin()
+);
+
 -- Policy tabel provinces
 drop policy if exists "provinces_select_policy" on public.provinces;
 create policy "provinces_select_policy"

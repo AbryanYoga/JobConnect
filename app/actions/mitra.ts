@@ -48,6 +48,59 @@ async function requireCompanyUser() {
   return { supabase, user, profile, company };
 }
 
+async function resolveCategoryId(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  rawData: Record<string, unknown>
+): Promise<number | null> {
+  const customName =
+    typeof rawData.customCategoryName === "string"
+      ? rawData.customCategoryName.trim()
+      : "";
+
+  if (customName && (rawData.categoryId === "custom" || !rawData.categoryId)) {
+    try {
+      const { data: rpcId, error: rpcErr } = await supabase.rpc(
+        "get_or_create_category",
+        { p_name: customName }
+      );
+      if (!rpcErr && rpcId) {
+        return Number(rpcId);
+      }
+    } catch {
+      // Abaikan jika RPC belum dieksekusi di database
+    }
+
+    const { data: existing } = await supabase
+      .from("categories")
+      .select("id")
+      .ilike("name", customName)
+      .maybeSingle();
+
+    if (existing?.id) {
+      return Number(existing.id);
+    }
+
+    const baseSlug = slugify(customName) || "kategori";
+    const { data: newCat } = await supabase
+      .from("categories")
+      .insert({
+        name: customName,
+        slug: `${baseSlug}-${Date.now().toString().slice(-4)}`,
+      })
+      .select("id")
+      .maybeSingle();
+
+    if (newCat?.id) {
+      return Number(newCat.id);
+    }
+  }
+
+  return rawData.categoryId && rawData.categoryId !== "custom"
+    ? Number(rawData.categoryId)
+    : null;
+}
+
 function buildJobPayload(companyId: number, rawData: Record<string, unknown>, status: string) {
   const cleanTitle = typeof rawData.title === "string" && rawData.title.trim() ? rawData.title.trim() : "Draft Lowongan";
   const rawSkills = Array.isArray(rawData.skills) ? (rawData.skills as string[]).filter(Boolean) : [];
@@ -177,7 +230,8 @@ export async function saveJobDraftAction(rawData: Record<string, unknown>) {
     const { supabase, company } = await requireCompanyUser();
     if (!company) return { success: false, error: "Profil perusahaan belum terdaftar." };
 
-    const payload = buildJobPayload(company.id, rawData, "draft");
+    const resolvedCategoryId = await resolveCategoryId(supabase, rawData);
+    const payload = buildJobPayload(company.id, { ...rawData, categoryId: resolvedCategoryId }, "draft");
     const rawId = typeof rawData.id === "number" ? rawData.id : undefined;
     if (rawId) {
       const { error } = await supabase.from("jobs").update(payload).eq("id", rawId).eq("company_id", company.id);
@@ -202,7 +256,8 @@ export async function submitJobAction(rawData: Record<string, unknown>) {
     if (!company) return { success: false, error: "Profil perusahaan belum terdaftar." };
     if (!company.name || !company.city_id) return { success: false, error: "Profil perusahaan wajib dilengkapi sebelum mengajukan lowongan." };
 
-    const payload = buildJobPayload(company.id, rawData, "draft");
+    const resolvedCategoryId = await resolveCategoryId(supabase, rawData);
+    const payload = buildJobPayload(company.id, { ...rawData, categoryId: resolvedCategoryId }, "draft");
     const rawId = typeof rawData.id === "number" ? rawData.id : undefined;
     let targetJobId: number;
     if (rawId) {
