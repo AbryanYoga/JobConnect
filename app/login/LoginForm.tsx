@@ -84,7 +84,9 @@ export function LoginForm() {
           lowerMsg.includes("invalid_grant") ||
           lowerMsg.includes("wrong password")
         ) {
-          setServerError("Email atau kata sandi yang Anda masukkan salah.");
+          setServerError(
+            "Email atau kata sandi yang Anda masukkan salah. Jika akun ini sebelumnya login dengan Google, silakan gunakan tombol Masuk dengan Google di bawah."
+          );
         } else if (lowerMsg.includes("email not confirmed")) {
           setServerError(
             "Email Anda belum dikonfirmasi. Silakan periksa kotak masuk email Anda."

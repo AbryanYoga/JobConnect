@@ -194,6 +194,19 @@ export function CompanyRegisterForm() {
         return;
       }
 
+      // Deteksi jika email sudah terdaftar sebelumnya (User Enumeration Protection)
+      if (
+        data.user &&
+        Array.isArray(data.user.identities) &&
+        data.user.identities.length === 0
+      ) {
+        setServerError(
+          "Email ini sudah terdaftar sebelumnya di JobConnect (misalnya lewat Akun Google). Silakan gunakan tombol Masuk dengan Google atau gunakan email kantor yang berbeda."
+        );
+        setIsSubmitting(false);
+        return;
+      }
+
       // Jika sesi langsung terbentuk
       if (data.session) {
         router.refresh();

@@ -112,6 +112,19 @@ export function RegisterForm() {
         return;
       }
 
+      // Deteksi jika email sudah terdaftar sebelumnya (User Enumeration Protection)
+      if (
+        data.user &&
+        Array.isArray(data.user.identities) &&
+        data.user.identities.length === 0
+      ) {
+        setServerError(
+          "Email ini sudah terdaftar sebelumnya di JobConnect (misalnya lewat Akun Google). Silakan gunakan tombol Masuk dengan Google atau masuk ke akun Anda."
+        );
+        setIsSubmitting(false);
+        return;
+      }
+
       // Jika sesi langsung terbentuk (tanpa verifikasi email)
       if (data.session) {
         // Alihkan langsung ke onboarding pengisian biodata
