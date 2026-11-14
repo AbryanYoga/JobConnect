@@ -11,6 +11,9 @@ as $$
 declare
   v_role text;
   v_name text;
+  v_phone text;
+  v_company_name text;
+  v_slug text;
 begin
   if new.raw_user_meta_data->>'role' = 'company' then
     v_role := 'company';
@@ -19,10 +22,23 @@ begin
   end if;
 
   v_name := substring(coalesce(nullif(trim(new.raw_user_meta_data->>'name'), ''), 'Pengguna'), 1, 100);
+  v_phone := nullif(trim(new.raw_user_meta_data->>'phone'), '');
 
-  insert into public.profiles (id, email, name, role)
-  values (new.id, new.email, v_name, v_role)
-  on conflict (id) do nothing;
+  insert into public.profiles (id, email, name, role, phone)
+  values (new.id, new.email, v_name, v_role, v_phone)
+  on conflict (id) do update set
+    role = excluded.role,
+    phone = coalesce(excluded.phone, public.profiles.phone);
+
+  if v_role = 'company' then
+    v_company_name := substring(coalesce(nullif(trim(new.raw_user_meta_data->>'company_name'), ''), v_name, 'Perusahaan Mitra'), 1, 100);
+    v_slug := 'mitra-' || replace(new.id::text, '-', '');
+
+    insert into public.companies (owner_id, name, slug)
+    values (new.id, v_company_name, v_slug)
+    on conflict (owner_id) do update set
+      name = coalesce(excluded.name, public.companies.name);
+  end if;
 
   return new;
 end;

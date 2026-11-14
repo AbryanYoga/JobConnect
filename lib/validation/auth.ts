@@ -46,6 +46,50 @@ export const registerSchema = z
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 
+export const companyRegisterSchema = z
+  .object({
+    picName: z
+      .string()
+      .trim()
+      .min(NAME_MIN, `Nama penanggung jawab minimal ${NAME_MIN} karakter`)
+      .max(NAME_MAX, `Nama penanggung jawab maksimal ${NAME_MAX} karakter`)
+      .refine((val) => !hasProfanity(val), {
+        message: "Nama mengandung kata yang tidak pantas. Harap gunakan nama asli yang sopan.",
+      }),
+    companyName: z
+      .string()
+      .trim()
+      .min(NAME_MIN, `Nama perusahaan minimal ${NAME_MIN} karakter`)
+      .max(NAME_MAX, `Nama perusahaan maksimal ${NAME_MAX} karakter`)
+      .refine((val) => !hasProfanity(val), {
+        message: "Nama perusahaan mengandung kata yang tidak pantas.",
+      }),
+    email: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .min(1, "Email kantor wajib diisi")
+      .email("Format email tidak valid. Contoh: hrd@perusahaan.co.id")
+      .max(EMAIL_MAX, `Email maksimal ${EMAIL_MAX} karakter`),
+    phone: z
+      .string()
+      .trim()
+      .min(9, "Nomor telepon atau WhatsApp minimal 9 digit")
+      .max(16, "Nomor telepon atau WhatsApp maksimal 16 digit")
+      .regex(/^[0-9+\-\s()]+$/, "Nomor telepon hanya boleh berisi angka dan tanda hubung"),
+    password: z
+      .string()
+      .min(PASSWORD_MIN, `Kata sandi minimal ${PASSWORD_MIN} karakter`)
+      .max(PASSWORD_MAX, `Kata sandi maksimal ${PASSWORD_MAX} karakter`),
+    confirmPassword: z.string().min(1, "Konfirmasi kata sandi wajib diisi"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Konfirmasi kata sandi tidak sama",
+    path: ["confirmPassword"],
+  });
+
+export type CompanyRegisterInput = z.infer<typeof companyRegisterSchema>;
+
 export const loginSchema = z.object({
   email: z
     .string()

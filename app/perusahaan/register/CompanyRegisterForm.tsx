@@ -17,11 +17,15 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
-import { registerSchema, peranToRole } from "@/lib/validation/auth";
+import {
+  companyRegisterSchema,
+  peranToRole,
+} from "@/lib/validation/auth";
 import { fieldErrors } from "@/lib/validation/helpers";
 import { hasProfanity } from "@/lib/validation/profanity";
 import { useLanguage } from "@/lib/i18n";
 import { switchToCompanyAction } from "@/app/actions/mitra";
+import { Phone } from "lucide-react";
 
 export function CompanyRegisterForm() {
   const router = useRouter();
@@ -29,15 +33,21 @@ export function CompanyRegisterForm() {
   const authError = searchParams.get("error");
   const { t, language } = useLanguage();
 
+  const [picName, setPicName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(() => {
+    if (!authError) return null;
+    return authError === "access_denied"
+      ? "Akses pendaftaran dibatalkan."
+      : decodeURIComponent(authError);
+  });
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
   const [isSwitching, setIsSwitching] = useState(false);
 
   // Status deteksi sesi aktif
@@ -129,42 +139,17 @@ export function CompanyRegisterForm() {
     }
   };
 
-  const handleGoogleRegister = async () => {
-    setServerError(null);
-    setIsGoogleSubmitting(true);
-    try {
-      const supabase = createClient();
-      const callbackUrl = `${window.location.origin}/auth/callback?flow=register&peran=perusahaan&next=${encodeURIComponent(
-        "/mitra/profil-perusahaan?onboarding=true"
-      )}`;
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: callbackUrl,
-        },
-      });
-
-      if (error) {
-        setServerError(error.message || "Gagal menghubungkan ke akun Google.");
-        setIsGoogleSubmitting(false);
-      }
-    } catch {
-      setServerError("Terjadi kendala saat menghubungi layanan Google.");
-      setIsGoogleSubmitting(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setServerError(null);
 
-    const validationResult = registerSchema.safeParse({
-      name: companyName,
+    const validationResult = companyRegisterSchema.safeParse({
+      picName,
+      companyName,
       email,
+      phone,
       password,
       confirmPassword,
-      peran: "perusahaan",
     });
 
     if (!validationResult.success) {
@@ -182,7 +167,9 @@ export function CompanyRegisterForm() {
         password: validationResult.data.password,
         options: {
           data: {
-            name: validationResult.data.name,
+            name: validationResult.data.picName,
+            company_name: validationResult.data.companyName,
+            phone: validationResult.data.phone,
             role: peranToRole("perusahaan"),
             is_registered: true,
           },
@@ -373,216 +360,215 @@ export function CompanyRegisterForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="bg-white rounded-[32px] sm:rounded-[40px] border border-black/[0.08] shadow-card p-8 sm:p-10">
+    <div className="w-full max-w-xl mx-auto">
+      <div className="bg-white rounded-[32px] sm:rounded-[40px] border border-black/[0.08] shadow-card p-6 sm:p-10">
         {/* Header Form Perusahaan */}
         <div className="mb-6 text-center space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-black text-[#FFDD00] text-xs font-bold shadow-2xs">
             <Building2 className="w-3.5 h-3.5 text-[#FFDD00]" aria-hidden="true" />
             <span>{t("Portal Perusahaan Mitra", "Employer Portal")}</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-black tracking-tight pt-1">
-            {t("Daftarkan Perusahaan")}
+          <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight pt-1">
+            {t("Daftarkan Akun Perusahaan", "Register Company Account")}
           </h1>
-          <p className="text-sm text-slate-600 leading-relaxed font-normal">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal max-w-md mx-auto">
             {t(
-              "Publikasikan lowongan kerja resmi dan rekrut talenta terverifikasi tanpa calo.",
-              "Publish verified job listings and recruit top talent without third-party brokers."
+              "Publikasikan lowongan kerja resmi dan temukan talenta terverifikasi langsung tanpa calo atau perantara.",
+              "Publish official verified jobs and hire top talent directly with zero intermediaries."
             )}
           </p>
         </div>
 
-        {/* Peringatan jika otentikasi Google memerlukan pendaftaran resmi */}
-        {authError === "google_role_conflict" && (
-          <div
-            role="alert"
-            className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950 flex items-start gap-3 text-xs sm:text-sm font-medium mb-5"
-          >
-            <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" aria-hidden="true" />
-            <div className="space-y-1">
-              <p className="font-bold text-amber-950">
-                {t("Pendaftaran Memerlukan Formulir Resmi Perusahaan", "Official Company Form Required")}
-              </p>
-              <p className="text-amber-900 leading-relaxed text-xs sm:text-sm">
-                {t(
-                  "Akun Google ini terdaftar sebagai Pencari Kerja atau sistem memerlukan verifikasi identitas instansi. Silakan gunakan formulir pendaftaran Nama Perusahaan, Email Kantor, dan Kata Sandi di bawah untuk langsung mengaktifkan akun Mitra Anda.",
-                  "This Google account is registered as a Job Seeker or verification is required. Please use the Company Name, Work Email, and Password form below to activate your Employer account."
-                )}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {authError === "oauth_failed" && (
-          <div
-            role="alert"
-            className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2.5 mb-5 font-medium"
-          >
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" aria-hidden="true" />
-            <span className="leading-snug">
-              {t("Gagal menghubungkan ke akun Google. Silakan gunakan formulir pendaftaran email resmi di bawah.")}
+        {/* Indikator Alur 3 Langkah Sesuai Standar Loker.id */}
+        <div className="mb-6 p-3.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] flex items-center justify-between gap-2 text-[11px] font-bold text-slate-600">
+          <div className="flex items-center gap-1.5 text-black">
+            <span className="w-5 h-5 rounded-full bg-[#FFDD00] text-black flex items-center justify-center text-[10px] font-black shrink-0">
+              1
             </span>
+            <span>{t("Daftar Akun", "Create Account")}</span>
           </div>
-        )}
+          <span className="text-slate-300">→</span>
+          <div className="flex items-center gap-1.5 text-slate-500">
+            <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px] font-bold shrink-0">
+              2
+            </span>
+            <span>{t("Lengkapi Profil", "Complete Profile")}</span>
+          </div>
+          <span className="text-slate-300">→</span>
+          <div className="flex items-center gap-1.5 text-slate-500">
+            <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[10px] font-bold shrink-0">
+              3
+            </span>
+            <span>{t("Pasang Loker", "Post Job")}</span>
+          </div>
+        </div>
 
         {serverError && (
           <div
             role="alert"
-            className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2.5 mb-5 font-medium"
+            className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-2.5 mb-5 font-medium"
           >
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" aria-hidden="true" />
             <span className="leading-snug">{serverError}</span>
           </div>
         )}
 
-        {/* Tombol Daftar Cepat dengan Google (Akun HR / Kantor) */}
-        <div>
-          <button
-            type="button"
-            onClick={handleGoogleRegister}
-            disabled={isSubmitting || isGoogleSubmitting}
-            className="w-full py-3.5 px-6 rounded-full bg-white hover:bg-slate-50 active:scale-98 border border-black/[0.12] text-black font-bold text-sm transition-all shadow-2xs hover:shadow flex items-center justify-center gap-3 min-h-[48px] disabled:opacity-50 cursor-pointer"
-          >
-            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-              />
-            </svg>
-            <span>
-              {isGoogleSubmitting
-                ? t("Menghubungkan ke Google...")
-                : t("Daftar Cepat dengan Google (Akun Kantor)")}
-            </span>
-          </button>
-          <p className="text-[11px] text-slate-500 text-center mt-2 font-normal">
-            {t("Khusus akun Google kantor atau email baru yang belum terdaftar sebagai pelamar.")}
-          </p>
-        </div>
-
-        {/* Pemisah Pilihan Pendaftaran */}
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-black/[0.08]" />
-          </div>
-          <div className="relative flex justify-center text-xs">
-            <span className="bg-white px-3 text-slate-500 font-medium">
-              {t("atau daftar resmi dengan email kantor (direkomendasikan)")}
-            </span>
-          </div>
-        </div>
-
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          {/* Input Nama Perusahaan */}
-          <Input
-            id="company-name"
-            label={t("Nama Perusahaan / Instansi")}
-            required
-            type="text"
-            autoComplete="organization"
-            placeholder={
-              language === "en" ? "e.g. Acme Corporation" : "Contoh: PT Teknologi Bangsa"
-            }
-            leftIcon={<Building2 className="w-4 h-4 text-slate-400" />}
-            value={companyName}
-            onChange={(e) => {
-              const val = e.target.value;
-              setCompanyName(val);
-              if (hasProfanity(val)) {
-                setErrors((prev) => ({
-                  ...prev,
-                  name: t(
-                    "Nama mengandung kata yang tidak pantas. Harap gunakan nama resmi perusahaan yang sopan.",
-                    "Name contains inappropriate words. Please use a respectful, official name."
-                  ),
-                }));
-              } else if (errors.name) {
-                setErrors((prev) => ({ ...prev, name: "" }));
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Input Nama PIC / HRD */}
+            <Input
+              id="company-pic-name"
+              label={t("Nama Penanggung Jawab / HRD", "HR / Contact Person Name")}
+              required
+              type="text"
+              autoComplete="name"
+              placeholder={
+                language === "en" ? "e.g. John Doe (HR Manager)" : "Contoh: Budi Santoso"
               }
-            }}
-            error={errors.name}
-            className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
-          />
+              leftIcon={<User className="w-4 h-4 text-slate-400" />}
+              value={picName}
+              onChange={(e) => {
+                const val = e.target.value;
+                setPicName(val);
+                if (hasProfanity(val)) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    picName: t(
+                      "Nama mengandung kata yang tidak pantas. Harap gunakan nama asli yang sopan.",
+                      "Name contains inappropriate words."
+                    ),
+                  }));
+                } else if (errors.picName) {
+                  setErrors((prev) => ({ ...prev, picName: "" }));
+                }
+              }}
+              error={errors.picName}
+              className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-2.5 font-medium transition-all"
+            />
 
-          {/* Input Alamat Email Kantor */}
-          <Input
-            id="company-email"
-            label={t("Alamat Email Kantor / HR")}
-            required
-            type="email"
-            autoComplete="email"
-            placeholder={
-              language === "en" ? "e.g. hr@company.com" : "Contoh: hrd@perusahaan.co.id"
-            }
-            leftIcon={<Mail className="w-4 h-4 text-slate-400" />}
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
-            }}
-            error={errors.email}
-            className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
-          />
+            {/* Input Nama Resmi Perusahaan */}
+            <Input
+              id="company-name"
+              label={t("Nama Resmi Perusahaan / PT", "Official Company Name")}
+              required
+              type="text"
+              autoComplete="organization"
+              placeholder={
+                language === "en" ? "e.g. PT Acme Indonesia" : "Contoh: PT Teknologi Bangsa"
+              }
+              leftIcon={<Building2 className="w-4 h-4 text-slate-400" />}
+              value={companyName}
+              onChange={(e) => {
+                const val = e.target.value;
+                setCompanyName(val);
+                if (hasProfanity(val)) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    companyName: t(
+                      "Nama mengandung kata yang tidak pantas. Harap gunakan nama resmi perusahaan yang sopan.",
+                      "Company name contains inappropriate words."
+                    ),
+                  }));
+                } else if (errors.companyName) {
+                  setErrors((prev) => ({ ...prev, companyName: "" }));
+                }
+              }}
+              error={errors.companyName}
+              className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-2.5 font-medium transition-all"
+            />
+          </div>
 
-          {/* Input Kata Sandi */}
-          <Input
-            id="company-password"
-            label={t("Kata Sandi", "Password")}
-            required
-            type="password"
-            autoComplete="new-password"
-            placeholder="••••••••"
-            helperText={t("Minimal 8 karakter", "Minimum 8 characters")}
-            leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              if (errors.password)
-                setErrors((prev) => ({ ...prev, password: "" }));
-            }}
-            error={errors.password}
-            className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Input Alamat Email Kantor */}
+            <Input
+              id="company-email"
+              label={t("Alamat Email Kantor / HRD", "Work / HR Email Address")}
+              required
+              type="email"
+              autoComplete="email"
+              placeholder={
+                language === "en" ? "e.g. hr@company.com" : "Contoh: hrd@perusahaan.co.id"
+              }
+              leftIcon={<Mail className="w-4 h-4 text-slate-400" />}
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+              }}
+              error={errors.email}
+              className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-2.5 font-medium transition-all"
+            />
 
-          {/* Input Konfirmasi Kata Sandi */}
-          <Input
-            id="company-confirm-password"
-            label={t("Konfirmasi Kata Sandi", "Confirm Password")}
-            required
-            type="password"
-            autoComplete="new-password"
-            placeholder="••••••••"
-            helperText={t("Ulangi kata sandi yang sama", "Repeat the same password")}
-            leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
-            value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-              if (errors.confirmPassword)
-                setErrors((prev) => ({ ...prev, confirmPassword: "" }));
-            }}
-            error={errors.confirmPassword}
-            className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
-          />
+            {/* Input Nomor Telepon / WhatsApp HR */}
+            <Input
+              id="company-phone"
+              label={t("Nomor Telepon / WhatsApp HR", "HR Phone / WhatsApp Number")}
+              required
+              type="tel"
+              autoComplete="tel"
+              placeholder={
+                language === "en" ? "e.g. 081234567890" : "Contoh: 081234567890"
+              }
+              leftIcon={<Phone className="w-4 h-4 text-slate-400" />}
+              value={phone}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                if (errors.phone) setErrors((prev) => ({ ...prev, phone: "" }));
+              }}
+              error={errors.phone}
+              className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-2.5 font-medium transition-all"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Input Kata Sandi */}
+            <Input
+              id="company-password"
+              label={t("Kata Sandi", "Password")}
+              required
+              type="password"
+              autoComplete="new-password"
+              placeholder="••••••••"
+              helperText={t("Minimal 8 karakter", "Minimum 8 characters")}
+              leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (errors.password)
+                  setErrors((prev) => ({ ...prev, password: "" }));
+              }}
+              error={errors.password}
+              className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-2.5 font-medium transition-all"
+            />
+
+            {/* Input Konfirmasi Kata Sandi */}
+            <Input
+              id="company-confirm-password"
+              label={t("Konfirmasi Kata Sandi", "Confirm Password")}
+              required
+              type="password"
+              autoComplete="new-password"
+              placeholder="••••••••"
+              helperText={t("Ulangi kata sandi", "Repeat password")}
+              leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                if (errors.confirmPassword)
+                  setErrors((prev) => ({ ...prev, confirmPassword: "" }));
+              }}
+              error={errors.confirmPassword}
+              className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-2.5 font-medium transition-all"
+            />
+          </div>
 
           {/* Kotak Info Verifikasi Resmi */}
           <div className="p-3.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed font-normal">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" aria-hidden="true" />
             <span>
               {t(
-                "Setelah akun dibuat, Anda dapat melengkapi alamat operasional dan mengunggah logo resmi sebelum memasang lowongan.",
-                "After your account is created, you can complete your operational address and upload your official logo before posting jobs."
+                "Setelah akun dibuat, Anda akan langsung diarahkan untuk melengkapi logo resmi, domisili kantor, industri, dan website sebelum memasang lowongan.",
+                "After registration, you will be redirected to complete your official logo, office domicile, industry, and website before posting jobs."
               )}
             </span>
           </div>
@@ -591,13 +577,13 @@ export function CompanyRegisterForm() {
           <div className="pt-2">
             <button
               type="submit"
-              disabled={isSubmitting || isGoogleSubmitting}
+              disabled={isSubmitting}
               className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-full bg-black hover:bg-slate-900 active:scale-98 text-white font-black text-sm transition-all shadow-2xs hover:shadow disabled:opacity-50 min-h-[48px] cursor-pointer"
             >
               <span>
                 {isSubmitting
-                  ? t("Mendaftarkan Perusahaan...", "Registering Company...")
-                  : t("Daftarkan Akun Perusahaan", "Register Company Account")}
+                  ? t("Mendaftarkan Akun Perusahaan...", "Registering Company...")
+                  : t("Daftar Akun Perusahaan & Lengkapi Profil", "Register Company & Complete Profile")}
               </span>
               <ArrowRight className="w-4 h-4 stroke-[2.5] text-[#FFDD00]" aria-hidden="true" />
             </button>
@@ -606,7 +592,7 @@ export function CompanyRegisterForm() {
 
         {/* Tautan Alternatif */}
         <div className="mt-8 pt-6 border-t border-black/[0.06] space-y-3 text-center">
-          <p className="text-sm text-slate-600 font-medium">
+          <p className="text-xs sm:text-sm text-slate-600 font-medium">
             {t("Sudah memiliki akun mitra?", "Already have an employer account?")}{" "}
             <Link
               href="/login?peran=perusahaan"
