@@ -93,6 +93,11 @@ export function DetailLamaranView({
   const { language, t } = useLanguage();
   const locale = language === "en" ? "en-US" : "id-ID";
 
+  const createdTime = new Date(application.created_at).getTime();
+  const nowTime = Date.now();
+  const daysPassed = Math.max(1, Math.floor((nowTime - createdTime) / (1000 * 60 * 60 * 24)));
+  const remainingDays = 14 - daysPassed;
+
   return (
     <div className="space-y-8">
       {/* Tombol Kembali */}
@@ -185,6 +190,61 @@ export function DetailLamaranView({
           </div>
         </div>
       </section>
+
+      {/* Pemantau Garansi Anti-Ghosting SLA */}
+      {(application.status === "dikirim" || application.status === "ditinjau") && (
+        <div
+          role="region"
+          aria-label="Pemantau Batas Waktu Respon Anti-Ghosting"
+          className="rounded-[28px] bg-amber-50/80 border border-amber-200/90 p-6 sm:p-7 shadow-card space-y-3"
+        >
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-950 text-xs font-bold border border-amber-300">
+              <Clock className="w-3.5 h-3.5 text-amber-800" aria-hidden="true" />
+              <span>{t("Garansi Anti-Ghosting JobConnect (SLA 14 Hari)", "JobConnect Anti-Ghosting SLA (14 Days)")}</span>
+            </div>
+            <span className="text-xs font-bold text-amber-900">
+              {remainingDays > 0
+                ? t(`Sisa ${remainingDays} Hari Kerja`, `${remainingDays} Working Days Remaining`)
+                : t("Melewati Batas Standar Respon", "Exceeded Standard Response Window")}
+            </span>
+          </div>
+
+          <h2 className="text-base sm:text-lg font-black text-amber-950 tracking-tight">
+            {remainingDays > 0
+              ? t("Lamaran Anda Terlindungi Garansi Respon", "Your Application is Protected by Response SLA")
+              : t("Waktu Respon Sedang Diingatkan ke Mitra", "Follow-up Reminder Sent to Employer")}
+          </h2>
+
+          <p className="text-xs sm:text-sm text-amber-900 leading-relaxed font-medium">
+            {remainingDays > 0
+              ? t(
+                  `Mitra perusahaan berkomitmen meninjau lamaran dalam 14 hari kerja sejak dikirimkan (${formatDate(application.created_at, locale)}). Anda akan menerima pemberitahuan otomatis jika ada undangan wawancara atau pembaruan status.`,
+                  `Employers commit to reviewing applications within 14 working days of submission (${formatDate(application.created_at, locale)}). You will receive automatic alerts for interview invites or status updates.`
+                )
+              : t(
+                  "Lamaran ini telah melampaui batas waktu standar review 14 hari kerja. Sistem telah mengirimkan pengingat notifikasi ke tim rekrutmen perusahaan.",
+                  "This application has exceeded the standard 14 working day review window. Our system has flagged a follow-up reminder to the recruiting team."
+                )}
+          </p>
+
+          {/* Progress Bar SLA 14 Hari */}
+          <div className="pt-2">
+            <div className="w-full bg-amber-200/80 h-2 rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 ${
+                  remainingDays > 0 ? "bg-amber-600" : "bg-rose-600"
+                }`}
+                style={{ width: `${Math.min(100, Math.max(10, (daysPassed / 14) * 100))}%` }}
+              />
+            </div>
+            <div className="flex justify-between items-center text-[11px] text-amber-900/80 font-bold mt-1.5">
+              <span>{t("Hari 1 (Dikirim)", "Day 1 (Submitted)")}</span>
+              <span>{t("Batas Hari ke-14", "Day 14 Deadline")}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pemberitahuan Penting Sesuai Status Terkini */}
       {application.status === "wawancara" && (

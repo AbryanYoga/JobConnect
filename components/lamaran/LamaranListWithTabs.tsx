@@ -315,9 +315,30 @@ export function LamaranListWithTabs({ applications }: LamaranListWithTabsProps) 
                     </div>
                   </div>
 
-                  {/* Status Badge */}
-                  <div className="self-start sm:self-center shrink-0 flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                  {/* Status Badge & SLA Indicator */}
+                  <div className="self-start sm:self-center shrink-0 flex flex-col sm:items-end gap-1.5">
                     <StatusBadge status={app.status as ApplicationStatus} />
+                    {(app.status === "dikirim" || app.status === "ditinjau") && (() => {
+                      const createdTime = new Date(app.created_at).getTime();
+                      const daysPassed = Math.max(0, Math.floor((Date.now() - createdTime) / (1000 * 60 * 60 * 24)));
+                      const remainingDays = 14 - daysPassed;
+                      return (
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                            remainingDays > 0
+                              ? "bg-amber-50 text-amber-900 border-amber-300"
+                              : "bg-rose-50 text-rose-900 border-rose-300"
+                          }`}
+                        >
+                          <Clock className="w-3 h-3 text-amber-700 shrink-0" aria-hidden="true" />
+                          <span>
+                            {remainingDays > 0
+                              ? t(`SLA: ${remainingDays} hr lagi`, `${remainingDays}d left`)
+                              : t("Melewati SLA 14 hr", "Overdue")}
+                          </span>
+                        </span>
+                      );
+                    })()}
                   </div>
                 </div>
 
