@@ -21,6 +21,7 @@ import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge
 import { BookmarkButton } from "@/components/lowongan/BookmarkButton";
 import { ReportJobModal } from "@/components/lowongan/ReportJobModal";
 import { ShareJobButtons } from "@/components/lowongan/ShareJobButtons";
+import { JobMatchScore } from "@/components/lowongan/JobMatchScore";
 
 interface JobDetailPageProps {
   params: Promise<{
@@ -114,8 +115,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
         website,
         description,
         city:cities(
+          id,
           name,
-          province:provinces(name)
+          province:provinces(id, name)
         )
       )
     `
@@ -138,6 +140,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   } = await supabase.auth.getUser();
 
   let userRole: string | null = null;
+  let userEducation: string | null = null;
+  let userCityId: number | null = null;
+  let userProvinceId: number | null = null;
   let existingApplication: { id: number; status: string; created_at: string } | null = null;
   let isBookmarked = false;
   let hasDefaultCv = false;
@@ -145,10 +150,13 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, education_level, city_id, province_id")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
     userRole = profile?.role || "user";
+    userEducation = (profile as { education_level?: string | null })?.education_level || null;
+    userCityId = (profile as { city_id?: number | null })?.city_id || null;
+    userProvinceId = (profile as { province_id?: number | null })?.province_id || null;
 
     // Cek apakah lowongan disimpan oleh pelamar
     const { data: savedData } = await supabase
@@ -504,6 +512,20 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
           {/* Kolom Kanan: Sidebar Kriteria Utama */}
           <aside className="lg:col-span-1 space-y-6">
+            {/* Indikator Kecocokan Profil Pelamar */}
+            <JobMatchScore
+              isLoggedIn={Boolean(user)}
+              userRole={userRole}
+              userEducation={userEducation}
+              userCityId={userCityId}
+              userProvinceId={userProvinceId}
+              hasDefaultCv={hasDefaultCv}
+              jobEducationMin={job.education_min}
+              jobWorkMode={job.work_mode}
+              jobCityId={(cityData as { id?: number } | null)?.id}
+              jobProvinceId={(provinceData as { id?: number } | null)?.id}
+            />
+
             <MainCriteriaCard
               salaryMin={job.salary_min}
               salaryMax={job.salary_max}
