@@ -30,6 +30,10 @@ export async function GET(request: Request) {
       const createdAtMs = new Date(user.created_at).getTime();
       const isBrandNewAccount = Date.now() - createdAtMs < 30000;
 
+      if (flow === "recovery") {
+        return NextResponse.redirect(`${origin}/reset-password`);
+      }
+
       if (flow === "login") {
         if ((isBrandNewAccount && !isRegistered) || isRegistrationBlocked) {
           // Tandai akun bahwa registrasi wajib diselesaikan sebelum bisa login
