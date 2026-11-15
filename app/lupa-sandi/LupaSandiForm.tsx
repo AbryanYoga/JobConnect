@@ -285,36 +285,65 @@ export function LupaSandiForm() {
     );
   }
 
-  // Tampilan Langkah 2: Verifikasi Kode OTP
+  // Tampilan Langkah 2: Verifikasi Kode OTP / Klik Tautan Email
   if (step === "verify_otp") {
     return (
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-white rounded-[32px] sm:rounded-[40px] border border-black/[0.08] shadow-card p-8 sm:p-10">
+        <div className="bg-white rounded-[32px] sm:rounded-[40px] border border-black/[0.08] shadow-card p-8 sm:p-10 text-center">
           <div className="w-14 h-14 rounded-2xl bg-[#FFDD00] text-black mx-auto flex items-center justify-center mb-5 shadow-2xs">
-            <KeyRound className="w-7 h-7" aria-hidden="true" />
+            <Mail className="w-7 h-7" aria-hidden="true" />
           </div>
 
-          <div className="text-center space-y-2 mb-6">
+          <div className="space-y-2 mb-6">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
               <ShieldCheck className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
               <span>{t("Konfirmasi Pemilik Akun", "Confirm Account Ownership")}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight pt-1">
-              {t("Verifikasi Kode OTP", "Verify OTP Code")}
+              {t("Cek Email Pemulihan Anda", "Check Your Recovery Email")}
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
               {t(
-                "Masukkan 6 digit kode pemulihan yang baru saja dikirimkan ke email:",
-                "Enter the 6-digit recovery code sent to your email:"
+                "Kami telah mengirimkan tautan pemulihan kata sandi resmi ke email:",
+                "We sent a password recovery link to:"
               )}{" "}
               <span className="font-bold text-black block mt-0.5">{email}</span>
             </p>
           </div>
 
+          <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] text-left text-xs text-slate-700 leading-relaxed mb-6 space-y-2 font-medium">
+            <p className="font-bold text-black flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full bg-[#FFDD00] text-black text-[10px] font-black inline-flex items-center justify-center">
+                ✓
+              </span>
+              <span>{t("Langkah Mengatur Ulang Sandi:", "Steps to Reset Password:")}</span>
+            </p>
+            <ol className="list-decimal list-inside space-y-1 pl-1 text-slate-600 font-normal">
+              <li>
+                {t(
+                  "Buka aplikasi Gmail Anda (cek Kotak Masuk atau folder Spam).",
+                  "Open your Gmail app (check Inbox or Spam folder)."
+                )}
+              </li>
+              <li>
+                {t(
+                  "Buka email dari JobConnect berjudul 'Reset password'.",
+                  "Open email from JobConnect titled 'Reset password'."
+                )}
+              </li>
+              <li>
+                {t(
+                  "Klik tombol atau tautan 'Reset password' untuk langsung memasukkan kata sandi baru Anda.",
+                  "Click the 'Reset password' link to enter your new password directly."
+                )}
+              </li>
+            </ol>
+          </div>
+
           {serverError && (
             <div
               role="alert"
-              className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-2.5 mb-5 font-medium"
+              className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-2.5 mb-5 font-medium text-left"
             >
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" aria-hidden="true" />
               <span className="leading-snug">{serverError}</span>
@@ -324,67 +353,69 @@ export function LupaSandiForm() {
           {serverSuccess && (
             <div
               role="status"
-              className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-start gap-2.5 mb-5 font-medium"
+              className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-start gap-2.5 mb-5 font-medium text-left"
             >
               <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" aria-hidden="true" />
               <span className="leading-snug">{serverSuccess}</span>
             </div>
           )}
 
-          <form onSubmit={handleVerifyRecoveryOtp} className="space-y-5">
-            <div>
-              <label
-                htmlFor="recovery-otp-input"
-                className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 text-center"
-              >
-                {t("6 Digit Kode Verifikasi OTP", "6-Digit OTP Code")}
-              </label>
-              <input
-                id="recovery-otp-input"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                maxLength={6}
-                value={otpCode}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "");
-                  setOtpCode(val);
-                  if (serverError) setServerError(null);
-                }}
-                placeholder="••••••"
-                className="w-full text-center text-2xl tracking-[0.4em] font-black py-3.5 px-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.12] focus:border-black focus:bg-white focus:outline-none transition-all placeholder:text-slate-300"
-                autoFocus
-              />
-              <p className="text-[11px] text-slate-500 text-center mt-2 font-normal">
-                {t(
-                  "Periksa kotak masuk atau folder Spam Gmail Anda.",
-                  "Check your Gmail inbox or Spam folder."
-                )}
-              </p>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting || otpCode.trim().length !== 6}
-              className="w-full py-3.5 px-6 rounded-full bg-black hover:bg-slate-900 active:scale-98 text-white font-black text-sm transition-all shadow-2xs hover:shadow flex items-center justify-center gap-2 min-h-[48px] disabled:opacity-50 cursor-pointer"
+          <div className="space-y-3">
+            <a
+              href="https://mail.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 px-6 rounded-full bg-black hover:bg-slate-900 active:scale-98 text-white font-black text-sm transition-all shadow-2xs hover:shadow flex items-center justify-center gap-2 min-h-[48px] cursor-pointer"
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" aria-hidden="true" />
-                  <span>{t("Memverifikasi Kode OTP...", "Verifying OTP...")}</span>
-                </>
-              ) : (
-                <>
-                  <span>{t("Verifikasi & Buat Kata Sandi Baru", "Verify & Create New Password")}</span>
-                  <ArrowRight className="w-4 h-4 stroke-[2.5] text-[#FFDD00]" aria-hidden="true" />
-                </>
-              )}
-            </button>
-          </form>
+              <Mail className="w-4 h-4 text-[#FFDD00]" aria-hidden="true" />
+              <span>{t("Buka Gmail Langsung", "Open Gmail Directly")}</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5] text-slate-400" aria-hidden="true" />
+            </a>
+          </div>
 
-          <div className="mt-6 pt-5 border-t border-black/[0.06] text-center space-y-3">
+          {/* Opsi jika memiliki 6 digit kode OTP */}
+          <div className="mt-6 pt-5 border-t border-black/[0.06] text-left">
+            <details className="text-xs text-slate-600 group">
+              <summary className="font-bold text-slate-700 hover:text-black cursor-pointer select-none">
+                {t(
+                  "Punya 6 digit kode pemulihan? Masukkan di sini",
+                  "Have a 6-digit recovery code? Enter here"
+                )}
+              </summary>
+              <form onSubmit={handleVerifyRecoveryOtp} className="mt-3 space-y-3 pt-2">
+                <input
+                  id="recovery-otp-input"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={otpCode}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "");
+                    setOtpCode(val);
+                    if (serverError) setServerError(null);
+                  }}
+                  placeholder="••••••"
+                  className="w-full text-center text-xl tracking-[0.3em] font-black py-2.5 px-4 rounded-xl bg-[#FAF8F0] border border-black/[0.12] focus:border-black focus:bg-white focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting || otpCode.trim().length !== 6}
+                  className="w-full py-2.5 px-4 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-black disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <span>{t("Verifikasi Kode & Atur Sandi", "Verify Code & Reset Password")}</span>
+                  )}
+                </button>
+              </form>
+            </details>
+          </div>
+
+          <div className="mt-5 pt-4 border-t border-black/[0.06] text-center space-y-2.5">
             <div className="text-xs text-slate-600 font-medium">
-              {t("Tidak menerima kode?", "Didn't receive code?")}{" "}
+              {t("Tidak menerima email?", "Didn't receive email?")}{" "}
               <button
                 type="button"
                 onClick={handleResendRecoveryOtp}
@@ -394,7 +425,7 @@ export function LupaSandiForm() {
                 {isResending && <RefreshCw className="w-3 h-3 animate-spin" />}
                 {resendCountdown > 0
                   ? `${t("Kirim ulang dalam", "Resend in")} ${resendCountdown}s`
-                  : t("Kirim Ulang Kode OTP", "Resend OTP Code")}
+                  : t("Kirim Ulang Email Pemulihan", "Resend Recovery Email")}
               </button>
             </div>
 

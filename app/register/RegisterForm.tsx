@@ -12,7 +12,6 @@ import {
   AlertCircle,
   CheckCircle2,
   Building2,
-  KeyRound,
   RefreshCw,
   Loader2,
 } from "lucide-react";
@@ -266,32 +265,61 @@ export function RegisterForm() {
   if (showOtp) {
     return (
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-white rounded-[32px] sm:rounded-[40px] border border-black/[0.08] shadow-card p-8 sm:p-10">
+        <div className="bg-white rounded-[32px] sm:rounded-[40px] border border-black/[0.08] shadow-card p-8 sm:p-10 text-center">
           <div className="w-14 h-14 rounded-2xl bg-[#FFDD00] text-black mx-auto flex items-center justify-center mb-5 shadow-2xs">
-            <KeyRound className="w-7 h-7" aria-hidden="true" />
+            <Mail className="w-7 h-7" aria-hidden="true" />
           </div>
 
-          <div className="text-center space-y-2 mb-6">
+          <div className="space-y-2 mb-6">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-              <Mail className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+              <ShieldCheck className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
               <span>{t("Verifikasi Akun Email", "Email Verification")}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-              {t("Masukkan Kode OTP", "Enter OTP Code")}
+              {t("Cek Email Gmail Anda", "Check Your Gmail Inbox")}
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
               {t(
-                "Kami telah mengirimkan 6 digit kode verifikasi ke alamat email:",
-                "We sent a 6-digit verification code to:"
+                "Kami telah mengirimkan tautan konfirmasi pendaftaran resmi ke:",
+                "We sent an official registration confirmation link to:"
               )}{" "}
               <span className="font-bold text-black block mt-0.5">{email}</span>
             </p>
           </div>
 
+          <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] text-left text-xs text-slate-700 leading-relaxed mb-6 space-y-2 font-medium">
+            <p className="font-bold text-black flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full bg-[#FFDD00] text-black text-[10px] font-black inline-flex items-center justify-center">
+                ✓
+              </span>
+              <span>{t("Langkah Konfirmasi:", "Confirmation Steps:")}</span>
+            </p>
+            <ol className="list-decimal list-inside space-y-1 pl-1 text-slate-600 font-normal">
+              <li>
+                {t(
+                  "Buka aplikasi Gmail Anda (cek Kotak Masuk atau folder Spam).",
+                  "Open your Gmail app (check Inbox or Spam folder)."
+                )}
+              </li>
+              <li>
+                {t(
+                  "Buka email dari JobConnect berjudul 'Confirm your email address'.",
+                  "Open email from JobConnect titled 'Confirm your email address'."
+                )}
+              </li>
+              <li>
+                {t(
+                  "Klik tombol biru 'Confirm email address' di dalam email.",
+                  "Click the blue 'Confirm email address' button inside the email."
+                )}
+              </li>
+            </ol>
+          </div>
+
           {otpError && (
             <div
               role="alert"
-              className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-2.5 mb-5 font-medium"
+              className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-2.5 mb-5 font-medium text-left"
             >
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" aria-hidden="true" />
               <span className="leading-snug">{otpError}</span>
@@ -301,67 +329,76 @@ export function RegisterForm() {
           {otpSuccess && (
             <div
               role="status"
-              className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-start gap-2.5 mb-5 font-medium"
+              className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-start gap-2.5 mb-5 font-medium text-left"
             >
               <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" aria-hidden="true" />
               <span className="leading-snug">{otpSuccess}</span>
             </div>
           )}
 
-          <form onSubmit={handleVerifyOtp} className="space-y-5">
-            <div>
-              <label
-                htmlFor="otp-input"
-                className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 text-center"
-              >
-                {t("6 Digit Kode Verifikasi OTP", "6-Digit OTP Code")}
-              </label>
-              <input
-                id="otp-input"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                maxLength={6}
-                value={otpCode}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "");
-                  setOtpCode(val);
-                  if (otpError) setOtpError(null);
-                }}
-                placeholder="••••••"
-                className="w-full text-center text-2xl tracking-[0.4em] font-black py-3.5 px-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.12] focus:border-black focus:bg-white focus:outline-none transition-all placeholder:text-slate-300"
-                autoFocus
-              />
-              <p className="text-[11px] text-slate-500 text-center mt-2 font-normal">
-                {t(
-                  "Periksa kotak masuk atau folder Spam Gmail Anda.",
-                  "Check your inbox or Gmail Spam folder."
-                )}
-              </p>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isVerifyingOtp || otpCode.trim().length !== 6}
-              className="w-full py-3.5 px-6 rounded-full bg-black hover:bg-slate-900 active:scale-98 text-white font-black text-sm transition-all shadow-2xs hover:shadow flex items-center justify-center gap-2 min-h-[48px] disabled:opacity-50 cursor-pointer"
+          <div className="space-y-3">
+            <a
+              href="https://mail.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 px-6 rounded-full bg-black hover:bg-slate-900 active:scale-98 text-white font-black text-sm transition-all shadow-2xs hover:shadow flex items-center justify-center gap-2 min-h-[48px] cursor-pointer"
             >
-              {isVerifyingOtp ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" aria-hidden="true" />
-                  <span>{t("Memverifikasi Kode OTP...", "Verifying OTP...")}</span>
-                </>
-              ) : (
-                <>
-                  <span>{t("Verifikasi & Masuk Akun", "Verify & Enter Account")}</span>
-                  <ArrowRight className="w-4 h-4 stroke-[2.5] text-[#FFDD00]" aria-hidden="true" />
-                </>
-              )}
-            </button>
-          </form>
+              <Mail className="w-4 h-4 text-[#FFDD00]" aria-hidden="true" />
+              <span>{t("Buka Gmail Langsung", "Open Gmail Directly")}</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5] text-slate-400" aria-hidden="true" />
+            </a>
 
-          <div className="mt-6 pt-5 border-t border-black/[0.06] text-center space-y-3">
+            <Link
+              href="/login"
+              className="w-full py-3 px-6 rounded-full bg-white hover:bg-slate-50 border border-black/[0.12] text-black font-bold text-sm transition-all shadow-2xs flex items-center justify-center gap-2 min-h-[44px]"
+            >
+              <span>{t("Sudah Konfirmasi? Masuk ke Akun", "Already Confirmed? Sign In")}</span>
+            </Link>
+          </div>
+
+          {/* Opsi alternatif jika menerima 6 digit kode OTP */}
+          <div className="mt-6 pt-5 border-t border-black/[0.06] text-left">
+            <details className="text-xs text-slate-600 group">
+              <summary className="font-bold text-slate-700 hover:text-black cursor-pointer select-none">
+                {t(
+                  "Punya 6 digit kode OTP? Masukkan di sini",
+                  "Have a 6-digit OTP code? Enter here"
+                )}
+              </summary>
+              <form onSubmit={handleVerifyOtp} className="mt-3 space-y-3 pt-2">
+                <input
+                  id="otp-input"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={otpCode}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "");
+                    setOtpCode(val);
+                    if (otpError) setOtpError(null);
+                  }}
+                  placeholder="••••••"
+                  className="w-full text-center text-xl tracking-[0.3em] font-black py-2.5 px-4 rounded-xl bg-[#FAF8F0] border border-black/[0.12] focus:border-black focus:bg-white focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={isVerifyingOtp || otpCode.trim().length !== 6}
+                  className="w-full py-2.5 px-4 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-black disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  {isVerifyingOtp ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <span>{t("Verifikasi Kode OTP", "Verify OTP")}</span>
+                  )}
+                </button>
+              </form>
+            </details>
+          </div>
+
+          <div className="mt-5 pt-4 border-t border-black/[0.06] text-center space-y-2.5">
             <div className="text-xs text-slate-600 font-medium">
-              {t("Tidak menerima kode?", "Didn't receive code?")}{" "}
+              {t("Tidak menerima email?", "Didn't receive email?")}{" "}
               <button
                 type="button"
                 onClick={handleResendOtp}
@@ -371,7 +408,7 @@ export function RegisterForm() {
                 {isResendingOtp && <RefreshCw className="w-3 h-3 animate-spin" />}
                 {resendCountdown > 0
                   ? `${t("Kirim ulang dalam", "Resend in")} ${resendCountdown}s`
-                  : t("Kirim Ulang Kode OTP", "Resend OTP Code")}
+                  : t("Kirim Ulang Email Konfirmasi", "Resend Confirmation Email")}
               </button>
             </div>
 
