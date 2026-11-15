@@ -5,8 +5,11 @@ import {
   updateProfilPelamarAction,
   uploadAvatarAction,
   deleteAvatarAction,
+  uploadDefaultCvAction,
+  deleteDefaultCvAction,
 } from "@/app/actions/profil";
 import { AvatarUpload } from "@/components/profil/AvatarUpload";
+import { DefaultCvManager } from "@/components/profil/DefaultCvManager";
 import { ProfilViewWrapper } from "@/components/profil/ProfilViewWrapper";
 import type { PortfolioItem } from "@/lib/validation/profil";
 
@@ -125,6 +128,28 @@ export default async function ProfilPage({ searchParams }: ProfilPageProps) {
   const portfolios = ((profile as { portfolios?: PortfolioItem[] | null })?.portfolios as PortfolioItem[]) || [];
   const emailNotifications = profile?.email_notifications ?? true;
 
+  // Cek keberadaan berkas CV utama pada storage privat pelamar
+  let defaultCvUrl: string | null = null;
+  let defaultCvUpdatedAt: string | null = null;
+  if (user) {
+    try {
+      const supabase = await createClient();
+      const { data: cvFiles } = await supabase.storage.from("cvs").list(user.id, {
+        search: "default-cv.pdf",
+      });
+      const file = cvFiles?.find((f) => f.name === "default-cv.pdf");
+      if (file) {
+        const { data: signedData } = await supabase.storage
+          .from("cvs")
+          .createSignedUrl(`${user.id}/default-cv.pdf`, 3600);
+        defaultCvUrl = signedData?.signedUrl || null;
+        defaultCvUpdatedAt = file.updated_at || file.created_at || null;
+      }
+    } catch {
+      // Fallback diam jika storage belum siap
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#FAF8F0] py-8 sm:py-12">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -158,6 +183,15 @@ export default async function ProfilPage({ searchParams }: ProfilPageProps) {
               name={name}
               onUploadAction={uploadAvatarAction}
               onDeleteAction={deleteAvatarAction}
+            />
+          }
+          defaultCvManagerComponent={
+            <DefaultCvManager
+              key="applicant-default-cv"
+              initialCvUrl={defaultCvUrl}
+              initialUpdatedAt={defaultCvUpdatedAt}
+              onUploadAction={uploadDefaultCvAction}
+              onDeleteAction={deleteDefaultCvAction}
             />
           }
           onSave={updateProfilPelamarAction}

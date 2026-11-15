@@ -46,6 +46,7 @@ interface ProfilViewWrapperProps {
   isOnboarding?: boolean;
   initialIsEditing?: boolean;
   avatarUploadComponent: React.ReactNode;
+  defaultCvManagerComponent?: React.ReactNode;
   onSave: (data: ProfilPelamarInput) => Promise<{
     success: boolean;
     error?: string;
@@ -75,6 +76,7 @@ export function ProfilViewWrapper({
   isOnboarding = false,
   initialIsEditing = false,
   avatarUploadComponent,
+  defaultCvManagerComponent,
   onSave,
 }: ProfilViewWrapperProps) {
   const router = useRouter();
@@ -434,6 +436,9 @@ export function ProfilViewWrapper({
               )}
             </div>
           </div>
+
+          {/* Kartu Berkas CV Utama (Quick Apply) */}
+          {defaultCvManagerComponent}
 
           {/* Kartu 5: Karya Nyata & Portofolio Proyek (Full Width) */}
           <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">

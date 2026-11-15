@@ -7,6 +7,7 @@ import {
   validateAvatarFile,
   AVATAR_BUCKET,
 } from "@/lib/validation/profil";
+import { validateCvFile } from "@/lib/validation/lamaran";
 
 /**
  * Server Action untuk menyimpan perubahan profil pelamar kerja secara menyeluruh.
@@ -263,6 +264,105 @@ export async function deleteAvatarAction(): Promise<{
   } catch (err: unknown) {
     const message =
       err instanceof Error ? err.message : "Terjadi kesalahan saat menghapus foto.";
+    return { success: false, error: message };
+  }
+}
+
+/**
+ * Server Action untuk mengunggah dan menyimpan berkas CV utama pada profil pelamar.
+ * Disimpan di bucket 'cvs' pada direktori privat pengguna ({userId}/default-cv.pdf).
+ */
+export async function uploadDefaultCvAction(formData: FormData): Promise<{
+  success: boolean;
+  error?: string;
+  signedUrl?: string;
+}> {
+  const file = formData.get("cv");
+  if (!file || !(file instanceof File)) {
+    return { success: false, error: "Berkas CV tidak ditemukan." };
+  }
+
+  const validation = await validateCvFile(file);
+  if (!validation.ok) {
+    return { success: false, error: validation.message };
+  }
+
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login Anda telah berakhir." };
+    }
+
+    const cvPath = `${user.id}/default-cv.pdf`;
+    const buffer = await file.arrayBuffer();
+
+    const { error: uploadError } = await supabase.storage
+      .from("cvs")
+      .upload(cvPath, buffer, {
+        contentType: "application/pdf",
+        upsert: true,
+      });
+
+    if (uploadError) {
+      return {
+        success: false,
+        error: uploadError.message || "Gagal mengunggah CV utama ke penyimpanan.",
+      };
+    }
+
+    const { data: signedData } = await supabase.storage
+      .from("cvs")
+      .createSignedUrl(cvPath, 3600);
+
+    revalidatePath("/profil");
+    return { success: true, signedUrl: signedData?.signedUrl || undefined };
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Terjadi gangguan saat mengunggah CV.";
+    return { success: false, error: message };
+  }
+}
+
+/**
+ * Server Action untuk menghapus berkas CV utama profil pelamar dari bucket 'cvs'.
+ */
+export async function deleteDefaultCvAction(): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login Anda telah berakhir." };
+    }
+
+    const cvPath = `${user.id}/default-cv.pdf`;
+    const { error: deleteError } = await supabase.storage
+      .from("cvs")
+      .remove([cvPath]);
+
+    if (deleteError) {
+      return {
+        success: false,
+        error: deleteError.message || "Gagal menghapus CV utama.",
+      };
+    }
+
+    revalidatePath("/profil");
+    return { success: true };
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Terjadi gangguan saat menghapus CV.";
     return { success: false, error: message };
   }
 }
