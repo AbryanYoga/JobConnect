@@ -21,7 +21,7 @@ export function NavLink({ href, children, className = "", onClick }: NavLinkProp
     : pathname === href || pathname.startsWith(href + "/");
 
   const baseStyles =
-    "inline-flex items-center text-sm transition-colors rounded-full min-h-[44px] px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600";
+    "inline-flex items-center text-xs lg:text-sm transition-colors rounded-full min-h-[40px] lg:min-h-[44px] px-2.5 lg:px-4 py-1.5 lg:py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-600";
 
   const activeStyles = isActive
     ? "text-[#0D0C23] font-bold bg-black/[0.06]"

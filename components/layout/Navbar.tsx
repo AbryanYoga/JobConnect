@@ -115,10 +115,10 @@ export async function Navbar({ role }: NavbarProps = {}) {
         </div>
 
         {/* Tengah: Logo Brand JobConnect (Persis Buy Me a Coffee di tengah) */}
-        <div className="hidden md:flex items-center justify-center">
+        <div className="hidden md:flex items-center justify-center shrink-0">
           <Link
             href={homeHref}
-            className="flex items-center rounded-full transition hover:opacity-90 px-3 py-1"
+            className="flex items-center rounded-full transition hover:opacity-90 px-2 lg:px-3 py-1"
             aria-label="JobConnect Beranda"
           >
             <Image
@@ -126,14 +126,14 @@ export async function Navbar({ role }: NavbarProps = {}) {
               alt="JobConnect"
               width={175}
               height={35}
-              className="h-8 w-auto"
+              className="h-7 lg:h-8 w-auto shrink-0"
               priority
             />
           </Link>
         </div>
 
         {/* Sisi Kanan: Button Ganti Bahasa & Masuk / Daftar Akun */}
-        <div className="hidden md:flex items-center gap-2 lg:gap-2.5">
+        <div className="hidden md:flex items-center gap-1.5 lg:gap-2.5 shrink-0">
           {/* Pengatur Ukuran Font Aksesibilitas */}
           <FontSizeToggle />
 

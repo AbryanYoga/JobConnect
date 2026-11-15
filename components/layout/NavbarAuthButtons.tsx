@@ -90,16 +90,16 @@ export function NavbarAuthButtons({
 
   if (userRole === "tamu") {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 lg:gap-2">
         <Link
           href="/login"
-          className="inline-flex items-center justify-center px-4 py-2 rounded-full font-bold text-sm text-[#0D0C23] hover:bg-black/[0.05] transition min-h-[44px]"
+          className="inline-flex items-center justify-center px-3 lg:px-4 py-2 rounded-full font-bold text-xs lg:text-sm text-[#0D0C23] hover:bg-black/[0.05] transition min-h-[40px] lg:min-h-[44px]"
         >
           {t("Masuk", "Sign In")}
         </Link>
         <Link
           href="/register"
-          className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-[#0D0C23] font-black text-sm shadow-2xs hover:shadow-xs active:scale-95 transition min-h-[44px]"
+          className="inline-flex items-center justify-center px-3.5 lg:px-5 py-2 lg:py-2.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-[#0D0C23] font-black text-xs lg:text-sm shadow-2xs hover:shadow-xs active:scale-95 transition min-h-[40px] lg:min-h-[44px]"
         >
           {t("Daftar Akun", "Register")}
         </Link>

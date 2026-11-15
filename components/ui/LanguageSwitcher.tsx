@@ -222,8 +222,11 @@ export function LanguageSwitcher({
         ) : (
           <UkFlag className="w-5 h-3.5" />
         )}
-        <span className="font-bold tracking-tight text-slate-800">
+        <span className="font-bold tracking-tight text-slate-800 hidden lg:inline">
           {activeOption.name}
+        </span>
+        <span className="font-bold tracking-tight text-slate-800 lg:hidden">
+          {activeOption.code.toUpperCase()}
         </span>
         <ChevronDown
           className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${
