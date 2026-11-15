@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { BookOpen, Search, X, HelpCircle, CheckCircle2 } from "lucide-react";
+import { BookOpen, Search, X } from "lucide-react";
 import { Modal } from "./Modal";
 import { useLanguage } from "@/lib/i18n";
 

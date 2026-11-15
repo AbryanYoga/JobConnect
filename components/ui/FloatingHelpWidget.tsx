@@ -9,7 +9,6 @@ import {
   ChevronUp,
   BookOpen,
   LifeBuoy,
-  ShieldCheck,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 import { CareerGlossaryModal } from "./CareerGlossaryModal";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Copy, Check, Share2, MessageCircle } from "lucide-react";
 
 interface ShareJobButtonsProps {
@@ -21,16 +21,16 @@ export function ShareJobButtons({
   className = "",
 }: ShareJobButtonsProps) {
   const [copied, setCopied] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState("");
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setCurrentUrl(`${window.location.origin}/lowongan/${jobSlug}`);
+  const getTargetUrl = () => {
+    if (typeof window !== "undefined" && window.location.origin) {
+      return `${window.location.origin}/lowongan/${jobSlug}`;
     }
-  }, [jobSlug]);
+    return `https://jobconnect-id.vercel.app/lowongan/${jobSlug}`;
+  };
 
   const handleCopyLink = async () => {
-    const targetUrl = currentUrl || `https://jobconnect-id.vercel.app/lowongan/${jobSlug}`;
+    const targetUrl = getTargetUrl();
     try {
       if (navigator?.clipboard) {
         await navigator.clipboard.writeText(targetUrl);
@@ -50,7 +50,7 @@ export function ShareJobButtons({
   };
 
   const getWhatsAppShareUrl = () => {
-    const targetUrl = currentUrl || `https://jobconnect-id.vercel.app/lowongan/${jobSlug}`;
+    const targetUrl = getTargetUrl();
     const lines = [
       `*Lowongan Kerja: ${jobTitle}*`,
       `*Perusahaan:* ${companyName}`,

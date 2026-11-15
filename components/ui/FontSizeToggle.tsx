@@ -1,26 +1,41 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useSyncExternalStore } from "react";
 import { Type } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
+function subscribe(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener("jobconnect-fontsize-change", callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("jobconnect-fontsize-change", callback);
+  };
+}
+
+function getSnapshot() {
+  if (typeof window === "undefined") return false;
+  return localStorage.getItem("jobconnect_font_size") === "large";
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 export function FontSizeToggle({ className = "" }: { className?: string }) {
   const { t } = useLanguage();
-  const [isLarge, setIsLarge] = useState<boolean>(false);
+  const isLarge = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("jobconnect_font_size");
-      if (saved === "large") {
-        setIsLarge(true);
-        document.documentElement.classList.add("font-large");
-      }
+    if (isLarge) {
+      document.documentElement.classList.add("font-large");
+    } else {
+      document.documentElement.classList.remove("font-large");
     }
-  }, []);
+  }, [isLarge]);
 
   const toggleFontSize = () => {
     const nextState = !isLarge;
-    setIsLarge(nextState);
     if (typeof window !== "undefined") {
       if (nextState) {
         document.documentElement.classList.add("font-large");
@@ -29,6 +44,7 @@ export function FontSizeToggle({ className = "" }: { className?: string }) {
         document.documentElement.classList.remove("font-large");
         localStorage.setItem("jobconnect_font_size", "normal");
       }
+      window.dispatchEvent(new Event("jobconnect-fontsize-change"));
     }
   };
 

@@ -161,7 +161,7 @@ export function MitraPelamarViewSwitcher({
   };
 
   // Filter daftar pelamar sesuai status tab, pencarian nama/keahlian, dan jenjang pendidikan
-  let filteredApplications = applications.filter((app) => {
+  const filteredApplications = applications.filter((app) => {
     // 1. Filter status tab
     if (activeTab !== "semua" && app.status !== activeTab) {
       return false;

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { CheckCircle2, AlertCircle, Target, Sparkles, Zap, MapPin, GraduationCap } from "lucide-react";
+import { CheckCircle2, AlertCircle, Target, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
 interface JobMatchScoreProps {
