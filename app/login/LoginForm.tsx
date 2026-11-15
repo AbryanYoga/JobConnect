@@ -196,6 +196,16 @@ export function LoginForm() {
             className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
           />
 
+          {/* Tautan Lupa Kata Sandi */}
+          <div className="flex justify-end pt-1">
+            <Link
+              href="/lupa-sandi"
+              className="text-xs font-bold text-slate-600 hover:text-black hover:underline underline-offset-4 transition-colors"
+            >
+              {t("Lupa kata sandi?", "Forgot password?")}
+            </Link>
+          </div>
+
           {/* Tombol Submit Masuk (Gaya BMC Pill Kuning) */}
           <div className="pt-3">
             <button
