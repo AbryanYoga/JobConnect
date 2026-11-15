@@ -37,6 +37,7 @@ import {
   EDUCATION_LEVEL_OPTIONS,
   type PortfolioItem,
 } from "@/lib/validation/profil";
+import { formatWhatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Detail Kandidat & Profil Akun Pelamar - Dashboard Mitra",
@@ -336,20 +337,16 @@ export default async function DetailPelamarPage({
     applicant?.education_level ||
     null;
 
-  // Format tautan WhatsApp langsung
-  let whatsappUrl: string | null = null;
-  if (applicant?.phone) {
-    const raw = applicant.phone.replace(/[\s-]/g, "").trim();
-    const clean = raw.startsWith("+")
-      ? raw.slice(1)
-      : raw.startsWith("0")
-      ? "62" + raw.slice(1)
-      : raw;
-    const msgText = encodeURIComponent(
-      `Halo ${applicantName}, kami dari ${company.name} ingin mengonfirmasi berkas lamaran Anda untuk posisi ${job.title} di JobConnect.`
-    );
-    whatsappUrl = `https://wa.me/${clean}?text=${msgText}`;
-  }
+  // Format tautan WhatsApp langsung dengan template pesan kontekstual
+  const whatsappUrl = formatWhatsAppUrl(
+    applicant?.phone,
+    applicantName,
+    company.name,
+    job.title,
+    application.status,
+    application.interview_at ? formatDateIndo(application.interview_at) : null,
+    application.interview_place
+  );
 
   // Format tautan Gmail langsung dengan pesan template otomatis sesuai status lamaran
   let gmailUrl: string | null = null;
