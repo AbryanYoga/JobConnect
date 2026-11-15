@@ -55,7 +55,7 @@ export function ProfilHeader({
   return (
     <div className="bg-white rounded-[32px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-        <div className="flex items-center gap-4 sm:gap-5">
+        <div className="flex items-center gap-4 sm:gap-5 min-w-0">
           {avatarUrl ? (
             <Image
               src={avatarUrl}
@@ -70,26 +70,26 @@ export function ProfilHeader({
               {getInitials(name)}
             </div>
           )}
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl sm:text-3xl font-black text-black tracking-tight">
+          <div className="space-y-1.5 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap min-w-0">
+              <h1 className="text-xl sm:text-3xl font-black text-black tracking-tight break-words min-w-0">
                 {name}
               </h1>
-              <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-[#FFDD00] text-black text-xs font-bold border border-black/10 shadow-2xs">
+              <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-[#FFDD00] text-black text-xs font-bold border border-black/10 shadow-2xs shrink-0">
                 <ShieldCheck className="w-3.5 h-3.5 text-black" aria-hidden="true" />
                 <span>{t("Akun Pelamar", "Job Seeker Account")}</span>
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-600 font-medium">{email}</p>
+            <p className="text-xs sm:text-sm text-slate-600 font-medium truncate" title={email}>{email}</p>
             {headline && (
-              <p className="text-xs sm:text-sm font-semibold text-slate-800 pt-0.5">
+              <p className="text-xs sm:text-sm font-semibold text-slate-800 pt-0.5 break-words">
                 {headline}
               </p>
             )}
             {domicileString && (
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium pt-0.5">
-                <MapPin className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
-                <span>{domicileString}</span>
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium pt-0.5 min-w-0">
+                <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+                <span className="truncate">{domicileString}</span>
               </div>
             )}
           </div>

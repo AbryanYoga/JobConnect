@@ -232,29 +232,29 @@ export function ProfilViewWrapper({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1 min-w-0 overflow-hidden">
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Nama Lengkap", "Full Name")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950">
+                    <p className="text-sm font-bold text-navy-950 truncate" title={profileData.name}>
                       {profileData.name}
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1 min-w-0 overflow-hidden">
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Alamat Email Akun", "Account Email")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950 truncate break-all">
+                    <p className="text-sm font-bold text-navy-950 truncate" title={profileData.email}>
                       {profileData.email}
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1 min-w-0 overflow-hidden">
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Nomor WhatsApp / Telepon", "WhatsApp / Phone Number")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950">
+                    <p className="text-sm font-bold text-navy-950 truncate">
                       {profileData.phone || (
                         <span className="text-slate-400 font-normal italic">
                           {t("Belum ditambahkan", "Not added yet")}
@@ -263,11 +263,11 @@ export function ProfilViewWrapper({
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1 min-w-0 overflow-hidden">
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Tanggal Lahir (Umur)", "Date of Birth (Age)")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950">
+                    <p className="text-sm font-bold text-navy-950 truncate">
                       {formattedBirthDate ? (
                         <>
                           {formattedBirthDate}
@@ -285,11 +285,11 @@ export function ProfilViewWrapper({
                     </p>
                   </div>
 
-                  <div className="sm:col-span-2 p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <div className="sm:col-span-2 p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1 min-w-0 overflow-hidden">
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Domisili Penempatan Kerja", "Placement Domicile")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950">
+                    <p className="text-sm font-bold text-navy-950 break-words">
                       {domicileString || (
                         <span className="text-slate-400 font-normal italic">
                           {t("Belum memilih provinsi / kota", "Province or city not selected")}
@@ -323,11 +323,11 @@ export function ProfilViewWrapper({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1 min-w-0 overflow-hidden">
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Jenjang Pendidikan", "Education Level")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950">
+                    <p className="text-sm font-bold text-navy-950 truncate">
                       {eduLevelLabel || (
                         <span className="text-slate-400 font-normal italic">
                           {t("Belum ditentukan", "Not specified")}
@@ -336,11 +336,11 @@ export function ProfilViewWrapper({
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1 min-w-0 overflow-hidden">
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Nama Sekolah / Kampus / Institusi", "School / University / Institution")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950 truncate">
+                    <p className="text-sm font-bold text-navy-950 truncate" title={profileData.educationInstitution || ""}>
                       {profileData.educationInstitution || (
                         <span className="text-slate-400 font-normal italic">
                           {t("Belum ditambahkan", "Not added yet")}
@@ -349,9 +349,9 @@ export function ProfilViewWrapper({
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1 min-w-0 overflow-hidden">
                     <p className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                      <LinkedinIcon className="w-3.5 h-3.5 text-[#0077b5]" />
+                      <LinkedinIcon className="w-3.5 h-3.5 text-[#0077b5] shrink-0" />
                       <span>LinkedIn</span>
                     </p>
                     {profileData.linkedinUrl ? (
@@ -359,9 +359,10 @@ export function ProfilViewWrapper({
                         href={profileData.linkedinUrl}
                         target="_blank"
                         rel="noreferrer noopener"
-                        className="text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline inline-flex items-center gap-1.5 break-all line-clamp-1"
+                        className="flex items-center justify-between gap-1.5 w-full min-w-0 overflow-hidden text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline"
+                        title={profileData.linkedinUrl}
                       >
-                        <span className="truncate">{profileData.linkedinUrl}</span>
+                        <span className="truncate min-w-0">{profileData.linkedinUrl}</span>
                         <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" aria-hidden="true" />
                       </a>
                     ) : (
@@ -371,19 +372,20 @@ export function ProfilViewWrapper({
                     )}
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
+                  <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1 min-w-0 overflow-hidden">
                     <p className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                      <Globe className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
-                      <span>{t("Website / Portofolio Utama", "Website / Main Portfolio")}</span>
+                      <Globe className="w-3.5 h-3.5 text-slate-600 shrink-0" aria-hidden="true" />
+                      <span className="truncate">{t("Website / Portofolio Utama", "Website / Main Portfolio")}</span>
                     </p>
                     {profileData.portfolioUrl ? (
                       <a
                         href={profileData.portfolioUrl}
                         target="_blank"
                         rel="noreferrer noopener"
-                        className="text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline inline-flex items-center gap-1.5 break-all line-clamp-1"
+                        className="flex items-center justify-between gap-1.5 w-full min-w-0 overflow-hidden text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline"
+                        title={profileData.portfolioUrl}
                       >
-                        <span className="truncate">{profileData.portfolioUrl}</span>
+                        <span className="truncate min-w-0">{profileData.portfolioUrl}</span>
                         <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" aria-hidden="true" />
                       </a>
                     ) : (
@@ -463,9 +465,9 @@ export function ProfilViewWrapper({
                   {profileData.portfolios.map((item) => (
                     <div
                       key={item.id}
-                      className="p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-2.5 flex flex-col justify-between"
+                      className="p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] space-y-2.5 flex flex-col justify-between min-w-0 overflow-hidden"
                     >
-                      <div className="space-y-2">
+                      <div className="space-y-2 min-w-0 overflow-hidden">
                         {item.imageUrl && (
                           <div className="w-full h-36 rounded-xl overflow-hidden bg-slate-100 border border-black/[0.06] mb-1">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -477,8 +479,8 @@ export function ProfilViewWrapper({
                             />
                           </div>
                         )}
-                        <div className="flex items-start justify-between gap-2">
-                          <h4 className="text-sm font-bold text-navy-950 leading-snug">
+                        <div className="flex items-start justify-between gap-2 min-w-0">
+                          <h4 className="text-sm font-bold text-navy-950 leading-snug break-words min-w-0">
                             {item.title}
                           </h4>
                           {item.year && (
@@ -488,16 +490,16 @@ export function ProfilViewWrapper({
                           )}
                         </div>
                         {item.description && (
-                          <p className="text-xs text-slate-600 leading-relaxed">
+                          <p className="text-xs text-slate-600 leading-relaxed break-words">
                             {item.description}
                           </p>
                         )}
                         {item.skills && item.skills.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 pt-1">
+                          <div className="flex flex-wrap gap-1.5 pt-1 min-w-0">
                             {item.skills.map((skill, idx) => (
                               <span
                                 key={idx}
-                                className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white border border-black/[0.08] text-slate-700"
+                                className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white border border-black/[0.08] text-slate-700 truncate max-w-full"
                               >
                                 {skill}
                               </span>
@@ -507,15 +509,16 @@ export function ProfilViewWrapper({
                       </div>
 
                       {item.url && (
-                        <div className="pt-2">
+                        <div className="pt-2 min-w-0 overflow-hidden">
                           <a
                             href={item.url}
                             target="_blank"
                             rel="noreferrer noopener"
-                            className="inline-flex items-center gap-1.5 text-xs font-bold text-navy-800 hover:text-navy-950 hover:underline"
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-navy-800 hover:text-navy-950 hover:underline max-w-full"
+                            title={item.url}
                           >
-                            <span>{t("Lihat Karya / Demo", "View Project / Demo")}</span>
-                            <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                            <span className="truncate">{t("Lihat Karya / Demo", "View Project / Demo")}</span>
+                            <ExternalLink className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                           </a>
                         </div>
                       )}

@@ -169,9 +169,9 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
           {items.map((item) => (
             <div
               key={item.id}
-              className="p-4 rounded-2xl bg-white border border-black/[0.08] shadow-2xs hover:border-black/20 transition-all flex flex-col justify-between space-y-3"
+              className="p-4 rounded-2xl bg-white border border-black/[0.08] shadow-2xs hover:border-black/20 transition-all flex flex-col justify-between space-y-3 min-w-0 overflow-hidden"
             >
-              <div className="space-y-2">
+              <div className="space-y-2 min-w-0 overflow-hidden">
                 {item.imageUrl && (
                   <div className="w-full h-32 rounded-xl overflow-hidden bg-slate-100 border border-black/[0.06] mb-1">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -183,8 +183,8 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
                     />
                   </div>
                 )}
-                <div className="flex items-start justify-between gap-2">
-                  <h4 className="font-bold text-sm text-slate-900 line-clamp-1">
+                <div className="flex items-start justify-between gap-2 min-w-0">
+                  <h4 className="font-bold text-sm text-slate-900 break-words min-w-0">
                     {item.title}
                   </h4>
                   {item.year && (
@@ -196,36 +196,36 @@ export function PortfolioManager({ items, onChange }: PortfolioManagerProps) {
                 </div>
 
                 {item.description && (
-                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed break-words">
                     {item.description}
                   </p>
                 )}
 
                 {item.skills && item.skills.length > 0 && (
-                  <div className="flex flex-wrap gap-1 pt-1">
+                  <div className="flex flex-wrap gap-1 pt-1 min-w-0">
                     {item.skills.map((skill, idx) => (
                       <span
                         key={idx}
-                        className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#FAF8F0] text-slate-700 border border-black/[0.06]"
+                        className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#FAF8F0] text-slate-700 border border-black/[0.06] truncate max-w-full"
                       >
-                        <Code2 className="w-2.5 h-2.5 text-slate-400" aria-hidden="true" />
-                        <span>{skill}</span>
+                        <Code2 className="w-2.5 h-2.5 text-slate-400 shrink-0" aria-hidden="true" />
+                        <span className="truncate">{skill}</span>
                       </span>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-black/[0.06]">
+              <div className="flex items-center justify-between pt-2 border-t border-black/[0.06] min-w-0 gap-2">
                 {item.url ? (
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline min-w-0 truncate"
                   >
-                    <span>{t("Lihat Proyek", "View Project")}</span>
-                    <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                    <span className="truncate">{t("Lihat Proyek", "View Project")}</span>
+                    <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
                   </a>
                 ) : (
                   <span className="text-[11px] text-slate-400 italic">
