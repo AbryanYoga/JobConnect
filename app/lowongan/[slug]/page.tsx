@@ -140,6 +140,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   let userRole: string | null = null;
   let existingApplication: { id: number; status: string; created_at: string } | null = null;
   let isBookmarked = false;
+  let hasDefaultCv = false;
 
   if (user) {
     const { data: profile } = await supabase
@@ -171,6 +172,16 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
     if (appData) {
       existingApplication = appData;
+    }
+
+    // Cek apakah pelamar memiliki berkas CV utama tersimpan untuk Quick Apply
+    try {
+      const { data: cvFiles } = await supabase.storage.from("cvs").list(user.id, {
+        search: "default-cv.pdf",
+      });
+      hasDefaultCv = Boolean(cvFiles?.some((f) => f.name === "default-cv.pdf"));
+    } catch {
+      hasDefaultCv = false;
     }
   }
 
@@ -487,6 +498,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               userRole={userRole}
               hasApplied={Boolean(existingApplication)}
               existingApplicationId={existingApplication?.id}
+              hasDefaultCv={hasDefaultCv}
             />
           </div>
 

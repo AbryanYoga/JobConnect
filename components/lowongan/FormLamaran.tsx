@@ -12,6 +12,7 @@ import {
   X,
   CheckCircle2,
   Loader2,
+  Zap,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -35,6 +36,7 @@ export interface FormLamaranProps {
   userRole?: string | null;
   hasApplied?: boolean;
   existingApplicationId?: number | null;
+  hasDefaultCv?: boolean;
 }
 
 export function FormLamaran({
@@ -49,9 +51,11 @@ export function FormLamaran({
   userRole = "user",
   hasApplied = false,
   existingApplicationId,
+  hasDefaultCv = false,
 }: FormLamaranProps) {
   const { t, language } = useLanguage();
   const [coverLetter, setCoverLetter] = useState("");
+  const [useDefaultCv, setUseDefaultCv] = useState<boolean>(hasDefaultCv);
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -217,7 +221,7 @@ export function FormLamaran({
       return;
     }
 
-    if (!cvFile) {
+    if (!useDefaultCv && !cvFile) {
       setFileError("Silakan unggah berkas CV Anda terlebih dahulu.");
       return;
     }
@@ -240,21 +244,66 @@ export function FormLamaran({
         return;
       }
 
-      // Unggah berkas CV ke bucket privat cvs di Supabase Storage
       const cvPath = buildCvPath(user.id, jobId);
-      const { error: uploadError } = await supabase.storage
-        .from(CV_BUCKET)
-        .upload(cvPath, cvFile, {
-          upsert: true,
-          contentType: "application/pdf",
-        });
 
-      if (uploadError) {
-        setErrorMessage(
-          "Gagal mengunggah berkas CV ke penyimpanan aman. Silakan coba kembali."
-        );
-        setIsUploading(false);
-        return;
+      if (useDefaultCv) {
+        // Gunakan CV profil utama: salin default-cv.pdf ke cvPath lowongan ini
+        const defaultSource = `${user.id}/default-cv.pdf`;
+        const { error: copyError } = await supabase.storage
+          .from(CV_BUCKET)
+          .copy(defaultSource, cvPath);
+
+        if (copyError) {
+          // Fallback download buffer lalu upload jika copy langsung storage dibatasi
+          const { data: fileData, error: downloadError } = await supabase.storage
+            .from(CV_BUCKET)
+            .download(defaultSource);
+
+          if (downloadError || !fileData) {
+            setErrorMessage(
+              "Gagal mengambil CV utama profil. Silakan pilih opsi unggah berkas CV baru."
+            );
+            setIsUploading(false);
+            return;
+          }
+
+          const { error: fallbackUploadError } = await supabase.storage
+            .from(CV_BUCKET)
+            .upload(cvPath, fileData, {
+              upsert: true,
+              contentType: "application/pdf",
+            });
+
+          if (fallbackUploadError) {
+            setErrorMessage(
+              "Gagal menyimpan berkas CV ke lamaran. Silakan coba kembali."
+            );
+            setIsUploading(false);
+            return;
+          }
+        }
+      } else {
+        if (!cvFile) {
+          setFileError("Silakan unggah berkas CV Anda terlebih dahulu.");
+          setIsUploading(false);
+          return;
+        }
+
+        // Unggah berkas CV baru ke bucket privat cvs di Supabase Storage
+        const { error: uploadError } = await supabase.storage
+          .from(CV_BUCKET)
+          .upload(cvPath, cvFile, {
+            upsert: true,
+            contentType: "application/pdf",
+          });
+
+        if (uploadError) {
+          setErrorMessage(
+            "Gagal mengunggah berkas CV ke penyimpanan aman. Silakan coba kembali."
+          );
+          setIsUploading(false);
+          return;
+        }
       }
 
       // 2. Simpan baris lamaran dengan status awal 'dikirim'
@@ -416,7 +465,66 @@ export function FormLamaran({
       )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
-        {/* Kolom Unggah Berkas CV */}
+        {/* Pilihan Sumber CV: Quick Apply vs Unggah Khusus */}
+        {hasDefaultCv && (
+          <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-3">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 fill-amber-500 text-amber-600" aria-hidden="true" />
+              <span className="text-xs font-bold text-amber-950">
+                {t("Fitur Lamar Cepat (Quick Apply)", "Quick Apply Feature")}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setUseDefaultCv(true);
+                  setFileError(null);
+                }}
+                className={`p-3 rounded-xl border text-left text-xs transition cursor-pointer ${
+                  useDefaultCv
+                    ? "bg-white border-amber-500 ring-2 ring-amber-400 font-bold text-navy-950 shadow-2xs"
+                    : "bg-white/70 border-amber-200 text-slate-700 hover:bg-white"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span>{t("Gunakan CV Profil Utama", "Use Main Profile CV")}</span>
+                  {useDefaultCv && (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 font-normal">
+                  {t("CV tersimpan di akun Anda (default-cv.pdf)", "CV saved in your account")}
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setUseDefaultCv(false);
+                  setFileError(null);
+                }}
+                className={`p-3 rounded-xl border text-left text-xs transition cursor-pointer ${
+                  !useDefaultCv
+                    ? "bg-white border-amber-500 ring-2 ring-amber-400 font-bold text-navy-950 shadow-2xs"
+                    : "bg-white/70 border-amber-200 text-slate-700 hover:bg-white"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span>{t("Unggah CV Khusus Lainnya", "Upload Custom CV")}</span>
+                  {!useDefaultCv && (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 font-normal">
+                  {t("Pilih file PDF baru khusus lowongan ini", "Choose a new PDF for this job")}
+                </p>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Kolom Berkas CV */}
         <div className="space-y-2">
           <label
             htmlFor="cv-file"
@@ -430,71 +538,108 @@ export function FormLamaran({
             </span>
           </label>
 
-          <input
-            ref={fileInputRef}
-            id="cv-file"
-            name="cvFile"
-            type="file"
-            accept=".pdf,application/pdf"
-            onChange={handleFileChange}
-            className="sr-only"
-          />
-
-          {!cvFile ? (
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  fileInputRef.current?.click();
-                }
-              }}
-              tabIndex={0}
-              role="button"
-              aria-label={t("Pilih berkas CV format PDF maksimal 2 MB", "Choose CV PDF file maximum 2 MB")}
-              className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition ${
-                fileError
-                  ? "border-red-300 bg-red-50/40 hover:bg-red-50/70"
-                  : "border-black/[0.12] bg-[#FAF8F0]/50 hover:bg-[#FAF8F0] hover:border-black/30"
-              }`}
-            >
-              <div className="w-12 h-12 rounded-full bg-white border border-black/[0.08] flex items-center justify-center mx-auto text-slate-700 shadow-2xs mb-3">
-                <Upload className="w-5 h-5 text-slate-700" aria-hidden="true" />
+          {useDefaultCv ? (
+            <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/80 border border-emerald-200 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5 text-emerald-700" aria-hidden="true" />
+                </div>
+                <div className="space-y-0.5 min-w-0">
+                  <p className="text-sm font-bold text-emerald-950 truncate">
+                    CV-Utama-Pelamar.pdf
+                  </p>
+                  <p className="text-xs text-emerald-800 font-medium">
+                    {t(
+                      "Siap dikirimkan otomatis menggunakan berkas CV utama profil Anda",
+                      "Ready to submit automatically using your profile main CV"
+                    )}
+                  </p>
+                </div>
               </div>
-              <p className="text-sm font-bold text-slate-900">
-                {t("Pilih Berkas CV Anda")}
-              </p>
-              <p className="text-xs text-slate-500 mt-1">
-                {t("Format resmi wajib PDF dengan ukuran maksimal 2 MB")}
-              </p>
+              <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 shrink-0 bg-white/80 px-3 py-1.5 rounded-full border border-emerald-200">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{t("Quick Apply", "Quick Apply")}</span>
+              </span>
             </div>
           ) : (
-            <div className="p-4 rounded-2xl bg-white border border-black/[0.12] shadow-2xs flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 text-amber-900 font-bold text-xs border border-amber-200">
-                  PDF
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-slate-900 truncate">
-                    {cvFile.name}
+            <>
+              <input
+                ref={fileInputRef}
+                id="cv-file"
+                name="cvFile"
+                type="file"
+                accept=".pdf,application/pdf"
+                onChange={handleFileChange}
+                className="sr-only"
+              />
+
+              {!cvFile ? (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      fileInputRef.current?.click();
+                    }
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={t("Pilih berkas CV format PDF maksimal 2 MB", "Choose CV PDF file maximum 2 MB")}
+                  className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition ${
+                    fileError
+                      ? "border-red-300 bg-red-50/40 hover:bg-red-50/70"
+                      : "border-black/[0.12] bg-[#FAF8F0]/50 hover:bg-[#FAF8F0] hover:border-black/30"
+                  }`}
+                >
+                  <div className="w-12 h-12 rounded-full bg-white border border-black/[0.08] flex items-center justify-center mx-auto text-slate-700 shadow-2xs mb-3">
+                    <Upload className="w-5 h-5 text-slate-700" aria-hidden="true" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-900">
+                    {t("Pilih Berkas CV Anda")}
                   </p>
-                  <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
-                    <span>
-                      {(cvFile.size / (1024 * 1024)).toFixed(2)} MB • {t("Berkas siap dikirim")}
-                    </span>
+                  <p className="text-xs text-slate-500 mt-1">
+                    {t("Format resmi wajib PDF dengan ukuran maksimal 2 MB")}
                   </p>
                 </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleRemoveFile}
-                className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
-                aria-label={t("Hapus berkas CV yang dipilih")}
-              >
-                <X className="w-5 h-5" aria-hidden="true" />
-              </button>
-            </div>
+              ) : (
+                <div className="p-4 rounded-2xl bg-white border border-black/[0.12] shadow-2xs flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 text-amber-900 font-bold text-xs border border-amber-200">
+                      PDF
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-slate-900 truncate">
+                        {cvFile.name}
+                      </p>
+                      <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+                        <span>
+                          {(cvFile.size / (1024 * 1024)).toFixed(2)} MB • {t("Berkas siap dikirim")}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveFile}
+                    className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
+                    aria-label={t("Hapus berkas CV yang dipilih")}
+                  >
+                    <X className="w-5 h-5" aria-hidden="true" />
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          {!hasDefaultCv && (
+            <p className="text-xs text-slate-500 font-medium">
+              Tip: Anda dapat menyimpan CV utama di{" "}
+              <Link href="/profil" className="text-navy-900 font-bold hover:underline">
+                halaman profil
+              </Link>{" "}
+              untuk mengaktifkan fitur Quick Apply pada lamaran berikutnya.
+            </p>
           )}
 
           {fileError && (
