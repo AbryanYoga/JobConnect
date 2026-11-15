@@ -15,6 +15,9 @@ import {
   FolderGit2,
   ArrowRight,
   MessageCircle,
+  Search,
+  X,
+  Filter,
 } from "lucide-react";
 import { LinkedinIcon } from "@/components/ui/LinkedinIcon";
 import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge";
@@ -114,6 +117,8 @@ export function MitraPelamarViewSwitcher({
   const [applications, setApplications] = useState<AppItem[]>(initialApplications);
   const [activeTab, setActiveTab] = useState<string>("semua");
   const [activeSort, setActiveSort] = useState<string>("terbaru");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedEdu, setSelectedEdu] = useState<string>("semua");
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   // Hitung jumlah pelamar per status
@@ -155,11 +160,33 @@ export function MitraPelamarViewSwitcher({
     }
   };
 
-  // Filter daftar pelamar sesuai status tab
-  let filteredApplications = [...applications];
-  if (activeTab !== "semua") {
-    filteredApplications = filteredApplications.filter((app) => app.status === activeTab);
-  }
+  // Filter daftar pelamar sesuai status tab, pencarian nama/keahlian, dan jenjang pendidikan
+  let filteredApplications = applications.filter((app) => {
+    // 1. Filter status tab
+    if (activeTab !== "semua" && app.status !== activeTab) {
+      return false;
+    }
+
+    // 2. Filter jenjang pendidikan
+    if (selectedEdu !== "semua") {
+      if (app.profiles?.education_level !== selectedEdu) {
+        return false;
+      }
+    }
+
+    // 3. Filter kata kunci pencarian (nama, headline, email)
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const nameMatch = app.profiles?.name?.toLowerCase().includes(q) || false;
+      const headlineMatch = app.profiles?.headline?.toLowerCase().includes(q) || false;
+      const emailMatch = app.profiles?.email?.toLowerCase().includes(q) || false;
+      if (!nameMatch && !headlineMatch && !emailMatch) {
+        return false;
+      }
+    }
+
+    return true;
+  });
 
   // Pengurutan daftar pelamar
   filteredApplications.sort((a, b) => {
@@ -215,6 +242,63 @@ export function MitraPelamarViewSwitcher({
         </div>
       </div>
 
+      {/* Bilah Pencarian Nama & Filter Pendidikan Kandidat */}
+      <div className="bg-white rounded-3xl border border-black/[0.08] p-4 sm:p-5 shadow-card flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3.5">
+        {/* Kolom Pencarian Cepat */}
+        <div className="relative flex-1 min-w-0">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cari nama kandidat, keahlian, atau email..."
+            className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/10 text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-black min-h-[44px]"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-black p-1 transition"
+              aria-label="Hapus kata kunci pencarian"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Dropdown Filter Jenjang Pendidikan */}
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 shrink-0">
+            <Filter className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+            <span>Pendidikan:</span>
+          </div>
+          <select
+            value={selectedEdu}
+            onChange={(e) => setSelectedEdu(e.target.value)}
+            className="text-xs font-bold rounded-2xl bg-[#FAF8F0] border border-black/10 px-3 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-black min-h-[44px] cursor-pointer"
+          >
+            <option value="semua">Semua Jenjang</option>
+            {EDUCATION_LEVEL_OPTIONS.map((edu) => (
+              <option key={edu.value} value={edu.value}>
+                {edu.label}
+              </option>
+            ))}
+          </select>
+          {(searchQuery || selectedEdu !== "semua") && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery("");
+                setSelectedEdu("semua");
+              }}
+              className="text-xs font-bold text-rose-600 hover:text-rose-700 hover:underline px-2 py-1"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* ========================================================
           MODE 1: PAPAN KANBAN ATS (DRAG / QUICK STAGE PIPELINE)
           ======================================================== */}
@@ -223,7 +307,18 @@ export function MitraPelamarViewSwitcher({
           <div className="overflow-x-auto pb-6 scrollbar-thin">
             <div className="flex items-start gap-4 min-w-[1300px]">
               {KANBAN_STAGES.map((col) => {
-                const colApplications = applications.filter((app) => app.status === col.status);
+                const colApplications = applications.filter((app) => {
+                  if (app.status !== col.status) return false;
+                  if (selectedEdu !== "semua" && app.profiles?.education_level !== selectedEdu) return false;
+                  if (searchQuery.trim()) {
+                    const q = searchQuery.toLowerCase().trim();
+                    const nameMatch = app.profiles?.name?.toLowerCase().includes(q) || false;
+                    const headlineMatch = app.profiles?.headline?.toLowerCase().includes(q) || false;
+                    const emailMatch = app.profiles?.email?.toLowerCase().includes(q) || false;
+                    if (!nameMatch && !headlineMatch && !emailMatch) return false;
+                  }
+                  return true;
+                });
 
                 return (
                   <div
