@@ -54,6 +54,11 @@ body {
   color-scheme: light;
 }
 
+/* Mode Aksesibilitas Font Ramah Penglihatan / Lanjut Usia */
+html.font-large {
+  font-size: 112.5%;
+}
+
 /*
   Focus ring aksesibilitas Antislop (WCAG AA 4.5:1):
   - Latar terang: outline 2px navy-600 dengan offset 2px.

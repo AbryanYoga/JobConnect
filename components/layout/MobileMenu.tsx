@@ -20,6 +20,7 @@ import { LogoutButton } from "@/components/auth/LogoutButton";
 import { NavLink } from "./NavLink";
 import { useLanguage } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { FontSizeToggle } from "@/components/ui/FontSizeToggle";
 
 interface MobileMenuProps {
   links: NavItem[];
@@ -201,10 +202,11 @@ export function MobileMenu({
               </div>
             )}
 
-            {/* 2. Switcher Bahasa & Info Ringkas */}
-            <div className="pb-3 border-b border-black/[0.06]">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-2">
-                <span>{t("Pilihan Bahasa", "Language Selection")}</span>
+            {/* 2. Switcher Bahasa & Ukuran Teks Aksesibilitas */}
+            <div className="pb-3 border-b border-black/[0.06] space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+                <span>{t("Pilihan Bahasa & Teks", "Language & Font")}</span>
+                <FontSizeToggle />
               </div>
               <LanguageSwitcher variant="mobile" />
             </div>

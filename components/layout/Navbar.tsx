@@ -10,6 +10,7 @@ import { NavLink } from "./NavLink";
 import { MobileMenu } from "./MobileMenu";
 import { NavbarHeader } from "./NavbarHeader";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { FontSizeToggle } from "@/components/ui/FontSizeToggle";
 import { NotificationBell } from "@/components/notifikasi/NotificationBell";
 import { NavbarAuthButtons } from "./NavbarAuthButtons";
 
@@ -132,7 +133,10 @@ export async function Navbar({ role }: NavbarProps = {}) {
         </div>
 
         {/* Sisi Kanan: Button Ganti Bahasa & Masuk / Daftar Akun */}
-        <div className="hidden md:flex items-center gap-2.5 lg:gap-3">
+        <div className="hidden md:flex items-center gap-2 lg:gap-2.5">
+          {/* Pengatur Ukuran Font Aksesibilitas */}
+          <FontSizeToggle />
+
           {/* Button Ganti Bahasa (Menggantikan Quick Search Pill) */}
           <LanguageSwitcher />
 
