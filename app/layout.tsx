@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingHelpWidget } from "@/components/ui/FloatingHelpWidget";
 import { LanguageProvider, type Language } from "@/lib/i18n";
 import "./globals.css";
 
@@ -66,6 +67,7 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
+          <FloatingHelpWidget />
         </LanguageProvider>
       </body>
     </html>
