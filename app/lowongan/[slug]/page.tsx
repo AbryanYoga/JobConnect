@@ -20,6 +20,7 @@ import { FormLamaran } from "@/components/lowongan/FormLamaran";
 import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge";
 import { BookmarkButton } from "@/components/lowongan/BookmarkButton";
 import { ReportJobModal } from "@/components/lowongan/ReportJobModal";
+import { ShareJobButtons } from "@/components/lowongan/ShareJobButtons";
 
 interface JobDetailPageProps {
   params: Promise<{
@@ -504,6 +505,21 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               locationDetail={job.location_detail}
               isOpen={isApplyAllowed}
             />
+
+            {/* Bagikan Lowongan */}
+            <div className="bg-white rounded-[24px] border border-black/[0.08] p-5 shadow-card">
+              <ShareJobButtons
+                jobTitle={job.title}
+                companyName={companyName}
+                location={locationText}
+                salaryText={
+                  job.salary_min && job.salary_max
+                    ? `Rp ${Number(job.salary_min).toLocaleString("id-ID")} - Rp ${Number(job.salary_max).toLocaleString("id-ID")}`
+                    : undefined
+                }
+                jobSlug={job.slug}
+              />
+            </div>
 
             {/* Jaminan Bebas Calo & Pungutan */}
             <div className="bg-white rounded-[24px] border border-black/[0.08] p-5 shadow-card space-y-4">
