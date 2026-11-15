@@ -536,7 +536,7 @@ export function RegisterForm() {
             type="text"
             autoComplete="name"
             placeholder={
-              language === "en" ? "e.g. John Doe" : "Contoh: Budi Santoso"
+              language === "en" ? "e.g. Alex Pratama" : "Contoh: Nama Lengkap Anda"
             }
             leftIcon={<User className="w-4 h-4 text-slate-400" />}
             value={name}

@@ -24,6 +24,7 @@ import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CopyJobLinkButton } from "@/components/mitra/CopyJobLinkButton";
 import { updateApplicationStatusAction } from "@/app/actions/mitra";
+import { useLanguage } from "@/lib/i18n";
 import {
   calculateAge,
   EDUCATION_LEVEL_OPTIONS,
@@ -113,6 +114,7 @@ export function MitraPelamarViewSwitcher({
   initialApplications,
   job,
 }: MitraPelamarViewSwitcherProps) {
+  const { t, language } = useLanguage();
   const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
   const [applications, setApplications] = useState<AppItem[]>(initialApplications);
   const [activeTab, setActiveTab] = useState<string>("semua");
@@ -208,7 +210,7 @@ export function MitraPelamarViewSwitcher({
       {/* Pengalih Mode Tampilan (Daftar vs Papan Kanban ATS) */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white rounded-3xl border border-black/[0.08] p-4 sm:p-5 shadow-card">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-black text-slate-700">Tampilan Seleksi:</span>
+          <span className="text-xs font-black text-slate-700">{t("Tampilan Seleksi:", "Selection View:")}</span>
           <div className="inline-flex rounded-full bg-[#FAF8F0] p-1 border border-black/[0.06]">
             <button
               type="button"
@@ -220,7 +222,7 @@ export function MitraPelamarViewSwitcher({
               }`}
             >
               <LayoutList className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Daftar Rinci</span>
+              <span>{t("Daftar Rinci", "Detailed List")}</span>
             </button>
             <button
               type="button"
@@ -232,13 +234,13 @@ export function MitraPelamarViewSwitcher({
               }`}
             >
               <Columns3 className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Papan Kanban ATS</span>
+              <span>{t("Papan Kanban ATS", "ATS Kanban Board")}</span>
             </button>
           </div>
         </div>
 
         <div className="text-xs sm:text-sm font-bold text-slate-700 self-start sm:self-center">
-          Total Terdaftar: <span className="text-black font-black">{applications.length}</span> kandidat
+          {t("Total Terdaftar:", "Total Registered:")} <span className="text-black font-black">{applications.length}</span> {t("kandidat", "candidates")}
         </div>
       </div>
 
@@ -251,7 +253,7 @@ export function MitraPelamarViewSwitcher({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari nama kandidat, keahlian, atau email..."
+            placeholder={t("Cari nama kandidat, keahlian, atau email...", "Search applicant name, skill, or email...")}
             className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/10 text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-black min-h-[44px]"
           />
           {searchQuery && (
@@ -259,7 +261,7 @@ export function MitraPelamarViewSwitcher({
               type="button"
               onClick={() => setSearchQuery("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-black p-1 transition"
-              aria-label="Hapus kata kunci pencarian"
+              aria-label={t("Hapus kata kunci pencarian", "Clear search query")}
             >
               <X className="w-4 h-4" />
             </button>
@@ -270,14 +272,14 @@ export function MitraPelamarViewSwitcher({
         <div className="flex items-center gap-2 shrink-0">
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 shrink-0">
             <Filter className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
-            <span>Pendidikan:</span>
+            <span>{t("Pendidikan:", "Education:")}</span>
           </div>
           <select
             value={selectedEdu}
             onChange={(e) => setSelectedEdu(e.target.value)}
             className="text-xs font-bold rounded-2xl bg-[#FAF8F0] border border-black/10 px-3 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-black min-h-[44px] cursor-pointer"
           >
-            <option value="semua">Semua Jenjang</option>
+            <option value="semua">{t("Semua Jenjang", "All Education Levels")}</option>
             {EDUCATION_LEVEL_OPTIONS.map((edu) => (
               <option key={edu.value} value={edu.value}>
                 {edu.label}
@@ -396,7 +398,7 @@ export function MitraPelamarViewSwitcher({
                               {/* Pengubah Tahap Status Cepat */}
                               <div className="pt-2 border-t border-black/[0.06] space-y-1.5">
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                                  Pindahkan Status:
+                                  {t("Pindahkan Status:", "Move Status:")}
                                 </label>
                                 <select
                                   value={app.status}
@@ -405,13 +407,13 @@ export function MitraPelamarViewSwitcher({
                                   }
                                   className="w-full text-xs font-bold rounded-xl bg-[#FAF8F0] border border-black/10 px-2.5 py-1.5 text-slate-800 focus:outline-none focus:ring-1 focus:ring-black cursor-pointer"
                                 >
-                                  <option value="dikirim">Masuk Baru</option>
-                                  <option value="ditinjau">Ditinjau</option>
-                                  <option value="shortlist">Shortlist</option>
-                                  <option value="wawancara">Wawancara</option>
-                                  <option value="ditawari">Offering</option>
-                                  <option value="diterima">Diterima</option>
-                                  <option value="ditolak">Ditolak</option>
+                                  <option value="dikirim">{t("Masuk Baru", "New Applied")}</option>
+                                  <option value="ditinjau">{t("Ditinjau", "Under Review")}</option>
+                                  <option value="shortlist">{t("Shortlist", "Shortlisted")}</option>
+                                  <option value="wawancara">{t("Wawancara", "Interview")}</option>
+                                  <option value="ditawari">{t("Offering", "Offering")}</option>
+                                  <option value="diterima">{t("Diterima", "Accepted")}</option>
+                                  <option value="ditolak">{t("Ditolak", "Rejected")}</option>
                                 </select>
                               </div>
 
@@ -421,7 +423,7 @@ export function MitraPelamarViewSwitcher({
                                   href={`/mitra/pelamar/${app.id}`}
                                   className="inline-flex items-center gap-1 font-black text-black hover:underline"
                                 >
-                                  <span>Tinjau Detail</span>
+                                  <span>{t("Tinjau Detail", "Review Details")}</span>
                                   <ArrowRight className="w-3 h-3 stroke-[2.5]" aria-hidden="true" />
                                 </Link>
                                 {(() => {
@@ -495,20 +497,20 @@ export function MitraPelamarViewSwitcher({
           {/* Bilah Ringkasan dan Pengurutan Pelamar */}
           <div className="bg-white rounded-3xl border border-black/[0.08] p-4 sm:p-5 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="text-xs sm:text-sm font-bold text-slate-700">
-              Menampilkan <span className="text-black font-black">{filteredApplications.length}</span> pelamar
+              {t("Menampilkan", "Showing")} <span className="text-black font-black">{filteredApplications.length}</span> {t("pelamar", "applicants")}
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
               <div className="flex items-center gap-1.5 text-xs font-black text-slate-800 shrink-0">
                 <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
-                <span>Urutkan:</span>
+                <span>{t("Urutkan:", "Sort:")}</span>
               </div>
 
               <div className="flex items-center gap-1.5 flex-wrap">
                 {[
-                  { label: "Terbaru", value: "terbaru" },
-                  { label: "Nama (A-Z)", value: "nama_asc" },
-                  { label: "Nama (Z-A)", value: "nama_desc" },
+                  { label: t("Terbaru", "Newest"), value: "terbaru" },
+                  { label: t("Nama (A-Z)", "Name (A-Z)"), value: "nama_asc" },
+                  { label: t("Nama (Z-A)", "Name (Z-A)"), value: "nama_desc" },
                 ].map((sortOpt) => {
                   const isActive = activeSort === sortOpt.value;
 
@@ -535,10 +537,13 @@ export function MitraPelamarViewSwitcher({
           {applications.length === 0 ? (
             <div className="space-y-4">
               <EmptyState
-                title="Belum ada yang melamar"
-                description="Belum ada pencari kerja yang mengirimkan lamaran untuk posisi ini. Bagikan tautan lowongan agar kandidat potensial dapat menemukan dan melamar pekerjaan Anda."
+                title={t("Belum ada yang melamar", "No applicants yet")}
+                description={t(
+                  "Belum ada pencari kerja yang mengirimkan lamaran untuk posisi ini. Bagikan tautan lowongan agar kandidat potensial dapat menemukan dan melamar pekerjaan Anda.",
+                  "No job seekers have applied for this position yet. Share the vacancy link so potential candidates can find and apply."
+                )}
                 action={{
-                  label: "Kembali ke Kelola Lowongan",
+                  label: t("Kembali ke Kelola Lowongan", "Back to Job Management"),
                   href: "/mitra/lowongan",
                 }}
               />
@@ -553,10 +558,10 @@ export function MitraPelamarViewSwitcher({
               </div>
               <div className="space-y-1 max-w-md mx-auto">
                 <h2 className="text-lg font-black text-black">
-                  Tidak ada kandidat sesuai kriteria
+                  {t("Tidak ada kandidat sesuai kriteria", "No matching applicants")}
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-600 font-medium">
-                  Tidak ditemukan pelamar dengan status yang Anda pilih.
+                  {t("Tidak ditemukan pelamar dengan status yang Anda pilih.", "No applicants found for the selected status.")}
                 </p>
               </div>
               <div className="pt-2">
@@ -565,7 +570,7 @@ export function MitraPelamarViewSwitcher({
                   onClick={() => setActiveTab("semua")}
                   className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-black text-white font-bold text-xs transition min-h-[44px] cursor-pointer"
                 >
-                  Reset Semua Filter
+                  {t("Reset Semua Filter", "Reset All Filters")}
                 </button>
               </div>
             </div>
@@ -620,7 +625,7 @@ export function MitraPelamarViewSwitcher({
                           <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] font-bold">
                             {age !== null && (
                               <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
-                                Usia {age} th
+                                {language === "en" ? `Age ${age} y/o` : `Usia ${age} th`}
                               </span>
                             )}
                             {eduLabel && (
@@ -631,7 +636,7 @@ export function MitraPelamarViewSwitcher({
                             {hasPortfolio && (
                               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-200">
                                 <FolderGit2 className="w-3 h-3 text-emerald-700" aria-hidden="true" />
-                                <span>Ada Portofolio</span>
+                                <span>{t("Ada Portofolio", "Has Portfolio")}</span>
                               </span>
                             )}
                           </div>
@@ -701,7 +706,7 @@ export function MitraPelamarViewSwitcher({
                         href={`/mitra/pelamar/${app.id}`}
                         className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-black font-black text-xs sm:text-sm shadow-2xs hover:shadow transition min-h-[44px] w-full sm:w-auto"
                       >
-                        <span>Tinjau Kandidat</span>
+                        <span>{t("Tinjau Kandidat", "Review Candidate")}</span>
                         <ChevronRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
                       </Link>
                     </div>

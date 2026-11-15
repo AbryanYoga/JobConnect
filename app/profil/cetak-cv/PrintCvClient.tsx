@@ -11,15 +11,14 @@ import {
   MapPin,
   Calendar,
   GraduationCap,
-  Briefcase,
   FolderGit2,
   CheckCircle2,
   Globe,
-  ExternalLink,
   Sparkles,
   User,
 } from "lucide-react";
 import { LinkedinIcon } from "@/components/ui/LinkedinIcon";
+import { useLanguage } from "@/lib/i18n";
 import type { PortfolioItem } from "@/lib/validation/profil";
 
 interface PrintCvClientProps {
@@ -51,13 +50,15 @@ function getInitials(name: string): string {
 }
 
 export function PrintCvClient({ profile }: PrintCvClientProps) {
+  const { t, language } = useLanguage();
+
   const handlePrint = () => {
     if (typeof window !== "undefined") {
       window.print();
     }
   };
 
-  const todayStr = new Intl.DateTimeFormat("id-ID", {
+  const todayStr = new Intl.DateTimeFormat(language === "en" ? "en-US" : "id-ID", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -72,13 +73,22 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
     )
   );
 
-  const defaultSkills = [
-    "Pengembangan Perangkat Lunak",
-    "Analisis & Problem Solving",
-    "Komunikasi & Kerja Tim",
-    "Manajemen Waktu",
-    "Adaptabilitas Cepat",
-  ];
+  const defaultSkills =
+    language === "en"
+      ? [
+          "Software Development",
+          "Analysis & Problem Solving",
+          "Communication & Teamwork",
+          "Time Management",
+          "Rapid Adaptability",
+        ]
+      : [
+          "Pengembangan Perangkat Lunak",
+          "Analisis & Problem Solving",
+          "Komunikasi & Kerja Tim",
+          "Manajemen Waktu",
+          "Adaptabilitas Cepat",
+        ];
 
   const finalSkills =
     extractedSkills.length > 0 ? extractedSkills : defaultSkills;
@@ -86,9 +96,13 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
   // Ringkasan profil profesional jika bio belum diisi manual
   const professionalBio =
     profile.bio ||
-    `Lulusan ${profile.educationInstitution || "kejuruan"} dengan spesialisasi ${
-      profile.headline || "profesional di bidangnya"
-    }. Memiliki motivasi kerja yang tinggi, integritas, serta kesiapan untuk beradaptasi dan berkontribusi secara produktif bersama tim perusahaan.`;
+    (language === "en"
+      ? `Graduate of ${profile.educationInstitution || "vocational education"} specializing in ${
+          profile.headline || "industry expertise"
+        }. Highly motivated with integrity, adaptability, and dedication to contributing productively with the company team.`
+      : `Lulusan ${profile.educationInstitution || "kejuruan"} dengan spesialisasi ${
+          profile.headline || "profesional di bidangnya"
+        }. Memiliki motivasi kerja yang tinggi, integritas, serta kesiapan untuk beradaptasi dan berkontribusi secara produktif bersama tim perusahaan.`);
 
   return (
     <div className="min-h-screen bg-[#FAF8F0] py-8 sm:py-12 print:py-0 print:bg-white text-slate-800">
@@ -100,13 +114,13 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
             className="inline-flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-black transition min-h-[44px]"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-            <span>Kembali ke Halaman Profil</span>
+            <span>{t("Kembali ke Halaman Profil", "Back to Profile")}</span>
           </Link>
 
           <div className="flex items-center gap-3">
             <span className="hidden md:inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 bg-[#FAF8F0] px-3.5 py-2 rounded-full border border-black/[0.06]">
               <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              <span>Pratinjau Resume Standar ATS</span>
+              <span>{t("Pratinjau Resume Standar ATS", "ATS Standard Resume Preview")}</span>
             </span>
 
             <button
@@ -115,13 +129,16 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
               className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-navy-950 hover:bg-black text-[#FFDD00] font-black text-xs sm:text-sm shadow-md transition active:scale-95 min-h-[44px] cursor-pointer w-full sm:w-auto"
             >
               <Printer className="w-4 h-4" aria-hidden="true" />
-              <span>Cetak / Simpan PDF (Ctrl+P)</span>
+              <span>{t("Cetak / Simpan PDF (Ctrl+P)", "Print / Save PDF (Ctrl+P)")}</span>
             </button>
           </div>
         </div>
 
         <p className="text-xs text-slate-500 mt-3 text-center font-medium">
-          Petunjuk: Pada jendela cetak browser, pilih Destination: <strong>Save as PDF</strong> (Simpan sebagai PDF) untuk mengunduh dokumen resmi ini.
+          {t(
+            "Petunjuk: Pada jendela cetak browser, pilih Destination: Save as PDF (Simpan sebagai PDF) untuk mengunduh dokumen resmi ini.",
+            "Tip: In the browser print dialog, select Destination: Save as PDF to download this official resume."
+          )}
         </p>
       </div>
 
@@ -160,7 +177,7 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
                 <div className="pt-1">
                   <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                    <span>Akun Terverifikasi Resmi JobConnect</span>
+                    <span>{t("Akun Terverifikasi Resmi JobConnect", "JobConnect Officially Verified Account")}</span>
                   </span>
                 </div>
               </div>
@@ -198,7 +215,7 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
               <div className="flex items-center gap-2 p-2 rounded-xl bg-[#FAF8F0] border border-black/[0.04]">
                 <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" aria-hidden="true" />
                 <span className="font-semibold text-slate-800">
-                  Usia {profile.age} Tahun
+                  {language === "en" ? `Age ${profile.age} Years` : `Usia ${profile.age} Tahun`}
                 </span>
               </div>
             )}
@@ -240,7 +257,7 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
           <div className="flex items-center gap-2 border-b border-slate-200 pb-1.5">
             <User className="w-4 h-4 text-slate-900" aria-hidden="true" />
             <h2 className="text-xs font-black text-slate-950 uppercase tracking-wider">
-              Profil & Ringkasan Profesional
+              {t("Profil & Ringkasan Profesional", "Professional Summary")}
             </h2>
           </div>
           <p className="text-xs sm:text-sm leading-relaxed text-slate-700 font-medium whitespace-pre-line text-justify">
@@ -253,22 +270,22 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
           <div className="flex items-center gap-2 border-b border-slate-200 pb-1.5">
             <GraduationCap className="w-4 h-4 text-slate-900" aria-hidden="true" />
             <h2 className="text-xs font-black text-slate-950 uppercase tracking-wider">
-              Riwayat Pendidikan
+              {t("Riwayat Pendidikan", "Education History")}
             </h2>
           </div>
 
           <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
               <span className="text-sm font-bold text-slate-950">
-                {profile.educationInstitution || "Pendidikan Terakhir"}
+                {profile.educationInstitution || t("Pendidikan Terakhir", "Latest Education")}
               </span>
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white border border-black/[0.06] text-slate-700 self-start sm:self-auto">
-                {profile.educationLevel || "Lulusan Sederajat"}
+                {profile.educationLevel || t("Lulusan Sederajat", "Equivalent Graduate")}
               </span>
             </div>
             {profile.headline && (
               <p className="text-xs text-slate-600 font-medium">
-                Konsentrasi Keahlian: {profile.headline}
+                {t("Konsentrasi Keahlian:", "Specialization:")} {profile.headline}
               </p>
             )}
           </div>
@@ -279,7 +296,7 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
           <div className="flex items-center gap-2 border-b border-slate-200 pb-1.5">
             <FolderGit2 className="w-4 h-4 text-slate-900" aria-hidden="true" />
             <h2 className="text-xs font-black text-slate-950 uppercase tracking-wider">
-              Pengalaman Proyek & Portofolio Karya
+              {t("Pengalaman Proyek & Portofolio Karya", "Project Experience & Portfolio")}
             </h2>
           </div>
 
@@ -308,7 +325,7 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
                   {item.skills && item.skills.length > 0 && (
                     <div className="flex flex-wrap items-center gap-1.5 pt-1">
                       <span className="text-[11px] font-bold text-slate-500">
-                        Teknologi:
+                        {t("Teknologi:", "Technologies:")}
                       </span>
                       {item.skills.map((s, sIdx) => (
                         <span
@@ -322,7 +339,7 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
                   )}
                   {item.url && (
                     <p className="text-[11px] text-slate-500 font-mono pt-0.5 truncate">
-                      Tautan: {item.url}
+                      {t("Tautan:", "Link:")} {item.url}
                     </p>
                   )}
                 </div>
@@ -331,10 +348,13 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
           ) : (
             <div className="p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-1">
               <span className="text-xs font-bold text-slate-800 block">
-                Kesiapan Kerja & Penugasan Pertama
+                {t("Kesiapan Kerja & Penugasan Pertama", "Work Readiness & Entry-Level Assignment")}
               </span>
               <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                Telah menyelesaikan seluruh program kurikulum dan uji kompetensi kejuruan di {profile.educationInstitution || "institusi pendidikan"}. Siap mengikuti masa percobaan, magang industri, atau penugasan posisi tingkat awal (entry-level).
+                {t(
+                  `Telah menyelesaikan seluruh program kurikulum dan uji kompetensi kejuruan di ${profile.educationInstitution || "institusi pendidikan"}. Siap mengikuti masa percobaan, magang industri, atau penugasan posisi tingkat awal (entry-level).`,
+                  `Completed all academic curriculum and competency tests at ${profile.educationInstitution || "educational institution"}. Ready for probation, industrial internship, or entry-level roles.`
+                )}
               </p>
             </div>
           )}
@@ -345,7 +365,7 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
           <div className="flex items-center gap-2 border-b border-slate-200 pb-1.5">
             <Sparkles className="w-4 h-4 text-slate-900" aria-hidden="true" />
             <h2 className="text-xs font-black text-slate-950 uppercase tracking-wider">
-              Keahlian & Kompetensi Utama
+              {t("Keahlian & Kompetensi Utama", "Core Skills & Competencies")}
             </h2>
           </div>
 
@@ -365,9 +385,9 @@ export function PrintCvClient({ profile }: PrintCvClientProps) {
         <footer className="pt-6 border-t-2 border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500 font-medium">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-600" aria-hidden="true" />
-            <span>Dokumen Curriculum Vitae resmi - JobConnect Indonesia</span>
+            <span>{t("Dokumen Curriculum Vitae resmi - JobConnect Indonesia", "Official Curriculum Vitae document - JobConnect Indonesia")}</span>
           </div>
-          <span>Dicetak pada {todayStr}</span>
+          <span>{t("Dicetak pada", "Printed on")} {todayStr}</span>
         </footer>
       </main>
     </div>

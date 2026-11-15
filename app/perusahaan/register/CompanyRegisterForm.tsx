@@ -680,7 +680,7 @@ export function CompanyRegisterForm() {
               type="text"
               autoComplete="name"
               placeholder={
-                language === "en" ? "e.g. John Doe (HR Manager)" : "Contoh: Budi Santoso"
+                language === "en" ? "e.g. Jane Doe (HR Manager)" : "Contoh: Siti Rahma (HRD Manager)"
               }
               leftIcon={<User className="w-4 h-4 text-slate-400" />}
               value={picName}

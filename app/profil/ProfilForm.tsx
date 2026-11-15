@@ -398,7 +398,7 @@ export function ProfilForm({
             label={t("Nama Lengkap", "Full Name")}
             required
             type="text"
-            placeholder={language === "en" ? "e.g. John Doe" : "Contoh: Budi Santoso"}
+            placeholder={language === "en" ? "e.g. Alex Pratama" : "Contoh: Nama Lengkap Anda"}
             leftIcon={<User className="w-4 h-4 text-slate-400" />}
             value={name}
             onChange={(e) => {

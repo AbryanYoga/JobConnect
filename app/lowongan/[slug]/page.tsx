@@ -13,16 +13,13 @@ import {
   ArrowLeft,
   ArrowRight,
   ExternalLink,
-  ShieldCheck,
-  Clock,
 } from "lucide-react";
 import { FormLamaran } from "@/components/lowongan/FormLamaran";
 import { StatusBadge, type ApplicationStatus } from "@/components/ui/StatusBadge";
 import { BookmarkButton } from "@/components/lowongan/BookmarkButton";
-import { ReportJobModal } from "@/components/lowongan/ReportJobModal";
 import { ShareJobButtons } from "@/components/lowongan/ShareJobButtons";
 import { JobMatchScore } from "@/components/lowongan/JobMatchScore";
-import { CareerGlossaryTrigger } from "@/components/ui/CareerGlossaryModal";
+import { JobTrustSidebar } from "@/components/lowongan/JobTrustSidebar";
 
 interface JobDetailPageProps {
   params: Promise<{
@@ -556,49 +553,12 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               />
             </div>
 
-            {/* Jaminan Bebas Calo & Pungutan */}
-            <div className="bg-white rounded-[24px] border border-black/[0.08] p-5 shadow-card space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-5 h-5" aria-hidden="true" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-sm font-black text-navy-950">
-                    Jaminan Bebas Calo & Pungli
-                  </h3>
-                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                    JobConnect 100% gratis untuk pelamar. Instansi ini telah melalui verifikasi identitas resmi dan domisili kantor fisik.
-                  </p>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                <ReportJobModal
-                  jobId={job.id}
-                  jobTitle={job.title}
-                  jobSlug={job.slug}
-                />
-              </div>
-            </div>
-
-            {/* Komitmen Anti-Ghosting */}
-            <div className="bg-[#FAF8F0] rounded-[24px] border border-black/[0.08] p-5 shadow-2xs space-y-2.5">
-              <div className="flex items-center gap-2 text-navy-950 font-bold text-xs">
-                <Clock className="w-4 h-4 text-amber-600" aria-hidden="true" />
-                <span>Komitmen Responsif JobConnect</span>
-              </div>
-              <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                Mitra memiliki batas evaluasi maksimal 14 hari kerja. Pelamar berhak memantau linimasa progres seleksi secara transparan tanpa digantung.
-              </p>
-            </div>
-
-            {/* Kamus Istilah Karir */}
-            <div className="bg-white rounded-[24px] border border-black/[0.08] p-4 shadow-card flex items-center justify-between gap-3">
-              <span className="text-xs font-semibold text-slate-600">
-                Bingung arti istilah kerja?
-              </span>
-              <CareerGlossaryTrigger />
-            </div>
+            {/* Jaminan Bebas Calo, Anti-Ghosting, & Kamus Istilah */}
+            <JobTrustSidebar
+              jobId={job.id}
+              jobTitle={job.title}
+              jobSlug={job.slug}
+            />
           </aside>
         </div>
       </div>

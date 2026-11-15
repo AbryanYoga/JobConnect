@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Copy, Check, Share2, MessageCircle } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 interface ShareJobButtonsProps {
   jobTitle: string;
@@ -20,6 +21,7 @@ export function ShareJobButtons({
   jobSlug,
   className = "",
 }: ShareJobButtonsProps) {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const getTargetUrl = () => {
@@ -60,7 +62,7 @@ export function ShareJobButtons({
       lines.push(`*Gaji:* ${salaryText}`);
     }
     lines.push("");
-    lines.push("Lamar secara resmi dan gratis melalui JobConnect:");
+    lines.push(t("Lamar secara resmi dan gratis melalui JobConnect:", "Apply officially and free of charge on JobConnect:"));
     lines.push(targetUrl);
 
     return `https://api.whatsapp.com/send?text=${encodeURIComponent(lines.join("\n"))}`;
@@ -70,7 +72,7 @@ export function ShareJobButtons({
     <div className={`space-y-3 ${className}`}>
       <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
         <Share2 className="w-3.5 h-3.5 text-navy-800" aria-hidden="true" />
-        <span>Bagikan Lowongan Ini</span>
+        <span>{t("Bagikan Lowongan Ini", "Share This Vacancy")}</span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -80,10 +82,10 @@ export function ShareJobButtons({
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-2xs min-h-[44px]"
-          aria-label={`Bagikan lowongan ${jobTitle} ke WhatsApp`}
+          aria-label={`${t("Bagikan lowongan", "Share vacancy")} ${jobTitle} WhatsApp`}
         >
           <MessageCircle className="w-4 h-4 text-white fill-current shrink-0" aria-hidden="true" />
-          <span>Kirim ke WhatsApp</span>
+          <span>{t("Kirim ke WhatsApp", "Send to WhatsApp")}</span>
         </a>
 
         {/* Tombol Salin Tautan */}
@@ -95,17 +97,17 @@ export function ShareJobButtons({
               ? "bg-emerald-50 text-emerald-800 border-emerald-300"
               : "bg-white hover:bg-slate-50 text-slate-800 border-black/10"
           }`}
-          aria-label="Salin tautan lowongan ke papan klip"
+          aria-label={t("Salin tautan lowongan ke papan klip", "Copy vacancy link to clipboard")}
         >
           {copied ? (
             <>
               <Check className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
-              <span>Tautan Tersalin!</span>
+              <span>{t("Tautan Tersalin!", "Link Copied!")}</span>
             </>
           ) : (
             <>
               <Copy className="w-4 h-4 text-slate-600 shrink-0" aria-hidden="true" />
-              <span>Salin Tautan</span>
+              <span>{t("Salin Tautan", "Copy Link")}</span>
             </>
           )}
         </button>
