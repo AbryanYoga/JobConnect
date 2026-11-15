@@ -102,6 +102,43 @@ export const loginSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(1, "Email wajib diisi")
+    .email("Email tidak valid. Contoh: nama@gmail.com")
+    .max(EMAIL_MAX, `Email maksimal ${EMAIL_MAX} karakter`),
+});
+
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+
+export const verifyOtpSchema = z.object({
+  otp: z
+    .string()
+    .trim()
+    .length(6, "Kode OTP harus terdiri dari 6 digit angka")
+    .regex(/^\d{6}$/, "Kode OTP hanya boleh berisi angka"),
+});
+
+export type VerifyOtpInput = z.infer<typeof verifyOtpSchema>;
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(PASSWORD_MIN, `Kata sandi baru minimal ${PASSWORD_MIN} karakter`)
+      .max(PASSWORD_MAX, `Kata sandi baru maksimal ${PASSWORD_MAX} karakter`),
+    confirmPassword: z.string().min(1, "Konfirmasi kata sandi baru wajib diisi"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Konfirmasi kata sandi baru tidak sama",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
 /**
  * Memetakan peran pendaftaran ke role database.
  * Nilai admin sengaja tidak ada dalam pemetaan ini untuk mencegah eskalasi hak akses.
