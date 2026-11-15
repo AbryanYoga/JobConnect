@@ -151,9 +151,9 @@ export const TRANSLATIONS: Record<string, string> = {
   "Bank Mandiri merekrut Officer Development Program nasional":
     "Bank Mandiri recruits national Officer Development Program",
   "8.450 pelamar": "8,450 applicants",
-  "Budi Santoso diterima sebagai UI/UX Designer di Bank Mitra":
-    "Budi Santoso hired as UI/UX Designer at Partner Bank",
-  "Gaji Rp 14 - 20 Jt": "Salary Rp 14 - 20 M",
+  "PT Bank Rakyat Indonesia merekrut Management Trainee & IT":
+    "PT Bank Rakyat Indonesia recruits Management Trainee & IT",
+  "12.840 pelamar": "12,840 applicants",
   "BCA Finance Mitra membuka Staff Operasional wilayah Surabaya":
     "BCA Finance Partner opens Operations Staff in Surabaya",
   "146 lowongan baru": "146 new vacancies",

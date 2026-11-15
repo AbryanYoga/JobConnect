@@ -105,11 +105,11 @@ const HERO_CASCADE_CARDS = [
   {
     cls: "bmc-scroll-l3 absolute top-[520px] xl:top-[550px] left-2 xl:left-6 2xl:left-12 w-48 xl:w-56 2xl:w-60 pointer-events-auto",
     rotate: "-rotate-3",
-    logo: { type: "text" as const, text: "BS", bg: "bg-blue-600" },
-    titleId: "Budi Santoso diterima sebagai UI/UX Designer di Bank Mitra",
-    titleEn: "Budi Santoso hired as UI/UX Designer at Partner Bank",
-    statId: "Gaji Rp 14 - 20 Jt",
-    statEn: "Salary Rp 14 - 20 M",
+    logo: { type: "img" as const, src: "/logos/companies/bri.svg", alt: "Bank BRI", pad: "p-1" },
+    titleId: "PT Bank Rakyat Indonesia merekrut Management Trainee & IT",
+    titleEn: "PT Bank Rakyat Indonesia recruits Management Trainee & IT",
+    statId: "12.840 pelamar",
+    statEn: "12,840 applicants",
   },
   {
     cls: "bmc-scroll-r1 absolute top-8 right-3 xl:right-8 2xl:right-14 w-48 xl:w-56 2xl:w-60 pointer-events-auto",
@@ -293,24 +293,6 @@ export function BmcLandingPage({
         className="relative z-20 pt-10 sm:pt-16 pb-16 sm:pb-36 px-4 sm:px-6 lg:px-8 overflow-x-clip overflow-y-visible min-h-0 lg:min-h-[820px]"
       >
         <div className="mx-auto max-w-3xl text-center relative z-20 space-y-6 sm:space-y-8">
-          {/* Badge Rating & Kepercayaan Atas Hero */}
-          <div className="hero-anim-item inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#222222]/10 shadow-2xs">
-            <div className="flex items-center gap-0.5 text-emerald-600">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <svg
-                  key={i}
-                  className="w-4 h-4 fill-emerald-600"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <span className="text-xs sm:text-sm font-semibold text-[#1F2022]">
-              {t("100% Terverifikasi Admin • Bebas Calo & Pungli", "100% Admin Verified • Zero Scams & Brokers")}
-            </span>
-          </div>
-
           {/* Headline Utama Besar & Hangat */}
           <h1 className="hero-anim-item text-4xl sm:text-6xl lg:text-7xl font-black text-[#0D0C23] tracking-tight leading-[1.08] max-w-3xl mx-auto">
             {t("Mulai langkah karier impianmu tanpa rasa cemas.", "Take the next step in your dream career with confidence.")}
@@ -406,21 +388,15 @@ export function BmcLandingPage({
           {HERO_CASCADE_CARDS.map((card, i) => (
             <div key={i} className={card.cls}>
               <div className={`bmc-card-inner bg-white p-4 xl:p-5 rounded-3xl border border-black/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.06)] hover:shadow-card-md hover:-translate-y-1 transition duration-200 ${card.rotate} text-left`}>
-                {card.logo.type === "img" ? (
-                  <div className={`w-11 h-11 rounded-full bg-white border border-slate-200/90 ${card.logo.pad || "p-1"} flex items-center justify-center shadow-2xs overflow-hidden shrink-0`}>
-                    <Image
-                      src={card.logo.src}
-                      alt={card.logo.alt}
-                      width={38}
-                      height={38}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                ) : (
-                  <div className={`w-11 h-11 rounded-full ${card.logo.bg} text-white font-black text-sm flex items-center justify-center shadow-2xs shrink-0`}>
-                    {card.logo.text}
-                  </div>
-                )}
+                <div className={`w-11 h-11 rounded-full bg-white border border-slate-200/90 ${card.logo.pad || "p-1"} flex items-center justify-center shadow-2xs overflow-hidden shrink-0`}>
+                  <Image
+                    src={card.logo.src}
+                    alt={card.logo.alt}
+                    width={38}
+                    height={38}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
                 <p className="mt-3 text-xs xl:text-[13px] font-bold text-[#0D0C23] leading-snug line-clamp-3">
                   {t(card.titleId, card.titleEn)}
                 </p>
