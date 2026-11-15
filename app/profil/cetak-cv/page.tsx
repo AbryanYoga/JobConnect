@@ -34,6 +34,7 @@ export default async function CetakCvPage() {
       email,
       phone,
       headline,
+      avatar_url,
       birth_date,
       education_level,
       education_institution,
@@ -55,9 +56,10 @@ export default async function CetakCvPage() {
       .eq("id", profile.city_id)
       .maybeSingle();
     if (cityData) {
-      const typeStr = cityData.type === "kota" ? "Kota" : "Kab.";
+      const cleanCity = cityData.name.replace(/^(Kabupaten|Kota)\s+/i, "");
+      const typePrefix = cityData.type === "kota" ? "Kota" : "Kab.";
       const provName = (cityData.provinces as { name: string } | null)?.name;
-      locationText = `${typeStr} ${cityData.name}${provName ? `, ${provName}` : ""}`;
+      locationText = `${typePrefix} ${cleanCity}${provName ? `, ${provName}` : ""}`;
     }
   } else if (profile?.province_id) {
     const { data: provData } = await supabase
@@ -84,6 +86,7 @@ export default async function CetakCvPage() {
         email: profile?.email || user.email || "",
         phone: profile?.phone || null,
         headline: profile?.headline || null,
+        avatarUrl: profile?.avatar_url || null,
         birthDate: profile?.birth_date || null,
         age,
         educationLevel: eduLabel,
