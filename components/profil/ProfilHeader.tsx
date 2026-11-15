@@ -2,7 +2,8 @@
 
 import React from "react";
 import Image from "next/image";
-import { Calendar, ShieldCheck, MapPin, PencilLine } from "lucide-react";
+import Link from "next/link";
+import { Calendar, ShieldCheck, MapPin, PencilLine, Printer } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
 interface ProfilHeaderProps {
@@ -96,6 +97,19 @@ export function ProfilHeader({
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full sm:w-auto">
+          {!isEditing && (
+            <Link
+              href="/profil/cetak-cv"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-white hover:bg-slate-50 text-navy-950 font-bold text-xs transition border border-black/10 shadow-2xs min-h-[44px]"
+              title={t("Cetak lembar CV profil siap pakai", "Print ready-to-use profile CV")}
+            >
+              <Printer className="w-4 h-4 text-navy-800" aria-hidden="true" />
+              <span>{t("Cetak CV (PDF)", "Print CV (PDF)")}</span>
+            </Link>
+          )}
+
           {onEdit && !isEditing && (
             <button
               type="button"

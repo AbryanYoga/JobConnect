@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useTransition } from "react";
+import Link from "next/link";
 import {
   FileText,
   Upload,
@@ -10,6 +11,7 @@ import {
   AlertCircle,
   Loader2,
   Zap,
+  Printer,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
@@ -255,6 +257,25 @@ export function DefaultCvManager({
           </div>
         </div>
       )}
+
+      {/* Tautan Cetak CV Format Standar ATS */}
+      <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <span className="text-slate-600 font-medium">
+          {t(
+            "Butuh berkas CV fisik untuk wawancara kerja langsung?",
+            "Need a physical printed CV for walk-in interview?"
+          )}
+        </span>
+        <Link
+          href="/profil/cetak-cv"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 font-bold text-navy-900 hover:text-navy-950 hover:underline shrink-0"
+        >
+          <Printer className="w-3.5 h-3.5 text-navy-800" aria-hidden="true" />
+          <span>{t("Cetak CV Standar ATS dari Profil", "Print ATS CV from Profile")}</span>
+        </Link>
+      </div>
 
       {/* Hidden File Input */}
       <input
