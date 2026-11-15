@@ -22,6 +22,7 @@ import { BookmarkButton } from "@/components/lowongan/BookmarkButton";
 import { ReportJobModal } from "@/components/lowongan/ReportJobModal";
 import { ShareJobButtons } from "@/components/lowongan/ShareJobButtons";
 import { JobMatchScore } from "@/components/lowongan/JobMatchScore";
+import { CareerGlossaryTrigger } from "@/components/ui/CareerGlossaryModal";
 
 interface JobDetailPageProps {
   params: Promise<{
@@ -589,6 +590,14 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               <p className="text-xs text-slate-600 leading-relaxed font-medium">
                 Mitra memiliki batas evaluasi maksimal 14 hari kerja. Pelamar berhak memantau linimasa progres seleksi secara transparan tanpa digantung.
               </p>
+            </div>
+
+            {/* Kamus Istilah Karir */}
+            <div className="bg-white rounded-[24px] border border-black/[0.08] p-4 shadow-card flex items-center justify-between gap-3">
+              <span className="text-xs font-semibold text-slate-600">
+                Bingung arti istilah kerja?
+              </span>
+              <CareerGlossaryTrigger />
             </div>
           </aside>
         </div>

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { useLanguage } from "@/lib/i18n";
+import { CareerGlossaryTrigger } from "@/components/ui/CareerGlossaryModal";
 
 /**
  * Komponen LogoIcon JobConnect:
@@ -122,8 +123,10 @@ function FooterCard() {
             </h4>
             <ul className="space-y-3.5 list-none p-0 m-0">
               <FooterLink href="/tentang">{t("Alur Melamar", "Application Process")}</FooterLink>
-              <FooterLink href="/tentang">{t("Panduan CV", "CV Guide")}</FooterLink>
-              <FooterLink href="/tentang">{t("Verifikasi Mitra", "Partner Verification")}</FooterLink>
+              <FooterLink href="/profil/cetak-cv">{t("Cetak CV ATS", "Print ATS CV")}</FooterLink>
+              <li>
+                <CareerGlossaryTrigger />
+              </li>
               <FooterLink href="/tentang">{t("Keamanan Akun", "Account Security")}</FooterLink>
             </ul>
           </div>
