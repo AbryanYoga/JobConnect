@@ -16,6 +16,9 @@ import {
   Globe,
   FileText,
   Heart,
+  Sparkles,
+  Zap,
+  CheckCircle2,
 } from "lucide-react";
 import {
   JOB_TYPE_LABEL,
@@ -799,6 +802,94 @@ export function BmcLandingPage({
                 </span>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          PANDUAN TIGA LANGKAH MELAMAR RAMAH SEMUA KALANGAN UMUR
+          ======================================================== */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white/70 border-y border-black/[0.04]">
+        <div className="mx-auto max-w-7xl space-y-8">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold border border-amber-300">
+              <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+              <span>{t("Panduan Ramah Seluruh Usia", "Guide for All Ages")}</span>
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-black text-[#0D0C23] tracking-tight">
+              {t("Tiga Langkah Mudah Melamar Pekerjaan", "Three Simple Steps to Apply")}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+              {t(
+                "Dirancang praktis dan jelas agar siapa pun, dari lulusan baru SMK hingga pekerja senior, dapat melamar dengan mudah.",
+                "Designed simply so anyone, from fresh graduates to senior workers, can apply with confidence."
+              )}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Langkah 1 */}
+            <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4 relative overflow-hidden">
+              <span className="text-5xl font-black text-slate-100 absolute -right-2 -bottom-2 select-none pointer-events-none">
+                01
+              </span>
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-900 border border-amber-200 flex items-center justify-center font-black text-sm shadow-2xs">
+                <Search className="w-6 h-6 text-amber-700" aria-hidden="true" />
+              </div>
+              <div className="space-y-1.5 relative">
+                <h3 className="text-lg font-black text-navy-950">
+                  {t("1. Cari Lowongan yang Sesuai", "1. Find Matching Vacancy")}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                  {t(
+                    "Pilih lowongan kerja resmi di kota atau provinsi tempat tinggal Anda, atau pilih opsi kerja remote dari rumah.",
+                    "Choose verified job vacancies in your domicile city or province, or opt for remote work from home."
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* Langkah 2 */}
+            <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4 relative overflow-hidden">
+              <span className="text-5xl font-black text-slate-100 absolute -right-2 -bottom-2 select-none pointer-events-none">
+                02
+              </span>
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-900 border border-emerald-200 flex items-center justify-center font-black text-sm shadow-2xs">
+                <Zap className="w-6 h-6 text-emerald-700 fill-emerald-600" aria-hidden="true" />
+              </div>
+              <div className="space-y-1.5 relative">
+                <h3 className="text-lg font-black text-navy-950">
+                  {t("2. Lamar Cepat (Quick Apply)", "2. Quick 1-Click Apply")}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                  {t(
+                    "Simpan CV utama Anda satu kali di profil, lalu kirimkan lamaran hanya dengan satu kali klik tanpa perlu unggah ulang dokumen.",
+                    "Save your main CV once in your profile, then submit applications with a single click without repeated file uploads."
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* Langkah 3 */}
+            <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-4 relative overflow-hidden">
+              <span className="text-5xl font-black text-slate-100 absolute -right-2 -bottom-2 select-none pointer-events-none">
+                03
+              </span>
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-900 border border-blue-200 flex items-center justify-center font-black text-sm shadow-2xs">
+                <CheckCircle2 className="w-6 h-6 text-blue-700" aria-hidden="true" />
+              </div>
+              <div className="space-y-1.5 relative">
+                <h3 className="text-lg font-black text-navy-950">
+                  {t("3. Pantau & Terima Panggilan", "3. Track & Get Called")}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                  {t(
+                    "Pantau progres linimasa secara transparan (Anti-Ghosting). Dapatkan undangan wawancara resmi langsung lewat WhatsApp dan email Anda.",
+                    "Track application progress transparently with Anti-Ghosting guarantee. Receive official interview invites via WhatsApp and email."
+                  )}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
