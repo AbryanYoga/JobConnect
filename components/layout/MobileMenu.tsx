@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Menu,
   X,
@@ -27,6 +28,7 @@ interface MobileMenuProps {
   actions?: NavAction[];
   role?: Role;
   userName?: string | null;
+  userAvatar?: string | null;
 }
 
 const ROLE_LABEL: Record<Role, { id: string; en: string }> = {
@@ -77,6 +79,7 @@ export function MobileMenu({
   links,
   role = "tamu",
   userName,
+  userAvatar,
 }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -180,15 +183,37 @@ export function MobileMenu({
           >
             {/* 1. Profil Pengguna yang Sedang Masuk */}
             {role !== "tamu" && userName && (
-              <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-black/[0.08] shadow-2xs">
-                <span
-                  className="w-11 h-11 rounded-full bg-navy-900 text-white text-sm font-bold flex items-center justify-center shrink-0 shadow-2xs"
-                  aria-hidden="true"
-                >
-                  {getUserInitials(userName)}
-                </span>
+              <Link
+                href={
+                  role === "perusahaan"
+                    ? "/mitra/profil-perusahaan"
+                    : role === "admin"
+                    ? "/admin"
+                    : "/profil"
+                }
+                onClick={closeMenu}
+                className="flex items-center gap-3 p-3 bg-white hover:bg-slate-50 transition rounded-2xl border border-black/[0.08] shadow-2xs group"
+                title={t("Buka profil akun", "Open profile account")}
+              >
+                {userAvatar ? (
+                  <Image
+                    src={userAvatar}
+                    alt={`Foto profil ${userName}`}
+                    width={44}
+                    height={44}
+                    className="w-11 h-11 rounded-full object-cover shrink-0 border border-black/10 shadow-2xs"
+                    unoptimized
+                  />
+                ) : (
+                  <span
+                    className="w-11 h-11 rounded-full bg-navy-900 text-white text-sm font-bold flex items-center justify-center shrink-0 shadow-2xs"
+                    aria-hidden="true"
+                  >
+                    {getUserInitials(userName)}
+                  </span>
+                )}
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-black text-navy-950 truncate">
+                  <p className="text-sm font-black text-navy-950 truncate group-hover:text-navy-700 transition-colors">
                     {userName}
                   </p>
                   <span
@@ -199,7 +224,7 @@ export function MobileMenu({
                       : ROLE_LABEL[role].id}
                   </span>
                 </div>
-              </div>
+              </Link>
             )}
 
             {/* 2. Switcher Bahasa & Ukuran Teks Aksesibilitas */}

@@ -157,6 +157,7 @@ export async function Navbar({ role }: NavbarProps = {}) {
             actions={actions}
             role={userRole}
             userName={userName}
+            userAvatar={userAvatar}
           />
         </div>
       </div>
