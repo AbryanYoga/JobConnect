@@ -189,7 +189,27 @@ export function RegisterForm() {
     });
 
     if (!validationResult.success) {
-      setErrors(fieldErrors(validationResult.error));
+      const errs = fieldErrors(validationResult.error);
+      setErrors(errs);
+      const fieldIdMap: Record<string, string> = {
+        name: "register-name",
+        email: "register-email",
+        password: "register-password",
+        confirmPassword: "register-confirm-password",
+      };
+      const firstKey = Object.keys(errs)[0];
+      const targetId = fieldIdMap[firstKey];
+      if (targetId) {
+        setTimeout(() => {
+          const el = document.getElementById(targetId);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            try {
+              el.focus({ preventScroll: true });
+            } catch {}
+          }
+        }, 50);
+      }
       return;
     }
 
@@ -618,6 +638,47 @@ export function RegisterForm() {
             error={errors.confirmPassword}
             className="rounded-2xl bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white text-sm py-3 font-medium transition-all"
           />
+
+          {/* Peringatan error tepat di atas tombol submit agar user langsung tahu */}
+          {Object.keys(errors).length > 0 && (
+            <div
+              role="alert"
+              className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs font-medium flex items-center justify-between gap-3 animate-in fade-in"
+            >
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" aria-hidden="true" />
+                <span>
+                  <strong className="font-bold">{t("Periksa isian:", "Check input:")}</strong>{" "}
+                  {errors.general || Object.values(errors)[0]}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const fieldIdMap: Record<string, string> = {
+                    name: "register-name",
+                    email: "register-email",
+                    password: "register-password",
+                    confirmPassword: "register-confirm-password",
+                  };
+                  const firstKey = Object.keys(errors)[0];
+                  const targetId = fieldIdMap[firstKey];
+                  if (targetId) {
+                    const el = document.getElementById(targetId);
+                    if (el) {
+                      el.scrollIntoView({ behavior: "smooth", block: "center" });
+                      try {
+                        el.focus({ preventScroll: true });
+                      } catch {}
+                    }
+                  }
+                }}
+                className="text-xs font-bold text-red-700 underline shrink-0 hover:text-red-900 cursor-pointer"
+              >
+                {t("Lihat Kolom", "View Field")}
+              </button>
+            </div>
+          )}
 
           {/* Tombol Submit Pendaftaran */}
           <div className="pt-2">

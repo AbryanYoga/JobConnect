@@ -9,6 +9,7 @@ import {
   Briefcase,
   MapPin,
   Check,
+  AlertCircle,
 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -447,6 +448,53 @@ export function ProfilPerusahaanForm({
           error={errors.description}
         />
       </div>
+
+      {/* Peringatan error tepat di atas tombol submit agar user langsung tahu */}
+      {Object.keys(errors).length > 0 && (
+        <div
+          role="alert"
+          className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm font-medium flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 shadow-2xs"
+        >
+          <div className="flex items-center gap-2.5">
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" aria-hidden="true" />
+            <span>
+              <strong className="font-bold">Periksa isian:</strong>{" "}
+              {errors.general || Object.values(errors)[0]}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              const fieldIdMap: Record<string, string> = {
+                name: "company-name",
+                website: "company-website",
+                industry: "company-industry",
+                size: "company-size",
+                provinceId: "company-province",
+                cityId: "company-city",
+                addressNote: "company-address-note",
+                description: "company-description",
+              };
+              const firstKey = Object.keys(errors)[0];
+              const targetId = fieldIdMap[firstKey];
+              if (targetId) {
+                const el = document.getElementById(targetId);
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth", block: "center" });
+                  try {
+                    el.focus({ preventScroll: true });
+                  } catch {}
+                }
+              } else {
+                window.scrollTo({ top: 120, behavior: "smooth" });
+              }
+            }}
+            className="text-xs font-bold text-red-700 underline shrink-0 hover:text-red-900 cursor-pointer text-left sm:text-right"
+          >
+            Lihat Kolom yang Kurang
+          </button>
+        </div>
+      )}
 
       {/* Tombol Simpan */}
       <div className="flex items-center justify-end gap-3 pt-2">

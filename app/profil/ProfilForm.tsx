@@ -163,6 +163,38 @@ export function ProfilForm({
     avatarUrl,
   ]);
 
+  const fieldIdMap: Record<string, string> = {
+    name: "profil-name",
+    birthDate: "profil-birthdate",
+    phone: "profil-phone",
+    provinceId: "profil-province",
+    cityId: "profil-city",
+    headline: "profil-headline",
+    educationLevel: "profil-edu-level",
+    educationInstitution: "profil-edu-inst",
+    bio: "profil-bio",
+    linkedinUrl: "profil-linkedin",
+    portfolioUrl: "profil-web-portfolio",
+  };
+
+  const scrollToFirstError = (errs: Record<string, string>) => {
+    const firstKey = Object.keys(errs)[0];
+    const targetId = fieldIdMap[firstKey];
+    setTimeout(() => {
+      if (targetId) {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          try {
+            el.focus({ preventScroll: true });
+          } catch {}
+          return;
+        }
+      }
+      window.scrollTo({ top: 120, behavior: "smooth" });
+    }, 60);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuccessMessage(null);
@@ -187,36 +219,7 @@ export function ProfilForm({
     if (!validationResult.success) {
       const errs = fieldErrors(validationResult.error);
       setErrors(errs);
-      const fieldIdMap: Record<string, string> = {
-        name: "profil-name",
-        birthDate: "profil-birthdate",
-        phone: "profil-phone",
-        provinceId: "profil-province",
-        cityId: "profil-city",
-        headline: "profil-headline",
-        educationLevel: "profil-edu-level",
-        educationInstitution: "profil-edu-inst",
-        bio: "profil-bio",
-        linkedinUrl: "profil-linkedin",
-        portfolioUrl: "profil-web-portfolio",
-      };
-      const firstKey = Object.keys(errs)[0];
-      const targetId = fieldIdMap[firstKey];
-      if (targetId) {
-        setTimeout(() => {
-          const el = document.getElementById(targetId);
-          if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "center" });
-            try {
-              el.focus({ preventScroll: true });
-            } catch {}
-          } else {
-            window.scrollTo({ top: 120, behavior: "smooth" });
-          }
-        }, 50);
-      } else {
-        window.scrollTo({ top: 120, behavior: "smooth" });
-      }
+      scrollToFirstError(errs);
       return;
     }
 
@@ -240,6 +243,7 @@ export function ProfilForm({
         router.refresh();
       } else if (res.error) {
         setErrors({ general: res.error });
+        window.scrollTo({ top: 120, behavior: "smooth" });
       }
     }
   };
@@ -487,11 +491,18 @@ export function ProfilForm({
                   setBirthDate(e.target.value);
                   if (errors.birthDate) setErrors((prev) => ({ ...prev, birthDate: "" }));
                 }}
-                className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition-all text-slate-900"
+                className={`w-full px-4 py-3 rounded-2xl border text-sm font-medium transition-all text-slate-900 scroll-mt-24 ${
+                  errors.birthDate
+                    ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                    : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+                }`}
               />
             </div>
             {errors.birthDate ? (
-              <p className="text-xs text-red-600 font-medium">{errors.birthDate}</p>
+              <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.birthDate}</span>
+              </p>
             ) : (
               <p className="text-xs text-slate-500">
                 {t(
@@ -563,10 +574,15 @@ export function ProfilForm({
             <select
               id="profil-province"
               value={provinceId}
-              onChange={(e) =>
-                handleProvinceChange(e.target.value ? Number(e.target.value) : "")
-              }
-              className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+              onChange={(e) => {
+                handleProvinceChange(e.target.value ? Number(e.target.value) : "");
+                if (errors.provinceId) setErrors((prev) => ({ ...prev, provinceId: "" }));
+              }}
+              className={`w-full px-4 py-3 rounded-2xl border text-sm font-medium transition text-black scroll-mt-24 ${
+                errors.provinceId
+                  ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                  : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+              }`}
             >
               <option value="">{t("-- Pilih Provinsi --", "-- Select Province --")}</option>
               {provinces.map((prov) => (
@@ -576,7 +592,10 @@ export function ProfilForm({
               ))}
             </select>
             {errors.provinceId && (
-              <p className="text-xs text-red-600 font-medium">{errors.provinceId}</p>
+              <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.provinceId}</span>
+              </p>
             )}
           </div>
 
@@ -593,7 +612,11 @@ export function ProfilForm({
                 setCityId(e.target.value ? Number(e.target.value) : "");
                 if (errors.cityId) setErrors((prev) => ({ ...prev, cityId: "" }));
               }}
-              className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black disabled:opacity-50"
+              className={`w-full px-4 py-3 rounded-2xl border text-sm font-medium transition text-black disabled:opacity-50 scroll-mt-24 ${
+                errors.cityId
+                  ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                  : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+              }`}
             >
               <option value="">
                 {!provinceId
@@ -617,7 +640,10 @@ export function ProfilForm({
               })}
             </select>
             {errors.cityId && (
-              <p className="text-xs text-red-600 font-medium">{errors.cityId}</p>
+              <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.cityId}</span>
+              </p>
             )}
           </div>
         </div>
@@ -747,10 +773,17 @@ export function ProfilForm({
               if (errors.bio) setErrors((prev) => ({ ...prev, bio: "" }));
             }}
             maxLength={1500}
-            className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black resize-none"
+            className={`w-full px-4 py-3 rounded-2xl border text-sm font-medium transition text-black resize-none scroll-mt-24 ${
+              errors.bio
+                ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+            }`}
           />
           {errors.bio && (
-            <p className="text-xs text-red-600 font-medium">{errors.bio}</p>
+            <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{errors.bio}</span>
+            </p>
           )}
         </div>
 
@@ -774,11 +807,18 @@ export function ProfilForm({
                   if (errors.linkedinUrl)
                     setErrors((prev) => ({ ...prev, linkedinUrl: "" }));
                 }}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+                className={`w-full pl-10 pr-4 py-3 rounded-2xl border text-sm font-medium transition text-black scroll-mt-24 ${
+                  errors.linkedinUrl
+                    ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                    : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+                }`}
               />
             </div>
             {errors.linkedinUrl ? (
-              <p className="text-xs text-red-600 font-medium">{errors.linkedinUrl}</p>
+              <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.linkedinUrl}</span>
+              </p>
             ) : (
               <p className="text-[11px] text-slate-500">
                 {t(
@@ -808,11 +848,18 @@ export function ProfilForm({
                   if (errors.portfolioUrl)
                     setErrors((prev) => ({ ...prev, portfolioUrl: "" }));
                 }}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+                className={`w-full pl-10 pr-4 py-3 rounded-2xl border text-sm font-medium transition text-black scroll-mt-24 ${
+                  errors.portfolioUrl
+                    ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                    : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+                }`}
               />
             </div>
             {errors.portfolioUrl ? (
-              <p className="text-xs text-red-600 font-medium">{errors.portfolioUrl}</p>
+              <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.portfolioUrl}</span>
+              </p>
             ) : (
               <p className="text-[11px] text-slate-500">
                 {t(
@@ -884,6 +931,29 @@ export function ProfilForm({
           </div>
         </label>
       </div>
+
+      {/* Peringatan error tepat di atas tombol submit agar user langsung tahu */}
+      {Object.keys(errors).length > 0 && (
+        <div
+          role="alert"
+          className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm font-medium flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 shadow-2xs"
+        >
+          <div className="flex items-center gap-2.5">
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" aria-hidden="true" />
+            <span>
+              <strong className="font-bold">{t("Periksa isian:", "Check input:")}</strong>{" "}
+              {errors.general || Object.values(errors)[0]}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => scrollToFirstError(errors)}
+            className="text-xs font-bold text-red-700 underline shrink-0 hover:text-red-900 cursor-pointer text-left sm:text-right"
+          >
+            {t("Lihat Kolom yang Kurang", "Go to Missing Field")}
+          </button>
+        </div>
+      )}
 
       {/* Tombol Simpan Terpadu */}
       <div className="flex items-center justify-end gap-3 pt-2">

@@ -29,11 +29,17 @@ export function UbahPasswordModal({ isOpen, onClose }: UbahPasswordModalProps) {
 
     if (password.length < 8) {
       setErrorMessage(t("Kata sandi baru minimal 8 karakter.", "New password must be at least 8 characters."));
+      setTimeout(() => {
+        document.getElementById("new-password")?.focus();
+      }, 50);
       return;
     }
 
     if (password !== confirmPassword) {
       setErrorMessage(t("Konfirmasi kata sandi tidak cocok.", "Password confirmation does not match."));
+      setTimeout(() => {
+        document.getElementById("confirm-password")?.focus();
+      }, 50);
       return;
     }
 
@@ -100,11 +106,12 @@ export function UbahPasswordModal({ isOpen, onClose }: UbahPasswordModalProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 block">
+            <label htmlFor="new-password" className="text-xs font-bold text-slate-700 block">
               {t("Kata Sandi Baru", "New Password")}
             </label>
             <div className="relative">
               <input
+                id="new-password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -125,10 +132,11 @@ export function UbahPasswordModal({ isOpen, onClose }: UbahPasswordModalProps) {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 block">
+            <label htmlFor="confirm-password" className="text-xs font-bold text-slate-700 block">
               {t("Konfirmasi Kata Sandi Baru", "Confirm New Password")}
             </label>
             <input
+              id="confirm-password"
               type={showPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

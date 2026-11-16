@@ -67,7 +67,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             aria-invalid={!!error}
             aria-describedby={describedBy}
-            className={`w-full min-h-[44px] h-11 px-3.5 py-2 text-sm bg-white text-slate-900 placeholder:text-slate-400 rounded-control border transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed ${
+            className={`w-full min-h-[44px] h-11 px-3.5 py-2 text-sm bg-white text-slate-900 placeholder:text-slate-400 rounded-control border transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed scroll-mt-24 ${
               leftIcon ? "pl-10" : ""
             } ${rightIcon ? "pr-10" : ""} ${
               error

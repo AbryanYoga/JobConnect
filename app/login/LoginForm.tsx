@@ -63,7 +63,18 @@ export function LoginForm() {
     });
 
     if (!validationResult.success) {
-      setErrors(fieldErrors(validationResult.error));
+      const errs = fieldErrors(validationResult.error);
+      setErrors(errs);
+      const targetId = errs.email ? "login-email" : "login-password";
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          try {
+            el.focus({ preventScroll: true });
+          } catch {}
+        }
+      }, 50);
       return;
     }
 

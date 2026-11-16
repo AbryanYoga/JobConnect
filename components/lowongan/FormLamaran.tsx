@@ -261,11 +261,26 @@ export function FormLamaran({
 
     if (!useDefaultCv && !cvFile) {
       setFileError("Silakan unggah berkas CV Anda terlebih dahulu.");
+      setTimeout(() => {
+        const el = document.getElementById("cv-file-area");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 50);
       return;
     }
 
     if (coverLetter.length > COVER_LETTER_MAX) {
       setErrorMessage(`Surat pengantar maksimal ${COVER_LETTER_MAX} karakter.`);
+      setTimeout(() => {
+        const el = document.getElementById("cover-letter");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          try {
+            el.focus({ preventScroll: true });
+          } catch {}
+        }
+      }, 50);
       return;
     }
 
@@ -613,6 +628,7 @@ export function FormLamaran({
 
               {!cvFile ? (
                 <div
+                  id="cv-file-area"
                   onClick={() => !isConvertingCv && fileInputRef.current?.click()}
                   onKeyDown={(e) => {
                     if ((e.key === "Enter" || e.key === " ") && !isConvertingCv) {
@@ -626,9 +642,9 @@ export function FormLamaran({
                     "Pilih berkas CV format PDF atau foto gambar maksimal 2 MB",
                     "Choose CV PDF or image file maximum 2 MB"
                   )}
-                  className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition ${
+                  className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition scroll-mt-24 ${
                     fileError
-                      ? "border-red-300 bg-red-50/40 hover:bg-red-50/70"
+                      ? "border-red-500 bg-red-50/40 hover:bg-red-50/70 ring-2 ring-red-200"
                       : "border-black/[0.12] bg-[#FAF8F0]/50 hover:bg-[#FAF8F0] hover:border-black/30"
                   }`}
                 >
@@ -739,9 +755,37 @@ export function FormLamaran({
             value={coverLetter}
             onChange={(e) => setCoverLetter(e.target.value)}
             placeholder={t("Tuliskan perkenalan singkat, ketertarikan Anda pada posisi ini, atau catatan tambahan untuk HRD...")}
-            className="w-full rounded-2xl border border-black/[0.12] bg-[#FAF8F0]/40 p-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-black focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 transition resize-y min-h-[110px]"
+            className="w-full rounded-2xl border border-black/[0.12] bg-[#FAF8F0]/40 p-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-black focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 transition resize-y min-h-[110px] scroll-mt-24"
           />
         </div>
+
+        {/* Peringatan error tepat di atas tombol submit agar pelamar langsung tahu */}
+        {(fileError || errorMessage) && (
+          <div
+            role="alert"
+            className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm font-medium flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 shadow-2xs"
+          >
+            <div className="flex items-center gap-2.5">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" aria-hidden="true" />
+              <span>
+                <strong className="font-bold">{t("Periksa isian:", "Check input:")}</strong>{" "}
+                {fileError || errorMessage}
+              </span>
+            </div>
+            {fileError && (
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById("cv-file-area");
+                  if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+                }}
+                className="text-xs font-bold text-red-700 underline shrink-0 hover:text-red-900 cursor-pointer text-left sm:text-right"
+              >
+                {t("Ke Area Unggah CV", "Go to Upload Area")}
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Tombol Kirim Lamaran */}
         <div className="pt-2">
