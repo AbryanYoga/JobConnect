@@ -30,6 +30,9 @@ export const metadata: Metadata = {
     ],
     apple: "/logos/concept-2-symbol.png",
   },
+  other: {
+    google: "notranslate",
+  },
 };
 
 export const viewport: Viewport = {
@@ -53,8 +56,12 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang={initialLang} className={inter.variable}>
-      <body className="min-h-dvh flex flex-col font-sans bg-[#FAF8F0]">
+    <html
+      lang={initialLang}
+      className={`${inter.variable} notranslate`}
+      translate="no"
+    >
+      <body className="min-h-dvh flex flex-col font-sans bg-[#FAF8F0] notranslate" translate="no">
         <LanguageProvider initialLanguage={initialLang}>
           <a
             href="#konten"
