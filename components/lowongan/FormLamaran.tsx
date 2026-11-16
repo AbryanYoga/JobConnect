@@ -22,6 +22,11 @@ import {
   CV_BUCKET,
   buildCvPath,
 } from "@/lib/validation/lamaran";
+import {
+  convertCvImageToPdf,
+  isSupportedCvFile,
+  SUPPORTED_CV_ACCEPT,
+} from "@/lib/cv/image-to-pdf";
 import { useLanguage } from "@/lib/i18n";
 
 export interface FormLamaranProps {
@@ -60,6 +65,7 @@ export function FormLamaran({
   const [fileError, setFileError] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isConvertingCv, setIsConvertingCv] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [alreadyApplied, setAlreadyApplied] = useState(hasApplied);
   const [submittedAppId, setSubmittedAppId] = useState<number | null>(null);
@@ -75,17 +81,49 @@ export function FormLamaran({
       return;
     }
 
-    const validation = await validateCvFile(file);
-    if (!validation.ok) {
+    if (!isSupportedCvFile(file)) {
       setCvFile(null);
-      setFileError(validation.message || CV_ERROR_MESSAGE);
+      setFileError(
+        t(
+          "Berkas harus berformat PDF, JPG, PNG, atau WEBP.",
+          "File must be in PDF, JPG, PNG, or WEBP format."
+        )
+      );
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
       return;
     }
 
-    setCvFile(file);
+    try {
+      setIsConvertingCv(true);
+      // Konversi otomatis foto/gambar CV ke PDF resmi
+      const pdfFile = await convertCvImageToPdf(file);
+      const validation = await validateCvFile(pdfFile);
+      if (!validation.ok) {
+        setCvFile(null);
+        setFileError(validation.message || CV_ERROR_MESSAGE);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        return;
+      }
+
+      setCvFile(pdfFile);
+    } catch {
+      setCvFile(null);
+      setFileError(
+        t(
+          "Gagal memproses berkas CV. Pastikan berkas gambar atau PDF valid.",
+          "Failed to process CV file. Ensure image or PDF format is valid."
+        )
+      );
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } finally {
+      setIsConvertingCv(false);
+    }
   };
 
   const handleRemoveFile = () => {
@@ -568,38 +606,64 @@ export function FormLamaran({
                 id="cv-file"
                 name="cvFile"
                 type="file"
-                accept=".pdf,application/pdf"
+                accept={SUPPORTED_CV_ACCEPT}
                 onChange={handleFileChange}
                 className="sr-only"
               />
 
               {!cvFile ? (
                 <div
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() => !isConvertingCv && fileInputRef.current?.click()}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
+                    if ((e.key === "Enter" || e.key === " ") && !isConvertingCv) {
                       e.preventDefault();
                       fileInputRef.current?.click();
                     }
                   }}
                   tabIndex={0}
                   role="button"
-                  aria-label={t("Pilih berkas CV format PDF maksimal 2 MB", "Choose CV PDF file maximum 2 MB")}
+                  aria-label={t(
+                    "Pilih berkas CV format PDF atau foto gambar maksimal 2 MB",
+                    "Choose CV PDF or image file maximum 2 MB"
+                  )}
                   className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition ${
                     fileError
                       ? "border-red-300 bg-red-50/40 hover:bg-red-50/70"
                       : "border-black/[0.12] bg-[#FAF8F0]/50 hover:bg-[#FAF8F0] hover:border-black/30"
                   }`}
                 >
-                  <div className="w-12 h-12 rounded-full bg-white border border-black/[0.08] flex items-center justify-center mx-auto text-slate-700 shadow-2xs mb-3">
-                    <Upload className="w-5 h-5 text-slate-700" aria-hidden="true" />
-                  </div>
-                  <p className="text-sm font-bold text-slate-900">
-                    {t("Pilih Berkas CV Anda")}
-                  </p>
-                  <p className="text-xs text-slate-500 mt-1">
-                    {t("Format resmi wajib PDF dengan ukuran maksimal 2 MB")}
-                  </p>
+                  {isConvertingCv ? (
+                    <div className="py-2 flex flex-col items-center justify-center space-y-2">
+                      <Loader2 className="w-8 h-8 text-navy-900 animate-spin" aria-hidden="true" />
+                      <p className="text-sm font-bold text-slate-900">
+                        {t(
+                          "Mengonversi Gambar ke Dokumen PDF...",
+                          "Converting Image to PDF Document..."
+                        )}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {t(
+                          "Menyesuaikan resolusi dan tata letak secara otomatis",
+                          "Automatically adjusting resolution and layout"
+                        )}
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="w-12 h-12 rounded-full bg-white border border-black/[0.08] flex items-center justify-center mx-auto text-slate-700 shadow-2xs mb-3">
+                        <Upload className="w-5 h-5 text-slate-700" aria-hidden="true" />
+                      </div>
+                      <p className="text-sm font-bold text-slate-900">
+                        {t("Pilih Berkas atau Foto CV Anda", "Choose Your CV File or Photo")}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        {t(
+                          "Format didukung: PDF, JPG, PNG, atau WEBP (maksimal 2 MB). Foto CV otomatis dirapikan ke dokumen resmi.",
+                          "Supported formats: PDF, JPG, PNG, or WEBP (max 2 MB). CV images are automatically formatted."
+                        )}
+                      </p>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div className="p-4 rounded-2xl bg-white border border-black/[0.12] shadow-2xs flex items-center justify-between gap-3">

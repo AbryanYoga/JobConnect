@@ -4,7 +4,7 @@ export const CV_MAX_BYTES = 2 * 1024 * 1024;
 export const COVER_LETTER_MAX = 2000;
 export const CV_BUCKET = "cvs";
 
-export const CV_ERROR_MESSAGE = "CV harus berformat PDF dan maksimal 2 MB";
+export const CV_ERROR_MESSAGE = "CV harus berformat PDF atau gambar (JPG/PNG/WEBP) maksimal 2 MB";
 
 /**
  * Skema validasi pengiriman data lamaran pekerjaan.

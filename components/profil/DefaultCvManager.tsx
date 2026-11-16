@@ -14,6 +14,11 @@ import {
   Printer,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
+import {
+  convertCvImageToPdf,
+  isSupportedCvFile,
+  SUPPORTED_CV_ACCEPT,
+} from "@/lib/cv/image-to-pdf";
 
 interface DefaultCvManagerProps {
   initialCvUrl?: string | null;
@@ -39,46 +44,67 @@ export function DefaultCvManager({
   const [cvUrl, setCvUrl] = useState<string | null>(initialCvUrl);
   const [updatedAt, setUpdatedAt] = useState<string | null>(initialUpdatedAt);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isConverting, setIsConverting] = useState(false);
   const [isPending, startTransition] = useTransition();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.type !== "application/pdf") {
+    if (!isSupportedCvFile(file)) {
       setErrorMessage(
-        t("Berkas harus berformat PDF.", "File must be in PDF format.")
-      );
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      return;
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-      setErrorMessage(
-        t("Ukuran berkas maksimal 2 MB.", "File size must not exceed 2 MB.")
+        t(
+          "Berkas harus berformat PDF, JPG, PNG, atau WEBP.",
+          "File must be in PDF, JPG, PNG, or WEBP format."
+        )
       );
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
     setErrorMessage(null);
-    const formData = new FormData();
-    formData.append("cv", file);
 
-    startTransition(async () => {
-      const result = await onUploadAction(formData);
-      if (result.success) {
-        setCvUrl(result.signedUrl || "available");
-        setUpdatedAt(new Date().toISOString());
-      } else {
+    try {
+      setIsConverting(true);
+      // Konversi otomatis jika pengguna memilih foto/gambar CV
+      const pdfFile = await convertCvImageToPdf(file);
+
+      if (pdfFile.size > 2 * 1024 * 1024) {
         setErrorMessage(
-          result.error ||
-            t("Gagal mengunggah CV utama.", "Failed to upload main CV.")
+          t("Ukuran berkas maksimal 2 MB.", "File size must not exceed 2 MB.")
         );
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
       }
+
+      const formData = new FormData();
+      formData.append("cv", pdfFile);
+
+      startTransition(async () => {
+        const result = await onUploadAction(formData);
+        if (result.success) {
+          setCvUrl(result.signedUrl || "available");
+          setUpdatedAt(new Date().toISOString());
+        } else {
+          setErrorMessage(
+            result.error ||
+              t("Gagal mengunggah CV utama.", "Failed to upload main CV.")
+          );
+        }
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      });
+    } catch {
+      setErrorMessage(
+        t(
+          "Gagal memproses berkas CV. Pastikan format gambar atau PDF valid.",
+          "Failed to process CV file. Ensure image or PDF format is valid."
+        )
+      );
       if (fileInputRef.current) fileInputRef.current.value = "";
-    });
+    } finally {
+      setIsConverting(false);
+    }
   };
 
   const handleDelete = () => {
@@ -135,14 +161,14 @@ export function DefaultCvManager({
           </div>
         </div>
         <span className="text-xs font-semibold text-slate-500">
-          {t("Format PDF maks 2 MB", "PDF format max 2 MB")}
+          {t("Format PDF, JPG, PNG, atau WEBP maks 2 MB", "PDF, JPG, PNG, or WEBP format max 2 MB")}
         </span>
       </div>
 
       <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
         {t(
-          "Simpan CV utama Anda satu kali di sini. Saat melamar lowongan kerja di JobConnect, Anda dapat memilih 'Gunakan CV Utama' untuk melamar dalam hitungan detik tanpa perlu mengunggah ulang file.",
-          "Save your main CV once here. When applying for jobs on JobConnect, you can choose 'Use Main CV' to apply in seconds without re-uploading."
+          "Simpan CV utama Anda satu kali di sini. Anda dapat mengunggah berkas PDF atau foto CV dari ponsel (JPG/PNG). Berkas gambar akan otomatis dirapikan ke format dokumen resmi.",
+          "Save your main CV once here. You can upload a PDF or CV image from your phone (JPG/PNG). Image files will be automatically formatted into an official document."
         )}
       </p>
 
@@ -195,21 +221,26 @@ export function DefaultCvManager({
 
             <button
               type="button"
-              disabled={isPending}
+              disabled={isPending || isConverting}
               onClick={() => fileInputRef.current?.click()}
               className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-navy-900 hover:bg-navy-950 text-white font-bold text-xs shadow-2xs transition min-h-[40px] flex-1 sm:flex-none cursor-pointer disabled:opacity-50"
             >
-              {isPending ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+              {isConverting || isPending ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                  <span>{isConverting ? t("Mengonversi...", "Converting...") : t("Mengunggah...", "Uploading...")}</span>
+                </>
               ) : (
-                <Upload className="w-3.5 h-3.5" aria-hidden="true" />
+                <>
+                  <Upload className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>{t("Ganti Berkas", "Replace File")}</span>
+                </>
               )}
-              <span>{t("Ganti Berkas", "Replace File")}</span>
             </button>
 
             <button
               type="button"
-              disabled={isPending}
+              disabled={isPending || isConverting}
               onClick={handleDelete}
               className="inline-flex items-center justify-center p-2 rounded-xl text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition min-h-[40px] min-w-[40px] cursor-pointer disabled:opacity-50"
               title={t("Hapus CV utama", "Delete main CV")}
@@ -230,22 +261,26 @@ export function DefaultCvManager({
             </p>
             <p className="text-xs text-slate-500">
               {t(
-                "Unggah CV dalam format PDF (maksimal 2 MB) untuk mengaktifkan fitur lamar cepat.",
-                "Upload CV in PDF format (max 2 MB) to enable quick apply feature."
+                "Unggah berkas CV format PDF atau foto/gambar (JPG, PNG, WEBP) maksimal 2 MB. Gambar otomatis dikonversi ke dokumen resmi.",
+                "Upload CV in PDF format or image (JPG, PNG, WEBP) up to 2 MB. Images are automatically converted to official documents."
               )}
             </p>
           </div>
           <div>
             <button
               type="button"
-              disabled={isPending}
+              disabled={isPending || isConverting}
               onClick={() => fileInputRef.current?.click()}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-navy-900 hover:bg-navy-950 text-white font-bold text-xs shadow-2xs transition min-h-[44px] cursor-pointer disabled:opacity-50"
             >
-              {isPending ? (
+              {isConverting || isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                  <span>{t("Mengunggah...", "Uploading...")}</span>
+                  <span>
+                    {isConverting
+                      ? t("Mengonversi Gambar ke Dokumen...", "Converting Image to Document...")
+                      : t("Mengunggah...", "Uploading...")}
+                  </span>
                 </>
               ) : (
                 <>
@@ -281,7 +316,7 @@ export function DefaultCvManager({
       <input
         ref={fileInputRef}
         type="file"
-        accept="application/pdf"
+        accept={SUPPORTED_CV_ACCEPT}
         className="hidden"
         onChange={handleFileSelect}
       />
