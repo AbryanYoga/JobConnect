@@ -45,6 +45,7 @@ interface ProfilViewWrapperProps {
   cities: { id: number; name: string; province_id: number; type: string }[];
   isOnboarding?: boolean;
   initialIsEditing?: boolean;
+  hasDefaultCv?: boolean;
   avatarUploadComponent: React.ReactNode;
   defaultCvManagerComponent?: React.ReactNode;
   onSave: (data: ProfilPelamarInput) => Promise<{
@@ -75,6 +76,7 @@ export function ProfilViewWrapper({
   cities,
   isOnboarding = false,
   initialIsEditing = false,
+  hasDefaultCv = false,
   avatarUploadComponent,
   defaultCvManagerComponent,
   onSave,
@@ -600,6 +602,8 @@ export function ProfilViewWrapper({
             provinces={provinces}
             cities={cities}
             isOnboarding={isOnboarding}
+            hasDefaultCv={hasDefaultCv}
+            avatarUrl={profileData.avatarUrl}
             avatarUploadComponent={avatarUploadComponent}
             onSave={handleSaveWrapper}
           />

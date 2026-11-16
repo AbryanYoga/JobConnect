@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { ZoomIn, ZoomOut, RotateCcw, X, Check, Loader2 } from "lucide-react";
+import { ZoomIn, ZoomOut, RotateCcw, X, Check, Loader2, AlertCircle, ShieldCheck } from "lucide-react";
+import { verifyFaceImage } from "@/lib/validation/face-detection";
 
 interface ImageCropperModalProps {
   imageSrc: string;
@@ -20,6 +21,7 @@ export function ImageCropperModal({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isProcessing, setIsProcessing] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [faceError, setFaceError] = useState<string | null>(null);
 
   const imageRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -101,12 +103,14 @@ export function ImageCropperModal({
   const handleReset = () => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
+    setFaceError(null);
   };
 
   // Proses crop menggunakan HTML5 Canvas
   const handleApply = async () => {
     if (!imageRef.current) return;
     setIsProcessing(true);
+    setFaceError(null);
 
     try {
       const img = imageRef.current;
@@ -146,6 +150,17 @@ export function ImageCropperModal({
         img.height
       );
       ctx.restore();
+
+      // Validasi mutlak: pastikan area lingkaran hasil crop memuat wajah asli bukan teks
+      const verification = await verifyFaceImage(canvas);
+      if (!verification.isValid) {
+        setFaceError(
+          verification.error ||
+            "Wajah manusia tidak terdeteksi pada area foto. Pastikan posisi lingkaran tepat pada wajah Anda."
+        );
+        setIsProcessing(false);
+        return;
+      }
 
       // Konversi ke Blob JPEG terkompresi (kualitas 0.88 menghasilkan berkas ~40-60 KB)
       canvas.toBlob(
@@ -233,7 +248,27 @@ export function ImageCropperModal({
           <p className="text-[11px] text-slate-500 font-medium mt-3 flex items-center gap-1">
             <span>Sentuh atau klik lalu geser untuk memposisikan foto.</span>
           </p>
+
+          {/* Indikator Verifikasi Mutlak Wajah Asli */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-black/[0.08] text-[11px] font-semibold text-slate-700 mt-2 shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+            <span>Verifikasi Wajah Asli Aktif</span>
+          </div>
         </div>
+
+        {/* Peringatan Error Verifikasi Wajah Asli */}
+        {faceError && (
+          <div
+            role="alert"
+            className="mx-5 my-3 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs font-medium flex items-start gap-2.5 animate-in fade-in"
+          >
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="space-y-0.5">
+              <p className="font-bold text-red-900">Verifikasi Wajah Tidak Lolos</p>
+              <p className="leading-relaxed">{faceError}</p>
+            </div>
+          </div>
+        )}
 
         {/* Kontrol Zoom & Reset */}
         <div className="p-5 border-t border-black/[0.06] space-y-4 bg-white">

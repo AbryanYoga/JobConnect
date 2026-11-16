@@ -3,13 +3,14 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Camera, Trash2, Loader2, AlertCircle, Check, Crop } from "lucide-react";
+import { Camera, Trash2, Loader2, AlertCircle, Check, Crop, ShieldCheck } from "lucide-react";
 import {
   AVATAR_MAX_BYTES,
   AVATAR_ALLOWED_TYPES,
   AVATAR_ERROR_MESSAGE,
 } from "@/lib/validation/profil";
 import { ImageCropperModal } from "./ImageCropperModal";
+import { verifyFaceImage } from "@/lib/validation/face-detection";
 import { useLanguage } from "@/lib/i18n";
 
 interface AvatarUploadProps {
@@ -70,10 +71,23 @@ export function AvatarUpload({
       return;
     }
 
-    // Baca berkas sebagai data URL untuk dipotong terlebih dahulu
+    // Baca berkas sebagai data URL untuk verifikasi wajah dan pemotongan
     const reader = new FileReader();
-    reader.onload = () => {
-      setCropImageSrc(reader.result as string);
+    reader.onload = async () => {
+      const dataUrl = reader.result as string;
+
+      // Verifikasi awal sebelum modal cropper dibuka
+      const preCheck = await verifyFaceImage(dataUrl);
+      if (!preCheck.isValid) {
+        setErrorMessage(
+          preCheck.error ||
+            "Berkas yang dipilih bukan foto wajah manusia asli. Harap gunakan pas foto atau foto wajah resmi."
+        );
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
+      }
+
+      setCropImageSrc(dataUrl);
       setIsCropperOpen(true);
       if (fileInputRef.current) fileInputRef.current.value = "";
     };
@@ -226,6 +240,10 @@ export function AvatarUpload({
                 "Choose a photo then crop. Supported formats: PNG, JPG, or WEBP (up to 2 MB)."
               )}
             </p>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-semibold text-emerald-900 mt-2">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" aria-hidden="true" />
+              <span>{t("Wajib Foto Wajah Asli • Verifikasi Mutlak", "Real Face Photo Required • Strict Verification")}</span>
+            </div>
           </div>
 
           <div className="flex items-center justify-center sm:justify-start gap-2 pt-1 flex-wrap">

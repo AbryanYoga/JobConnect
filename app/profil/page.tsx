@@ -176,6 +176,7 @@ export default async function ProfilPage({ searchParams }: ProfilPageProps) {
           cities={cities}
           isOnboarding={isOnboarding}
           initialIsEditing={isEditMode}
+          hasDefaultCv={Boolean(defaultCvUrl)}
           avatarUploadComponent={
             <AvatarUpload
               key="applicant-avatar-upload"
