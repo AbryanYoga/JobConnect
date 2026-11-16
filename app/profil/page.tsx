@@ -151,8 +151,8 @@ export default async function ProfilPage({ searchParams }: ProfilPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F0] py-8 sm:py-12">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAF8F0] py-6 sm:py-12 overflow-x-hidden">
+      <div className="mx-auto max-w-6xl px-3.5 sm:px-6 lg:px-8 min-w-0">
         <ProfilViewWrapper
           initialData={{
             name,

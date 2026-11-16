@@ -213,7 +213,7 @@ export function ProfilViewWrapper({
           {/* Baris 1: Identitas Diri & Pendidikan + Tautan (Seimbang Tanpa Void) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-stretch">
             {/* Kartu 1: Identitas Diri & Kontak */}
-            <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 flex flex-col justify-between space-y-6">
+            <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 flex flex-col justify-between space-y-6">
               <div className="space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                   <div className="flex items-center gap-2.5">
@@ -238,7 +238,7 @@ export function ProfilViewWrapper({
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Nama Lengkap", "Full Name")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950 truncate" title={profileData.name}>
+                    <p className="text-sm font-bold text-navy-950 break-words [overflow-wrap:anywhere]" title={profileData.name}>
                       {profileData.name}
                     </p>
                   </div>
@@ -247,7 +247,7 @@ export function ProfilViewWrapper({
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Alamat Email Akun", "Account Email")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950 truncate" title={profileData.email}>
+                    <p className="text-sm font-bold text-navy-950 break-all [overflow-wrap:anywhere]" title={profileData.email}>
                       {profileData.email}
                     </p>
                   </div>
@@ -256,7 +256,7 @@ export function ProfilViewWrapper({
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Nomor WhatsApp / Telepon", "WhatsApp / Phone Number")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950 truncate">
+                    <p className="text-sm font-bold text-navy-950 break-all [overflow-wrap:anywhere]">
                       {profileData.phone || (
                         <span className="text-slate-400 font-normal italic">
                           {t("Belum ditambahkan", "Not added yet")}
@@ -269,7 +269,7 @@ export function ProfilViewWrapper({
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Tanggal Lahir (Umur)", "Date of Birth (Age)")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950 truncate">
+                    <p className="text-sm font-bold text-navy-950 break-words [overflow-wrap:anywhere]">
                       {formattedBirthDate ? (
                         <>
                           {formattedBirthDate}
@@ -291,7 +291,7 @@ export function ProfilViewWrapper({
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Domisili Penempatan Kerja", "Placement Domicile")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950 break-words">
+                    <p className="text-sm font-bold text-navy-950 break-words [overflow-wrap:anywhere]">
                       {domicileString || (
                         <span className="text-slate-400 font-normal italic">
                           {t("Belum memilih provinsi / kota", "Province or city not selected")}
@@ -304,7 +304,7 @@ export function ProfilViewWrapper({
             </div>
 
             {/* Kartu 2: Riwayat Pendidikan & Tautan Profesional */}
-            <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 flex flex-col justify-between space-y-6">
+            <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 flex flex-col justify-between space-y-6">
               <div className="space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                   <div className="flex items-center gap-2.5">
@@ -329,7 +329,7 @@ export function ProfilViewWrapper({
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Jenjang Pendidikan", "Education Level")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950 truncate">
+                    <p className="text-sm font-bold text-navy-950 break-words [overflow-wrap:anywhere]">
                       {eduLevelLabel || (
                         <span className="text-slate-400 font-normal italic">
                           {t("Belum ditentukan", "Not specified")}
@@ -342,7 +342,7 @@ export function ProfilViewWrapper({
                     <p className="text-xs font-semibold text-slate-500">
                       {t("Nama Sekolah / Kampus / Institusi", "School / University / Institution")}
                     </p>
-                    <p className="text-sm font-bold text-navy-950 truncate" title={profileData.educationInstitution || ""}>
+                    <p className="text-sm font-bold text-navy-950 break-words [overflow-wrap:anywhere]" title={profileData.educationInstitution || ""}>
                       {profileData.educationInstitution || (
                         <span className="text-slate-400 font-normal italic">
                           {t("Belum ditambahkan", "Not added yet")}
@@ -364,7 +364,7 @@ export function ProfilViewWrapper({
                         className="flex items-center justify-between gap-1.5 w-full min-w-0 overflow-hidden text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline"
                         title={profileData.linkedinUrl}
                       >
-                        <span className="truncate min-w-0">{profileData.linkedinUrl}</span>
+                        <span className="flex-1 min-w-0 truncate">{profileData.linkedinUrl}</span>
                         <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" aria-hidden="true" />
                       </a>
                     ) : (
@@ -387,7 +387,7 @@ export function ProfilViewWrapper({
                         className="flex items-center justify-between gap-1.5 w-full min-w-0 overflow-hidden text-sm font-bold text-navy-800 hover:text-navy-950 hover:underline"
                         title={profileData.portfolioUrl}
                       >
-                        <span className="truncate min-w-0">{profileData.portfolioUrl}</span>
+                        <span className="flex-1 min-w-0 truncate">{profileData.portfolioUrl}</span>
                         <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" aria-hidden="true" />
                       </a>
                     ) : (
@@ -402,7 +402,7 @@ export function ProfilViewWrapper({
           </div>
 
           {/* Baris 2: Tentang Saya (Bio Lengkap) */}
-          <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-4">
+          <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
@@ -423,7 +423,7 @@ export function ProfilViewWrapper({
 
             <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.04]">
               {profileData.bio ? (
-                <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-line font-medium">
+                <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-line font-medium break-words [overflow-wrap:anywhere]">
                   {profileData.bio}
                 </p>
               ) : (
@@ -441,7 +441,7 @@ export function ProfilViewWrapper({
           {defaultCvManagerComponent}
 
           {/* Kartu 5: Karya Nyata & Portofolio Proyek (Full Width) */}
-          <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-6">
+          <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">

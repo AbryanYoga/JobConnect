@@ -122,7 +122,7 @@ export function DefaultCvManager({
   }
 
   return (
-    <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-5">
+    <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-900 flex items-center justify-center">
@@ -158,13 +158,13 @@ export function DefaultCvManager({
 
       {cvUrl ? (
         <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5 min-w-0">
+          <div className="flex items-center gap-3.5 min-w-0 flex-1 w-full sm:w-auto">
             <div className="w-11 h-11 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
               <FileText className="w-5 h-5" aria-hidden="true" />
             </div>
-            <div className="space-y-0.5 min-w-0">
+            <div className="space-y-0.5 min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-bold text-navy-950 truncate">
+                <span className="text-sm font-bold text-navy-950 truncate max-w-full">
                   CV-Utama-Pelamar.pdf
                 </span>
                 <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-200">

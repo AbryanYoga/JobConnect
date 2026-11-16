@@ -360,7 +360,7 @@ export function ProfilForm({
 
       {/* Kartu 1: Foto Profil Resmi */}
       {avatarUploadComponent && (
-        <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8">
+        <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8">
           <div className="mb-4">
             <h3 className="text-lg font-black text-black tracking-tight">
               {t("Foto Profil Pelamar", "Applicant Profile Photo")}
@@ -377,7 +377,7 @@ export function ProfilForm({
       )}
 
       {/* Kartu 2: Identitas Diri, Umur & Kontak */}
-      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-5">
+      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-5">
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <User className="w-5 h-5 text-black" aria-hidden="true" />
@@ -500,7 +500,7 @@ export function ProfilForm({
       </div>
 
       {/* Kartu 3: Domisili Pelamar (Provinsi & Kota/Kabupaten) */}
-      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-5">
+      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-5">
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <MapPin className="w-5 h-5 text-black" aria-hidden="true" />
@@ -575,7 +575,7 @@ export function ProfilForm({
       </div>
 
       {/* Kartu 4: Pendidikan Terakhir & Headline Profesional */}
-      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-5">
+      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-5">
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <GraduationCap className="w-5 h-5 text-black" aria-hidden="true" />
@@ -660,7 +660,7 @@ export function ProfilForm({
       </div>
 
       {/* Kartu 5: Bio Diri & Tautan Profil Profesional (LinkedIn & Portofolio Web) */}
-      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-5">
+      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-5">
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <FileText className="w-5 h-5 text-black" aria-hidden="true" />
@@ -777,7 +777,7 @@ export function ProfilForm({
       </div>
 
       {/* Kartu 6: Galeri Showcase Portofolio Proyek (Project Showcase) */}
-      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-4">
+      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-4">
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <Briefcase className="w-5 h-5 text-black" aria-hidden="true" />
@@ -795,7 +795,7 @@ export function ProfilForm({
       </div>
 
       {/* Kartu 7: Preferensi Pemberitahuan */}
-      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-6 sm:p-8 space-y-4">
+      <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-4">
         <div>
           <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
             <Bell className="w-5 h-5 text-black" aria-hidden="true" />
