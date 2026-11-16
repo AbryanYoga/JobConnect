@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -129,6 +129,25 @@ function parseNumberFromDots(val: string): number | "" {
   return isNaN(parsed) ? "" : parsed;
 }
 
+function subscribeDraft(callback: () => void) {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
+
+function getDraftSnapshot() {
+  if (typeof window === "undefined") return "no";
+  try {
+    return localStorage.getItem("jobconnect_mitra_job_draft") ? "yes" : "no";
+  } catch {
+    return "no";
+  }
+}
+
+function getDraftServerSnapshot() {
+  return "no";
+}
+
 export function JobForm({
   categories,
   provinces = [],
@@ -215,6 +234,96 @@ export function JobForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
+  const hasSavedDraft = useSyncExternalStore(subscribeDraft, getDraftSnapshot, getDraftServerSnapshot) === "yes";
+  const [isDraftRestored, setIsDraftRestored] = useState(false);
+  const [isDraftDismissed, setIsDraftDismissed] = useState(false);
+
+  // Fungsi untuk memulihkan isian draf lowongan tersimpan
+  const handleRestoreDraft = () => {
+    try {
+      const saved = localStorage.getItem("jobconnect_mitra_job_draft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.title) setTitle(parsed.title);
+        if (parsed.summary) setSummary(parsed.summary);
+        if (parsed.categoryId) setCategoryId(parsed.categoryId);
+        if (parsed.workMode) setWorkMode(parsed.workMode);
+        if (parsed.jobType) setJobType(parsed.jobType);
+        if (parsed.educationMin) setEducationMin(parsed.educationMin);
+        if (parsed.experienceMinYears !== undefined) setExperienceMinYears(parsed.experienceMinYears);
+        if (parsed.provinceId) setProvinceId(parsed.provinceId);
+        if (parsed.cityId) setCityId(parsed.cityId);
+        if (parsed.locationDetail) setLocationDetail(parsed.locationDetail);
+        if (parsed.skills?.length) setSkills(parsed.skills);
+        if (parsed.responsibilities?.length) setResponsibilities(parsed.responsibilities);
+        if (parsed.niceToHave?.length) setNiceToHave(parsed.niceToHave);
+        if (parsed.benefits?.length) setBenefits(parsed.benefits);
+        if (parsed.salaryMin !== undefined) setSalaryMin(parsed.salaryMin);
+        if (parsed.salaryMax !== undefined) setSalaryMax(parsed.salaryMax);
+        if (parsed.deadline) setDeadline(parsed.deadline);
+        setIsDraftRestored(true);
+      }
+    } catch {}
+  };
+
+  // Simpan draf formulir secara otomatis saat rekruter mengetik
+  useEffect(() => {
+    if (isEditing) return;
+    const timer = setTimeout(() => {
+      try {
+        if (title.trim() || summary.trim()) {
+          const draftData = {
+            title,
+            summary,
+            categoryId,
+            workMode,
+            jobType,
+            educationMin,
+            experienceMinYears,
+            provinceId,
+            cityId,
+            locationDetail,
+            skills,
+            responsibilities,
+            niceToHave,
+            benefits,
+            salaryMin,
+            salaryMax,
+            deadline,
+          };
+          localStorage.setItem("jobconnect_mitra_job_draft", JSON.stringify(draftData));
+        }
+      } catch {}
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [
+    isEditing,
+    title,
+    summary,
+    categoryId,
+    workMode,
+    jobType,
+    educationMin,
+    experienceMinYears,
+    provinceId,
+    cityId,
+    locationDetail,
+    skills,
+    responsibilities,
+    niceToHave,
+    benefits,
+    salaryMin,
+    salaryMax,
+    deadline,
+  ]);
+
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem("jobconnect_mitra_job_draft");
+    } catch {}
+    setIsDraftDismissed(true);
+    setIsDraftRestored(false);
+  };
 
   const getJobPayload = (cleanSkills?: string[], cleanResp?: string[]): JobFormData => ({
     id: initialData?.id,
@@ -248,6 +357,9 @@ export function JobForm({
       if (!res.success) {
         setFormError(res.error || "Gagal menyimpan draft lowongan.");
       } else {
+        try {
+          localStorage.removeItem("jobconnect_mitra_job_draft");
+        } catch {}
         setFormSuccess(res.message || "Draft berhasil disimpan!");
         router.push("/mitra/lowongan");
       }
@@ -299,6 +411,9 @@ export function JobForm({
       if (!res.success) {
         setFormError(res.error || "Gagal mengajukan lowongan.");
       } else {
+        try {
+          localStorage.removeItem("jobconnect_mitra_job_draft");
+        } catch {}
         setFormSuccess(res.message || "Lowongan berhasil diajukan!");
         router.push("/mitra/lowongan");
       }
@@ -386,6 +501,49 @@ export function JobForm({
         >
           <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600 mt-0.5" aria-hidden="true" />
           <span>{formSuccess}</span>
+        </div>
+      )}
+
+      {/* Pemberitahuan Draf Belum Diajukan */}
+      {hasSavedDraft && !isEditing && !isDraftRestored && !isDraftDismissed && (
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-medium">
+          <div className="flex items-center gap-2">
+            <Save className="w-4 h-4 text-amber-700 shrink-0" aria-hidden="true" />
+            <span>{t("Ditemukan draf lowongan yang belum diajukan.", "An unsaved job draft was found.")}</span>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={handleRestoreDraft}
+              className="px-3.5 py-1.5 rounded-full bg-[#FFDD00] text-black font-black text-xs shadow-2xs hover:bg-[#F5D400] transition cursor-pointer"
+            >
+              {t("Pulihkan Draf", "Restore Draft")}
+            </button>
+            <button
+              type="button"
+              onClick={clearDraft}
+              className="text-slate-500 hover:text-black font-semibold text-xs cursor-pointer underline"
+            >
+              {t("Abaikan", "Dismiss")}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Konfirmasi Draf Berhasil Dipulihkan */}
+      {isDraftRestored && !isEditing && (
+        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between gap-3 font-medium">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{t("Draf berhasil dipulihkan ke formulir.", "Draft successfully restored to the form.")}</span>
+          </div>
+          <button
+            type="button"
+            onClick={clearDraft}
+            className="text-emerald-800 hover:text-black font-bold text-xs underline cursor-pointer shrink-0"
+          >
+            {t("Hapus Draf", "Clear Draft")}
+          </button>
         </div>
       )}
 

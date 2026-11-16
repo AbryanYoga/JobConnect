@@ -13,6 +13,7 @@ import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { FontSizeToggle } from "@/components/ui/FontSizeToggle";
 import { NotificationBell } from "@/components/notifikasi/NotificationBell";
 import { NavbarAuthButtons } from "./NavbarAuthButtons";
+import { MobileBottomNav } from "./MobileBottomNav";
 
 interface NavbarProps {
   role?: Role;
@@ -81,8 +82,9 @@ export async function Navbar({ role }: NavbarProps = {}) {
       : "/";
 
   return (
-    <NavbarHeader>
-      <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-10 h-full flex items-center justify-between">
+    <>
+      <NavbarHeader>
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-10 h-full flex items-center justify-between">
         {/* Sisi Kiri: Navigasi Menu Desktop (Sesuai BMC: Links di sisi kiri) */}
         <div className="flex items-center gap-2">
           {/* Logo Mobile (Hanya tampil di ponsel) */}
@@ -162,5 +164,9 @@ export async function Navbar({ role }: NavbarProps = {}) {
         </div>
       </div>
     </NavbarHeader>
+
+      {/* Bilah Navigasi Bawah Khusus Layar Ponsel */}
+      <MobileBottomNav role={userRole} />
+    </>
   );
 }

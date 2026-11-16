@@ -122,6 +122,53 @@ export function MitraPelamarViewSwitcher({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedEdu, setSelectedEdu] = useState<string>("semua");
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [selectedAppIds, setSelectedAppIds] = useState<number[]>([]);
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
+
+  // Toggle pilihan kotak centang per pelamar
+  const toggleSelect = (appId: number) => {
+    setSelectedAppIds((prev) =>
+      prev.includes(appId) ? prev.filter((id) => id !== appId) : [...prev, appId]
+    );
+  };
+
+  // Pilih atau batalkan semua pelamar yang sedang tampil
+  const handleSelectAll = (itemsToSelect: AppItem[]) => {
+    if (selectedAppIds.length === itemsToSelect.length && itemsToSelect.length > 0) {
+      setSelectedAppIds([]);
+    } else {
+      setSelectedAppIds(itemsToSelect.map((a) => a.id));
+    }
+  };
+
+  // Ubah status massal untuk seluruh pelamar yang dicentang
+  const handleBulkStatusChange = async (newStatus: ApplicationStatus) => {
+    if (selectedAppIds.length === 0) return;
+    setIsBulkUpdating(true);
+
+    const idsToUpdate = [...selectedAppIds];
+    setApplications((prev) =>
+      prev.map((item) =>
+        idsToUpdate.includes(item.id) ? { ...item, status: newStatus } : item
+      )
+    );
+
+    try {
+      await Promise.all(
+        idsToUpdate.map((id) =>
+          updateApplicationStatusAction({
+            applicationId: id,
+            toStatus: newStatus,
+          })
+        )
+      );
+      setSelectedAppIds([]);
+    } catch {
+      setApplications(initialApplications);
+    } finally {
+      setIsBulkUpdating(false);
+    }
+  };
 
   // Hitung jumlah pelamar per status
   const statusCounts: Record<string, number> = {
@@ -496,8 +543,19 @@ export function MitraPelamarViewSwitcher({
 
           {/* Bilah Ringkasan dan Pengurutan Pelamar */}
           <div className="bg-white rounded-3xl border border-black/[0.08] p-4 sm:p-5 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="text-xs sm:text-sm font-bold text-slate-700">
-              {t("Menampilkan", "Showing")} <span className="text-black font-black">{filteredApplications.length}</span> {t("pelamar", "applicants")}
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 select-none">
+                <input
+                  type="checkbox"
+                  checked={filteredApplications.length > 0 && selectedAppIds.length === filteredApplications.length}
+                  onChange={() => handleSelectAll(filteredApplications)}
+                  className="w-4 h-4 rounded text-black accent-black cursor-pointer"
+                />
+                <span>{t("Pilih Semua", "Select All")}</span>
+              </label>
+              <div className="text-xs sm:text-sm font-bold text-slate-500">
+                ({t("Menampilkan", "Showing")} <span className="text-black font-black">{filteredApplications.length}</span> {t("pelamar", "applicants")})
+              </div>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
@@ -532,6 +590,44 @@ export function MitraPelamarViewSwitcher({
               </div>
             </div>
           </div>
+
+          {/* Bilah Aksi Massal Pelamar Terpilih */}
+          {selectedAppIds.length > 0 && (
+            <div className="sticky top-20 z-30 p-4 rounded-2xl bg-slate-900 text-white shadow-xl flex flex-wrap items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="flex items-center gap-2.5 text-xs font-bold">
+                <span className="w-6 h-6 rounded-full bg-[#FFDD00] text-black font-black flex items-center justify-center text-xs">
+                  {selectedAppIds.length}
+                </span>
+                <span>{t("Pelamar dipilih untuk pembaruan massal", "Applicants selected for bulk update")}</span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => handleBulkStatusChange("ditinjau")}
+                  disabled={isBulkUpdating}
+                  className="px-3.5 py-2 rounded-full bg-amber-500 hover:bg-amber-600 text-black text-xs font-black transition cursor-pointer min-h-[36px]"
+                >
+                  {t("Tandai Ditinjau", "Mark Reviewed")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleBulkStatusChange("shortlist")}
+                  disabled={isBulkUpdating}
+                  className="px-3.5 py-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-black transition cursor-pointer min-h-[36px]"
+                >
+                  {t("Pindahkan ke Shortlist", "Move to Shortlist")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedAppIds([])}
+                  className="px-3 py-2 rounded-full bg-slate-800 text-slate-300 hover:text-white text-xs font-bold transition cursor-pointer min-h-[36px]"
+                >
+                  {t("Batal", "Cancel")}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Daftar Kandidat Pelamar */}
           {applications.length === 0 ? (
@@ -593,10 +689,21 @@ export function MitraPelamarViewSwitcher({
                 return (
                   <div
                     key={app.id}
-                    className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-5 hover:border-black/[0.15] transition"
+                    className={`bg-white rounded-3xl border p-6 sm:p-7 shadow-card space-y-5 transition ${
+                      selectedAppIds.includes(app.id)
+                        ? "border-black ring-1 ring-black bg-slate-50/30"
+                        : "border-black/[0.08] hover:border-black/[0.15]"
+                    }`}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-start sm:items-center gap-4">
+                      <div className="flex items-start sm:items-center gap-3.5">
+                        <input
+                          type="checkbox"
+                          checked={selectedAppIds.includes(app.id)}
+                          onChange={() => toggleSelect(app.id)}
+                          aria-label={`Pilih pelamar ${applicantName}`}
+                          className="w-4 h-4 rounded text-black accent-black cursor-pointer shrink-0 mt-3.5 sm:mt-0"
+                        />
                         {profile?.avatar_url ? (
                           <Image
                             src={profile.avatar_url}

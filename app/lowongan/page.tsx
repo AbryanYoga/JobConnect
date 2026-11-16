@@ -27,6 +27,8 @@ interface LowonganPageProps {
     wilayah?: string;
     kota?: string;
     page?: string;
+    freshGraduate?: string;
+    adaGaji?: string;
   }>;
 }
 
@@ -41,6 +43,8 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
     wilayah: provinceSlug,
     kota: citySlug,
     page: pageParam,
+    freshGraduate: freshGraduateParam,
+    adaGaji: adaGajiParam,
   } = await searchParams;
 
   const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
@@ -183,6 +187,16 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
     baseQuery = baseQuery.eq("city_id", -1);
   }
 
+  // Filter untuk lowongan tanpa syarat pengalaman (Cocok untuk Fresh Graduate)
+  if (freshGraduateParam === "true") {
+    baseQuery = baseQuery.eq("experience_min_years", 0);
+  }
+
+  // Filter untuk lowongan yang mencantumkan informasi gaji
+  if (adaGajiParam === "true") {
+    baseQuery = baseQuery.not("salary_min", "is", null);
+  }
+
   const fromIndex = (currentPage - 1) * PAGE_SIZE;
   const toIndex = fromIndex + PAGE_SIZE - 1;
 
@@ -278,6 +292,8 @@ export default async function LowonganPage({ searchParams }: LowonganPageProps) 
               selectedWorkMode={workModeParam}
               selectedProvince={provinceSlug}
               selectedCity={citySlug}
+              isFreshGraduate={freshGraduateParam === "true"}
+              hasSalaryOnly={adaGajiParam === "true"}
             />
           </div>
 

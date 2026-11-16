@@ -93,7 +93,7 @@ export function FloatingHelpWidget() {
   return (
     <div
       ref={panelRef}
-      className="fixed bottom-5 right-5 z-40 print:hidden flex flex-col items-end"
+      className="fixed bottom-20 md:bottom-5 right-4 sm:right-5 z-40 print:hidden flex flex-col items-end"
     >
       {/* Panel Tanya Jawab & Bantuan */}
       {isOpen && (

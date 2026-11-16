@@ -70,7 +70,7 @@ export default async function RootLayout({
             {initialLang === "en" ? "Skip to content" : "Lewati ke konten"}
           </a>
           <Navbar />
-          <main id="konten" className="flex-1">
+          <main id="konten" className="flex-1 pb-16 md:pb-0">
             {children}
           </main>
           <Footer />

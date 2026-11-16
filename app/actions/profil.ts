@@ -366,3 +366,45 @@ export async function deleteDefaultCvAction(): Promise<{
     return { success: false, error: message };
   }
 }
+
+// Server action untuk memperbarui kata sandi akun secara mandiri
+export async function updatePasswordAction(newPassword: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  if (!newPassword || newPassword.length < 8) {
+    return {
+      success: false,
+      error: "Kata sandi baru wajib diisi minimal 8 karakter.",
+    };
+  }
+
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Sesi login Anda telah berakhir." };
+    }
+
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (updateError) {
+      return {
+        success: false,
+        error: updateError.message || "Gagal memperbarui kata sandi.",
+      };
+    }
+
+    return { success: true };
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Terjadi gangguan saat mengganti kata sandi.";
+    return { success: false, error: message };
+  }
+}

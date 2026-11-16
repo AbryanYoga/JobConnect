@@ -12,11 +12,14 @@ import {
   ArrowLeft,
   CheckCircle2,
   FolderGit2,
+  Lock,
+  Key,
 } from "lucide-react";
 import { LinkedinIcon } from "@/components/ui/LinkedinIcon";
 import { useLanguage } from "@/lib/i18n";
 import { ProfilHeader } from "./ProfilHeader";
 import { ProfilForm } from "@/app/profil/ProfilForm";
+import { UbahPasswordModal } from "./UbahPasswordModal";
 import type { PortfolioItem, ProfilPelamarInput } from "@/lib/validation/profil";
 import { calculateAge, EDUCATION_LEVEL_OPTIONS } from "@/lib/validation/profil";
 
@@ -89,6 +92,7 @@ export function ProfilViewWrapper({
   const [profileData, setProfileData] = useState<ProfilData>(initialData);
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
   const [warningBanner, setWarningBanner] = useState<string | null>(null);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   // Sinkronisasi foto profil aktif ke penyimpanan peramban dan navbar
   React.useEffect(() => {
@@ -134,6 +138,16 @@ export function ProfilViewWrapper({
   // Tanggal lahir & umur
   const formattedBirthDate = formatBirthDate(profileData.birthDate, locale);
   const age = calculateAge(profileData.birthDate);
+
+  // Kumpulan keahlian pelamar dari portofolio dan proyek
+  const allSkills = Array.from(
+    new Set(
+      (profileData.portfolios || [])
+        .flatMap((p) => p.skills || [])
+        .map((s) => s.trim())
+        .filter(Boolean)
+    )
+  );
 
   // Label jenjang pendidikan
   const rawEduLevel =
@@ -415,6 +429,24 @@ export function ProfilViewWrapper({
                       </p>
                     )}
                   </div>
+
+                  {allSkills.length > 0 && (
+                    <div className="sm:col-span-2 p-4 rounded-2xl bg-[#FAF8F0] border border-black/[0.04] space-y-2 min-w-0">
+                      <p className="text-xs font-semibold text-slate-500">
+                        {t("Keahlian & Keterampilan Terbukti", "Verified Skills & Competencies")}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {allSkills.map((skill, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2.5 py-1 rounded-lg bg-white border border-black/[0.08] text-xs font-bold text-black shadow-2xs"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -569,6 +601,32 @@ export function ProfilViewWrapper({
             </div>
           </div>
 
+          {/* Kartu Keamanan Akun & Ubah Kata Sandi */}
+          <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-800 shrink-0">
+                <Lock className="w-5 h-5" aria-hidden="true" />
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-navy-950">
+                  {t("Keamanan & Kata Sandi", "Security & Password")}
+                </h3>
+                <p className="text-xs text-slate-500 font-medium">
+                  {t("Kelola kata sandi akun JobConnect Anda secara aman.", "Manage your JobConnect account password securely.")}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsPasswordModalOpen(true)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition min-h-[44px] cursor-pointer shrink-0"
+            >
+              <Key className="w-4 h-4 text-slate-600" />
+              <span>{t("Ubah Kata Sandi", "Change Password")}</span>
+            </button>
+          </div>
+
           {/* Tombol Aksi di Bawah */}
           <div className="pt-2 text-center">
             <button
@@ -626,6 +684,12 @@ export function ProfilViewWrapper({
           />
         </div>
       )}
+
+      {/* Modal Ubah Kata Sandi Akun */}
+      <UbahPasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+      />
     </div>
   );
 }

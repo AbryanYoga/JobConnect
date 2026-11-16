@@ -20,6 +20,7 @@ import { BookmarkButton } from "@/components/lowongan/BookmarkButton";
 import { ShareJobButtons } from "@/components/lowongan/ShareJobButtons";
 import { JobMatchScore } from "@/components/lowongan/JobMatchScore";
 import { JobTrustSidebar } from "@/components/lowongan/JobTrustSidebar";
+import { StickyApplyBar } from "@/components/lowongan/StickyApplyBar";
 
 interface JobDetailPageProps {
   params: Promise<{
@@ -54,7 +55,7 @@ export async function generateMetadata({
   const supabase = await createClient();
   const { data: job } = await supabase
     .from("jobs")
-    .select("title, summary, company:companies(name)")
+    .select("title, summary, company:companies(name, logo_path)")
     .eq("slug", slug)
     .single();
 
@@ -66,12 +67,36 @@ export async function generateMetadata({
 
   const companyData = Array.isArray(job.company) ? job.company[0] : job.company;
   const companyName = companyData?.name || "Perusahaan";
+  const title = `${job.title} di ${companyName} - JobConnect`;
+  const description =
+    job.summary ||
+    `Lamar lowongan kerja ${job.title} di ${companyName} resmi terverifikasi melalui JobConnect.`;
+  const logoUrl = getCompanyLogo(companyData?.logo_path) || "/logos/concept-2-symbol.png";
 
   return {
-    title: `${job.title} di ${companyName} - JobConnect`,
-    description:
-      job.summary ||
-      `Lamar lowongan kerja ${job.title} di ${companyName} resmi terverifikasi melalui JobConnect.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      siteName: "JobConnect",
+      url: `/lowongan/${slug}`,
+      images: [
+        {
+          url: logoUrl,
+          width: 800,
+          height: 600,
+          alt: `${job.title} - ${companyName}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [logoUrl],
+    },
   };
 }
 
@@ -492,20 +517,22 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
             )}
 
             {/* 6. Formulir Pengajuan Lamaran Pekerjaan */}
-            <FormLamaran
-              jobId={job.id}
-              jobTitle={job.title}
-              jobSlug={job.slug}
-              companyName={companyName}
-              isOpen={isOpen}
-              isExpired={isExpired}
-              deadline={job.deadline}
-              isLoggedIn={Boolean(user)}
-              userRole={userRole}
-              hasApplied={Boolean(existingApplication)}
-              existingApplicationId={existingApplication?.id}
-              hasDefaultCv={hasDefaultCv}
-            />
+            <div id="formulir-lamaran">
+              <FormLamaran
+                jobId={job.id}
+                jobTitle={job.title}
+                jobSlug={job.slug}
+                companyName={companyName}
+                isOpen={isOpen}
+                isExpired={isExpired}
+                deadline={job.deadline}
+                isLoggedIn={Boolean(user)}
+                userRole={userRole}
+                hasApplied={Boolean(existingApplication)}
+                existingApplicationId={existingApplication?.id}
+                hasDefaultCv={hasDefaultCv}
+              />
+            </div>
           </div>
 
           {/* Kolom Kanan: Sidebar Kriteria Utama */}
@@ -562,6 +589,15 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
           </aside>
         </div>
       </div>
+
+      {/* Bilah Aksi Cepat Melayang di Layar Ponsel */}
+      <StickyApplyBar
+        jobTitle={job.title}
+        companyName={companyName}
+        isOpen={isOpen}
+        isExpired={isExpired}
+        hasApplied={Boolean(existingApplication)}
+      />
     </div>
   );
 }
