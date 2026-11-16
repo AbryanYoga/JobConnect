@@ -234,6 +234,7 @@ export function JobForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const hasSavedDraft = useSyncExternalStore(subscribeDraft, getDraftSnapshot, getDraftServerSnapshot) === "yes";
   const [isDraftRestored, setIsDraftRestored] = useState(false);
   const [isDraftDismissed, setIsDraftDismissed] = useState(false);
@@ -348,14 +349,43 @@ export function JobForm({
     aiScreening: false,
   });
 
+  const scrollToError = (
+    elementId: string,
+    errorMsg: string,
+    fieldKey?: string
+  ) => {
+    setFormError(errorMsg);
+    if (fieldKey) {
+      setFieldErrors((prev) => ({ ...prev, [fieldKey]: errorMsg }));
+    }
+
+    setTimeout(() => {
+      const target = document.getElementById(elementId);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        try {
+          target.focus({ preventScroll: true });
+        } catch {}
+      } else {
+        const topBanner = document.getElementById("form-error-banner");
+        if (topBanner) {
+          topBanner.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+    }, 60);
+  };
+
   const handleSaveDraft = async () => {
     setFormError(null);
     setFormSuccess(null);
+    setFieldErrors({});
     setIsSavingDraft(true);
     try {
       const res = await saveJobDraftAction(getJobPayload());
       if (!res.success) {
-        setFormError(res.error || "Gagal menyimpan draft lowongan.");
+        scrollToError("form-error-banner", res.error || "Gagal menyimpan draft lowongan.");
       } else {
         try {
           localStorage.removeItem("jobconnect_mitra_job_draft");
@@ -364,7 +394,7 @@ export function JobForm({
         router.push("/mitra/lowongan");
       }
     } catch {
-      setFormError("Terjadi kesalahan teknis saat menyimpan draft.");
+      scrollToError("form-error-banner", "Terjadi kesalahan teknis saat menyimpan draft.");
     } finally {
       setIsSavingDraft(false);
     }
@@ -373,35 +403,82 @@ export function JobForm({
   const handleSubmit = async () => {
     setFormError(null);
     setFormSuccess(null);
+    setFieldErrors({});
 
     if (!title.trim() || title.trim().length < JOB_LIMITS.title.min) {
-      setFormError(`Judul lowongan minimal ${JOB_LIMITS.title.min} karakter.`);
+      scrollToError(
+        "title",
+        `Judul lowongan minimal ${JOB_LIMITS.title.min} karakter.`,
+        "title"
+      );
       return;
     }
+
+    if (categoryId === "custom" && (!customCategoryName.trim() || customCategoryName.trim().length < 2)) {
+      scrollToError(
+        "custom-category",
+        "Nama kategori kustom baru wajib diisi minimal 2 karakter.",
+        "customCategoryName"
+      );
+      return;
+    }
+
     if (!summary.trim() || summary.trim().length < JOB_LIMITS.summary.min) {
-      setFormError(`Ringkasan pekerjaan minimal ${JOB_LIMITS.summary.min} karakter.`);
+      scrollToError(
+        "summary",
+        `Ringkasan pekerjaan minimal ${JOB_LIMITS.summary.min} karakter (saat ini ${summary.trim().length} karakter).`,
+        "summary"
+      );
       return;
     }
+
+    if (workMode !== "remote") {
+      if (!provinceId) {
+        scrollToError(
+          "province",
+          "Provinsi penempatan wajib dipilih untuk mode kerja Onsite atau Hybrid.",
+          "provinceId"
+        );
+        return;
+      }
+      if (!cityId) {
+        scrollToError(
+          "city",
+          "Kota penempatan wajib dipilih untuk mode kerja Onsite atau Hybrid.",
+          "cityId"
+        );
+        return;
+      }
+    }
+
     const validSkills = skills.filter(Boolean);
     if (validSkills.length < 1) {
-      setFormError("Keahlian wajib minimal 1 item.");
+      scrollToError(
+        "currentSkillInput",
+        "Keahlian wajib minimal 1 item. Ketik keahlian lalu klik Tambah.",
+        "skills"
+      );
       return;
     }
-    const validResp = responsibilities.filter(Boolean);
+
+    const validResp = responsibilities.filter((r) => r.trim().length > 0);
     if (validResp.length < 3) {
-      setFormError("Tanggung jawab utama wajib diisi minimal 3 poin.");
+      const emptyIdx = responsibilities.findIndex((r) => !r.trim());
+      const targetId = emptyIdx >= 0 ? `responsibility-${emptyIdx}` : "responsibility-0";
+      scrollToError(
+        targetId,
+        "Tanggung jawab utama wajib diisi minimal 3 poin.",
+        "responsibilities"
+      );
       return;
     }
-    if (workMode !== "remote" && !cityId) {
-      setFormError("Kota penempatan wajib dipilih untuk mode kerja Onsite atau Hybrid.");
-      return;
-    }
+
     if (!deadline.trim()) {
-      setFormError("Batas waktu lamaran (deadline) wajib diisi untuk pengajuan lowongan.");
-      return;
-    }
-    if (categoryId === "custom" && (!customCategoryName.trim() || customCategoryName.trim().length < 2)) {
-      setFormError("Nama kategori kustom baru wajib diisi minimal 2 karakter.");
+      scrollToError(
+        "deadline",
+        "Batas waktu lamaran (deadline) wajib diisi untuk pengajuan lowongan.",
+        "deadline"
+      );
       return;
     }
 
@@ -409,7 +486,7 @@ export function JobForm({
     try {
       const res = await submitJobAction(getJobPayload(validSkills, validResp));
       if (!res.success) {
-        setFormError(res.error || "Gagal mengajukan lowongan.");
+        scrollToError("form-error-banner", res.error || "Gagal mengajukan lowongan.");
       } else {
         try {
           localStorage.removeItem("jobconnect_mitra_job_draft");
@@ -418,7 +495,7 @@ export function JobForm({
         router.push("/mitra/lowongan");
       }
     } catch {
-      setFormError("Terjadi kesalahan teknis saat mengajukan lowongan.");
+      scrollToError("form-error-banner", "Terjadi kesalahan teknis saat mengajukan lowongan.");
     } finally {
       setIsSubmitting(false);
     }
@@ -483,8 +560,9 @@ export function JobForm({
       {/* Alert Error / Sukses */}
       {formError && (
         <div
+          id="form-error-banner"
           role="alert"
-          className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3 font-medium"
+          className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3 font-medium scroll-mt-24"
         >
           <AlertCircle className="w-5 h-5 shrink-0 text-red-600 mt-0.5" aria-hidden="true" />
           <div className="space-y-0.5">
@@ -583,14 +661,30 @@ export function JobForm({
             maxLength={JOB_LIMITS.title.max}
             placeholder={language === "en" ? "e.g. Frontend Engineer, Warehouse Administrator" : "Contoh: Frontend Engineer, Staff Administrasi Gudang"}
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+            onChange={(e) => {
+              setTitle(e.target.value);
+              if (fieldErrors.title) {
+                setFieldErrors((prev) => ({ ...prev, title: "" }));
+              }
+            }}
+            className={`w-full px-4 py-3 rounded-2xl border text-sm font-medium transition text-black scroll-mt-24 ${
+              fieldErrors.title
+                ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+            }`}
           />
-          <p className="text-xs text-slate-500 font-medium">
-            {language === "en"
-              ? `Minimum ${JOB_LIMITS.title.min} characters, maximum ${JOB_LIMITS.title.max} characters.`
-              : `Minimal ${JOB_LIMITS.title.min} karakter, maksimal ${JOB_LIMITS.title.max} karakter.`}
-          </p>
+          {fieldErrors.title ? (
+            <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{fieldErrors.title}</span>
+            </p>
+          ) : (
+            <p className="text-xs text-slate-500 font-medium">
+              {language === "en"
+                ? `Minimum ${JOB_LIMITS.title.min} characters, maximum ${JOB_LIMITS.title.max} characters.`
+                : `Minimal ${JOB_LIMITS.title.min} karakter, maksimal ${JOB_LIMITS.title.max} karakter.`}
+            </p>
+          )}
         </div>
 
         {/* Pilihan Kategori */}
@@ -612,7 +706,7 @@ export function JobForm({
               const val = e.target.value;
               setCategoryId(val === "custom" ? "custom" : Number(val));
             }}
-            className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+            className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black scroll-mt-24"
           >
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
@@ -635,11 +729,26 @@ export function JobForm({
                 type="text"
                 placeholder={language === "en" ? "e.g. Information Technology, Logistics & Warehousing, Hospitality" : "Contoh: Teknologi Informasi, Logistik & Pergudangan, Perhotelan"}
                 value={customCategoryName}
-                onChange={(e) => setCustomCategoryName(e.target.value)}
+                onChange={(e) => {
+                  setCustomCategoryName(e.target.value);
+                  if (fieldErrors.customCategoryName) {
+                    setFieldErrors((prev) => ({ ...prev, customCategoryName: "" }));
+                  }
+                }}
                 maxLength={60}
                 required
-                className="w-full px-4 py-2.5 rounded-xl bg-white border border-amber-300 focus:border-black text-sm font-medium text-black focus:outline-none transition shadow-2xs"
+                className={`w-full px-4 py-2.5 rounded-xl border text-sm font-medium text-black focus:outline-none transition shadow-2xs scroll-mt-24 ${
+                  fieldErrors.customCategoryName
+                    ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600"
+                    : "bg-white border-amber-300 focus:border-black"
+                }`}
               />
+              {fieldErrors.customCategoryName && (
+                <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>{fieldErrors.customCategoryName}</span>
+                </p>
+              )}
               <p className="text-[11px] text-amber-800 font-medium">
                 {t(
                   "Kategori ini akan otomatis didaftarkan dan dapat ditinjau oleh admin saat moderasi lowongan.",
@@ -674,14 +783,30 @@ export function JobForm({
                 : "Tuliskan 1 paragraf ringkas tentang peran ini dan apa yang akan dikerjakan kandidat."
             }
             value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-            className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+            onChange={(e) => {
+              setSummary(e.target.value);
+              if (fieldErrors.summary) {
+                setFieldErrors((prev) => ({ ...prev, summary: "" }));
+              }
+            }}
+            className={`w-full px-4 py-3 rounded-2xl border text-sm font-medium transition text-black scroll-mt-24 ${
+              fieldErrors.summary
+                ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+            }`}
           />
-          <p className="text-xs text-slate-500 font-medium">
-            {language === "en"
-              ? `Minimum ${JOB_LIMITS.summary.min} characters, maximum ${JOB_LIMITS.summary.max} characters.`
-              : `Minimal ${JOB_LIMITS.summary.min} karakter, maksimal ${JOB_LIMITS.summary.max} karakter.`}
-          </p>
+          {fieldErrors.summary ? (
+            <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{fieldErrors.summary}</span>
+            </p>
+          ) : (
+            <p className="text-xs text-slate-500 font-medium">
+              {language === "en"
+                ? `Minimum ${JOB_LIMITS.summary.min} characters, maximum ${JOB_LIMITS.summary.max} characters.`
+                : `Minimal ${JOB_LIMITS.summary.min} karakter, maksimal ${JOB_LIMITS.summary.max} karakter.`}
+            </p>
+          )}
         </div>
       </section>
 
@@ -789,7 +914,7 @@ export function JobForm({
         {/* Tag Input Keahlian Wajib (Skills) */}
         <div className="space-y-3 pt-2">
           <div className="flex items-center justify-between">
-            <label className="block text-sm font-bold text-black">
+            <label htmlFor="currentSkillInput" className="block text-sm font-bold text-black">
               {language === "en"
                 ? `Required Skills (${skills.filter(Boolean).length} of max. ${JOB_LIMITS.skills.max})`
                 : `Keahlian Wajib (${skills.filter(Boolean).length} dari maks. ${JOB_LIMITS.skills.max})`} <span className="text-red-500">*</span>
@@ -801,18 +926,28 @@ export function JobForm({
           </div>
           <div className="flex gap-2">
             <input
+              id="currentSkillInput"
               type="text"
               maxLength={JOB_LIMITS.skills.itemMax}
               placeholder={language === "en" ? "e.g. React, Microsoft Excel, Graphic Design" : "Contoh: React, Microsoft Excel, Desain Grafis"}
               value={currentSkillInput}
-              onChange={(e) => setCurrentSkillInput(e.target.value)}
+              onChange={(e) => {
+                setCurrentSkillInput(e.target.value);
+                if (fieldErrors.skills) {
+                  setFieldErrors((prev) => ({ ...prev, skills: "" }));
+                }
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
                   handleAddSkill();
                 }
               }}
-              className="flex-1 px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+              className={`flex-1 px-4 py-3 rounded-2xl border text-sm font-medium transition text-black scroll-mt-24 ${
+                fieldErrors.skills
+                  ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                  : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+              }`}
             />
             <button
               type="button"
@@ -823,6 +958,12 @@ export function JobForm({
               <span>{t("Tambah", "Add")}</span>
             </button>
           </div>
+          {fieldErrors.skills && (
+            <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{fieldErrors.skills}</span>
+            </p>
+          )}
 
           {/* Chip List Skills */}
           <div className="flex flex-wrap gap-2 pt-1">
@@ -875,8 +1016,17 @@ export function JobForm({
               id="province"
               name="province"
               value={provinceId}
-              onChange={(e) => handleProvinceChange(e.target.value ? Number(e.target.value) : "")}
-              className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+              onChange={(e) => {
+                handleProvinceChange(e.target.value ? Number(e.target.value) : "");
+                if (fieldErrors.provinceId) {
+                  setFieldErrors((prev) => ({ ...prev, provinceId: "" }));
+                }
+              }}
+              className={`w-full px-4 py-3 rounded-2xl border text-sm font-medium transition text-black scroll-mt-24 ${
+                fieldErrors.provinceId
+                  ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                  : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+              }`}
             >
               <option value="">{t("-- Pilih Provinsi --", "-- Select Province --")}</option>
               {provinces.map((prov) => (
@@ -885,6 +1035,12 @@ export function JobForm({
                 </option>
               ))}
             </select>
+            {fieldErrors.provinceId && (
+              <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{fieldErrors.provinceId}</span>
+              </p>
+            )}
           </div>
 
           {/* Dropdown Kota / Kabupaten Berjenjang */}
@@ -897,8 +1053,17 @@ export function JobForm({
               name="city"
               disabled={!provinceId}
               value={cityId}
-              onChange={(e) => setCityId(e.target.value ? Number(e.target.value) : "")}
-              className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black disabled:opacity-50"
+              onChange={(e) => {
+                setCityId(e.target.value ? Number(e.target.value) : "");
+                if (fieldErrors.cityId) {
+                  setFieldErrors((prev) => ({ ...prev, cityId: "" }));
+                }
+              }}
+              className={`w-full px-4 py-3 rounded-2xl border text-sm font-medium transition text-black disabled:opacity-50 scroll-mt-24 ${
+                fieldErrors.cityId
+                  ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                  : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+              }`}
             >
               <option value="">
                 {!provinceId
@@ -921,6 +1086,12 @@ export function JobForm({
                 );
               })}
             </select>
+            {fieldErrors.cityId && (
+              <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{fieldErrors.cityId}</span>
+              </p>
+            )}
           </div>
         </div>
 
@@ -1009,12 +1180,22 @@ export function JobForm({
                 </span>
                 <div className="flex-1 flex items-center gap-2">
                   <input
+                    id={`responsibility-${idx}`}
                     type="text"
                     maxLength={JOB_LIMITS.responsibilities.itemMax}
                     placeholder={language === "en" ? `Core duty #${idx + 1}` : `Tugas pokok ke-${idx + 1}`}
                     value={item}
-                    onChange={(e) => handleResponsibilityChange(idx, e.target.value)}
-                    className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+                    onChange={(e) => {
+                      handleResponsibilityChange(idx, e.target.value);
+                      if (fieldErrors.responsibilities) {
+                        setFieldErrors((prev) => ({ ...prev, responsibilities: "" }));
+                      }
+                    }}
+                    className={`flex-1 px-4 py-2.5 rounded-2xl border text-sm font-medium transition text-black scroll-mt-24 ${
+                      fieldErrors.responsibilities && !item.trim()
+                        ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                        : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+                    }`}
                   />
                   <CharCounter
                     current={item.length}
@@ -1034,6 +1215,12 @@ export function JobForm({
               </div>
             ))}
           </div>
+          {fieldErrors.responsibilities && (
+            <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in pt-1">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{fieldErrors.responsibilities}</span>
+            </p>
+          )}
         </div>
 
         {/* Nilai Tambah (Nice to have, Opsional) */}
@@ -1197,18 +1384,64 @@ export function JobForm({
 
         <div className="space-y-2">
           <label htmlFor="deadline" className="block text-sm font-bold text-black">
-            {t("Batas Akhir Lamaran (Opsional)", "Application Deadline (Optional)")}
+            {t("Batas Akhir Lamaran", "Application Deadline")} <span className="text-red-500">*</span>
           </label>
           <input
             id="deadline"
             name="deadline"
             type="date"
             value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-            className="w-full sm:w-72 px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
+            onChange={(e) => {
+              setDeadline(e.target.value);
+              if (fieldErrors.deadline) {
+                setFieldErrors((prev) => ({ ...prev, deadline: "" }));
+              }
+            }}
+            className={`w-full sm:w-72 px-4 py-3 rounded-2xl border text-sm font-medium transition text-black scroll-mt-24 ${
+              fieldErrors.deadline
+                ? "border-red-500 bg-red-50/30 ring-2 ring-red-200 focus:border-red-600 focus:bg-white"
+                : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
+            }`}
           />
+          {fieldErrors.deadline ? (
+            <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{fieldErrors.deadline}</span>
+            </p>
+          ) : (
+            <p className="text-xs text-slate-500 font-medium">
+              {t("Wajib diisi agar lowongan memiliki batas waktu penayangan yang jelas.", "Required so the vacancy has a clear application deadline.")}
+            </p>
+          )}
         </div>
       </section>
+
+      {/* Peringatan error tepat di atas tombol submit agar user langsung tahu dan ada tombol shortcut ke kolom */}
+      {formError && (
+        <div
+          role="alert"
+          className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm font-medium flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 shadow-2xs"
+        >
+          <div className="flex items-center gap-2.5">
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" aria-hidden="true" />
+            <span>
+              <strong className="font-bold">{t("Periksa isian:", "Check input:")}</strong> {formError}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              const banner = document.getElementById("form-error-banner");
+              if (banner) {
+                banner.scrollIntoView({ behavior: "smooth", block: "center" });
+              }
+            }}
+            className="text-xs font-bold text-red-700 underline shrink-0 hover:text-red-900 cursor-pointer text-left sm:text-right"
+          >
+            {t("Lihat Kolom yang Kurang", "Go to Missing Field")}
+          </button>
+        </div>
+      )}
 
       {/* Navigasi & Tombol Aksi Simpan Draft / Submit */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-black/[0.08]">

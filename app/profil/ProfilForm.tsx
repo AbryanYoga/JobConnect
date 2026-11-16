@@ -185,9 +185,38 @@ export function ProfilForm({
     });
 
     if (!validationResult.success) {
-      setErrors(fieldErrors(validationResult.error));
-      // Gulir ke atas agar pengguna melihat kesalahan pertama
-      window.scrollTo({ top: 120, behavior: "smooth" });
+      const errs = fieldErrors(validationResult.error);
+      setErrors(errs);
+      const fieldIdMap: Record<string, string> = {
+        name: "profil-name",
+        birthDate: "profil-birthdate",
+        phone: "profil-phone",
+        provinceId: "profil-province",
+        cityId: "profil-city",
+        headline: "profil-headline",
+        educationLevel: "profil-edu-level",
+        educationInstitution: "profil-edu-inst",
+        bio: "profil-bio",
+        linkedinUrl: "profil-linkedin",
+        portfolioUrl: "profil-web-portfolio",
+      };
+      const firstKey = Object.keys(errs)[0];
+      const targetId = fieldIdMap[firstKey];
+      if (targetId) {
+        setTimeout(() => {
+          const el = document.getElementById(targetId);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            try {
+              el.focus({ preventScroll: true });
+            } catch {}
+          } else {
+            window.scrollTo({ top: 120, behavior: "smooth" });
+          }
+        }, 50);
+      } else {
+        window.scrollTo({ top: 120, behavior: "smooth" });
+      }
       return;
     }
 

@@ -136,8 +136,32 @@ export function ProfilPerusahaanForm({
       newErrors.description = "Deskripsi profil bisnis perusahaan wajib diisi minimal 40 karakter";
     }
 
+    const fieldIdMap: Record<string, string> = {
+      name: "company-name",
+      website: "company-website",
+      industry: "company-industry",
+      size: "company-size",
+      provinceId: "company-province",
+      cityId: "company-city",
+      addressNote: "company-address-note",
+      description: "company-description",
+    };
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      const firstKey = Object.keys(newErrors)[0];
+      const targetId = fieldIdMap[firstKey];
+      if (targetId) {
+        setTimeout(() => {
+          const el = document.getElementById(targetId);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            try {
+              el.focus({ preventScroll: true });
+            } catch {}
+          }
+        }, 50);
+      }
       return;
     }
 
@@ -153,7 +177,21 @@ export function ProfilPerusahaanForm({
     });
 
     if (!validationResult.success) {
-      setErrors(fieldErrors(validationResult.error));
+      const errs = fieldErrors(validationResult.error);
+      setErrors(errs);
+      const firstKey = Object.keys(errs)[0];
+      const targetId = fieldIdMap[firstKey];
+      if (targetId) {
+        setTimeout(() => {
+          const el = document.getElementById(targetId);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            try {
+              el.focus({ preventScroll: true });
+            } catch {}
+          }
+        }, 50);
+      }
       return;
     }
 
