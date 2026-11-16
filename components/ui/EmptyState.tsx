@@ -21,6 +21,8 @@ export type EmptyStateAction = EmptyStateLinkAction | EmptyStateClickAction;
 export interface EmptyStateProps {
   title: string;
   description?: string;
+  enTitle?: string;
+  enDescription?: string;
   icon?: React.ReactNode;
   action: EmptyStateAction;
   secondaryAction?: EmptyStateAction;
@@ -61,6 +63,8 @@ function renderAction(
 export function EmptyState({
   title,
   description,
+  enTitle,
+  enDescription,
   icon,
   action,
   secondaryAction,
@@ -82,12 +86,12 @@ export function EmptyState({
       </div>
 
       <Heading className="text-base font-semibold text-slate-900 mb-1 tracking-tight">
-        {t(title)}
+        {t(title, enTitle)}
       </Heading>
 
       {description && (
         <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-          {t(description)}
+          {t(description, enDescription)}
         </p>
       )}
 

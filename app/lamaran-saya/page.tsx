@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Briefcase, ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { ErrorState } from "@/components/ui/ErrorState";
 import {
   LamaranListWithTabs,
   type ApplicationItem,
 } from "@/components/lamaran/LamaranListWithTabs";
+import { LamaranHeader } from "@/components/lamaran/LamaranHeader";
 import { calculateSlaStatus } from "@/lib/sla";
 
 export const metadata: Metadata = {
@@ -147,32 +146,8 @@ export default async function LamaranSayaPage() {
   return (
     <div className="min-h-screen bg-[#FAF8F0] py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
-        {/* Header Halaman */}
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFDD00] text-black text-xs font-bold border border-black/10 shadow-2xs">
-            <Briefcase className="w-3.5 h-3.5 text-black" aria-hidden="true" />
-            <span>Portofolio Lamaran Kerja</span>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-4xl font-black text-black tracking-tight">
-                Riwayat Lamaran Saya
-              </h1>
-              <p className="text-sm text-slate-600 mt-1 font-medium">
-                Pantau progres peninjauan berkas, undangan wawancara, dan keputusan resmi dari perusahaan mitra.
-              </p>
-            </div>
-            {processedApplications.length > 0 && (
-              <Link
-                href="/lowongan"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#FFDD00] hover:bg-[#F2D200] text-black font-bold text-xs transition border border-black/10 shadow-2xs self-start sm:self-auto min-h-[44px]"
-              >
-                <span>Cari Lowongan Lain</span>
-                <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-              </Link>
-            )}
-          </div>
-        </div>
+        {/* Header Halaman Bilingual */}
+        <LamaranHeader hasApplications={processedApplications.length > 0} />
 
         {/* Komponen Daftar Lamaran dengan Tab Status Bersih */}
         <LamaranListWithTabs applications={processedApplications} />

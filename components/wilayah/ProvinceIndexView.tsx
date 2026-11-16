@@ -52,10 +52,10 @@ export function ProvinceIndexView({
       <div className="space-y-3 pb-2">
         <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFDD00] text-black border border-black/10 text-xs font-bold shadow-2xs">
           <MapPin className="w-3.5 h-3.5 text-black" aria-hidden="true" />
-          <span>{t("Jelajah 38 Provinsi Nusantara")}</span>
+          <span>{t("Jelajah 38 Provinsi Nusantara", "Explore 38 Provinces of Indonesia")}</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-black text-black tracking-tight">
-          {t("Jelajah Lowongan Berdasarkan Wilayah")}
+          {t("Jelajah Lowongan Berdasarkan Wilayah", "Explore Jobs by Region")}
         </h1>
         <p className="text-sm sm:text-base text-slate-700 max-w-2xl leading-relaxed font-medium">
           {language === "en"
@@ -73,16 +73,19 @@ export function ProvinceIndexView({
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
               <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                {t("Kerja Remote (Bebas Lokasi)")}
+                {t("Kerja Remote (Bebas Lokasi)", "Remote Work (Location Free)")}
               </h2>
               <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-[#FFDD00] border border-white/15">
                 {remoteCount > 0
                   ? (language === "en" ? `${remoteCount} active vacancies` : `${remoteCount} lowongan aktif`)
-                  : t("Belum ada lowongan")}
+                  : t("Belum ada lowongan", "No vacancies yet")}
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed">
-              {t("Peluang karier yang dapat dikerjakan dari mana saja tanpa batasan domisili atau kewajiban hadir di kantor fisik.")}
+              {t(
+                "Peluang karier yang dapat dikerjakan dari mana saja tanpa batasan domisili atau kewajiban hadir di kantor fisik.",
+                "Career opportunities that can be done from anywhere without domicile restrictions or physical office requirements."
+              )}
             </p>
           </div>
         </div>
@@ -91,7 +94,7 @@ export function ProvinceIndexView({
           href="/wilayah/remote"
           className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#FFDD00] hover:bg-[#F5D500] active:scale-95 text-black font-bold text-xs sm:text-sm transition-all shadow-md shrink-0 min-h-[44px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFDD00]"
         >
-          {t("Lihat Lowongan Remote")}
+          {t("Lihat Lowongan Remote", "View Remote Jobs")}
         </Link>
       </div>
 
@@ -107,9 +110,9 @@ export function ProvinceIndexView({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t("Cari nama provinsi (misal: Jawa, Bali, Papua)...")}
+            placeholder={t("Cari nama provinsi (misal: Jawa, Bali, Papua)...", "Search province (e.g. Java, Bali, Papua)...")}
             className="w-full pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 bg-white border border-black/[0.08] rounded-full focus:outline-none focus:border-black focus:ring-2 focus:ring-black/5 shadow-2xs min-h-[44px] font-medium"
-            aria-label={t("Cari nama provinsi")}
+            aria-label={t("Cari nama provinsi", "Search province name")}
           />
         </div>
 
@@ -124,7 +127,7 @@ export function ProvinceIndexView({
                 : "bg-white text-slate-700 border-black/[0.08] hover:bg-black/5"
             }`}
           >
-            {t("Semua")} ({provinces.length})
+            {t("Semua", "All")} ({provinces.length})
           </button>
           <button
             type="button"
@@ -135,7 +138,7 @@ export function ProvinceIndexView({
                 : "bg-white text-slate-700 border-black/[0.08] hover:bg-black/5"
             }`}
           >
-            {t("Ada Lowongan")} ({activeProvincesCount})
+            {t("Ada Lowongan", "Has Vacancies")} ({activeProvincesCount})
           </button>
         </div>
       </div>
@@ -145,7 +148,7 @@ export function ProvinceIndexView({
         <div className="rounded-[28px] border border-dashed border-black/15 p-8 sm:p-12 text-center bg-white shadow-2xs">
           <MapPin className="w-8 h-8 text-slate-400 mx-auto mb-2" aria-hidden="true" />
           <h3 className="text-base font-bold text-black">
-            {t("Provinsi tidak ditemukan")}
+            {t("Provinsi tidak ditemukan", "Province not found")}
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
             {language === "en"
@@ -160,7 +163,7 @@ export function ProvinceIndexView({
             }}
             className="mt-4 px-5 py-2.5 rounded-full bg-black text-white text-xs font-bold hover:bg-black/80 transition-all min-h-[44px] inline-flex items-center"
           >
-            {t("Reset Pencarian")}
+            {t("Reset Pencarian", "Reset Search")}
           </button>
         </div>
       ) : (
@@ -197,8 +200,8 @@ export function ProvinceIndexView({
                       }`}
                     >
                       {hasJobs
-                        ? `${province.jobCount} ${t("lowongan")}`
-                        : `0 ${t("lowongan")}`}
+                        ? `${province.jobCount} ${t("lowongan", "vacancies")}`
+                        : `0 ${t("lowongan", "vacancies")}`}
                     </span>
                   </div>
                 </div>

@@ -633,6 +633,84 @@ export const TRANSLATIONS: Record<string, string> = {
   "Coba Lagi": "Try Again",
   "Kembali": "Go Back",
   "Tutup": "Close",
+
+  // --- Jelajah Wilayah & Remote ---
+  "Jelajah Lowongan Berdasarkan Wilayah": "Explore Jobs by Region",
+  "Peluang Jarak Jauh": "Remote Opportunities",
+  "Pekerjaan resmi berstatus aktif yang dapat dikerjakan dari mana saja di seluruh Indonesia tanpa kewajiban hadir fisik di kantor.":
+    "Official active vacancies that can be done from anywhere in Indonesia without physical office requirements.",
+  "Filter Lowongan Remote": "Filter Remote Vacancies",
+  "Hapus Filter": "Clear Filters",
+  "Jelajah 38 Provinsi": "Explore 38 Provinces",
+  "Pilih Provinsi Lain": "Choose Another Province",
+  "Belum ada lowongan remote yang sesuai": "No matching remote vacancies yet",
+  "Saat ini belum ada lowongan kerja jarak jauh yang cocok dengan kriteria pencarian Anda. Anda juga dapat menjelajahi lowongan berdasarkan wilayah provinsi.":
+    "Currently there are no remote jobs matching your search criteria. You can also explore vacancies by province.",
+  "Kembali ke Daftar 38 Provinsi": "Back to 38 Provinces List",
+  "Lihat Seluruh Lowongan Indonesia": "View All Indonesia Vacancies",
+  "Kota dan Kabupaten dengan Lowongan Tayang": "Cities and Regencies with Active Vacancies",
+
+  // --- Lowongan Tersimpan ---
+  "Bookmark Pelamar": "Applicant Bookmarks",
+  "Belum ada lowongan tersimpan.": "No saved jobs yet.",
+  "Belum ada lowongan tersimpan": "No saved jobs yet",
+  "Simpan lowongan pekerjaan yang menarik minat Anda agar mudah ditemukan dan diajukan kapan saja.":
+    "Save job vacancies that interest you so they are easy to find and apply for anytime.",
+  "Koleksi peluang karir yang Anda tandai. Buka detail posisi dan ajukan berkas lamaran Anda sebelum batas waktu berakhir.":
+    "Collection of career opportunities you bookmarked. Open position details and submit your application before the deadline passes.",
+
+  // --- Riwayat & Detail Lamaran Pelamar ---
+  "Portofolio Lamaran Kerja": "Job Application Portfolio",
+  "Riwayat Lamaran Saya": "My Applications History",
+  "Pantau progres peninjauan berkas, undangan wawancara, dan keputusan resmi dari perusahaan mitra.":
+    "Track the progress of your application review, interview invitations, and official decisions from partner companies.",
+  "Cari Lowongan Pekerjaan": "Search Job Vacancies",
+  "Tidak ada lamaran yang menunggu konfirmasi.": "No applications awaiting confirmation.",
+  "Belum ada lamaran dalam tahap seleksi atau wawancara.": "No applications in selection or interview stage.",
+  "Belum ada riwayat lamaran yang selesai.": "No completed application history.",
+  "Tidak ada lamaran yang cocok.": "No matching applications.",
+  "Lamaran yang baru dikirim atau sedang ditinjau HRD akan muncul di tab ini.":
+    "Applications recently submitted or under HR review will appear here.",
+  "Undangan wawancara dan tahapan seleksi lanjutan dari perusahaan mitra akan tertera di sini.":
+    "Interview invites and advanced selection stages will appear here.",
+  "Semua lamaran yang diterima, ditolak, atau ditarik akan dicatat di bagian ini.":
+    "All accepted, rejected, or withdrawn applications will be recorded here.",
+  "Lihat Semua Lamaran": "View All Applications",
+  "Dilamar": "Applied",
+  "Terakhir diperbarui": "Last updated",
+  "Lihat Detail & Timeline": "View Details & Timeline",
+  "Kembali ke Riwayat Lamaran": "Back to Application History",
+  "Posisi Pekerjaan": "Job Position",
+  "Timeline Riwayat Proses": "Process Timeline History",
+  "Catatan kronologis setiap tahapan seleksi yang diperbarui secara transparan.":
+    "Chronological record of each selection stage updated transparently.",
+  "Lamaran Berhasil Terkirim": "Application Successfully Submitted",
+  "Garansi Anti-Ghosting JobConnect (SLA 14 Hari)": "JobConnect Anti-Ghosting SLA (14 Days)",
+  "Undangan Wawancara Kerja": "Job Interview Invitation",
+  "Selamat! Anda Diundang ke Tahap Wawancara": "Congratulations! You are Invited to an Interview",
+  "Waktu Wawancara:": "Interview Time:",
+  "Lokasi / Tautan Pertemuan:": "Location / Meeting Link:",
+  "Keputusan Seleksi": "Selection Decision",
+  "Lamaran Belum Dapat Dilanjutkan": "Application Not Moving Forward",
+  "Resmi Diterima": "Officially Accepted",
+  "Buka Halaman Lowongan": "Open Job Page",
+
+  // --- Notifikasi ---
+  "Pantau pemberitahuan terkini seputar lamaran, panggilan wawancara, dan pembaruan lowongan Anda.":
+    "Track latest updates on applications, interview calls, and job alerts.",
+  "Gagal Memuat Notifikasi": "Failed to Load Notifications",
+  "Terjadi kendala saat mengambil data notifikasi Anda. Silakan coba muat ulang.":
+    "An issue occurred while retrieving your notifications. Please reload.",
+  "Semua Notifikasi Telah Dibaca": "All Notifications Read",
+  "Tidak ada pemberitahuan baru yang belum dibaca saat ini.":
+    "No new unread notifications at this time.",
+  "Belum Ada Notifikasi": "No Notifications Yet",
+  "Pemberitahuan aktivitas seputar status lamaran, panggilan wawancara, dan lowongan Anda akan tampil di sini.":
+    "Activity updates regarding your applications, interview invites, and jobs will appear here.",
+  "Lihat Semua Notifikasi": "View All Notifications",
+  "Tandai Semua Dibaca": "Mark All as Read",
+  "Belum Dibaca": "Unread",
+  "Pembaruan realtime aktif": "Realtime updates active",
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(

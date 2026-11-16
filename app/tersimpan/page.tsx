@@ -147,7 +147,9 @@ export default async function TersimpanPage() {
           <div className="bg-white rounded-card border border-slate-200 p-8 sm:p-12 shadow-2xs">
             <EmptyState
               title="Belum ada lowongan tersimpan."
+              enTitle="No saved jobs yet."
               description="Simpan lowongan pekerjaan yang menarik minat Anda agar mudah ditemukan dan diajukan kapan saja."
+              enDescription="Save job vacancies that interest you so they are easy to find and apply for anytime."
               icon={<Bookmark className="w-6 h-6 text-slate-400" />}
               action={{
                 label: "Cari Lowongan",
