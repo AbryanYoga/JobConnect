@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Download, Printer, Loader2 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 export interface AdminLaporanExportItem {
   no: number;
@@ -27,6 +28,7 @@ export function AdminLaporanExportButtons({
   disabled = false,
 }: AdminLaporanExportButtonsProps) {
   const [isExportingCsv, setIsExportingCsv] = useState(false);
+  const { t, language } = useLanguage();
 
   const handleExportCsv = () => {
     if (disabled || items.length === 0) return;
@@ -34,15 +36,26 @@ export function AdminLaporanExportButtons({
     try {
       setIsExportingCsv(true);
 
-      const headers = [
-        "No",
-        "Judul Lowongan",
-        "Perusahaan Mitra",
-        "Kategori",
-        "Tipe Pekerjaan",
-        "Status Moderasi",
-        "Tanggal Pengajuan",
-      ];
+      const headers =
+        language === "en"
+          ? [
+              "No",
+              "Job Title",
+              "Partner Company",
+              "Category",
+              "Job Type",
+              "Moderation Status",
+              "Submission Date",
+            ]
+          : [
+              "No",
+              "Judul Lowongan",
+              "Perusahaan Mitra",
+              "Kategori",
+              "Tipe Pekerjaan",
+              "Status Moderasi",
+              "Tanggal Pengajuan",
+            ];
 
       const csvRows = items.map((item) => [
         item.no,
@@ -88,13 +101,15 @@ export function AdminLaporanExportButtons({
         disabled={disabled || isExportingCsv}
         title={
           disabled
-            ? "Tidak ada data pada rentang ini. Ekspor dinonaktifkan"
-            : "Unduh rekapitulasi data agregat platform dalam format CSV"
+            ? language === "en"
+              ? "No data in this range. Export disabled."
+              : "Tidak ada data pada rentang ini. Ekspor dinonaktifkan."
+            : t("Unduh rekapitulasi data agregat platform dalam format CSV")
         }
         className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-2xs min-h-[44px] ${
           disabled
             ? "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
-            : "bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 active:scale-95"
+            : "bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 active:scale-95 cursor-pointer"
         }`}
       >
         {isExportingCsv ? (
@@ -102,7 +117,7 @@ export function AdminLaporanExportButtons({
         ) : (
           <Download className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
         )}
-        <span>Ekspor CSV</span>
+        <span>{t("Ekspor CSV")}</span>
       </button>
 
       <button
@@ -111,17 +126,19 @@ export function AdminLaporanExportButtons({
         disabled={disabled}
         title={
           disabled
-            ? "Tidak ada data pada rentang ini. Ekspor dinonaktifkan"
-            : "Cetak dokumen rekapitulasi platform atau simpan sebagai PDF"
+            ? language === "en"
+              ? "No data in this range. Print disabled."
+              : "Tidak ada data pada rentang ini. Cetak dinonaktifkan."
+            : t("Cetak dokumen atau simpan sebagai PDF laporan resmi")
         }
         className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-2xs min-h-[44px] ${
           disabled
             ? "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
-            : "bg-[#FFDD00] hover:bg-[#F5D400] text-black border border-black/10 active:scale-95"
+            : "bg-[#FFDD00] hover:bg-[#F5D400] text-black border border-black/10 active:scale-95 cursor-pointer"
         }`}
       >
         <Printer className="w-3.5 h-3.5 text-black" aria-hidden="true" />
-        <span>Cetak PDF</span>
+        <span>{t("Cetak PDF")}</span>
       </button>
     </div>
   );

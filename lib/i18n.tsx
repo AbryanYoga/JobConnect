@@ -711,6 +711,117 @@ export const TRANSLATIONS: Record<string, string> = {
   "Tandai Semua Dibaca": "Mark All as Read",
   "Belum Dibaca": "Unread",
   "Pembaruan realtime aktif": "Realtime updates active",
+
+  // --- Admin Moderasi Lowongan, Kategori, dan Laporan ---
+  "Antrean Moderasi Lowongan": "Job Moderation Queue",
+  "Periksa kriteria, kelayakan tanggung jawab, dan standar transparansi informasi sebelum menyetujui publikasi lowongan.":
+    "Review criteria, role responsibilities, and transparency standards before approving job postings.",
+  "Ditolak / Takedown": "Rejected / Taken Down",
+  "Tidak Ada Lowongan Menunggu Review": "No Vacancies Pending Review",
+  "Seluruh pengajuan lowongan dari mitra perusahaan telah selesai dimoderasi. Kerja bagus!":
+    "All job submissions from partner companies have been moderated. Great work!",
+  "Kembali ke Ringkasan": "Back to Summary",
+  "Tidak Ada Lowongan yang Cocok": "No Matching Vacancies Found",
+  "Tidak ditemukan lowongan dengan status": "No vacancies found with status",
+  "atau kata kunci pencarian yang dimasukkan.": "or the specified search query.",
+  "Lihat Semua Antrean": "View All Queue",
+  "Pengajuan": "Submitted",
+  "Moderasi": "Moderated",
+  "Catatan Penolakan:": "Rejection Note:",
+  "Batas Lamar": "Deadline",
+  "Tolak Lowongan": "Reject Vacancy",
+  "Buka Pratinjau": "Open Preview",
+  "Tanpa batas waktu": "No deadline",
+  "Fresh Graduate": "Fresh Graduate",
+  "Tahun": "Years",
+  "Kelola Kategori Lowongan": "Manage Job Categories",
+  "Atur taksonomi bidang pekerjaan platform. Kategori digunakan untuk pengelompokan penelusuran oleh pencari kerja.":
+    "Organize platform job taxonomy. Categories are used for grouping and search filtering by job seekers.",
+  "Daftar Kategori": "Category List",
+  "Kategori pekerjaan yang tersedia untuk penyaringan lowongan di portal publik.":
+    "Job categories available for filtering vacancies on the public portal.",
+  "Tambah Kategori Baru": "Add New Category",
+  "Nama Kategori": "Category Name",
+  "Slug Tautan": "URL Slug",
+  "Lowongan Terkait": "Related Vacancies",
+  "Aksi": "Actions",
+  "Tambah Kategori Pekerjaan": "Add Job Category",
+  "Kategori baru akan langsung dapat dipilih saat perusahaan memasang lowongan.":
+    "New categories will be immediately available when companies post jobs.",
+  "Simpan Kategori": "Save Category",
+  "Menyimpan...": "Saving...",
+  "Edit Nama Kategori": "Edit Category Name",
+  "Perubahan nama akan otomatis memperbarui slug tautan kategori terkait.":
+    "Changing the name will automatically update the related URL slug.",
+  "Perbarui Kategori": "Update Category",
+  "Hapus Kategori": "Delete Category",
+  "Apakah Anda yakin ingin menghapus kategori": "Are you sure you want to delete category",
+  "Tindakan ini tidak dapat dibatalkan. Kategori hanya dapat dihapus jika tidak memiliki lowongan kerja terkait.":
+    "This action cannot be undone. Categories can only be deleted if they have no associated jobs.",
+  "Ya, Hapus Kategori": "Yes, Delete Category",
+  "Menghapus...": "Deleting...",
+  "Kategori tidak dapat dihapus karena masih digunakan lowongan aktif.":
+    "Category cannot be deleted because it is still used by active jobs.",
+  "Kategori baru berhasil ditambahkan.": "New category added successfully.",
+  "Kategori berhasil diperbarui.": "Category updated successfully.",
+  "Kategori berhasil dihapus.": "Category deleted successfully.",
+  "Rekapitulasi Platform Administrator": "Administrator Platform Summary",
+  "Rekapitulasi Platform & Moderasi": "Platform Summary & Moderation",
+  "Ringkasan metrik agregat volume lowongan, rasio persetujuan moderasi, dan pertumbuhan mitra platform per rentang tanggal.":
+    "Aggregate metrics summary of job volume, moderation approval rate, and partner growth by date range.",
+  "Rentang Periode": "Date Period",
+  "Ekspor CSV": "Export CSV",
+  "Cetak PDF": "Print PDF",
+  "Unduh rekapitulasi data agregat platform dalam format CSV":
+    "Download platform aggregate data summary in CSV format",
+  "Cetak dokumen atau simpan sebagai PDF laporan resmi":
+    "Print document or save as official report PDF",
+  "Tanggal Mulai": "Start Date",
+  "Tanggal Selesai": "End Date",
+  "Terapkan Periode": "Apply Period",
+  "Total Diajukan": "Total Submitted",
+  "Lowongan periode ini": "Vacancies this period",
+  "Disetujui (ACC)": "Approved (ACC)",
+  "Tayang publik resmi": "Official live postings",
+  "Antrean Pending": "Pending Queue",
+  "Menunggu verifikasi": "Awaiting verification",
+  "Tolak / Revisi": "Reject / Revision",
+  "Ditolak bersyarat": "Conditionally rejected",
+  "ditutup": "closed",
+  "Rasio ACC Rate": "ACC Rate Ratio",
+  "Persentase kelolosan": "Approval percentage",
+  "Pengguna Baru": "New Users",
+  "mitra": "partners",
+  "pelamar": "applicants",
+  "Rekapitulasi per Mitra Perusahaan": "Partner Company Breakdown",
+  "Agregat pengajuan lowongan kerja dan status kurasi masing-masing perusahaan pada periode ini.":
+    "Aggregate job postings and curation status for each company during this period.",
+  "Domisili Kantor": "Office Location",
+  "Total Lowongan": "Total Vacancies",
+  "Tayang (Open)": "Live (Open)",
+  "Aktivitas Terakhir": "Latest Activity",
+  "Tidak ada aktivitas pengajuan lowongan dari mitra pada periode ini.":
+    "No job submission activity from partners during this period.",
+  "Distribusi Lowongan Berdasarkan Kategori": "Job Distribution by Category",
+  "Sebaran kebutuhan tenaga kerja pada kategori bidang industri platform.":
+    "Workforce demand distribution across platform industry categories.",
+  "Belum ada data kategori lowongan pada periode ini.":
+    "No category data available for this period.",
+  "Nama Bidang Kategori": "Category Field Name",
+  "Lowongan Tayang": "Live Vacancies",
+  "Porsi Platform": "Platform Share",
+  "Rincian Pengajuan Lowongan Periode Ini": "Submission Details This Period",
+  "Riwayat lengkap seluruh lowongan yang masuk dalam rentang tanggal terpilih.":
+    "Complete history of all vacancies submitted within the selected date range.",
+  "lowongan tercatat": "vacancies recorded",
+  "Tidak ada aktivitas platform pada rentang ini.": "No platform activity in this range.",
+  "Cobalah memilih rentang tanggal yang lebih luas pada filter di atas.":
+    "Try selecting a broader date range in the filter above.",
+  "Buka Detail": "View Details",
+  "Tanggal Pengajuan": "Submission Date",
+  "Judul Lowongan": "Job Title",
+  "Laporan Rekapitulasi Platform & Aktivitas Moderasi Lowongan":
+    "Platform Summary Report & Job Moderation Activity",
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(
