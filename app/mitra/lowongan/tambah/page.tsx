@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { JobForm } from "@/components/mitra/JobForm";
-import { ShieldCheck } from "lucide-react";
 import { checkCompanyVerification } from "@/lib/validation/profil";
 import { getCompanyLogo } from "@/lib/company-logo";
 
@@ -76,22 +75,8 @@ export default async function TambahLowonganPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header Formulir Pengajuan */}
-      <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-2">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" aria-hidden="true" />
-          <span>Verifikasi Moderasi Admin</span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-          Pasang Lowongan Pekerjaan Baru
-        </h1>
-        <p className="text-sm text-slate-600 font-medium max-w-2xl leading-relaxed">
-          Tentukan kualifikasi yang jelas dan terstruktur. Setelah diajukan, lowongan akan ditinjau oleh admin JobConnect sebelum ditayangkan ke publik demi menjamin platform bebas dari calo dan penipuan.
-        </p>
-      </div>
-
-      {/* Form Kriteria Terstruktur dengan Lokasi Berjenjang */}
-      <JobForm categories={categories} provinces={provinces} cities={cities} />
+      {/* Form Kriteria Terstruktur dengan Lokasi Berjenjang & Header Bilingual */}
+      <JobForm categories={categories} provinces={provinces} cities={cities} showHeader={true} />
     </div>
   );
 }

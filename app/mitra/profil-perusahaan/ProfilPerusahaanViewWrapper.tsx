@@ -317,7 +317,9 @@ export function ProfilPerusahaanViewWrapper({
                     {t("Ukuran Tim / Karyawan", "Company Size")}
                   </p>
                   <p className="text-sm font-bold text-navy-950">
-                    {sizeLabel || (
+                    {sizeLabel ? (
+                      t(sizeLabel, sizeLabel)
+                    ) : (
                       <span className="text-slate-400 font-normal italic">
                         {t("Belum ditentukan", "Not specified")}
                       </span>

@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ArrowLeft, ExternalLink, Briefcase } from "lucide-react";
 import { type ApplicationStatus } from "@/components/ui/StatusBadge";
-import { CopyJobLinkButton } from "@/components/mitra/CopyJobLinkButton";
+import { MitraPelamarHeader } from "@/components/mitra/MitraPelamarHeader";
 import { MitraPelamarViewSwitcher } from "@/components/mitra/MitraPelamarViewSwitcher";
 import { type PortfolioItem } from "@/lib/validation/profil";
 
@@ -22,20 +20,6 @@ interface PelamarPageProps {
     ai?: string;
     sort?: string;
   }>;
-}
-
-function formatDateIndo(dateStr: string): string {
-  try {
-    return new Intl.DateTimeFormat("id-ID", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(dateStr));
-  } catch {
-    return dateStr;
-  }
 }
 
 type AppItem = {
@@ -166,48 +150,17 @@ export default async function PelamarPage({
 
   return (
     <div className="space-y-8">
-      {/* Tombol Kembali ke Daftar Lowongan */}
-      <div>
-        <Link
-          href="/mitra/lowongan"
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-600 hover:text-black transition min-h-[44px]"
-        >
-          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-          <span>Kembali ke Kelola Lowongan</span>
-        </Link>
-      </div>
-
-      {/* Header Lowongan & Metrik Pelamar */}
-      <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAF8F0] border border-black/[0.06] text-xs font-bold text-slate-800">
-            <Briefcase className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
-            <span>Kandidat Pelamar Lowongan</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
-            {job.title}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 font-medium">
-            Diajukan pada {formatDateIndo(job.created_at)} • Total {applications.length} pelamar terdaftar
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <CopyJobLinkButton jobSlug={job.slug} />
-
-          {job.status === "open" && (
-            <Link
-              href={`/lowongan/${job.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-black/[0.08] hover:bg-black/[0.04] text-black font-bold text-xs sm:text-sm transition min-h-[44px]"
-            >
-              <span>Lihat Tayangan</span>
-              <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-            </Link>
-          )}
-        </div>
-      </div>
+      {/* Header Lowongan & Metrik Pelamar Bilingual */}
+      <MitraPelamarHeader
+        job={{
+          id: job.id,
+          title: job.title,
+          slug: job.slug,
+          status: job.status,
+          created_at: job.created_at,
+        }}
+        totalApplications={applications.length}
+      />
 
       {/* Pengalih Tampilan & Papan Kanban ATS Pelamar */}
       <MitraPelamarViewSwitcher

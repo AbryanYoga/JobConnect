@@ -822,6 +822,117 @@ export const TRANSLATIONS: Record<string, string> = {
   "Judul Lowongan": "Job Title",
   "Laporan Rekapitulasi Platform & Aktivitas Moderasi Lowongan":
     "Platform Summary Report & Job Moderation Activity",
+
+  // --- Dashboard & Panel Mitra ---
+  "Mitra Resmi Terverifikasi": "Verified Official Partner",
+  "Kelola lowongan kerja resmi, pantau proses peninjauan admin, dan seleksi kandidat pelamar secara transparan tanpa pungutan liar.":
+    "Manage official job postings, track admin review progress, and screen applicant candidates transparently without unauthorized fees.",
+  "Pasang Lowongan Baru": "Post New Job",
+  "Aktif dapat dilamar publik": "Active and open for public applications",
+  "Sedang diverifikasi admin": "Awaiting admin verification",
+  "Berkas lamaran diterima": "Applications received",
+  "Perlu Ditinjau": "Needs Review",
+  "Status dikirim atau ditinjau": "Status submitted or under review",
+  "Aktivitas Lowongan Terbaru": "Recent Job Activities",
+  "Lowongan pekerjaan yang baru saja diajukan atau dikelola perusahaan Anda.":
+    "Job postings recently submitted or managed by your company.",
+  "Kamu belum punya lowongan": "You don't have any job vacancies yet",
+  "Pasang lowongan pertamamu untuk mulai menjangkau pencari kerja terverifikasi dari seluruh 38 provinsi di Indonesia.":
+    "Post your first vacancy to start reaching verified job seekers across all 38 provinces in Indonesia.",
+  "Pasang Lowongan Pertama": "Post Your First Job",
+  "Komitmen Rekrutmen Bersih JobConnect": "JobConnect Clean Recruitment Commitment",
+  "JobConnect menjamin seluruh proses seleksi berjalan adil, transparan, dan bebas calo. Dilarang memungut biaya apa pun dari pelamar kerja.":
+    "JobConnect ensures all selection processes are fair, transparent, and broker-free. Charging any fees to job seekers is strictly prohibited.",
+  "Kelola Lowongan Perusahaan": "Manage Company Vacancies",
+  "Pantau status verifikasi, periksa jumlah kandidat pelamar, dan perbarui rincian lowongan kerja Anda.":
+    "Monitor verification status, inspect candidate count, and update your job vacancy details.",
+  "Tidak ada lowongan dengan status ini": "No vacancies found with this status",
+  "Belum ada lowongan yang sesuai dengan filter yang Anda pilih. Coba pilih status lain atau tampilkan seluruh lowongan.":
+    "No vacancies match your selected filter. Try selecting another status or view all vacancies.",
+  "Pasang lowongan pekerjaan pertama Anda untuk mulai menerima lamaran dan menemukan kandidat terbaik.":
+    "Post your first vacancy to start receiving applications and find the best candidates.",
+  "Tampilkan Semua Lowongan": "Show All Vacancies",
+  "Lihat Halaman Publik": "View Public Page",
+  "Catatan Penolakan dari Admin:": "Rejection Note from Admin:",
+  "Pelamar Masuk:": "Received Applicants:",
+  "Edit Lowongan": "Edit Job",
+  "Tutup Lowongan": "Close Job",
+  "Verifikasi Moderasi Admin": "Admin Moderation Verification",
+  "Pasang Lowongan Pekerjaan Baru": "Post New Job Vacancy",
+  "Tentukan kualifikasi yang jelas dan terstruktur. Setelah diajukan, lowongan akan ditinjau oleh admin JobConnect sebelum ditayangkan ke publik demi menjamin platform bebas dari calo dan penipuan.":
+    "Define clear and structured qualifications. Once submitted, the vacancy will be reviewed by JobConnect administrators before publishing to ensure the platform is free from brokers and fraud.",
+  "1. Identitas Posisi & Ringkasan": "1. Position Identity & Summary",
+  "Judul pekerjaan dan gambaran ringkas peran ini.": "Job title and brief description of this role.",
+  "Tidak menemukan kategori yang sesuai? Pilih kustom di bawah":
+    "Can't find a matching category? Choose custom below",
+  "+ Kategori Lainnya (Tentukan Kategori Baru)": "+ Other Category (Define New Category)",
+  "Nama Kategori Baru Perusahaan Anda": "Your Company's New Category Name",
+  "Kategori ini akan otomatis didaftarkan dan dapat ditinjau oleh admin saat moderasi lowongan.":
+    "This category will be automatically registered and reviewed by admin moderators.",
+  "Ringkasan Pekerjaan": "Job Summary",
+  "2. Kriteria Utama Terstruktur": "2. Core Structured Criteria",
+  "Mode kerja, tipe kontrak, syarat pendidikan, dan pengalaman.":
+    "Work mode, contract type, education requirements, and experience.",
+  "Pengalaman Minimal (Tahun)": "Minimum Experience (Years)",
+  "Isi 0 jika posisi terbuka bagi lulusan baru (fresh graduate).":
+    "Enter 0 if the position is open for fresh graduates.",
+  "Keahlian Wajib": "Required Skills",
+  "3. Lokasi & Penempatan Kerja": "3. Work Location & Placement",
+  "Provinsi dan kota penempatan kerja (berjenjang sesuai Kemendagri).":
+    "Work placement province and city.",
+  "Provinsi Penempatan": "Placement Province",
+  "-- Pilih Provinsi --": "-- Select Province --",
+  "Kota / Kabupaten Penempatan": "Placement City / Regency",
+  "-- Pilih Provinsi Terlebih Dahulu --": "-- Select Province First --",
+  "-- Pilih Kota / Kabupaten --": "-- Select City / Regency --",
+  "Area atau Alamat Singkat Kantor (Opsional)": "Office Area / Short Address (Optional)",
+  "4. Rincian Tanggung Jawab & Benefit": "4. Responsibilities & Benefits Details",
+  "Poin tugas utama, nilai tambah, dan fasilitas yang didapatkan.":
+    "Core duties, nice to have qualifications, and perks.",
+  "Tanggung Jawab Utama (3 hingga 6 Poin)": "Core Responsibilities (3 to 6 Points)",
+  "Tambah Poin": "Add Point",
+  "Nilai Tambah (Nice to Have, Maks. 5)": "Nice to Have (Optional, Max. 5)",
+  "Fasilitas & Benefit (Maks. 5)": "Perks & Benefits (Max. 5)",
+  "5. Kompensasi & Penutupan": "5. Compensation & Closing",
+  "Rentang gaji bulanan dan tanggal batas akhir lamaran.":
+    "Monthly salary range and application deadline date.",
+  "Gaji Minimal (Rp, Opsional)": "Minimum Salary (IDR, Optional)",
+  "Gaji Maksimal (Rp, Opsional)": "Maximum Salary (IDR, Optional)",
+  "Batas Waktu Lamaran (Deadline)": "Application Deadline",
+  "Simpan sebagai Draft": "Save as Draft",
+  "Menyimpan Draft...": "Saving Draft...",
+  "Ajukan Lowongan": "Submit Vacancy",
+  "Mengajukan...": "Submitting...",
+  "Batal Perubahan": "Cancel Changes",
+  "Detail Berkas": "View Application",
+  "berkas ditemukan": "records found",
+  "Tidak ada data pada rentang ini.": "No data found for this date range.",
+  "Cobalah memilih rentang tanggal yang lebih luas atau pilih lowongan lain pada formulir filter di atas.":
+    "Try choosing a broader date range or select another job from the filter above.",
+  "Pendidikan": "Education",
+  "Geser tabel untuk melihat seluruh data": "Scroll table horizontally to view full data",
+  "Belum ada lowongan pekerjaan yang dibuat.": "No job vacancies posted yet.",
+  "Statistik perolehan pelamar pada masing-masing posisi pekerjaan aktif.":
+    "Applicant statistics for each active job vacancy position.",
+  "Riwayat lengkap berkas pelamar yang masuk pada rentang waktu yang ditentukan.":
+    "Full history of candidate applications received during the selected date range.",
+  "Daftar Rekapitulasi Kandidat Pelamar": "Applicant Candidate Records",
+  "Laporan Operasional Rekrutmen": "Recruitment Operational Report",
+  "Laporan Rekapitulasi Pelamar": "Applicant Summary Report",
+  "Data rekapitulasi pengajuan lamaran, alur seleksi, dan keputusan kandidat per rentang tanggal.":
+    "Summary data of applications, selection workflow, and candidate decisions by date range.",
+  "Rentang Aktif": "Active Date Range",
+  "Semua Posisi Lowongan": "All Job Positions",
+  "Terapkan Filter": "Apply Filter",
+  "Total Pelamar Masuk": "Total Applicants",
+  "Dalam Proses Seleksi": "In Selection Process",
+  "Diterima / Ditawari": "Accepted / Offered",
+  "Ditolak / Ditarik": "Rejected / Withdrawn",
+  "Pada rentang tanggal yang dipilih": "During selected date range",
+  "Status review, shortlist, atau wawancara": "Review, shortlist, or interview",
+  "Kandidat berhasil lolos seleksi": "Candidates passed selection",
+  "Belum sesuai kriteria atau ditarik": "Not matching criteria or withdrawn",
+  "Rekapitulasi per Posisi Lowongan": "Breakdown by Job Position",
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(

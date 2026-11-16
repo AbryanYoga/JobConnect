@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/lib/i18n";
 import {
   CheckCircle2,
   ChevronRight,
@@ -37,6 +38,7 @@ export function ApplicationStatusActions({
   onOpenRejectModal,
   onOpenInterviewModal,
 }: ApplicationStatusActionsProps) {
+  const { t } = useLanguage();
   const [isUpdating, setIsUpdating] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -67,10 +69,13 @@ export function ApplicationStatusActions({
     <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-card space-y-5">
       <div className="space-y-1">
         <h2 className="text-base sm:text-lg font-black text-black">
-          Keputusan & Alur Seleksi
+          {t("Keputusan & Alur Seleksi", "Hiring Decision & Selection Pipeline")}
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 font-medium">
-          Tentukan kelanjutan proses pelamar pada tahapan seleksi perusahaan Anda.
+          {t(
+            "Tentukan kelanjutan proses pelamar pada tahapan seleksi perusahaan Anda.",
+            "Manage the candidate's next step in your company's recruitment pipeline."
+          )}
         </p>
       </div>
 
@@ -78,15 +83,24 @@ export function ApplicationStatusActions({
         <div className="p-5 rounded-2xl bg-[#FAF8F0] border border-black/[0.06] text-xs sm:text-sm font-medium space-y-2">
           <div className="flex items-center gap-2 font-bold text-black">
             <CheckCircle2 className="w-4 h-4 text-emerald-700" aria-hidden="true" />
-            <span>Keputusan Akhir Telah Ditetapkan</span>
+            <span>{t("Keputusan Akhir Telah Ditetapkan", "Final Decision Has Been Made")}</span>
           </div>
           <p className="text-slate-600 leading-relaxed">
             {currentStatus === "diterima" &&
-              "Kandidat ini telah resmi diterima bekerja. Status lamaran telah selesai dan tidak dapat diubah kembali."}
+              t(
+                "Kandidat ini telah resmi diterima bekerja. Status lamaran telah selesai dan tidak dapat diubah kembali.",
+                "Candidate has been officially hired. Application status is concluded and locked."
+              )}
             {currentStatus === "ditolak" &&
-              "Kandidat ini telah ditolak beserta alasan tertulis. Status lamaran telah ditutup."}
+              t(
+                "Kandidat ini telah ditolak beserta alasan tertulis. Status lamaran telah ditutup.",
+                "Candidate has been rejected with written reasons. Application status is closed."
+              )}
             {currentStatus === "ditarik" &&
-              "Lamaran telah ditarik secara sukarela oleh pelamar."}
+              t(
+                "Lamaran telah ditarik secara sukarela oleh pelamar.",
+                "Application was voluntarily withdrawn by the applicant."
+              )}
           </p>
         </div>
       ) : (
@@ -102,12 +116,12 @@ export function ApplicationStatusActions({
               {isUpdating ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-black" aria-hidden="true" />
-                  <span>Memperbarui Status...</span>
+                  <span>{t("Memperbarui Status...", "Updating Status...")}</span>
                 </>
               ) : (
                 <>
                   <Eye className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
-                  <span>Tandai Sedang Ditinjau</span>
+                  <span>{t("Tandai Sedang Ditinjau", "Mark Under Review")}</span>
                   <ChevronRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
                 </>
               )}
@@ -124,12 +138,12 @@ export function ApplicationStatusActions({
               {isUpdating ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-black" aria-hidden="true" />
-                  <span>Memperbarui Status...</span>
+                  <span>{t("Memperbarui Status...", "Updating Status...")}</span>
                 </>
               ) : (
                 <>
                   <Star className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
-                  <span>Pindahkan ke Shortlist</span>
+                  <span>{t("Pindahkan ke Shortlist", "Move to Shortlist")}</span>
                   <ChevronRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
                 </>
               )}
@@ -147,8 +161,8 @@ export function ApplicationStatusActions({
               <Calendar className="w-4 h-4" aria-hidden="true" />
               <span>
                 {currentStatus === "wawancara"
-                  ? "Ubah Jadwal Wawancara"
-                  : "Jadwalkan Wawancara Kandidat"}
+                  ? t("Ubah Jadwal Wawancara", "Reschedule Interview")
+                  : t("Jadwalkan Wawancara Kandidat", "Schedule Candidate Interview")}
               </span>
             </button>
           )}
@@ -163,12 +177,12 @@ export function ApplicationStatusActions({
               {isUpdating ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-black" aria-hidden="true" />
-                  <span>Memperbarui Status...</span>
+                  <span>{t("Memperbarui Status...", "Updating Status...")}</span>
                 </>
               ) : (
                 <>
                   <Gift className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
-                  <span>Beri Penawaran Kerja (Offering)</span>
+                  <span>{t("Beri Penawaran Kerja (Offering)", "Extend Job Offer")}</span>
                   <ChevronRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
                 </>
               )}
@@ -185,12 +199,12 @@ export function ApplicationStatusActions({
               {isUpdating ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-white" aria-hidden="true" />
-                  <span>Memperbarui Status...</span>
+                  <span>{t("Memperbarui Status...", "Updating Status...")}</span>
                 </>
               ) : (
                 <>
                   <UserCheck className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
-                  <span>Terima Kandidat Bekerja</span>
+                  <span>{t("Terima Kandidat Bekerja", "Hire Candidate")}</span>
                   <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
                 </>
               )}
@@ -206,7 +220,7 @@ export function ApplicationStatusActions({
               className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full hover:bg-red-50 text-red-600 hover:text-red-700 font-bold text-xs sm:text-sm border border-red-200 transition min-h-[44px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <XCircle className="w-4 h-4" aria-hidden="true" />
-              <span>Tolak Lamaran Kandidat</span>
+              <span>{t("Tolak Lamaran Kandidat", "Reject Candidate Application")}</span>
             </button>
           </div>
         </div>

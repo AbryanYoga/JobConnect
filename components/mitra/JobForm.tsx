@@ -15,7 +15,9 @@ import {
   Save,
   CheckCircle2,
   AlertCircle,
+  ShieldCheck,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
@@ -80,6 +82,7 @@ interface JobFormProps {
   isEditing?: boolean;
   onSubmitDraft?: (data: JobFormData) => Promise<void>;
   onSubmitPending?: (data: JobFormData) => Promise<void>;
+  showHeader?: boolean;
 }
 
 function CharCounter({
@@ -132,7 +135,10 @@ export function JobForm({
   cities = [],
   initialData,
   isEditing = false,
+  showHeader = true,
 }: JobFormProps) {
+  const { t, language } = useLanguage();
+
   // Field-field utama kriteria terstruktur
   const [title, setTitle] = useState(initialData?.title || "");
   const [summary, setSummary] = useState(initialData?.summary || "");
@@ -340,6 +346,25 @@ export function JobForm({
 
   return (
     <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+      {/* Header Formulir Pengajuan (jika diminta oleh halaman dan bukan mode edit) */}
+      {showHeader && !isEditing && (
+        <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" aria-hidden="true" />
+            <span>{t("Verifikasi Moderasi Admin", "Admin Moderation Verification")}</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
+            {t("Pasang Lowongan Pekerjaan Baru", "Post New Job Vacancy")}
+          </h1>
+          <p className="text-sm text-slate-600 font-medium max-w-2xl leading-relaxed">
+            {t(
+              "Tentukan kualifikasi yang jelas dan terstruktur. Setelah diajukan, lowongan akan ditinjau oleh admin JobConnect sebelum ditayangkan ke publik demi menjamin platform bebas dari calo dan penipuan.",
+              "Define clear and structured qualifications. Once submitted, the vacancy will be reviewed by JobConnect administrators before publishing to ensure the platform is free from brokers and fraud."
+            )}
+          </p>
+        </div>
+      )}
+
       {/* Alert Error / Sukses */}
       {formError && (
         <div
@@ -348,7 +373,7 @@ export function JobForm({
         >
           <AlertCircle className="w-5 h-5 shrink-0 text-red-600 mt-0.5" aria-hidden="true" />
           <div className="space-y-0.5">
-            <span className="font-bold block">Terdapat kesalahan isian:</span>
+            <span className="font-bold block">{t("Terdapat kesalahan isian:", "Input errors occurred:")}</span>
             <span>{formError}</span>
           </div>
         </div>
@@ -372,10 +397,10 @@ export function JobForm({
           </div>
           <div>
             <h2 className="text-lg font-black text-black">
-              1. Identitas Posisi & Ringkasan
+              {t("1. Identitas Posisi & Ringkasan", "1. Position Identity & Summary")}
             </h2>
             <p className="text-xs text-slate-500 font-medium">
-              Judul pekerjaan dan gambaran ringkas peran ini.
+              {t("Judul pekerjaan dan gambaran ringkas peran ini.", "Job title and concise summary of this role.")}
             </p>
           </div>
         </div>
@@ -384,7 +409,7 @@ export function JobForm({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label htmlFor="title" className="block text-sm font-bold text-black">
-              Judul Lowongan <span className="text-red-500">*</span>
+              {t("Judul Lowongan", "Job Title")} <span className="text-red-500">*</span>
             </label>
             <CharCounter
               current={title.length}
@@ -398,13 +423,15 @@ export function JobForm({
             type="text"
             required
             maxLength={JOB_LIMITS.title.max}
-            placeholder="Contoh: Frontend Engineer, Staff Administrasi Gudang"
+            placeholder={language === "en" ? "e.g. Frontend Engineer, Warehouse Administrator" : "Contoh: Frontend Engineer, Staff Administrasi Gudang"}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
           />
           <p className="text-xs text-slate-500 font-medium">
-            Minimal {JOB_LIMITS.title.min} karakter, maksimal {JOB_LIMITS.title.max} karakter.
+            {language === "en"
+              ? `Minimum ${JOB_LIMITS.title.min} characters, maximum ${JOB_LIMITS.title.max} characters.`
+              : `Minimal ${JOB_LIMITS.title.min} karakter, maksimal ${JOB_LIMITS.title.max} karakter.`}
           </p>
         </div>
 
@@ -412,10 +439,10 @@ export function JobForm({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label htmlFor="category" className="block text-sm font-bold text-black">
-              Kategori Pekerjaan <span className="text-red-500">*</span>
+              {t("Kategori Pekerjaan", "Job Category")} <span className="text-red-500">*</span>
             </label>
             <span className="text-xs text-slate-500 font-medium">
-              Tidak menemukan kategori yang sesuai? Pilih kustom di bawah
+              {t("Tidak menemukan kategori yang sesuai? Pilih kustom di bawah", "Can't find a matching category? Select custom below")}
             </span>
           </div>
           <select
@@ -431,11 +458,11 @@ export function JobForm({
           >
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
-                {cat.name}
+                {t(cat.name, cat.name)}
               </option>
             ))}
             <option value="custom">
-              + Kategori Lainnya (Tentukan Kategori Baru)
+              {t("+ Kategori Lainnya (Tentukan Kategori Baru)", "+ Other Category (Specify New Category)")}
             </option>
           </select>
 
@@ -443,12 +470,12 @@ export function JobForm({
           {categoryId === "custom" && (
             <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-2 animate-in fade-in duration-200">
               <label htmlFor="custom-category" className="block text-xs font-bold text-amber-950">
-                Nama Kategori Baru Perusahaan Anda <span className="text-red-500">*</span>
+                {t("Nama Kategori Baru Perusahaan Anda", "Your Company New Category Name")} <span className="text-red-500">*</span>
               </label>
               <input
                 id="custom-category"
                 type="text"
-                placeholder="Contoh: Kecerdasan Buatan / AI, Logistik & Pergudangan, Perhotelan"
+                placeholder={language === "en" ? "e.g. Artificial Intelligence, Logistics & Warehousing, Hospitality" : "Contoh: Kecerdasan Buatan / AI, Logistik & Pergudangan, Perhotelan"}
                 value={customCategoryName}
                 onChange={(e) => setCustomCategoryName(e.target.value)}
                 maxLength={60}
@@ -456,7 +483,10 @@ export function JobForm({
                 className="w-full px-4 py-2.5 rounded-xl bg-white border border-amber-300 focus:border-black text-sm font-medium text-black focus:outline-none transition shadow-2xs"
               />
               <p className="text-[11px] text-amber-800 font-medium">
-                Kategori ini akan otomatis didaftarkan dan dapat ditinjau oleh admin saat moderasi lowongan.
+                {t(
+                  "Kategori ini akan otomatis didaftarkan dan dapat ditinjau oleh admin saat moderasi lowongan.",
+                  "This category will be automatically registered and reviewed by admin during moderation."
+                )}
               </p>
             </div>
           )}
@@ -466,7 +496,7 @@ export function JobForm({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label htmlFor="summary" className="block text-sm font-bold text-black">
-              Ringkasan Pekerjaan <span className="text-red-500">*</span>
+              {t("Ringkasan Pekerjaan", "Job Summary")} <span className="text-red-500">*</span>
             </label>
             <CharCounter
               current={summary.length}
@@ -480,13 +510,19 @@ export function JobForm({
             rows={3}
             required
             maxLength={JOB_LIMITS.summary.max}
-            placeholder="Tuliskan 1 paragraf ringkas tentang peran ini dan apa yang akan dikerjakan kandidat."
+            placeholder={
+              language === "en"
+                ? "Write 1 concise paragraph about this role and key candidate duties."
+                : "Tuliskan 1 paragraf ringkas tentang peran ini dan apa yang akan dikerjakan kandidat."
+            }
             value={summary}
             onChange={(e) => setSummary(e.target.value)}
             className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
           />
           <p className="text-xs text-slate-500 font-medium">
-            Minimal {JOB_LIMITS.summary.min} karakter, maksimal {JOB_LIMITS.summary.max} karakter.
+            {language === "en"
+              ? `Minimum ${JOB_LIMITS.summary.min} characters, maximum ${JOB_LIMITS.summary.max} characters.`
+              : `Minimal ${JOB_LIMITS.summary.min} karakter, maksimal ${JOB_LIMITS.summary.max} karakter.`}
           </p>
         </div>
       </section>
@@ -499,10 +535,13 @@ export function JobForm({
           </div>
           <div>
             <h2 className="text-lg font-black text-black">
-              2. Kriteria Utama Terstruktur
+              {t("2. Kriteria Utama Terstruktur", "2. Structured Key Criteria")}
             </h2>
             <p className="text-xs text-slate-500 font-medium">
-              Mode kerja, tipe kontrak, syarat pendidikan, dan pengalaman.
+              {t(
+                "Mode kerja, tipe kontrak, syarat pendidikan, dan pengalaman.",
+                "Work mode, contract type, education requirement, and experience."
+              )}
             </p>
           </div>
         </div>
@@ -511,7 +550,7 @@ export function JobForm({
           {/* Mode Kerja */}
           <div className="space-y-2">
             <label htmlFor="workMode" className="block text-sm font-bold text-black">
-              Mode Kerja <span className="text-red-500">*</span>
+              {t("Mode Kerja", "Work Mode")} <span className="text-red-500">*</span>
             </label>
             <select
               id="workMode"
@@ -522,7 +561,7 @@ export function JobForm({
             >
               {(Object.keys(WORK_MODE_LABEL) as WorkMode[]).map((mode) => (
                 <option key={mode} value={mode}>
-                  {WORK_MODE_LABEL[mode]}
+                  {t(WORK_MODE_LABEL[mode], WORK_MODE_LABEL[mode])}
                 </option>
               ))}
             </select>
@@ -531,7 +570,7 @@ export function JobForm({
           {/* Tipe Pekerjaan */}
           <div className="space-y-2">
             <label htmlFor="jobType" className="block text-sm font-bold text-black">
-              Tipe Pekerjaan <span className="text-red-500">*</span>
+              {t("Tipe Pekerjaan", "Job Type")} <span className="text-red-500">*</span>
             </label>
             <select
               id="jobType"
@@ -542,7 +581,7 @@ export function JobForm({
             >
               {(Object.keys(JOB_TYPE_LABEL) as JobType[]).map((type) => (
                 <option key={type} value={type}>
-                  {JOB_TYPE_LABEL[type]}
+                  {t(JOB_TYPE_LABEL[type], JOB_TYPE_LABEL[type])}
                 </option>
               ))}
             </select>
@@ -551,7 +590,7 @@ export function JobForm({
           {/* Pendidikan Minimal */}
           <div className="space-y-2">
             <label htmlFor="educationMin" className="block text-sm font-bold text-black">
-              Pendidikan Minimal <span className="text-red-500">*</span>
+              {t("Pendidikan Minimal", "Minimum Education")} <span className="text-red-500">*</span>
             </label>
             <select
               id="educationMin"
@@ -562,7 +601,7 @@ export function JobForm({
             >
               {(Object.keys(EDUCATION_LABEL) as EducationMin[]).map((edu) => (
                 <option key={edu} value={edu}>
-                  {EDUCATION_LABEL[edu]}
+                  {t(EDUCATION_LABEL[edu], EDUCATION_LABEL[edu])}
                 </option>
               ))}
             </select>
@@ -571,7 +610,7 @@ export function JobForm({
           {/* Pengalaman Minimal (Tahun) */}
           <div className="space-y-2">
             <label htmlFor="experienceMin" className="block text-sm font-bold text-black">
-              Pengalaman Minimal (Tahun) <span className="text-red-500">*</span>
+              {t("Pengalaman Minimal (Tahun)", "Minimum Experience (Years)")} <span className="text-red-500">*</span>
             </label>
             <input
               id="experienceMin"
@@ -584,7 +623,7 @@ export function JobForm({
               className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
             />
             <p className="text-xs text-slate-500 font-medium">
-              Isi 0 jika posisi terbuka bagi lulusan baru (fresh graduate).
+              {t("Isi 0 jika posisi terbuka bagi lulusan baru (fresh graduate).", "Enter 0 if the position is open for fresh graduates.")}
             </p>
           </div>
         </div>
@@ -593,7 +632,9 @@ export function JobForm({
         <div className="space-y-3 pt-2">
           <div className="flex items-center justify-between">
             <label className="block text-sm font-bold text-black">
-              Keahlian Wajib ({skills.filter(Boolean).length} dari maks. {JOB_LIMITS.skills.max}) <span className="text-red-500">*</span>
+              {language === "en"
+                ? `Required Skills (${skills.filter(Boolean).length} of max. ${JOB_LIMITS.skills.max})`
+                : `Keahlian Wajib (${skills.filter(Boolean).length} dari maks. ${JOB_LIMITS.skills.max})`} <span className="text-red-500">*</span>
             </label>
             <CharCounter
               current={currentSkillInput.length}
@@ -604,7 +645,7 @@ export function JobForm({
             <input
               type="text"
               maxLength={JOB_LIMITS.skills.itemMax}
-              placeholder="Contoh: React, Microsoft Excel, Desain Grafis"
+              placeholder={language === "en" ? "e.g. React, Microsoft Excel, Graphic Design" : "Contoh: React, Microsoft Excel, Desain Grafis"}
               value={currentSkillInput}
               onChange={(e) => setCurrentSkillInput(e.target.value)}
               onKeyDown={(e) => {
@@ -618,10 +659,10 @@ export function JobForm({
             <button
               type="button"
               onClick={handleAddSkill}
-              className="px-5 py-3 rounded-2xl bg-black text-white hover:bg-slate-800 text-xs font-bold transition flex items-center gap-1.5 shrink-0 min-h-[44px]"
+              className="px-5 py-3 rounded-2xl bg-black text-white hover:bg-slate-800 text-xs font-bold transition flex items-center gap-1.5 shrink-0 min-h-[44px] cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              <span>Tambah</span>
+              <span>{t("Tambah", "Add")}</span>
             </button>
           </div>
 
@@ -636,8 +677,8 @@ export function JobForm({
                 <button
                   type="button"
                   onClick={() => handleRemoveSkill(index)}
-                  className="w-4 h-4 rounded-full hover:bg-black/10 flex items-center justify-center transition"
-                  aria-label={`Hapus ${skill}`}
+                  className="w-4 h-4 rounded-full hover:bg-black/10 flex items-center justify-center transition cursor-pointer"
+                  aria-label={language === "en" ? `Remove ${skill}` : `Hapus ${skill}`}
                 >
                   <Trash2 className="w-3 h-3 text-slate-500 hover:text-red-600" />
                 </button>
@@ -655,10 +696,13 @@ export function JobForm({
           </div>
           <div>
             <h2 className="text-lg font-black text-black">
-              3. Lokasi & Penempatan Kerja
+              {t("3. Lokasi & Penempatan Kerja", "3. Location & Placement")}
             </h2>
             <p className="text-xs text-slate-500 font-medium">
-              Provinsi dan kota penempatan kerja (berjenjang sesuai Kemendagri).
+              {t(
+                "Provinsi dan kota penempatan kerja (berjenjang sesuai Kemendagri).",
+                "Work placement province and city (aligned with official administrative boundaries)."
+              )}
             </p>
           </div>
         </div>
@@ -667,7 +711,7 @@ export function JobForm({
           {/* Dropdown Provinsi */}
           <div className="space-y-2">
             <label htmlFor="province" className="block text-sm font-bold text-black">
-              Provinsi Penempatan {workMode !== "remote" && <span className="text-red-500">*</span>}
+              {t("Provinsi Penempatan", "Placement Province")} {workMode !== "remote" && <span className="text-red-500">*</span>}
             </label>
             <select
               id="province"
@@ -676,7 +720,7 @@ export function JobForm({
               onChange={(e) => handleProvinceChange(e.target.value ? Number(e.target.value) : "")}
               className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
             >
-              <option value="">-- Pilih Provinsi --</option>
+              <option value="">{t("-- Pilih Provinsi --", "-- Select Province --")}</option>
               {provinces.map((prov) => (
                 <option key={prov.id} value={prov.id}>
                   {prov.name}
@@ -688,7 +732,7 @@ export function JobForm({
           {/* Dropdown Kota / Kabupaten Berjenjang */}
           <div className="space-y-2">
             <label htmlFor="city" className="block text-sm font-bold text-black">
-              Kota / Kabupaten Penempatan {workMode !== "remote" && <span className="text-red-500">*</span>}
+              {t("Kota / Kabupaten Penempatan", "Placement City / Regency")} {workMode !== "remote" && <span className="text-red-500">*</span>}
             </label>
             <select
               id="city"
@@ -699,7 +743,9 @@ export function JobForm({
               className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black disabled:opacity-50"
             >
               <option value="">
-                {!provinceId ? "-- Pilih Provinsi Terlebih Dahulu --" : "-- Pilih Kota / Kabupaten --"}
+                {!provinceId
+                  ? t("-- Pilih Provinsi Terlebih Dahulu --", "-- Select Province First --")
+                  : t("-- Pilih Kota / Kabupaten --", "-- Select City / Regency --")}
               </option>
               {availableCities.map((city) => (
                 <option key={city.id} value={city.id}>
@@ -714,7 +760,7 @@ export function JobForm({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label htmlFor="locationDetail" className="block text-sm font-bold text-black">
-              Area atau Alamat Singkat Kantor (Opsional)
+              {t("Area atau Alamat Singkat Kantor (Opsional)", "Office Area or Brief Address (Optional)")}
             </label>
             <CharCounter
               current={locationDetail.length}
@@ -726,18 +772,28 @@ export function JobForm({
             name="locationDetail"
             type="text"
             maxLength={JOB_LIMITS.locationDetail.max}
-            placeholder="Contoh: Dekat Tol Pasteur, Kawasan Industri Jababeka, atau nama gedung"
+            placeholder={
+              language === "en"
+                ? "e.g. Near Pasteur Toll, Jababeka Industrial Area, or building name"
+                : "Contoh: Dekat Tol Pasteur, Kawasan Industri Jababeka, atau nama gedung"
+            }
             value={locationDetail}
             onChange={(e) => setLocationDetail(e.target.value)}
             className="w-full px-4 py-3 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
           />
           {workMode === "remote" ? (
             <p className="text-xs text-emerald-700 font-medium">
-              Mode kerja Remote: pemilihan lokasi bersifat opsional jika posisi dapat dikerjakan sepenuhnya dari mana saja.
+              {t(
+                "Mode kerja Remote: pemilihan lokasi bersifat opsional jika posisi dapat dikerjakan sepenuhnya dari mana saja.",
+                "Remote work mode: location selection is optional if the position can be performed completely from anywhere."
+              )}
             </p>
           ) : (
             <p className="text-xs text-slate-500 font-medium">
-              Kota dan provinsi wajib dipilih untuk lowongan Onsite atau Hybrid.
+              {t(
+                "Kota dan provinsi wajib dipilih untuk lowongan Onsite atau Hybrid.",
+                "City and province must be selected for Onsite or Hybrid vacancies."
+              )}
             </p>
           )}
         </div>
@@ -751,10 +807,10 @@ export function JobForm({
           </div>
           <div>
             <h2 className="text-lg font-black text-black">
-              4. Rincian Tanggung Jawab & Benefit
+              {t("4. Rincian Tanggung Jawab & Benefit", "4. Responsibilities & Benefits")}
             </h2>
             <p className="text-xs text-slate-500 font-medium">
-              Poin tugas utama, nilai tambah, dan fasilitas yang didapatkan.
+              {t("Poin tugas utama, nilai tambah, dan fasilitas yang didapatkan.", "Core duties, value-add criteria, and provided benefits.")}
             </p>
           </div>
         </div>
@@ -763,16 +819,16 @@ export function JobForm({
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="block text-sm font-bold text-black">
-              Tanggung Jawab Utama (3 hingga 6 Poin) <span className="text-red-500">*</span>
+              {t("Tanggung Jawab Utama (3 hingga 6 Poin)", "Core Responsibilities (3 to 6 Points)")} <span className="text-red-500">*</span>
             </label>
             {responsibilities.length < JOB_LIMITS.responsibilities.max && (
               <button
                 type="button"
                 onClick={handleAddResponsibility}
-                className="text-xs font-bold text-black hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-black hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Tambah Poin</span>
+                <span>{t("Tambah Poin", "Add Point")}</span>
               </button>
             )}
           </div>
@@ -787,7 +843,7 @@ export function JobForm({
                   <input
                     type="text"
                     maxLength={JOB_LIMITS.responsibilities.itemMax}
-                    placeholder={`Tugas pokok ke-${idx + 1}`}
+                    placeholder={language === "en" ? `Core duty #${idx + 1}` : `Tugas pokok ke-${idx + 1}`}
                     value={item}
                     onChange={(e) => handleResponsibilityChange(idx, e.target.value)}
                     className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
@@ -801,8 +857,8 @@ export function JobForm({
                   <button
                     type="button"
                     onClick={() => handleRemoveResponsibility(idx)}
-                    className="p-2 text-slate-400 hover:text-red-600 transition"
-                    aria-label="Hapus baris tanggung jawab"
+                    className="p-2 text-slate-400 hover:text-red-600 transition cursor-pointer"
+                    aria-label={t("Hapus baris tanggung jawab", "Remove responsibility row")}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -816,16 +872,16 @@ export function JobForm({
         <div className="space-y-3 pt-3 border-t border-black/[0.06]">
           <div className="flex items-center justify-between">
             <label className="block text-sm font-bold text-black">
-              Nilai Tambah / Nice to Have (Opsional, Maks 5 Poin)
+              {t("Nilai Tambah / Nice to Have (Opsional, Maks 5 Poin)", "Nice to Have / Value Add (Optional, Max 5 Points)")}
             </label>
             {niceToHave.length < JOB_LIMITS.niceToHave.max && (
               <button
                 type="button"
                 onClick={handleAddNiceToHave}
-                className="text-xs font-bold text-black hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-black hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Tambah Nilai Tambah</span>
+                <span>{t("Tambah Nilai Tambah", "Add Nice to Have")}</span>
               </button>
             )}
           </div>
@@ -840,7 +896,7 @@ export function JobForm({
                   <input
                     type="text"
                     maxLength={JOB_LIMITS.niceToHave.itemMax}
-                    placeholder="Kriteria nilai tambah yang disukai"
+                    placeholder={language === "en" ? "Preferred additional qualification" : "Kriteria nilai tambah yang disukai"}
                     value={item}
                     onChange={(e) => handleNiceToHaveChange(idx, e.target.value)}
                     className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
@@ -853,8 +909,8 @@ export function JobForm({
                 <button
                   type="button"
                   onClick={() => handleRemoveNiceToHave(idx)}
-                  className="p-2 text-slate-400 hover:text-red-600 transition"
-                  aria-label="Hapus baris nilai tambah"
+                  className="p-2 text-slate-400 hover:text-red-600 transition cursor-pointer"
+                  aria-label={t("Hapus baris nilai tambah", "Remove nice-to-have row")}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -867,16 +923,16 @@ export function JobForm({
         <div className="space-y-3 pt-3 border-t border-black/[0.06]">
           <div className="flex items-center justify-between">
             <label className="block text-sm font-bold text-black">
-              Fasilitas & Benefit (Opsional, Maks 6 Poin)
+              {t("Fasilitas & Benefit (Opsional, Maks 6 Poin)", "Facilities & Benefits (Optional, Max 6 Points)")}
             </label>
             {benefits.length < JOB_LIMITS.benefits.max && (
               <button
                 type="button"
                 onClick={handleAddBenefit}
-                className="text-xs font-bold text-black hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-black hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Tambah Benefit</span>
+                <span>{t("Tambah Benefit", "Add Benefit")}</span>
               </button>
             )}
           </div>
@@ -891,7 +947,7 @@ export function JobForm({
                   <input
                     type="text"
                     maxLength={JOB_LIMITS.benefits.itemMax}
-                    placeholder="Contoh: BPJS Kesehatan, Tunjangan Makan, Laptop Perusahaan"
+                    placeholder={language === "en" ? "e.g. Health Insurance, Meal Allowance, Company Laptop" : "Contoh: BPJS Kesehatan, Tunjangan Makan, Laptop Perusahaan"}
                     value={item}
                     onChange={(e) => handleBenefitChange(idx, e.target.value)}
                     className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] focus:border-black focus:bg-white text-sm font-medium transition text-black"
@@ -904,8 +960,8 @@ export function JobForm({
                 <button
                   type="button"
                   onClick={() => handleRemoveBenefit(idx)}
-                  className="p-2 text-slate-400 hover:text-red-600 transition"
-                  aria-label="Hapus baris benefit"
+                  className="p-2 text-slate-400 hover:text-red-600 transition cursor-pointer"
+                  aria-label={t("Hapus baris benefit", "Remove benefit row")}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -915,7 +971,7 @@ export function JobForm({
         </div>
       </section>
 
-      {/* 4. Kompensasi & Batas Waktu */}
+      {/* 5. Kompensasi & Batas Waktu */}
       <section className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card space-y-6">
         <div className="flex items-center gap-2 pb-4 border-b border-black/[0.06]">
           <div className="w-9 h-9 rounded-full bg-[#FAF8F0] border border-black/[0.08] flex items-center justify-center text-black shadow-2xs">
@@ -923,10 +979,10 @@ export function JobForm({
           </div>
           <div>
             <h2 className="text-lg font-black text-black">
-              4. Kompensasi & Penutupan
+              {t("5. Kompensasi & Penutupan", "5. Compensation & Closing")}
             </h2>
             <p className="text-xs text-slate-500 font-medium">
-              Rentang gaji bulanan dan tanggal batas akhir lamaran.
+              {t("Rentang gaji bulanan dan tanggal batas akhir lamaran.", "Monthly salary range and application closing date.")}
             </p>
           </div>
         </div>
@@ -934,7 +990,7 @@ export function JobForm({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div className="space-y-2">
             <label htmlFor="salaryMin" className="block text-sm font-bold text-black">
-              Gaji Minimal (Rp, Opsional)
+              {t("Gaji Minimal (Rp, Opsional)", "Minimum Salary (IDR, Optional)")}
             </label>
             <input
               id="salaryMin"
@@ -953,7 +1009,7 @@ export function JobForm({
 
           <div className="space-y-2">
             <label htmlFor="salaryMax" className="block text-sm font-bold text-black">
-              Gaji Maksimal (Rp, Opsional)
+              {t("Gaji Maksimal (Rp, Opsional)", "Maximum Salary (IDR, Optional)")}
             </label>
             <input
               id="salaryMax"
@@ -973,7 +1029,7 @@ export function JobForm({
 
         <div className="space-y-2">
           <label htmlFor="deadline" className="block text-sm font-bold text-black">
-            Batas Akhir Lamaran (Opsional)
+            {t("Batas Akhir Lamaran (Opsional)", "Application Deadline (Optional)")}
           </label>
           <input
             id="deadline"
@@ -993,7 +1049,7 @@ export function JobForm({
           className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full hover:bg-black/[0.05] text-black font-bold text-sm transition min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>{isEditing ? "Batal Perubahan" : "Batal"}</span>
+          <span>{isEditing ? t("Batal Perubahan", "Cancel Changes") : t("Batal", "Cancel")}</span>
         </Link>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -1004,7 +1060,7 @@ export function JobForm({
             className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-black/[0.04] text-black font-bold text-sm border border-black/[0.12] transition min-h-[44px] disabled:opacity-50 cursor-pointer"
           >
             <Save className="w-4 h-4" />
-            <span>{isSavingDraft ? "Menyimpan Draft..." : "Simpan sebagai Draft"}</span>
+            <span>{isSavingDraft ? t("Menyimpan Draft...", "Saving Draft...") : t("Simpan sebagai Draft", "Save as Draft")}</span>
           </button>
 
           <button
@@ -1014,7 +1070,7 @@ export function JobForm({
             className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] active:scale-95 text-black font-black text-sm shadow-2xs hover:shadow transition min-h-[44px] disabled:opacity-50 cursor-pointer"
           >
             <Send className="w-4 h-4 stroke-[2.2]" />
-            <span>{isSubmitting ? "Mengajukan..." : "Ajukan Lowongan"}</span>
+            <span>{isSubmitting ? t("Mengajukan...", "Submitting...") : t("Ajukan Lowongan", "Submit Vacancy")}</span>
           </button>
         </div>
       </div>
