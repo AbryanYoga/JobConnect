@@ -125,7 +125,7 @@ function buildJobPayload(companyId: number, rawData: Record<string, unknown>, st
     salary_min: rawData.salaryMin ? Number(rawData.salaryMin) : null,
     salary_max: rawData.salaryMax ? Number(rawData.salaryMax) : null,
     deadline: typeof rawData.deadline === "string" && rawData.deadline.trim() ? rawData.deadline.trim() : null,
-    ai_screening: Boolean(rawData.aiScreening),
+    ai_screening: false,
     status,
   };
 }

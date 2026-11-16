@@ -17,7 +17,6 @@ interface PelamarPageProps {
   }>;
   searchParams: Promise<{
     status?: string;
-    ai?: string;
     sort?: string;
   }>;
 }

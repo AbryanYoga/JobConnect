@@ -475,7 +475,7 @@ export function JobForm({
               <input
                 id="custom-category"
                 type="text"
-                placeholder={language === "en" ? "e.g. Artificial Intelligence, Logistics & Warehousing, Hospitality" : "Contoh: Kecerdasan Buatan / AI, Logistik & Pergudangan, Perhotelan"}
+                placeholder={language === "en" ? "e.g. Information Technology, Logistics & Warehousing, Hospitality" : "Contoh: Teknologi Informasi, Logistik & Pergudangan, Perhotelan"}
                 value={customCategoryName}
                 onChange={(e) => setCustomCategoryName(e.target.value)}
                 maxLength={60}

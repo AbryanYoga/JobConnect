@@ -1,14 +1,6 @@
 import "server-only";
 
-/**
- * Catatan keamanan:
- * Klien ini menggunakan SUPABASE_SERVICE_ROLE_KEY dengan hak akses penuh yang melewati RLS.
- * Berkas ini HANYA boleh diimpor dari lib/ai/ untuk:
- * 1. Menyimpan hasil analisis AI (application_ai_reviews).
- * 2. Mengunduh berkas CV pelamar yang dianalisis secara privat.
- * Dilarang mengimpor atau menggunakan berkas ini di komponen klien atau rute umum.
- */
-
+// Klien Supabase service role khusus operasi administratif server terisolasi.
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 

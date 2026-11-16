@@ -119,7 +119,7 @@ export function HeroSection({ provinces = [] }: HeroSectionProps) {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
-          {/* Label Kontekstual Tanpa Efek AI */}
+          {/* Lencana portal resmi */}
           <div className="hero-badge mb-4">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm text-xs font-semibold uppercase tracking-wider bg-navy-50 text-navy-800 border border-navy-100">
               <ShieldCheck className="w-3.5 h-3.5 text-navy-700" aria-hidden="true" />
@@ -203,7 +203,7 @@ export function HeroSection({ provinces = [] }: HeroSectionProps) {
               </button>
             </form>
 
-            {/* Kata Kunci Sering Dicari (Tanpa Ikon Sparkles AI) */}
+            {/* Kata kunci pencarian populer */}
             <div className="flex items-center gap-2 flex-wrap mt-3 text-xs text-slate-600">
               <span className="text-slate-500 font-medium">Sering dicari:</span>
               {popularKeywords.map((item) => (
@@ -219,7 +219,7 @@ export function HeroSection({ provinces = [] }: HeroSectionProps) {
           </div>
         </div>
 
-        {/* Jalur Transparansi dan Kepastian (Bukan 4 Kartu Seragam AI) */}
+        {/* Jaminan transparansi dan verifikasi */}
         <div className="hero-guarantee mt-12 pt-8 border-t border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-sm bg-navy-50 text-navy-800 border border-navy-100 flex items-center justify-center shrink-0 mt-0.5">

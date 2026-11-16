@@ -29,8 +29,7 @@
   <a href="#fitur-utama-dan-keunggulan"><b>✨ Fitur Unggulan</b></a> •
   <a href="#tangkapan-layar"><b>🖼️ Pratinjau Tampilan</b></a> •
   <a href="#teknologi-dan-arsitektur"><b>🛠️ Teknologi</b></a> •
-  <a href="#akun-demo-untuk-pengujian"><b>🔑 Akun Demo</b></a> •
-  <a href="docs/ERD.md"><b>📊 Skema ERD</b></a>
+  <a href="#akun-demo-untuk-pengujian"><b>🔑 Akun Demo</b></a>
 </p>
 
 ---
@@ -119,16 +118,6 @@ Aplikasi JobConnect telah aktif dan dapat diakses publik melalui domain resmi be
 
 ---
 
-## Skema Basis Data
-
-Sistem JobConnect dirancang dengan arsitektur relasional yang rapi dan teroptimasi. Dokumentasi struktur tabel, relasi entitas, dan kamus data dapat dibaca secara lengkap pada berkas [docs/ERD.md](docs/ERD.md).
-
-<p align="center">
-  <img src="docs/erd.png" alt="Entity Relationship Diagram JobConnect" width="750" />
-</p>
-
----
-
 ## Akun Demo untuk Pengujian
 
 Penguji, rekruter, atau reviewer dapat langsung menjelajahi sistem menggunakan akun demo berikut:
@@ -136,7 +125,7 @@ Penguji, rekruter, atau reviewer dapat langsung menjelajahi sistem menggunakan a
 | Peran Akun | Alamat Email | Kata Sandi | Ruang Lingkup Akses |
 | --- | --- | --- | --- |
 | **Pelamar (Pencari Kerja)** | `abryan.yoga@jobconnect.id` | `Password123!` | Melamar pekerjaan, kelola portofolio showcase, simpan lowongan, pantau status seleksi |
-| **Perusahaan Mitra** | `perusahaan.demo@jobconnect.id` | `Password123!` | Pasang lowongan baru, seleksi pelamar di papan ATS, jadwalkan wawancara, ekspor laporan |
+| **Perusahaan Mitra** | `mitra.test@jobconnect.id` | `Mitra123!` | Pasang lowongan baru, seleksi pelamar di papan ATS, jadwalkan wawancara, ekspor laporan |
 | **Admin Platform** | `admin.demo@jobconnect.id` | `Password123!` | Moderasi persetujuan loker (ACC), kelola verifikasi mitra, master kategori, rekapitulasi data |
 
 ---
