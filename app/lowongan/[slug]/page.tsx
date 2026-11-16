@@ -249,7 +249,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
   return (
     <div className="min-h-screen bg-[#FAF8F0]">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 pb-28 sm:py-12 space-y-8">
         {/* Tombol Kembali ke Daftar Lowongan */}
         <div>
           <Link

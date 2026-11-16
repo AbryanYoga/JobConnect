@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -71,6 +72,7 @@ export function MitraSidebar({
   companyLogoUrl,
   isVerified = true,
 }: MitraSidebarProps) {
+  const [imageError, setImageError] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
 
@@ -90,13 +92,14 @@ export function MitraSidebar({
       <div className="lg:hidden bg-white rounded-2xl border border-black/[0.08] shadow-2xs p-3 mb-6">
         <div className="flex items-center gap-3 pb-3 mb-3 border-b border-black/[0.06]">
           <div className="w-10 h-10 rounded-xl bg-[#FAF8F0] border border-black/[0.08] flex items-center justify-center overflow-hidden shrink-0">
-            {companyLogoUrl ? (
+            {companyLogoUrl && !imageError ? (
               <Image
                 src={companyLogoUrl}
                 alt={companyName}
                 width={36}
                 height={36}
                 className="w-full h-full object-contain p-1"
+                onError={() => setImageError(true)}
                 unoptimized
               />
             ) : (
@@ -154,13 +157,14 @@ export function MitraSidebar({
         <div className="bg-white rounded-3xl border border-black/[0.08] shadow-card p-5">
           <div className="flex items-center gap-3.5 pb-4 border-b border-black/[0.06]">
             <div className="w-12 h-12 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
-              {companyLogoUrl ? (
+              {companyLogoUrl && !imageError ? (
                 <Image
                   src={companyLogoUrl}
                   alt={companyName}
                   width={44}
                   height={44}
                   className="w-full h-full object-contain p-1.5"
+                  onError={() => setImageError(true)}
                   unoptimized
                 />
               ) : (

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MitraSidebar } from "@/components/mitra/MitraSidebar";
+import { getCompanyLogo } from "@/lib/company-logo";
 
 interface MitraLayoutProps {
   children: ReactNode;
@@ -38,10 +39,20 @@ export default async function MitraLayout({ children }: MitraLayoutProps) {
 
   let logoUrl: string | null = null;
   if (company?.logo_path) {
-    const { data: publicUrlData } = supabase.storage
-      .from("company-logos")
-      .getPublicUrl(company.logo_path);
-    logoUrl = publicUrlData.publicUrl;
+    if (
+      company.logo_path.startsWith("http://") ||
+      company.logo_path.startsWith("https://") ||
+      company.logo_path.startsWith("/")
+    ) {
+      logoUrl = company.logo_path;
+    } else {
+      const { data: publicUrlData } = supabase.storage
+        .from("company-logos")
+        .getPublicUrl(company.logo_path);
+      logoUrl = publicUrlData?.publicUrl || null;
+    }
+  } else if (company?.name) {
+    logoUrl = getCompanyLogo(company.name);
   }
 
   const companyName = company?.name || profile?.name || "Perusahaan Mitra";

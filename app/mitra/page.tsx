@@ -53,12 +53,28 @@ export default async function MitraDashboardPage() {
   }
 
   const fallbackLogo = company.name ? getCompanyLogo(company.name) : null;
-  const effectiveLogo = company.logo_path || fallbackLogo;
+  let companyLogoUrl: string | null = null;
+  if (company.logo_path) {
+    if (
+      company.logo_path.startsWith("http://") ||
+      company.logo_path.startsWith("https://") ||
+      company.logo_path.startsWith("/")
+    ) {
+      companyLogoUrl = company.logo_path;
+    } else {
+      const { data: publicUrlData } = supabase.storage
+        .from("company-logos")
+        .getPublicUrl(company.logo_path);
+      companyLogoUrl = publicUrlData?.publicUrl || null;
+    }
+  } else if (fallbackLogo) {
+    companyLogoUrl = fallbackLogo;
+  }
 
   // Cek apakah profil perusahaan sudah memenuhi bukti nyata dan logo
   const verification = checkCompanyVerification({
     ...company,
-    logoUrl: effectiveLogo,
+    logoUrl: companyLogoUrl || company.logo_path,
   });
 
   // Jika belum lengkap, kunci dashboard dan wajibkan pengisian profil
@@ -158,7 +174,7 @@ export default async function MitraDashboardPage() {
   return (
     <MitraDashboardView
       companyName={company.name}
-      companyLogoUrl={effectiveLogo}
+      companyLogoUrl={companyLogoUrl}
       openJobsCount={openJobsCount}
       pendingJobsCount={pendingJobsCount}
       totalApplicationsCount={totalApplicationsCount}

@@ -111,7 +111,7 @@ export function MainCriteriaCard({
   };
 
   return (
-    <div className="bg-white rounded-card border border-slate-200 shadow-2xs overflow-hidden sticky top-20">
+    <div className="bg-white rounded-[24px] border border-black/[0.08] shadow-card overflow-hidden">
       {/* Header Kartu */}
       <div className="bg-navy-900 text-white p-5 sm:p-6 space-y-1">
         <div className="flex items-center justify-between gap-2">

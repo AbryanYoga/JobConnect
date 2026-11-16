@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   Briefcase,
@@ -8,12 +8,12 @@ import {
   Users,
   FileCheck,
   PlusCircle,
-  Building2,
   ShieldCheck,
   ChevronRight,
   ShieldAlert,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
+import { getCompanyInitials } from "@/lib/company-logo";
 import {
   JOB_TYPE_LABEL,
   WORK_MODE_LABEL,
@@ -65,6 +65,7 @@ export function MitraDashboardView({
   totalJobsCount,
   recentJobs,
 }: MitraDashboardViewProps) {
+  const [imageError, setImageError] = useState(false);
   const { t, language } = useLanguage();
   const locale = language === "en" ? "en-US" : "id-ID";
 
@@ -113,16 +114,19 @@ export function MitraDashboardView({
       {/* Banner Sapaan Ramah Mitra */}
       <div className="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-8 shadow-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex items-center gap-4 sm:gap-5 min-w-0">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-black/[0.08] p-1.5 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
-            {companyLogoUrl ? (
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#FAF8F0] border border-black/[0.08] p-1.5 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
+            {companyLogoUrl && !imageError ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={companyLogoUrl}
                 alt={`Logo ${companyName}`}
                 className="w-full h-full object-contain"
+                onError={() => setImageError(true)}
               />
             ) : (
-              <Building2 className="w-8 h-8 text-slate-400" aria-hidden="true" />
+              <span className="font-black text-lg text-slate-800 select-none">
+                {getCompanyInitials(companyName)}
+              </span>
             )}
           </div>
           <div className="space-y-1 min-w-0">

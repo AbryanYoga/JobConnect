@@ -82,7 +82,23 @@ export default async function LaporanMitraPage({ searchParams }: LaporanPageProp
     .join(", ");
 
   const fallbackLogo = rawCompany.name ? getCompanyLogo(rawCompany.name) : null;
-  const effectiveLogo = rawCompany.logo_path || fallbackLogo;
+  let effectiveLogo: string | null = null;
+  if (rawCompany.logo_path) {
+    if (
+      rawCompany.logo_path.startsWith("http://") ||
+      rawCompany.logo_path.startsWith("https://") ||
+      rawCompany.logo_path.startsWith("/")
+    ) {
+      effectiveLogo = rawCompany.logo_path;
+    } else {
+      const { data: publicUrlData } = supabase.storage
+        .from("company-logos")
+        .getPublicUrl(rawCompany.logo_path);
+      effectiveLogo = publicUrlData?.publicUrl || null;
+    }
+  } else if (fallbackLogo) {
+    effectiveLogo = fallbackLogo;
+  }
 
   const company: CompanyInfo = {
     id: rawCompany.id,
