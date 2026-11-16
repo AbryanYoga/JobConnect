@@ -16,6 +16,7 @@ import {
   PlusCircle,
   FileText,
 } from "lucide-react";
+import { useSyncedAvatar } from "@/lib/avatar-sync";
 import { NavAction, Role } from "@/lib/navigation";
 import { useLanguage } from "@/lib/i18n";
 import { NotificationBell } from "@/components/notifikasi/NotificationBell";
@@ -46,6 +47,7 @@ export function NavbarAuthButtons({
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const currentAvatar = useSyncedAvatar(userAvatar);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Tutup dropdown jika mengklik area luar
@@ -217,9 +219,9 @@ export function NavbarAuthButtons({
           title={t("Menu Akun", "Account Menu")}
           aria-label={`${t("Menu Akun", "Account Menu")}: ${userName || "User"}`}
         >
-          {userAvatar ? (
+          {currentAvatar ? (
             <Image
-              src={userAvatar}
+              src={currentAvatar}
               alt={`Foto profil ${userName || "User"}`}
               width={30}
               height={30}

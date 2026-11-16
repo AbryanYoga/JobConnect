@@ -50,7 +50,7 @@ export async function performClientLogout(targetUrl: string = "/login"): Promise
         const keysToRemove: string[] = [];
         for (let i = 0; i < storage.length; i++) {
           const key = storage.key(i);
-          if (key && (key.startsWith("sb-") || key.includes("supabase"))) {
+          if (key && (key.startsWith("sb-") || key.includes("supabase") || key === "jobconnect_user_avatar")) {
             keysToRemove.push(key);
           }
         }

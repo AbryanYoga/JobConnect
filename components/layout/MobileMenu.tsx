@@ -16,6 +16,7 @@ import {
   LogIn,
   UserPlus,
 } from "lucide-react";
+import { useSyncedAvatar } from "@/lib/avatar-sync";
 import { NavAction, NavItem, Role } from "@/lib/navigation";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { NavLink } from "./NavLink";
@@ -47,22 +48,22 @@ const ROLE_BADGE_CLASS: Record<Role, string> = {
 
 const ROLE_EXTRA_LINKS: Record<
   Role,
-  { label: string; href: string; icon: React.ComponentType<{ className?: string }> }[]
+  { labelId: string; labelEn: string; href: string; icon: React.ComponentType<{ className?: string }> }[]
 > = {
   tamu: [],
   pelamar: [
-    { label: "Profil Akun", href: "/profil", icon: User },
-    { label: "Notifikasi", href: "/notifikasi", icon: Bell },
+    { labelId: "Profil Akun", labelEn: "Account Profile", href: "/profil", icon: User },
+    { labelId: "Notifikasi", labelEn: "Notifications", href: "/notifikasi", icon: Bell },
   ],
   perusahaan: [
-    { label: "Profil Perusahaan", href: "/mitra/profil-perusahaan", icon: Building2 },
-    { label: "Laporan Rekap", href: "/mitra/laporan", icon: BarChart3 },
+    { labelId: "Profil Perusahaan", labelEn: "Company Profile", href: "/mitra/profil-perusahaan", icon: Building2 },
+    { labelId: "Laporan Rekap", labelEn: "Summary Report", href: "/mitra/laporan", icon: BarChart3 },
   ],
   admin: [
-    { label: "Antrean Review", href: "/admin/lowongan", icon: FileText },
-    { label: "Perusahaan Mitra", href: "/admin/perusahaan", icon: Building2 },
-    { label: "Kelola Kategori", href: "/admin/kategori", icon: FolderTree },
-    { label: "Rekapitulasi Platform", href: "/admin/laporan", icon: BarChart3 },
+    { labelId: "Antrean Review", labelEn: "Review Queue", href: "/admin/lowongan", icon: FileText },
+    { labelId: "Perusahaan Mitra", labelEn: "Partner Companies", href: "/admin/perusahaan", icon: Building2 },
+    { labelId: "Kelola Kategori", labelEn: "Manage Categories", href: "/admin/kategori", icon: FolderTree },
+    { labelId: "Rekapitulasi Platform", labelEn: "Platform Summary", href: "/admin/laporan", icon: BarChart3 },
   ],
 };
 
@@ -82,6 +83,7 @@ export function MobileMenu({
   userAvatar,
 }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const currentAvatar = useSyncedAvatar(userAvatar);
   const menuRef = useRef<HTMLDivElement>(null);
   const { t, language } = useLanguage();
 
@@ -195,9 +197,9 @@ export function MobileMenu({
                 className="flex items-center gap-3 p-3 bg-white hover:bg-slate-50 transition rounded-2xl border border-black/[0.08] shadow-2xs group"
                 title={t("Buka profil akun", "Open profile account")}
               >
-                {userAvatar ? (
+                {currentAvatar ? (
                   <Image
-                    src={userAvatar}
+                    src={currentAvatar}
                     alt={`Foto profil ${userName}`}
                     width={44}
                     height={44}
@@ -276,7 +278,7 @@ export function MobileMenu({
                         className="flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-slate-800 hover:text-navy-950 hover:bg-black/[0.04] rounded-xl transition min-h-[44px]"
                       >
                         <Icon className="w-4 h-4 text-slate-600 shrink-0" />
-                        <span>{t(item.label)}</span>
+                        <span>{t(item.labelId, item.labelEn)}</span>
                       </Link>
                     );
                   })}

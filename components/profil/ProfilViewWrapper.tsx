@@ -90,6 +90,20 @@ export function ProfilViewWrapper({
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
   const [warningBanner, setWarningBanner] = useState<string | null>(null);
 
+  // Sinkronisasi foto profil aktif ke penyimpanan peramban dan navbar
+  React.useEffect(() => {
+    if (initialData.avatarUrl && typeof window !== "undefined") {
+      try {
+        localStorage.setItem("jobconnect_user_avatar", initialData.avatarUrl);
+        window.dispatchEvent(
+          new CustomEvent("jobconnect:avatar-changed", {
+            detail: { avatarUrl: initialData.avatarUrl },
+          })
+        );
+      } catch {}
+    }
+  }, [initialData.avatarUrl]);
+
   // Cari nama kota dan provinsi yang dipilih
   const selectedCity = cities.find((c) => c.id === profileData.cityId);
   const selectedProvince = provinces.find((p) => p.id === profileData.provinceId);

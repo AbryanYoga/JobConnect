@@ -83,12 +83,23 @@ Aplikasi JobConnect telah aktif dan dapat diakses publik melalui domain resmi be
 ## Tangkapan Layar
 
 <p align="center">
-  <img src="docs/screenshots/beranda.png" alt="Beranda JobConnect" width="800" />
+  <img src="docs/screenshots/beranda.png" alt="Beranda Publik JobConnect" width="850" /><br>
+  <em>Halaman Utama Portal JobConnect</em>
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/lowongan.png" alt="Eksplorasi Lowongan" width="400" />
-  <img src="docs/screenshots/wilayah.png" alt="Jelajah Wilayah" width="400" />
+  <img src="docs/screenshots/lowongan.png" alt="Katalog Lowongan Pekerjaan" width="415" />
+  <img src="docs/screenshots/wilayah.png" alt="Jelajah Lowongan Berdasarkan Wilayah" width="415" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/profil-pelamar.png" alt="Kelola Profil dan Portofolio Pelamar" width="415" />
+  <img src="docs/screenshots/mitra-dashboard.png" alt="Dasbor Manajemen Mitra Perusahaan" width="415" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/mitra-lowongan.png" alt="Kelola Lowongan Perusahaan" width="415" />
+  <img src="docs/screenshots/admin-moderasi.png" alt="Antrean Moderasi dan Persetujuan Loker Admin" width="415" />
 </p>
 
 ---

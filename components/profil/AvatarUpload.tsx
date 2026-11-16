@@ -110,6 +110,18 @@ export function AvatarUpload({
         setSuccessMessage("Foto profil berhasil diperbarui.");
         setIsCropperOpen(false);
         setCropImageSrc(null);
+        // Simpan tautan foto ke penyimpanan lokal browser
+        try {
+          localStorage.setItem("jobconnect_user_avatar", res.publicUrl);
+        } catch {}
+        // Siarkan event perubahan foto agar navbar mobile dan desktop langsung terupdate
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("jobconnect:avatar-changed", {
+              detail: { avatarUrl: res.publicUrl },
+            })
+          );
+        }
         router.refresh();
       } else {
         setErrorMessage(res.error || "Gagal mengunggah foto profil.");
@@ -132,6 +144,18 @@ export function AvatarUpload({
       if (res.success) {
         setAvatarUrl(null);
         setSuccessMessage("Foto profil berhasil dihapus.");
+        // Hapus tautan foto dari penyimpanan lokal browser
+        try {
+          localStorage.removeItem("jobconnect_user_avatar");
+        } catch {}
+        // Beritahu navbar bahwa foto telah dihapus
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("jobconnect:avatar-changed", {
+              detail: { avatarUrl: null },
+            })
+          );
+        }
         router.refresh();
       } else {
         setErrorMessage(res.error || "Gagal menghapus foto profil.");

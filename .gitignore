@@ -44,5 +44,4 @@ lib/validation/ai.ts
 data-testing/
 scripts/
 database/seed_test_company.sql
-docs/screenshots/
 
