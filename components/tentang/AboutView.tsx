@@ -16,6 +16,7 @@ import {
   BadgeCheck,
   Check,
   Mail,
+  MessageCircle,
   RotateCcw,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
@@ -745,6 +746,15 @@ export function AboutView() {
           </div>
 
           <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <a
+              href="https://api.whatsapp.com/send?phone=6281326311280&text=Halo%20Admin%20JobConnect"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm transition shadow-2xs hover:shadow active:scale-95 min-h-[44px]"
+            >
+              <MessageCircle className="w-4 h-4 text-white fill-current" />
+              <span>WhatsApp: 0813-2631-1280</span>
+            </a>
             <a
               href="mailto:support@jobconnect.id"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-[#0D0C23] font-black text-sm transition shadow-2xs hover:shadow active:scale-95 min-h-[44px]"

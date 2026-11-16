@@ -86,7 +86,7 @@ export function FloatingHelpWidget() {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
 
-  const supportWaUrl = `https://api.whatsapp.com/send?phone=6281234567890&text=${encodeURIComponent(
+  const supportWaUrl = `https://api.whatsapp.com/send?phone=6281326311280&text=${encodeURIComponent(
     "Halo Layanan Bantuan JobConnect, saya membutuhkan panduan bantuan terkait penggunaan portal lowongan kerja JobConnect."
   )}`;
 
@@ -181,8 +181,8 @@ export function FloatingHelpWidget() {
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-2xs min-h-[40px]"
             >
-              <MessageCircle className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
-              <span>{t("Chat Bantuan via WhatsApp", "Chat Support on WhatsApp")}</span>
+              <MessageCircle className="w-3.5 h-3.5 fill-current shrink-0" aria-hidden="true" />
+              <span className="truncate">{t("Chat WhatsApp (0813-2631-1280)", "WhatsApp Support (0813-2631-1280)")}</span>
             </a>
           </div>
         </div>
