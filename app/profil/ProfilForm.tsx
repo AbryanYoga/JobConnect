@@ -737,14 +737,19 @@ export function ProfilForm({
       {/* Kartu 5: Bio Diri & Tautan Profil Profesional (LinkedIn & Portofolio Web) */}
       <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-5">
         <div>
-          <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
-            <FileText className="w-5 h-5 text-black" aria-hidden="true" />
-            <span>{t("Bio Profil & Tautan Eksternal (Opsional)", "Profile Bio & External Links (Optional)")}</span>
-          </h3>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
+              <FileText className="w-5 h-5 text-black" aria-hidden="true" />
+              <span>{t("Bio Profil & Tautan Eksternal", "Profile Bio & External Links")}</span>
+            </h3>
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-black/[0.08]">
+              {t("Tidak Wajib Diisi", "Optional")}
+            </span>
+          </div>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
             {t(
-              "Bagian ini bersifat opsional. Jika Anda memiliki tautan LinkedIn, website pribadi, atau profil GitHub, Anda dapat menautkannya di sini.",
-              "This section is optional. If you have LinkedIn, personal website, or GitHub profile, you can link them here."
+              "Bagian ini bersifat tidak wajib diisi. Anda dapat mengosongkannya jika belum memiliki akun atau tautan profil eksternal.",
+              "This section is not mandatory. You may leave it blank if you do not have external profile links."
             )}
           </p>
         </div>
@@ -752,8 +757,11 @@ export function ProfilForm({
         {/* Bio / Tentang Saya */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label htmlFor="profil-bio" className="block text-sm font-bold text-black">
-              {t("Bio / Ringkasan Tentang Saya (Opsional)", "Bio / Summary About Me (Optional)")}
+            <label htmlFor="profil-bio" className="flex items-center gap-2 text-sm font-bold text-black">
+              <span>{t("Bio / Ringkasan Tentang Saya", "Bio / Summary About Me")}</span>
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-black/[0.06]">
+                {t("Tidak wajib diisi", "Optional")}
+              </span>
             </label>
             <span className="text-[11px] font-semibold text-slate-400">
               {bio.length}/1500 {t("karakter", "characters")}
@@ -764,8 +772,8 @@ export function ProfilForm({
             rows={4}
             placeholder={
               language === "en"
-                ? "Tell about your background, key skills, past projects, and career goals you want to achieve..."
-                : "Ceritakan latar belakang Anda, keterampilan unggulan, proyek yang pernah Anda kerjakan, serta tujuan karier yang ingin Anda capai..."
+                ? "Optional: Tell about your background, key skills, past projects, and career goals you want to achieve..."
+                : "Opsional (tidak wajib): Ceritakan latar belakang Anda, keterampilan unggulan, atau ringkasan diri Anda..."
             }
             value={bio}
             onChange={(e) => {
@@ -779,10 +787,17 @@ export function ProfilForm({
                 : "bg-[#FAF8F0] border-black/[0.08] focus:border-black focus:bg-white"
             }`}
           />
-          {errors.bio && (
+          {errors.bio ? (
             <p className="text-xs text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               <span>{errors.bio}</span>
+            </p>
+          ) : (
+            <p className="text-[11px] text-slate-500">
+              {t(
+                "Tidak wajib diisi. Boleh dikosongkan jika Anda belum ingin menuliskan ringkasan profil.",
+                "Optional. Can be left blank if you do not wish to write a summary."
+              )}
             </p>
           )}
         </div>
@@ -790,8 +805,11 @@ export function ProfilForm({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {/* Tautan LinkedIn */}
           <div className="space-y-1.5">
-            <label htmlFor="profil-linkedin" className="block text-sm font-bold text-black">
-              {t("Tautan Profil LinkedIn (Opsional)", "LinkedIn Profile URL (Optional)")}
+            <label htmlFor="profil-linkedin" className="flex items-center gap-2 text-sm font-bold text-black">
+              <span>{t("Tautan Profil LinkedIn", "LinkedIn Profile URL")}</span>
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-black/[0.06]">
+                {t("Tidak wajib diisi", "Optional")}
+              </span>
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-blue-600">
@@ -822,8 +840,8 @@ export function ProfilForm({
             ) : (
               <p className="text-[11px] text-slate-500">
                 {t(
-                  "Opsional, memudahkan tim rekruter meninjau jejaring dan rekam jejak profesional Anda.",
-                  "Optional, makes it easy for recruiters to review your professional network."
+                  "Tidak wajib diisi. Boleh dikosongkan jika belum memiliki profil LinkedIn.",
+                  "Optional. Can be left blank if you do not have a LinkedIn profile."
                 )}
               </p>
             )}
@@ -831,8 +849,11 @@ export function ProfilForm({
 
           {/* Tautan Website Portofolio / GitHub */}
           <div className="space-y-1.5">
-            <label htmlFor="profil-web-portfolio" className="block text-sm font-bold text-black">
-              {t("Tautan Website / GitHub / Portofolio (Opsional)", "Website / GitHub / Portfolio URL (Optional)")}
+            <label htmlFor="profil-web-portfolio" className="flex items-center gap-2 text-sm font-bold text-black">
+              <span>{t("Tautan GitHub / Website Portofolio", "GitHub / Portfolio Website URL")}</span>
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-black/[0.06]">
+                {t("Tidak wajib diisi", "Optional")}
+              </span>
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
@@ -863,8 +884,8 @@ export function ProfilForm({
             ) : (
               <p className="text-[11px] text-slate-500">
                 {t(
-                  "Opsional, tautkan laman portofolio online, repository kode GitHub, atau Behance/Dribbble.",
-                  "Optional, link your online portfolio page, GitHub code repository, or Behance/Dribbble."
+                  "Tidak wajib diisi. Boleh dikosongkan jika belum memiliki laman portofolio online atau akun GitHub.",
+                  "Optional. Can be left blank if you do not have an online portfolio page or GitHub account."
                 )}
               </p>
             )}
@@ -875,14 +896,19 @@ export function ProfilForm({
       {/* Kartu 6: Galeri Showcase Portofolio Proyek (Project Showcase) */}
       <div className="bg-white rounded-[28px] sm:rounded-[36px] border border-black/[0.08] shadow-card p-4 xs:p-5 sm:p-8 space-y-4">
         <div>
-          <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
-            <Briefcase className="w-5 h-5 text-black" aria-hidden="true" />
-            <span>{t("Showcase Karya & Proyek Nyata (Opsional)", "Work Showcase & Real Projects (Optional)")}</span>
-          </h3>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-lg font-black text-black tracking-tight flex items-center gap-2">
+              <Briefcase className="w-5 h-5 text-black" aria-hidden="true" />
+              <span>{t("Showcase Karya & Proyek Nyata", "Work Showcase & Real Projects")}</span>
+            </h3>
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-black/[0.08]">
+              {t("Tidak Wajib Diisi", "Optional")}
+            </span>
+          </div>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
             {t(
-              "Bagian portofolio proyek ini bersifat opsional, bermanfaat bagi pelamar yang ingin memamerkan hasil karya nyata atau proyek mandiri.",
-              "This project portfolio section is optional, beneficial for applicants who wish to showcase real works or personal projects."
+              "Bagian portofolio proyek ini bersifat tidak wajib diisi, bermanfaat bagi pelamar yang ingin memamerkan hasil karya nyata atau proyek mandiri.",
+              "This project portfolio section is not mandatory, beneficial for applicants who wish to showcase real works or personal projects."
             )}
           </p>
         </div>
