@@ -696,6 +696,16 @@ export const TRANSLATIONS: Record<string, string> = {
   "Buka Halaman Lowongan": "Open Job Page",
 
   // --- Notifikasi ---
+  "Lamaran Baru Masuk": "New Application Received",
+  "Lamaran Ditarik": "Application Withdrawn",
+  "Pembaruan Status Lamaran": "Application Status Updated",
+  "Status Lamaran Diperbarui": "Application Status Updated",
+  "Pengajuan Lowongan Baru": "New Job Submission",
+  "Lowongan Disetujui": "Job Approved",
+  "Lowongan Belum Disetujui": "Job Not Approved",
+  "Lowongan Diturunkan": "Job Taken Down",
+  "Analisis AI Selesai": "AI Analysis Completed",
+  "Tandai notifikasi ini telah dibaca": "Mark this notification as read",
   "Pantau pemberitahuan terkini seputar lamaran, panggilan wawancara, dan pembaruan lowongan Anda.":
     "Track latest updates on applications, interview calls, and job alerts.",
   "Gagal Memuat Notifikasi": "Failed to Load Notifications",

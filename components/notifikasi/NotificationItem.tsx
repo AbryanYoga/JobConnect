@@ -102,6 +102,88 @@ function formatNotificationTime(
   }
 }
 
+function translateNotificationBody(body: string, language: string): string {
+  if (language !== "en" || !body) return body;
+
+  // Pattern 1: Lamaran baru masuk
+  const matchNewApp = body.match(/^(.+?)\s+mengirimkan lamaran untuk posisi\s+(.+)$/i);
+  if (matchNewApp) {
+    return `${matchNewApp[1]} submitted an application for the ${matchNewApp[2]} position.`;
+  }
+
+  // Pattern 2: Lamaran ditarik
+  const matchWithdraw = body.match(/^(.+?)\s+telah menarik lamarannya untuk posisi\s+(.+)$/i);
+  if (matchWithdraw) {
+    return `${matchWithdraw[1]} has withdrawn their application for the ${matchWithdraw[2]} position.`;
+  }
+
+  // Pattern 3: Jadwal wawancara
+  const matchInterview = body.match(/^Wawancara untuk posisi\s+(.+?)\s+di\s+(.+?)\s+dijadwalkan pada\s+(.+?)\s+di\s+(.+)$/i);
+  if (matchInterview) {
+    return `Interview for ${matchInterview[1]} at ${matchInterview[2]} is scheduled on ${matchInterview[3]} at ${matchInterview[4]}.`;
+  }
+
+  // Pattern 4: Pembaruan status lamaran
+  const matchStatus = body.match(/^Status lamaran Anda untuk posisi\s+(.+?)\s+di\s+(.+?)\s+telah diperbarui menjadi\s+([^\.]+)\.(.*)$/i);
+  if (matchStatus) {
+    const job = matchStatus[1];
+    const company = matchStatus[2];
+    const rawStatus = matchStatus[3].trim().toLowerCase();
+    const rawNote = matchStatus[4] || "";
+
+    const statusMap: Record<string, string> = {
+      dikirim: "submitted",
+      ditinjau: "under review",
+      terpilih: "shortlisted",
+      kandidat_terpilih: "shortlisted",
+      wawancara: "interview",
+      penawaran: "job offer",
+      penawaran_kerja: "job offer",
+      diterima: "accepted",
+      ditolak: "rejected",
+      ditarik: "withdrawn",
+    };
+    const translatedStatus = statusMap[rawStatus] || rawStatus;
+    const translatedNote = rawNote.replace(/Catatan:\s*/i, " Note: ");
+
+    return `Your application status for ${job} at ${company} has been updated to "${translatedStatus}".${translatedNote}`;
+  }
+
+  // Pattern 5: Pengajuan lowongan baru
+  const matchSubmitJob = body.match(/^Perusahaan\s+(.+?)\s+mengajukan lowongan baru:\s*(.+)$/i);
+  if (matchSubmitJob) {
+    return `Company ${matchSubmitJob[1]} submitted a new job posting: ${matchSubmitJob[2]}.`;
+  }
+
+  // Pattern 6: Lowongan disetujui
+  const matchApproved = body.match(/^Lowongan\s+(.+?)\s+telah disetujui dan kini tayang di JobConnect$/i);
+  if (matchApproved) {
+    return `Job posting "${matchApproved[1]}" has been approved and is now live on JobConnect.`;
+  }
+
+  // Pattern 7: Lowongan belum disetujui
+  const matchRejected = body.match(/^Pengajuan lowongan\s+(.+?)\s+belum disetujui\.(.*)$/i);
+  if (matchRejected) {
+    const note = (matchRejected[2] || "").replace(/Catatan:\s*/i, " Note: ");
+    return `Job posting submission "${matchRejected[1]}" has not been approved.${note}`;
+  }
+
+  // Pattern 8: Lowongan diturunkan
+  const matchTakedown = body.match(/^Lowongan\s+(.+?)\s+telah diturunkan oleh admin\.(.*)$/i);
+  if (matchTakedown) {
+    const note = (matchTakedown[2] || "").replace(/Catatan:\s*/i, " Note: ");
+    return `Job posting "${matchTakedown[1]}" has been taken down by admin.${note}`;
+  }
+
+  // Pattern 9: Analisis AI
+  const matchAi = body.match(/^Analisis AI untuk berkas pelamar\s+(.+?)\s+pada posisi\s+(.+?)\s+telah selesai$/i);
+  if (matchAi) {
+    return `AI analysis for applicant ${matchAi[1]} for position ${matchAi[2]} has been completed.`;
+  }
+
+  return body;
+}
+
 export function NotificationItem({
   notification,
   onMarkAsRead,
@@ -149,7 +231,7 @@ export function NotificationItem({
                 isUnread ? "text-navy-950 font-bold" : "text-slate-800"
               }`}
             >
-              {notification.title}
+              {t(notification.title)}
             </h3>
             {isUnread && (
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
@@ -173,7 +255,7 @@ export function NotificationItem({
 
         {notification.body && (
           <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed mb-2">
-            {notification.body}
+            {translateNotificationBody(notification.body, language)}
           </p>
         )}
 

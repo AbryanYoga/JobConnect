@@ -7,6 +7,7 @@ import {
   type NotificationData,
 } from "./NotificationItem";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorState } from "@/components/ui/ErrorState";
 import { createClient } from "@/lib/supabase/client";
 import { useLanguage } from "@/lib/i18n";
 import {
@@ -16,10 +17,12 @@ import {
 
 interface NotificationListProps {
   initialNotifications: NotificationData[];
+  hasError?: boolean;
 }
 
 export function NotificationList({
   initialNotifications,
+  hasError = false,
 }: NotificationListProps) {
   const { t } = useLanguage();
   const [notifications, setNotifications] =
@@ -133,11 +136,36 @@ export function NotificationList({
 
   return (
     <div className="space-y-6">
+      {/* Header Halaman Notifikasi */}
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-black text-navy-950 tracking-tight">
+          {t("Notifikasi", "Notifications")}
+        </h1>
+        <p className="text-sm sm:text-base text-slate-600 mt-1">
+          {t(
+            "Pantau pemberitahuan terkini seputar lamaran, panggilan wawancara, dan pembaruan lowongan Anda.",
+            "Track latest updates on applications, interview calls, and job alerts."
+          )}
+        </p>
+      </div>
+
+      {hasError && (
+        <ErrorState
+          title={t("Gagal Memuat Notifikasi", "Failed to Load Notifications")}
+          message={t(
+            "Terjadi kendala saat mengambil data notifikasi Anda. Silakan coba muat ulang.",
+            "An issue occurred while retrieving your notifications. Please reload."
+          )}
+          actionHref="/notifikasi"
+          actionLabel={t("Muat Ulang Halaman", "Reload Page")}
+        />
+      )}
+
       {/* Tab Filter Notifikasi, Status Realtime, & Tombol Tandai Semua Dibaca */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
         <div
           role="tablist"
-          aria-label="Filter notifikasi"
+          aria-label={t("Filter notifikasi", "Filter notifications")}
           className="inline-flex p-1 bg-slate-100 rounded-lg gap-1 self-start"
         >
           <button
@@ -222,27 +250,33 @@ export function NotificationList({
       {filteredNotifications.length === 0 ? (
         filter === "unread" ? (
           <EmptyState
-            title="Semua Notifikasi Telah Dibaca"
-            description="Tidak ada pemberitahuan baru yang belum dibaca saat ini."
+            title={t("Semua Notifikasi Telah Dibaca", "All Notifications Read")}
+            description={t(
+              "Tidak ada pemberitahuan baru yang belum dibaca saat ini.",
+              "No new unread notifications at this time."
+            )}
             icon={<CheckCheck className="w-6 h-6 text-emerald-600" />}
             action={{
-              label: "Lihat Semua Notifikasi",
+              label: t("Lihat Semua Notifikasi", "View All Notifications"),
               onClick: () => setFilter("all"),
             }}
           />
         ) : (
           <EmptyState
-            title="Belum Ada Notifikasi"
-            description="Pemberitahuan aktivitas seputar status lamaran, panggilan wawancara, dan lowongan Anda akan tampil di sini."
+            title={t("Belum Ada Notifikasi", "No Notifications Yet")}
+            description={t(
+              "Pemberitahuan aktivitas seputar status lamaran, panggilan wawancara, dan lowongan Anda akan tampil di sini.",
+              "Activity updates regarding your applications, interview invites, and jobs will appear here."
+            )}
             icon={<BellOff className="w-6 h-6 text-slate-400" />}
             action={{
-              label: "Jelajahi Lowongan",
+              label: t("Jelajahi Lowongan", "Explore Jobs"),
               href: "/lowongan",
             }}
           />
         )
       ) : (
-        <div className="space-y-3" role="feed" aria-label="Daftar notifikasi">
+        <div className="space-y-3" role="feed" aria-label={t("Daftar notifikasi", "Notifications list")}>
           {filteredNotifications.map((item) => (
             <NotificationItem
               key={item.id}
