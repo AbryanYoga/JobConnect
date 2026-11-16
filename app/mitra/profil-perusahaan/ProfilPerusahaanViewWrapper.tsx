@@ -70,8 +70,14 @@ export function ProfilPerusahaanViewWrapper({
   // Cari domisili kota & provinsi
   const selectedCity = cities.find((c) => c.id === companyData.cityId);
   const selectedProvince = provinces.find((p) => p.id === companyData.provinceId);
+  const cleanCity = selectedCity?.name
+    ? selectedCity.name
+        .replace(/^(kabupaten|kota|kab\.)\s*/gi, "")
+        .replace(/^(kabupaten|kota|kab\.)\s*/gi, "")
+        .trim()
+    : "";
   const domicileString = selectedCity
-    ? `${selectedCity.type === "kota" ? "Kota" : "Kab."} ${selectedCity.name}${
+    ? `${selectedCity.type === "kota" ? "Kota" : "Kab."} ${cleanCity}${
         selectedProvince ? `, ${selectedProvince.name}` : ""
       }`
     : selectedProvince?.name || null;

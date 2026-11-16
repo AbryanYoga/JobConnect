@@ -185,10 +185,16 @@ export function ProfilPerusahaanForm({
     label: p.name,
   }));
 
-  const cityOptions = filteredCities.map((c) => ({
-    value: String(c.id),
-    label: `${c.type === "kota" ? "Kota" : "Kabupaten"} ${c.name}`,
-  }));
+  const cityOptions = filteredCities.map((c) => {
+    const cleanName = c.name
+      .replace(/^(kabupaten|kota|kab\.)\s*/gi, "")
+      .replace(/^(kabupaten|kota|kab\.)\s*/gi, "")
+      .trim();
+    return {
+      value: String(c.id),
+      label: `${c.type === "kota" ? "Kota" : "Kabupaten"} ${cleanName}`,
+    };
+  });
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">

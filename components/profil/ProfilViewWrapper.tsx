@@ -97,7 +97,10 @@ export function ProfilViewWrapper({
   let cityTypePrefix = "";
   let cleanCityName = "";
   if (selectedCity) {
-    cleanCityName = selectedCity.name.replace(/^(Kabupaten|Kota|Kab\.|Kota)\s+/i, "");
+    cleanCityName = selectedCity.name
+      .replace(/^(kabupaten|kota|kab\.)\s*/gi, "")
+      .replace(/^(kabupaten|kota|kab\.)\s*/gi, "")
+      .trim();
     cityTypePrefix =
       selectedCity.type === "kota"
         ? language === "en"

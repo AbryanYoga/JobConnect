@@ -571,12 +571,21 @@ export function ProfilForm({
                   ? t("-- Pilih Provinsi Terlebih Dahulu --", "-- Select Province First --")
                   : t("-- Pilih Kota / Kabupaten --", "-- Select City / Regency --")}
               </option>
-              {availableCities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.type ? `${city.type} ` : ""}
-                  {city.name}
-                </option>
-              ))}
+              {availableCities.map((city) => {
+                const cleanName = city.name
+                  .replace(/^(kabupaten|kota|kab\.)\s*/gi, "")
+                  .replace(/^(kabupaten|kota|kab\.)\s*/gi, "")
+                  .trim();
+                const displayName =
+                  city.type === "kota"
+                    ? `Kota ${cleanName}`
+                    : `Kabupaten ${cleanName}`;
+                return (
+                  <option key={city.id} value={city.id}>
+                    {displayName}
+                  </option>
+                );
+              })}
             </select>
             {errors.cityId && (
               <p className="text-xs text-red-600 font-medium">{errors.cityId}</p>

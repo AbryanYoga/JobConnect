@@ -56,7 +56,10 @@ export default async function CetakCvPage() {
       .eq("id", profile.city_id)
       .maybeSingle();
     if (cityData) {
-      const cleanCity = cityData.name.replace(/^(Kabupaten|Kota)\s+/i, "");
+      const cleanCity = cityData.name
+        .replace(/^(kabupaten|kota|kab\.)\s*/gi, "")
+        .replace(/^(kabupaten|kota|kab\.)\s*/gi, "")
+        .trim();
       const typePrefix = cityData.type === "kota" ? "Kota" : "Kab.";
       const provName = (cityData.provinces as { name: string } | null)?.name;
       locationText = `${typePrefix} ${cleanCity}${provName ? `, ${provName}` : ""}`;
