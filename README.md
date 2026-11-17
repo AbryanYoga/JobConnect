@@ -28,8 +28,9 @@
   <a href="https://jobconnect.web.id"><b>🌐 Kunjungi Web Resmi</b></a> •
   <a href="#fitur-utama-dan-keunggulan"><b>✨ Fitur Unggulan</b></a> •
   <a href="#tangkapan-layar"><b>🖼️ Pratinjau Tampilan</b></a> •
-  <a href="#teknologi-dan-arsitektur"><b>🛠️ Teknologi</b></a> •
-  <a href="#akun-demo-untuk-pengujian"><b>🔑 Akun Demo</b></a>
+  <a href="#akun-demo-untuk-pengujian"><b>🔑 Akun Demo</b></a> •
+  <a href="#panduan-penggunaan-aplikasi-user-guide"><b>📖 Panduan Penggunaan</b></a> •
+  <a href="#panduan-instalasi-lokal"><b>💻 Panduan Instalasi</b></a>
 </p>
 
 ---
@@ -138,6 +139,43 @@ Penguji, rekruter, atau reviewer dapat langsung menjelajahi sistem menggunakan a
 | **Pelamar (Pencari Kerja)** | `abryan.yoga@jobconnect.id` | `Password123!` | Melamar pekerjaan, kelola portofolio showcase, simpan lowongan, pantau status seleksi |
 | **Perusahaan Mitra** | `mitra.test@jobconnect.id` | `Mitra123!` | Pasang lowongan baru, seleksi pelamar di papan ATS, jadwalkan wawancara, ekspor laporan |
 | **Admin Platform** | `admin.demo@jobconnect.id` | `Password123!` | Moderasi persetujuan loker (ACC), kelola verifikasi mitra, master kategori, rekapitulasi data |
+
+---
+
+## Panduan Penggunaan Aplikasi (User Guide)
+
+Berikut alur panduan langkah demi langkah penggunaan platform JobConnect sesuai peran pengguna:
+
+### 1. Panduan untuk Pencari Kerja (Pelamar)
+1. **Jelajah Lowongan:** Buka katalog di `/lowongan` atau telusuri wilayah di `/wilayah`. Gunakan filter pencarian berdasarkan provinsi, kota, sistem kerja remote, atau penanda khusus *Fresh Graduate*.
+2. **Pendaftaran Akun:** Klik menu **Daftar** di pojok kanan atas (`/register`), isi nama lengkap, alamat email, dan kata sandi.
+3. **Lengkapi Profil & Portofolio:** Masuk ke menu **Profil** (`/profil`). Isi nomor WhatsApp, bio ringkas, dan tambahkan karya nyata di bagian **Etalase Portofolio** (tautan GitHub, deskripsi proyek, atau tautan web karya).
+4. **Mengajukan Lamaran:** Buka rincian lowongan yang diminati (`/lowongan/[slug]`), periksa indikator kecocokan kualifikasi (*Job Match Score*), lalu klik tombol **Lamar Sekarang**. Unggah berkas CV format PDF (maksimal 2 MB) dan tulis surat pengantar singkat.
+5. **Pantau Linimasa Seleksi (Anti-Ghosting):** Buka menu **Lamaran Saya** (`/lamaran-saya`) untuk memantau status berkas secara transparan (dari `Dikirim`, `Ditinjau`, `Wawancara`, hingga `Diterima`). Jika status berubah menjadi wawancara, jadwal dan tautan pertemuan dapat dilihat langsung di kartu lamaran.
+6. **Tarik Lamaran Mandiri:** Jika perlu membatalkan pengajuan, gunakan tombol merah **Tarik Lamaran** di halaman rincian lamaran.
+
+### 2. Panduan untuk Perusahaan Mitra (Rekruter)
+1. **Registrasi Mitra Resmi:** Buka portal pendaftaran instansi di `/perusahaan/register`. Masukkan nama penanggung jawab (PIC), nama instansi/perusahaan, email kantor resmi, nomor WhatsApp, dan kata sandi.
+2. **Lengkapi Profil & Verifikasi Legalitas:** Masuk ke menu **Profil Perusahaan** (`/mitra/profil-perusahaan`). Lengkapi bidang industri, alamat kantor fisik operasional, situs web resmi perusahaan, dan unggah logo resmi instansi.
+3. **Membuat & Memasang Lowongan Baru:** Masuk ke menu **Pasang Lowongan** (`/mitra/lowongan/tambah`). Lengkapi identitas posisi, kategori bidang, kualifikasi pendidikan, rentang gaji bulanan transparan, tanggung jawab, dan batas waktu lamaran. Setelah dikirim, lowongan akan masuk antrean moderasi admin.
+4. **Kelola & Seleksi Pelamar Masuk:** Masuk ke menu **Kelola Lowongan** (`/mitra/lowongan`) lalu klik judul lowongan untuk membuka papan seleksi (*ATS Kanban*).
+   * Klik nama pelamar untuk membaca berkas CV secara aman via *Signed URL*.
+   * Geser atau perbarui tahapan kandidat (`Ditinjau`, `Kandidat Terpilih`, `Wawancara`, `Penawaran`, `Diterima`, atau `Ditolak`).
+   * Jadwalkan wawancara resmi lengkap dengan tanggal, jam, dan lokasi atau tautan pertemuan online.
+   * Gunakan tombol satu-klik untuk menghubungi pelamar via **WhatsApp** atau mengirim draf surat resmi via **Gmail**.
+5. **Rekapitulasi Laporan:** Buka menu **Laporan Rekap** (`/mitra/laporan`) untuk mengunduh berkas laporan pelamar ke format lembar sebar (CSV/Excel) atau dokumen cetak PDF.
+
+### 3. Panduan untuk Administrator (Pengelola Platform)
+1. **Masuk ke Dasbor Admin:** Masuk melalui `/login` menggunakan akun dengan hak akses admin.
+2. **Moderasi Antrean Lowongan:** Buka menu **Antrean Review** (`/admin/lowongan`). Periksa kelayakan posisi kerja, ketiadaan indikasi penipuan atau calo, serta transparansi gaji.
+   * Klik **Setujui (ACC)** agar lowongan resmi terbit dan dapat dicari di katalog publik.
+   * Klik **Tolak** jika ada kriteria yang melanggar, sertakan catatan alasan penolakan agar mitra dapat merevisi.
+3. **Kelola Master Kategori:** Buka menu **Kelola Kategori** (`/admin/kategori`) untuk menambah, mengubah, atau menghapus kategori bidang industri pekerjaan.
+4. **Pengawasan & Pembekuan Mitra:** Buka menu **Manajemen Mitra** (`/admin/perusahaan`) untuk meninjau legalitas mitra dan membekukan akun yang terindikasi bermasalah.
+
+### 4. Panduan Interaksi Publik (Tanpa Perlu Login)
+1. **Pusat Bantuan & FAQ:** Buka menu **Panduan & FAQ** di `/tentang` untuk membaca jawaban pertanyaan umum seputar platform.
+2. **Kirim Pesan Bantuan Langsung:** Pada halaman `/kontak` atau `/tentang#bantuan-kontak`, pengunjung umum dapat mengisi formulir kontak publik (Nama, Email, Kategori, dan Pesan) untuk bertanya atau melaporkan kendala tanpa perlu memiliki akun terlebih dahulu.
 
 ---
 
