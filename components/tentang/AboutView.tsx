@@ -20,6 +20,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
+import { PublicContactForm, SUPPORT_EMAIL } from "./PublicContactForm";
 
 export type FaqCategoryKey = "pelamar" | "perusahaan" | "keamanan" | "fitur";
 
@@ -722,6 +723,11 @@ export function AboutView() {
           )}
         </section>
 
+        {/* Formulir Kontak Langsung Non-Login (Interaksi Publik D1) */}
+        <section id="formulir-kontak" className="scroll-mt-20">
+          <PublicContactForm />
+        </section>
+
         {/* Contact / Help Section at Bottom (Tema Gelap Persis Bagian Bawah Landing Page) */}
         <section
           id="bantuan-kontak"
@@ -756,7 +762,7 @@ export function AboutView() {
               <span>WhatsApp: 0813-2631-1280</span>
             </a>
             <a
-              href="mailto:support@jobconnect.id"
+              href={`mailto:${SUPPORT_EMAIL}`}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#FFDD00] hover:bg-[#F5D400] text-[#0D0C23] font-black text-sm transition shadow-2xs hover:shadow active:scale-95 min-h-[44px]"
             >
               <Mail className="w-4 h-4 text-[#0D0C23]" />
